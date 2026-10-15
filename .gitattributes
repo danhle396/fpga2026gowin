@@ -1,0 +1,21 @@
+# Giữ LF cho script và mã nguồn để bash / Icarus / Python chạy giống nhau trên mọi máy (core.autocrlf của Windows)
+* text=auto
+*.sh text eol=lf
+*.py text eol=lf
+*.v text eol=lf
+*.vh text eol=lf
+*.c text eol=lf
+*.h text eol=lf
+*.md text eol=lf
+*.mem text eol=lf
+*.csv text eol=lf
+*.cst text eol=lf
+*.sdc text eol=lf
+*.bat text eol=crlf
+# nhị phân
+*.fs binary
+*.npz binary
+*.pdf binary
+*.docx binary
+*.pack binary
+*.png binary
