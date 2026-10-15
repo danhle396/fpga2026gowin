@@ -40,6 +40,10 @@ Khi file và trí nhớ khác nhau, **file thắng**. Mọi con số phải lấ
   4. `git add -A && git commit -m "<ngày> <việc> — <kết quả>"` rồi `git push`.
 
   Việc dở dang thì ghi vào cuối Phụ lục D với chữ **ĐANG DỞ**: đang làm gì, lệnh nào đang chạy, bước tiếp theo.
+- **Hook tự động** (`.claude/settings.json`, script trong `.claude/hooks/`; máy nào clone repo cũng có):
+  - *SessionStart*: khi mở phiên, tự `git pull` nếu repo sạch. Nếu repo đang có thay đổi chưa commit thì không pull mà cảnh báo. Sau đó in 5 commit gần nhất và các mục ĐANG DỞ.
+  - *Stop*: khi Claude định dừng mà repo còn thay đổi chưa commit hoặc commit chưa push, hook chặn lại và yêu cầu làm Chốt phiên. Lần dừng thứ hai luôn được cho qua (chỉ cảnh báo), để không lặp vô hạn.
+  - Tắt tạm bằng `/hooks`, hoặc đặt `"disableAllHooks": true` trong `.claude/settings.local.json` (file này không đưa lên git).
 - Phiên mới không có trí nhớ của phiên cũ. Mọi thứ cần biết phải nằm trong repo: file này, `PROMPT_KHOI_CONG.md`, `PROJECT_MASTER.md` và `docs/bao_cao/`.
 - File sinh ra khi build hoặc mô phỏng không đưa vào git (xem `.gitignore`). Kết quả tạm thì để ngoài repo, ví dụ thư mục tạm của hệ điều hành.
 

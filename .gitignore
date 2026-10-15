@@ -13,3 +13,5 @@ test_sensor/firmware/keil/*.uvguix.*
 test_sensor/firmware/keil/build_log.txt
 # impl/ của project Gowin do người giữ project quản lý
 Document Board Kiwi Primer 20K/Kiwi20K_FallDetection_FPGA/impl/
+# cấu hình Claude Code riêng từng máy
+.claude/settings.local.json
