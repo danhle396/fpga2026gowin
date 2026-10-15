@@ -19,3 +19,4 @@
 *.docx binary
 *.pack binary
 *.png binary
+*.txt text eol=lf
