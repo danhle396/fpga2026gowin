@@ -14,6 +14,7 @@ Repo clone từ GitHub `danhle396/fpga2026gowin` sang một máy khác máy gố
 | Firmware C thuần trong Unicorn | `firmware/build.sh test` + `tools/m0_test.py` | TẤT CẢ PASS (53/53 ca FSM, FW-15 50/50 × 4 mô hình, app_core 402 kết quả) | `m0_test.log` |
 | Firmware chính | `UV4.exe -r firmware/keil/fw.uvprojx` | 0 lỗi, 0 cảnh báo; Code 15.360, RO 1.680, RW 4, ZI 5.416 (trùng máy gốc) | `keil_fw_uv4.log` |
 | Dựng lại bitstream 1 | `SIM_NETLIST=1 rtl/v3/pnr_v3.sh … p1` (trong `rtl/gl/run_gl.sh`) | `.fs` **trùng từng dòng** với `bitstreams/1_e1_proto1_sisfall/fpga_project.fs`, chỉ khác dòng `Created Time`; Logic 907, Register 589, BSRAM 6/46, DSP 1,25/24, Fmax 105,196 MHz; FF INIT = 1 chỉ có `cs_sync` (cố ý) | `bitstream1_diff.txt`, `bitstream1_dung_lai.rpt.txt` |
+| Dựng lại bitstream 2 và 3 | `rtl/v3/pnr_v3.sh … v3`, `rtl/v3/pnr_v3.sh … e2 ml/out/e2_matrix/n2_p1` | Cả hai `.fs` **trùng từng dòng** với `bitstreams/2_v3_e1_sisfall`, `bitstreams/3_v3_e2_n2`, chỉ khác `Created Time`; Logic 1.521 / 1.474, Fmax 103,009 / 107,253 MHz (trùng số đã ghi) | `bitstream2_diff.txt`, `bitstream3_diff.txt`, `bitstream{2,3}_dung_lai.rpt.txt` |
 | SHA-256 3 bitstream | `sha256sum -c SHA256.txt` | OK × 3 | — |
 
 Thời gian từng testbench trên Icarus 12 (máy này): tb_pin_probe 1 s, tb_top_spi 70 s, tb_cnn_core_golden 222 s, tb_e1_layers 109 s, tb_proto_v3_e1 128 s, tb_e2 P = 1 33 s, P = 4 20 s.
@@ -25,5 +26,5 @@ Icarus 12 in 7 cảnh báo `$readmemh(...): Too many words in the file for the r
 ## Kết luận
 
 - **RB-01 đạt Pass**: `run_all` chạy được và PASS trên cả Icarus 0.9.7 (máy gốc, 14–15/10, [2026-10-14_rb01_run_all](../2026-10-14_rb01_run_all/)) lẫn Icarus 12.0 (máy này).
-- Bitstream 1 dùng cho đợt B dựng lại được trên máy thứ hai, nội dung không đổi, nên không phụ thuộc vào máy gốc.
+- Cả 3 bitstream dựng lại được trên máy thứ hai, nội dung không đổi, nên không phụ thuộc vào máy gốc.
 - TH-01 (repo Git, cả nhóm clone được): đã có thêm một máy clone và chạy được cả chuỗi kiểm. Vẫn **chưa đánh [x]**, vì Pass yêu cầu cả nhóm clone được, và còn thiếu `docs/spec.md`.
