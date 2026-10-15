@@ -1,0 +1,21 @@
+      1 WARN  (NL0002) : The module "crc8" instantiated to "u_crc8" is swept in optimizing("C:\Users\nhath\AppData\Local\Temp\claude\e--FPGA2026-GOWIN\6b182094-2331-4dc2-9ab6-d363a132e355\scratchpad\gl_p1\pnr\src\packet_parser.v":37)
+  Logic                       | 907/20736                           |  5%
+  Register                    | 589/16173                           |  4%
+  I/O Port                    | 6/207                               |  3%
+  BSRAM                       | 6/46                                | 14%
+  DSP                         | 1.25/24                             | 6%
+Max Frequency Summary: NO. Clock Name Constraint Actual Fmax Logic Level Entity 1 u_pll/rpll_inst/CLKOUT.default_gen_clk 50.143(MHz) 105.196(MHz) 3 TOP No timing paths to get frequency of clk27! No timing paths to get frequency of u_pll/rpll_inst/CLKOUTP.default_gen_clk! No timing paths to get frequency of u_pll/rpll_inst/CLKOUTD.default_gen_clk! No
+Total Negative Slack Summary: Clock Name Analysis Type Endpoints TNS Number of Endpoints clk27 Setup 0.000 0 clk27 Hold 0.000 0 u_pll/rpll_inst/CLKOUT.default_gen_clk Setup 0.000 0 u_pll/rpll_inst/CLKOUT.default_gen_clk Hold 0.000 0 u_pll/rpll_inst/CLKOUTP.default_gen_clk Setup 0.000 0 u_pll/rpll_inst/CLKOUTP.default_gen_clk Hold 0.000 0 u_pll/rpll_inst/CL
+-r--r--r-- 1 nhath 197609 7264154 Oct 15 22:06 impl/pnr/fpga_project.fs
+pROM trong netlist: 3, dòng INIT_RAM: 107
+FF có INIT=1:
+      3   u_spi_result_tx/cs_sync
+tb_top_spi: 5 khung (cửa sổ [0, 7, 1, 2], khung 2 sai CRC), shift [8, 8]
+khung 0: IRQ sau 699781 chu ky; doc 5a 00 00 00 02 73 74; mong doi 5a 00 00 00 02 73 74; IRQ sau doc = 0  PASS
+khung 1: IRQ sau 699781 chu ky; doc 5a 02 00 00 02 63 c0; mong doi 5a 02 00 00 02 63 c0; IRQ sau doc = 0  PASS
+khung 2: CRC-8 sai -> khong co IRQ sau 100000 chu ky  PASS
+khung 3: IRQ sau 699781 chu ky; doc 5a 00 00 00 01 ef 96; mong doi 5a 00 00 00 01 ef 96; IRQ sau doc = 0  PASS
+khung 4: IRQ sau 699781 chu ky; doc 5a 00 00 00 01 c9 64; mong doi 5a 00 00 00 01 c9 64; IRQ sau doc = 0  PASS
+------------------------------------------------------------
+PASS
+E:/FPGA2026_GOWIN/fpga2026gowin/rtl/tb/tb_top_spi.v:75: $finish called at 65791030000 (1ps)

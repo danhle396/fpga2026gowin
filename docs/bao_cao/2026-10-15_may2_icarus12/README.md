@@ -14,6 +14,7 @@ Repo clone từ GitHub `danhle396/fpga2026gowin` sang một máy khác máy gố
 | Firmware C thuần trong Unicorn | `firmware/build.sh test` + `tools/m0_test.py` | TẤT CẢ PASS (53/53 ca FSM, FW-15 50/50 × 4 mô hình, app_core 402 kết quả) | `m0_test.log` |
 | Firmware chính | `UV4.exe -r firmware/keil/fw.uvprojx` | 0 lỗi, 0 cảnh báo; Code 15.360, RO 1.680, RW 4, ZI 5.416 (trùng máy gốc) | `keil_fw_uv4.log` |
 | Dựng lại bitstream 1 | `SIM_NETLIST=1 rtl/v3/pnr_v3.sh … p1` (trong `rtl/gl/run_gl.sh`) | `.fs` **trùng từng dòng** với `bitstreams/1_e1_proto1_sisfall/fpga_project.fs`, chỉ khác dòng `Created Time`; Logic 907, Register 589, BSRAM 6/46, DSP 1,25/24, Fmax 105,196 MHz; FF INIT = 1 chỉ có `cs_sync` (cố ý) | `bitstream1_diff.txt`, `bitstream1_dung_lai.rpt.txt` |
+| Netlist sau P&R của bitstream 1 | `bash rtl/gl/run_gl.sh <thư mục> p1` (Icarus 12) | **`tb_top_spi` 5/5 PASS**: khung 0 (khung đầu sau lên nguồn, chỗ lỗi `conv_start` cũ) và khung 1, 3, 4 có IRQ sau 699.781 chu kỳ, đọc 7 byte khớp; khung 2 sai CRC-8 không có IRQ. Cả P&R mất 21 phút 46 giây | `gl_bitstream1_icarus12.log` |
 | Dựng lại bitstream 2 và 3 | `rtl/v3/pnr_v3.sh … v3`, `rtl/v3/pnr_v3.sh … e2 ml/out/e2_matrix/n2_p1` | Cả hai `.fs` **trùng từng dòng** với `bitstreams/2_v3_e1_sisfall`, `bitstreams/3_v3_e2_n2`, chỉ khác `Created Time`; Logic 1.521 / 1.474, Fmax 103,009 / 107,253 MHz (trùng số đã ghi) | `bitstream2_diff.txt`, `bitstream3_diff.txt`, `bitstream{2,3}_dung_lai.rpt.txt` |
 | SHA-256 3 bitstream | `sha256sum -c SHA256.txt` | OK × 3 | — |
 
