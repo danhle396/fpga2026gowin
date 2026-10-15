@@ -104,9 +104,17 @@ def main():
     log(f"mô hình {' + '.join(m.name for m in a.model)}, VOTE_K {a.vote_k}/3, TILT {'tắt' if a.no_tilt else 'bật'} (T_TILT {a.t_tilt}), "
         f"STILL_BLOCKS {a.still_blocks}, T_STILL_A/G {a.t_still_a}/{a.t_still_g}, khối 16 mẫu 50 Hz"
         + (f", THÍ NGHIỆM X15: bất động ≥ {a.still_upright} khối dù đầu thẳng" if a.still_upright else ""))
+    # chỉ phát lại những người mà mọi mô hình đều có lượt LOSO (mô hình huấn luyện trên 6 người vẫn chạy được khi
+    # file dữ liệu đã có thêm người)
+    have = set.intersection(*[{int(k.split("/", 1)[0]) for k in np.load(pp).files} for pp in params])
+    subj = [int(s) for s in np.unique(D["subject"]) if int(s) in have]
+    skip = sorted(set(int(s) for s in np.unique(D["subject"])) - have)
+    if skip:
+        log(f"bỏ {len(skip)} người không có lượt LOSO trong mô hình: {skip}")
+    on = np.isin(D["subject"], subj)
     # suy luận một lần cho mọi bản ghi, theo mô hình của người được để riêng
     preds = {}
-    for s in np.unique(D["subject"]):
+    for s in subj:
         folds = [load_fold(pp, s) for pp in params]
         ss = folds[0][1] + int(np.ceil(np.log2(len(folds))))       # tổng logit lớn ~ n lần: thêm log2(n) vào shift
         for i in np.flatnonzero(D["subject"] == s):
@@ -120,8 +128,8 @@ def main():
             c = lg.argmax(1)
             srt = np.sort(lg, 1)
             preds[i] = (c, cn.score(srt[:, -1] - srt[:, -2], ss))
-    falls = np.flatnonzero(D["event"] >= 0)
-    adl = np.flatnonzero(D["event"] < 0)
+    falls = np.flatnonzero((D["event"] >= 0) & on)
+    adl = np.flatnonzero((D["event"] < 0) & on)
     adl_h = D["length"][adl].sum() / 50 / 3600
     log(f"{len(falls)} bản ghi ngã, {len(adl)} bản ghi sinh hoạt = {adl_h:.2f} giờ")
     log("T_SCORE | ngã → SUSPECT | ngã → PRE_ALARM | trễ va chạm→SUSPECT trung vị / p90 | →PRE_ALARM trung vị / p90 "
