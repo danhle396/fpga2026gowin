@@ -9,23 +9,23 @@ Nguồn huấn luyện lớp FALL và NORMAL của đề tài (mục 4.4 và vi�
 - Tài liệu gốc đi kèm: [Information.pdf](Information.pdf).
 - Cảm biến Xsens MTw, 25 Hz, gia tốc tính bằng m/s² (có trọng lực), gyro tính bằng rad/s. Mỗi lần thực hiện ghi đồng thời 6 cảm biến.
 
-## Hiện có gì (13/10/2026)
+## Hiện có gì (16/10/2026)
 
-**6 trên 17 người** (101–106): 1.103 bản ghi = 604 cú ngã (20 kiểu, mỗi kiểu 30–33 lần) + 499 hoạt động thường ngày (16 loại), tổng 5,65 giờ.
+**8 trên 17 người** (101–108): 1.529 bản ghi = 840 cú ngã (20 kiểu, mỗi kiểu 41–45 lần) + 689 hoạt động thường ngày (16 loại), tổng 8,31 giờ. Ngày 13/10 có 6 người (101–106); phần 6 người đó trong các file hiện tại trùng từng byte với bản cũ ([2026-10-16_d1_8_nguoi](../../../docs/bao_cao/2026-10-16_d1_8_nguoi/README.md)).
 
-11 người còn lại chưa có. File gốc nặng 1,24 GB; máy chủ UCI không cho tải nối tiếp và ngắt kết nối sau 20 phút, nên với đường truyền khoảng 0,4 MB/s chỉ lấy được 477 MB đầu. Cách lấy phần còn lại: tải bằng mạng nhanh hơn (cần trung bình trên 1,1 MB/s), giải nén `Tests.rar` rồi từng `<mã người>.rar` vào một thư mục, và chạy lại lệnh ở cuối file này.
+9 người còn lại (109–117) chưa có. File gốc nặng 1,24 GB. Máy chủ UCI không nhận `Range`, giới hạn mỗi kết nối khoảng 0,4–0,6 MB/s và cắt kết nối sau 16–25 phút, nên mỗi lượt chỉ lấy được 477–643 MB đầu. Bản sao trên Kaggle thiếu nhiều file, không dùng được. Cách lấy phần còn lại: tải trọn file zip (cần một kết nối giữ được khoảng 35–50 phút, hoặc mạng nhanh hơn), rồi chạy `bash tools/fetch_d1.sh <thư mục ngoài repo> <file zip>` và các lệnh ở cuối file này. Script giải được cả từ file zip tải dở.
 
 | File | Nội dung |
 |---|---|
 | `d1_trials_50hz.npz` | Từng bản ghi đầy đủ ở 50 Hz, INT16 theo LSB của MPU6050 ở ±16 g / ±2000 °/s (2048 LSB/g, 16,4 LSB/(°/s)), trục đã xoay về quy ước của mũ. `data[start[i] : start[i] + length[i]]` là bản ghi thứ `i`; `subject`, `act` (801–816 thường ngày, 901–920 ngã), `rep`, `event` (chỉ số mẫu của điểm va chạm, −1 nếu không phải ngã), `flags` (1 = có khoảng trống đã nội suy, 2 = có mẫu ngoài dải đã bỏ) |
-| `d1_windows.npz` | 53.165 cửa sổ 128 × 6 INT8, bước 16 mẫu, nhãn theo A.4: `y` = 0 (NORMAL, 51.353 cửa sổ) hoặc 3 (FALL, 1.812 cửa sổ = 604 cú ngã × 3). Kèm `subject`, `act`, `trial`, `p` (vị trí điểm va chạm trong cửa sổ, −1 nếu không có). Cửa sổ thuộc vùng bỏ của A.4 đã được loại |
+| `d1_windows.npz` | 79.111 cửa sổ 128 × 6 INT8, bước 16 mẫu, nhãn theo A.4: `y` = 0 (NORMAL, 76.591 cửa sổ) hoặc 3 (FALL, 2.520 cửa sổ = 840 cú ngã × 3). Kèm `subject`, `act`, `trial`, `p` (vị trí điểm va chạm trong cửa sổ, −1 nếu không có). Cửa sổ thuộc vùng bỏ của A.4 đã được loại |
 | `d1_windows_nguc_340539.npz`, `d1_windows_that_lung_340535.npz` | Cùng định dạng với `d1_windows.npz`, lấy từ cảm biến ở **ngực** và **thắt lưng** của cùng các lần thực hiện (thêm 15/10). Chỉ dùng làm dữ liệu huấn luyện bổ sung: `ml/train_cnn.py --train-only <hai file>`. Không bao giờ dùng để kiểm tra, vì thiết bị đeo trên đầu. Kết quả AI-09: `docs/bao_cao/2026-10-15_ai09_du_lieu_than/` |
 
 Thứ tự kênh: `[AX, AY, AZ, GX, GY, GZ]`; X hướng về trước, Y sang trái, Z lên trời. Đứng yên thì AZ ≈ +16 mức INT8.
 
 ## Ba điều phải biết trước khi dùng
 
-1. **Mã cảm biến ở đầu là 340540, không phải 340506 như `Information.pdf` ghi.** Số liệu của cả 6 người cho thấy danh sách trong tài liệu bị ngược thứ tự:
+1. **Mã cảm biến ở đầu là 340540, không phải 340506 như `Information.pdf` ghi.** Số liệu của cả 8 người cho thấy danh sách trong tài liệu bị ngược thứ tự:
 
    | Dấu hiệu | 340506 (tài liệu ghi "đầu") | 340540 (tài liệu ghi "cổ chân") |
    |---|---|---|

@@ -69,7 +69,7 @@ bash firmware/build.sh test && python -I tools/m0_test.py
 ```
 
 **Chỉ có trên máy gốc, không có trong repo:**
-- Dữ liệu thô D1 (6 người, 6 cảm biến), vốn ở thư mục tạm của Claude. Bản đã chuyển đổi nằm ở `ml/data/public/`.
+- Dữ liệu thô D1 (8 người, 6 cảm biến): máy thứ hai giữ ở `E:\FPGA2026_GOWIN\d1_raw\`. Bản đã chuyển đổi nằm ở `ml/data/public/`; tải lại bằng `tools/fetch_d1.sh`.
 - Dự án vòng 1 `D:\hoctap\fpga\thi_fpga\MCU\`, chỉ để tham khảo.
 
 ## 5. Đang ở đâu (cập nhật mỗi khi đổi mốc lớn)

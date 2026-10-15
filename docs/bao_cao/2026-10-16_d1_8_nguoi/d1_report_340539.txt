@@ -1,0 +1,16 @@
+Cảm biến 340539 · 8 người · 1529 bản ghi (840 ngã, 689 hoạt động thường ngày) · bỏ 5 file thiếu hoặc quá ngắn
+Tổng 8.31 giờ ở 50 Hz · bản ghi dài 8.4–36.1 s
+Bản ghi có khoảng trống đã nội suy: 28 · có mẫu ngoài dải đã bỏ: 1
+Mẫu có trục gia tốc vượt 7,94 g: 0.0001 % · có trục gyro vượt 496 °/s: 0.0026 % · lớn nhất 8.77 g, 666 °/s
+Đỉnh |a| tại điểm va chạm của các cú ngã: trung vị 4.07 g, phân vị 5 % 2.48 g, lớn nhất 10.53 g
+Cửa sổ: 79124 (NORMAL 76604, FALL 2520); số cú ngã có đủ 3 cửa sổ dương: 840/840
+
+người | bản ghi | ngã | gyro rms khi đi bộ (rad/s) | nghiêng lớn nhất khi cúi (độ) | Δ áp suất khi ngã (hPa) | Z khi đi bộ (mức INT8) | lệch trục lên / trước (độ) | trục mũ X Y Z lấy từ trục cảm biến
+  101 |  197 | 100 |  0.26 |   98 | +0.072 |  15.0 | 21.1 /  1.5 | +Z -Y +X 
+  102 |  182 | 101 |  0.25 |   83 | +0.076 |  15.0 | 22.6 /  1.0 | +Z -Y +X 
+  103 |  181 | 101 |  0.25 |  109 | +0.079 |  15.0 | 20.1 /  4.2 | +Z -Y +X 
+  104 |  181 | 101 |  0.24 |  104 | +0.077 |  16.0 |  7.6 /  3.9 | +Z -Y +X 
+  105 |  180 | 100 |  0.28 |   89 | +0.066 |  14.6 | 25.7 /  9.1 | +Z -Y +X 
+  106 |  182 | 101 |  0.22 |   88 | +0.068 |  15.7 | 12.6 /  9.2 | +Z -Y +X 
+  107 |  212 | 117 |  0.25 |  101 | +0.039 |  16.0 |  5.6 /  4.3 | +Z -Y +X 
+  108 |  214 | 119 |  0.28 |   96 | +0.084 |  15.8 | 11.7 / 16.8 | +Z -Y +X 
