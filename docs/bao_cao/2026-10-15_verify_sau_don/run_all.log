@@ -1,0 +1,15 @@
+runall rc=0
+
+| Testbench | Kết quả | Thời gian |
+|---|---|---|
+| tb_pin_probe | PASS | 0 s |
+| tb_top_spi | PASS | 31 s |
+| tb_cnn_core_golden | PASS | 204 s |
+| tb_e1_layers | PASS | 105 s |
+| tb_proto_v3_e1 | PASS | 135 s |
+| tb_e2 (P = 1) | PASS | 63 s |
+| tb_e2 (P = 4) | PASS | 34 s |
+Icarus: Icarus Verilog version 0.9.7  (v0_9_7)
+TẤT CẢ PASS
+
+[exited with code 0]

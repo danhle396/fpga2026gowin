@@ -1,0 +1,7 @@
+Phép âm cho tb_proto (NG = 2), chạy ngày 14/10 bằng tb_proto_phep_am.sh trên bản sao rtl/v3:
+bắt được  SCORE không loại lớp thắng: FAIL khung dung: 3 byte sai
+bắt được  không chặn ghi khi bận: FAIL khung truoc khung ban: 4 byte sai
+bắt được  CS lên giữa khung không báo lỗi: FAIL khung thieu byte: khong co IRQ
+bắt được  CRC khung ghi không tính 0xA5: FAIL khung dung: 11 byte sai (lần đầu câu sed làm hỏng cú pháp, sửa sed rồi chạy lại)
+bắt được  read_done sau byte 6 thay vì 7: FAIL IRQ ha truoc khi doc du 7 byte
+          (lần đầu LỌT: testbench chỉ xem IRQ sau khi đọc đủ 7 byte; đã thêm bước đọc 6 byte và kiểm IRQ còn cao)

@@ -1,0 +1,3 @@
+class=0
+class_name=NORMAL
+logits=627 198 30 -51

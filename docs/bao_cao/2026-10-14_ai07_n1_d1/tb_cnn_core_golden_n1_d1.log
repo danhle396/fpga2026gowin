@@ -1,0 +1,24 @@
+cnn_core golden test: 20 vectors, conv1_shift=8 conv2_shift=8
+v0: cycles=699800 class=3 logits=-492 -4440 -1073741824 6089 PASS
+v1: cycles=699800 class=3 logits=1265 -5478 -1073741824 4017 PASS
+v2: cycles=699800 class=3 logits=-279 -4842 -1073741824 5676 PASS
+v3: cycles=699800 class=3 logits=21 -5376 -1073741824 5908 PASS
+v4: cycles=699800 class=3 logits=861 -5113 -1073741824 5326 PASS
+v5: cycles=699800 class=3 logits=1311 -6069 -1073741824 4430 PASS
+v6: cycles=699800 class=3 logits=751 -4763 -1073741824 5119 PASS
+v7: cycles=699800 class=3 logits=1295 -5090 -1073741824 3712 PASS
+v8: cycles=699800 class=3 logits=847 -4582 -1073741824 4457 PASS
+v9: cycles=699800 class=3 logits=116 -6196 -1073741824 6083 PASS
+v10: cycles=699800 class=0 logits=2662 -3266 -1073741824 -207 PASS
+v11: cycles=699800 class=0 logits=3139 -3953 -1073741824 384 PASS
+v12: cycles=699800 class=0 logits=3015 -3509 -1073741824 -175 PASS
+v13: cycles=699800 class=0 logits=2176 -2717 -1073741824 140 PASS
+v14: cycles=699800 class=0 logits=4136 -4871 -1073741824 -730 PASS
+v15: cycles=699800 class=0 logits=2519 -3609 -1073741824 886 PASS
+v16: cycles=699800 class=0 logits=3964 -3943 -1073741824 -2095 PASS
+v17: cycles=699800 class=0 logits=2684 -3160 -1073741824 147 PASS
+v18: cycles=699800 class=3 logits=2321 -5298 -1073741824 2514 PASS
+v19: cycles=699800 class=0 logits=2321 -3721 -1073741824 551 PASS
+------------------------------------------------------------
+KET QUA: 20/20 vector khop golden, cycles/inference=699800
+PASS

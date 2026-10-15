@@ -1,0 +1,12 @@
+# phép âm: .vo của bitstream 3 với INIT_RAM_00 của wrom_wrom_0_0_s đổi ...A7AD -> ...A7AC (lật 1 bit một weight), NG = 1
+(0) doc khi chua co ket qua: toan 0  PASS
+FAIL khung dung: 2 byte sai, irq sau doc = 0; doc 5a 40 01 03 1e bd 90, mong doi 5a 40 01 03 1e bd 90
+(1) 1 khung dung: xong, CYCLES = 258080, so loi den day = 1
+(2) CRC sai -> STATUS 0x00, CLASS 0xFF, IRQ sau 0 chu ky
+(3) khung thieu byte -> STATUS 0x04
+(4) hai khung sat nhau: khung sau STATUS 0x07, khung truoc van ra ket qua dung
+(5) byte dau khong phai 0xA5: bo qua, khong IRQ  PASS
+(6) RUN 7 byte: IRQ ve 0; doc lai -> toan 0  PASS
+(7) RST_N: IRQ ve 0, MISO toan 0  PASS
+------------------------------------------------------------
+FAIL: 1 loi

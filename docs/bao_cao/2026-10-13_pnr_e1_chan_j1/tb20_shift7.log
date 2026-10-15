@@ -1,0 +1,21 @@
+v0: cycles=699800 class=0 logits=1431 253 316 -15  mism=4
+v1: cycles=699800 class=0 logits=1207 186 1009 -226  mism=4
+v2: cycles=699800 class=0 logits=1302 276 775 -128  mism=4
+v3: cycles=699800 class=0 logits=1358 173 1049 -376  mism=4
+v4: cycles=699800 class=0 logits=1243 311 760 -127  mism=4
+v5: cycles=699800 class=0 logits=1242 302 964 -252  mism=4
+v6: cycles=699800 class=0 logits=1338 345 685 -151  mism=4
+v7: cycles=699800 class=2 logits=1297 383 1335 -429  mism=4
+v8: cycles=699800 class=0 logits=1334 436 1232 -388  mism=5
+v9: cycles=699800 class=0 logits=1563 334 1006 -233  mism=5
+v10: cycles=699800 class=0 logits=1334 506 947 -28  mism=4
+v11: cycles=699800 class=0 logits=1385 504 1314 -188  mism=5
+v12: cycles=699800 class=0 logits=2954 -560 2534 955  mism=4
+v13: cycles=699800 class=0 logits=3281 43 2259 1111  mism=4
+v14: cycles=699800 class=0 logits=3350 -69 1859 1194  mism=4
+v15: cycles=699800 class=0 logits=3418 252 1980 1238  mism=4
+v16: cycles=699800 class=0 logits=3019 223 2035 537  mism=4
+v17: cycles=699800 class=0 logits=3045 -124 2030 1021  mism=4
+v18: cycles=699800 class=0 logits=1896 211 1022 112  mism=4
+v19: cycles=699800 class=0 logits=3739 -1198 2840 1744  mism=4
+SHIFT=(7,8): 0/20 vector khop, cycles/inference=699800

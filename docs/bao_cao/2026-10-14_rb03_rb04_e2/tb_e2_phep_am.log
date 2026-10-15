@@ -1,0 +1,6 @@
+bắt được  đệm biên: bỏ kiểm pos >= L: FAIL vector 0: l1 sai 8 byte
+bắt được  drain 2 nhịp thay vì 3: FAIL vector 0: l1 sai 110 byte
+bắt được  max-pool lấy q = 1 thay vì max: FAIL vector 0: l1 sai 67 byte
+bắt được  requant làm tròn thay vì lấy sàn: FAIL vector 0: l1 sai 162 byte
+bắt được  argmax: bằng nhau chọn chỉ số lớn: FAIL vector 0: logit -1944 -1944 -1073741824 -1944 lop 1; mong doi -1944 -1944 -1073741824 -1944 lop 0
+bắt được  GAP lấy sàn sai (>> 4): FAIL vector 0: logit 931 1947 930 3282 lop 3; mong doi 438 979 395 1614 lop 3

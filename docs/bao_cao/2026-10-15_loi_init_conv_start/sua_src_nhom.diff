@@ -1,0 +1,88 @@
+diff -r C:/Users/ADMIN/AppData/Local/Temp/claude/d--hoctap-fpga-fpga2026gowin/4f873fbe-983f-43f7-9d9d-b0d332537d87/scratchpad/src_bak_init/cnn_controller.v "D:/hoctap/fpga/fpga2026gowin/Document Board Kiwi Primer 20K/Kiwi20K_FallDetection_FPGA/src/cnn_controller.v"
+12,15c12,15
+<     output reg  conv_start,
+<     output reg  pool_start,
+<     output reg  gap_start,
+<     output reg  dense_start,
+---
+>     output reg  conv_start = 0,
+>     output reg  pool_start = 0,
+>     output reg  gap_start = 0,
+>     output reg  dense_start = 0,
+18,19c18,19
+<     output reg  conv_layer_sel,
+<     output reg  pool_layer_sel,
+---
+>     output reg  conv_layer_sel = 0,
+>     output reg  pool_layer_sel = 0,
+21,22c21,22
+<     output reg  busy,
+<     output reg  inference_done,
+---
+>     output reg  busy = 0,
+>     output reg  inference_done = 0,
+25c25
+<     output reg [3:0] stage
+---
+>     output reg [3:0] stage = 0
+diff -r C:/Users/ADMIN/AppData/Local/Temp/claude/d--hoctap-fpga-fpga2026gowin/4f873fbe-983f-43f7-9d9d-b0d332537d87/scratchpad/src_bak_init/conv1d_engine.v "D:/hoctap/fpga/fpga2026gowin/Document Board Kiwi Primer 20K/Kiwi20K_FallDetection_FPGA/src/conv1d_engine.v"
+9,10c9,10
+<     output reg                    busy,
+<     output reg                    done,
+---
+>     output reg                    busy = 0,
+>     output reg                    done = 0,
+34c34
+<     output reg                    output_valid
+---
+>     output reg                    output_valid = 0
+diff -r C:/Users/ADMIN/AppData/Local/Temp/claude/d--hoctap-fpga-fpga2026gowin/4f873fbe-983f-43f7-9d9d-b0d332537d87/scratchpad/src_bak_init/dense_engine.v "D:/hoctap/fpga/fpga2026gowin/Document Board Kiwi Primer 20K/Kiwi20K_FallDetection_FPGA/src/dense_engine.v"
+5,6c5,6
+<     output reg                    busy,
+<     output reg                    done,
+---
+>     output reg                    busy = 0,
+>     output reg                    done = 0,
+diff -r C:/Users/ADMIN/AppData/Local/Temp/claude/d--hoctap-fpga-fpga2026gowin/4f873fbe-983f-43f7-9d9d-b0d332537d87/scratchpad/src_bak_init/gap_engine.v "D:/hoctap/fpga/fpga2026gowin/Document Board Kiwi Primer 20K/Kiwi20K_FallDetection_FPGA/src/gap_engine.v"
+5,6c5,6
+<     output reg                    busy,
+<     output reg                    done,
+---
+>     output reg                    busy = 0,
+>     output reg                    done = 0,
+15c15
+<     output reg                    output_valid
+---
+>     output reg                    output_valid = 0
+diff -r C:/Users/ADMIN/AppData/Local/Temp/claude/d--hoctap-fpga-fpga2026gowin/4f873fbe-983f-43f7-9d9d-b0d332537d87/scratchpad/src_bak_init/maxpool1d_engine.v "D:/hoctap/fpga/fpga2026gowin/Document Board Kiwi Primer 20K/Kiwi20K_FallDetection_FPGA/src/maxpool1d_engine.v"
+9,10c9,10
+<     output reg                    busy,
+<     output reg                    done,
+---
+>     output reg                    busy = 0,
+>     output reg                    done = 0,
+19c19
+<     output reg                    output_valid
+---
+>     output reg                    output_valid = 0
+diff -r C:/Users/ADMIN/AppData/Local/Temp/claude/d--hoctap-fpga-fpga2026gowin/4f873fbe-983f-43f7-9d9d-b0d332537d87/scratchpad/src_bak_init/packet_parser.v "D:/hoctap/fpga/fpga2026gowin/Document Board Kiwi Primer 20K/Kiwi20K_FallDetection_FPGA/src/packet_parser.v"
+11c11
+<     output reg        data_we,
+---
+>     output reg        data_we = 0,
+13,14c13,14
+<     output reg        payload_done,
+<     output reg        crc_error
+---
+>     output reg        payload_done = 0,
+>     output reg        crc_error = 0
+diff -r C:/Users/ADMIN/AppData/Local/Temp/claude/d--hoctap-fpga-fpga2026gowin/4f873fbe-983f-43f7-9d9d-b0d332537d87/scratchpad/src_bak_init/spi_result_tx.v "D:/hoctap/fpga/fpga2026gowin/Document Board Kiwi Primer 20K/Kiwi20K_FallDetection_FPGA/src/spi_result_tx.v"
+12c12
+<     output reg                    read_done
+---
+>     output reg                    read_done = 0
+diff -r C:/Users/ADMIN/AppData/Local/Temp/claude/d--hoctap-fpga-fpga2026gowin/4f873fbe-983f-43f7-9d9d-b0d332537d87/scratchpad/src_bak_init/spi_slave.v "D:/hoctap/fpga/fpga2026gowin/Document Board Kiwi Primer 20K/Kiwi20K_FallDetection_FPGA/src/spi_slave.v"
+10c10
+<     output reg        rx_valid
+---
+>     output reg        rx_valid = 0

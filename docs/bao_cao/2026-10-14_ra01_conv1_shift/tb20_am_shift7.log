@@ -1,0 +1,107 @@
+cnn_core golden test: 20 vectors, conv1_shift=7 conv2_shift=8
+FAIL tai vector 0 phan tu 0: mong doi 627, nhan 1431
+FAIL tai vector 0 phan tu 1: mong doi 198, nhan 253
+FAIL tai vector 0 phan tu 2: mong doi 30, nhan 316
+FAIL tai vector 0 phan tu 3: mong doi -51, nhan -15
+v0: cycles=699800 class=0 logits=1431 253 316 -15 FAIL
+FAIL tai vector 1 phan tu 0: mong doi 495, nhan 1207
+FAIL tai vector 1 phan tu 1: mong doi 16, nhan 186
+FAIL tai vector 1 phan tu 2: mong doi 397, nhan 1009
+FAIL tai vector 1 phan tu 3: mong doi -129, nhan -226
+v1: cycles=699800 class=0 logits=1207 186 1009 -226 FAIL
+FAIL tai vector 2 phan tu 0: mong doi 457, nhan 1302
+FAIL tai vector 2 phan tu 1: mong doi 287, nhan 276
+FAIL tai vector 2 phan tu 2: mong doi 198, nhan 775
+FAIL tai vector 2 phan tu 3: mong doi -87, nhan -128
+v2: cycles=699800 class=0 logits=1302 276 775 -128 FAIL
+FAIL tai vector 3 phan tu 0: mong doi 534, nhan 1358
+FAIL tai vector 3 phan tu 1: mong doi 140, nhan 173
+FAIL tai vector 3 phan tu 2: mong doi 531, nhan 1049
+FAIL tai vector 3 phan tu 3: mong doi -161, nhan -376
+v3: cycles=699800 class=0 logits=1358 173 1049 -376 FAIL
+FAIL tai vector 4 phan tu 0: mong doi 525, nhan 1243
+FAIL tai vector 4 phan tu 1: mong doi 231, nhan 311
+FAIL tai vector 4 phan tu 2: mong doi 304, nhan 760
+FAIL tai vector 4 phan tu 3: mong doi -76, nhan -127
+v4: cycles=699800 class=0 logits=1243 311 760 -127 FAIL
+FAIL tai vector 5 phan tu 0: mong doi 560, nhan 1242
+FAIL tai vector 5 phan tu 1: mong doi 200, nhan 302
+FAIL tai vector 5 phan tu 2: mong doi 293, nhan 964
+FAIL tai vector 5 phan tu 3: mong doi -62, nhan -252
+v5: cycles=699800 class=0 logits=1242 302 964 -252 FAIL
+FAIL tai vector 6 phan tu 0: mong doi 550, nhan 1338
+FAIL tai vector 6 phan tu 1: mong doi 193, nhan 345
+FAIL tai vector 6 phan tu 2: mong doi 274, nhan 685
+FAIL tai vector 6 phan tu 3: mong doi -37, nhan -151
+v6: cycles=699800 class=0 logits=1338 345 685 -151 FAIL
+FAIL tai vector 7 phan tu 0: mong doi 367, nhan 1297
+FAIL tai vector 7 phan tu 1: mong doi 299, nhan 383
+FAIL tai vector 7 phan tu 2: mong doi 611, nhan 1335
+FAIL tai vector 7 phan tu 3: mong doi -241, nhan -429
+v7: cycles=699800 class=2 logits=1297 383 1335 -429 FAIL
+FAIL tai vector 8 phan tu 0: mong doi 493, nhan 1334
+FAIL tai vector 8 phan tu 1: mong doi 227, nhan 436
+FAIL tai vector 8 phan tu 2: mong doi 520, nhan 1232
+FAIL tai vector 8 phan tu 3: mong doi -172, nhan -388
+FAIL tai vector 8 phan tu 4: mong doi 2, nhan 0
+v8: cycles=699800 class=0 logits=1334 436 1232 -388 FAIL
+FAIL tai vector 9 phan tu 0: mong doi 430, nhan 1563
+FAIL tai vector 9 phan tu 1: mong doi 116, nhan 334
+FAIL tai vector 9 phan tu 2: mong doi 549, nhan 1006
+FAIL tai vector 9 phan tu 3: mong doi -217, nhan -233
+FAIL tai vector 9 phan tu 4: mong doi 2, nhan 0
+v9: cycles=699800 class=0 logits=1563 334 1006 -233 FAIL
+FAIL tai vector 10 phan tu 0: mong doi 599, nhan 1334
+FAIL tai vector 10 phan tu 1: mong doi 309, nhan 506
+FAIL tai vector 10 phan tu 2: mong doi 465, nhan 947
+FAIL tai vector 10 phan tu 3: mong doi -68, nhan -28
+v10: cycles=699800 class=0 logits=1334 506 947 -28 FAIL
+FAIL tai vector 11 phan tu 0: mong doi 548, nhan 1385
+FAIL tai vector 11 phan tu 1: mong doi 181, nhan 504
+FAIL tai vector 11 phan tu 2: mong doi 707, nhan 1314
+FAIL tai vector 11 phan tu 3: mong doi -146, nhan -188
+FAIL tai vector 11 phan tu 4: mong doi 2, nhan 0
+v11: cycles=699800 class=0 logits=1385 504 1314 -188 FAIL
+FAIL tai vector 12 phan tu 0: mong doi 1330, nhan 2954
+FAIL tai vector 12 phan tu 1: mong doi -259, nhan -560
+FAIL tai vector 12 phan tu 2: mong doi 1085, nhan 2534
+FAIL tai vector 12 phan tu 3: mong doi 449, nhan 955
+v12: cycles=699800 class=0 logits=2954 -560 2534 955 FAIL
+FAIL tai vector 13 phan tu 0: mong doi 1536, nhan 3281
+FAIL tai vector 13 phan tu 1: mong doi 134, nhan 43
+FAIL tai vector 13 phan tu 2: mong doi 1136, nhan 2259
+FAIL tai vector 13 phan tu 3: mong doi 358, nhan 1111
+v13: cycles=699800 class=0 logits=3281 43 2259 1111 FAIL
+FAIL tai vector 14 phan tu 0: mong doi 1655, nhan 3350
+FAIL tai vector 14 phan tu 1: mong doi 20, nhan -69
+FAIL tai vector 14 phan tu 2: mong doi 922, nhan 1859
+FAIL tai vector 14 phan tu 3: mong doi 419, nhan 1194
+v14: cycles=699800 class=0 logits=3350 -69 1859 1194 FAIL
+FAIL tai vector 15 phan tu 0: mong doi 1611, nhan 3418
+FAIL tai vector 15 phan tu 1: mong doi 151, nhan 252
+FAIL tai vector 15 phan tu 2: mong doi 948, nhan 1980
+FAIL tai vector 15 phan tu 3: mong doi 457, nhan 1238
+v15: cycles=699800 class=0 logits=3418 252 1980 1238 FAIL
+FAIL tai vector 16 phan tu 0: mong doi 1387, nhan 3019
+FAIL tai vector 16 phan tu 1: mong doi 112, nhan 223
+FAIL tai vector 16 phan tu 2: mong doi 986, nhan 2035
+FAIL tai vector 16 phan tu 3: mong doi 110, nhan 537
+v16: cycles=699800 class=0 logits=3019 223 2035 537 FAIL
+FAIL tai vector 17 phan tu 0: mong doi 1414, nhan 3045
+FAIL tai vector 17 phan tu 1: mong doi -241, nhan -124
+FAIL tai vector 17 phan tu 2: mong doi 1003, nhan 2030
+FAIL tai vector 17 phan tu 3: mong doi 312, nhan 1021
+v17: cycles=699800 class=0 logits=3045 -124 2030 1021 FAIL
+FAIL tai vector 18 phan tu 0: mong doi 803, nhan 1896
+FAIL tai vector 18 phan tu 1: mong doi 100, nhan 211
+FAIL tai vector 18 phan tu 2: mong doi 450, nhan 1022
+FAIL tai vector 18 phan tu 3: mong doi 12, nhan 112
+v18: cycles=699800 class=0 logits=1896 211 1022 112 FAIL
+FAIL tai vector 19 phan tu 0: mong doi 1808, nhan 3739
+FAIL tai vector 19 phan tu 1: mong doi -659, nhan -1198
+FAIL tai vector 19 phan tu 2: mong doi 1480, nhan 2840
+FAIL tai vector 19 phan tu 3: mong doi 629, nhan 1744
+v19: cycles=699800 class=0 logits=3739 -1198 2840 1744 FAIL
+------------------------------------------------------------
+KET QUA: 0/20 vector khop golden, cycles/inference=699800
+FAIL: KHONG nap bitstream nay len board

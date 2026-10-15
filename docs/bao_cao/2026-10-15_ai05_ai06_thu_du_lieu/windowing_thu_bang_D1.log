@@ -1,0 +1,32 @@
+     s01_nga_truoc_01.csv: 17.4 s, 1 sự kiện, 43 cửa sổ (3 dương)
+     s01_nga_truoc_02.csv: 18.1 s, 1 sự kiện, 45 cửa sổ (3 dương)
+     s01_nga_truoc_03.csv: 17.6 s, 1 sự kiện, 44 cửa sổ (3 dương)
+     s01_nga_truoc_04.csv: 16.2 s, 1 sự kiện, 40 cửa sổ (3 dương)
+     s01_nga_truoc_05.csv: 16.2 s, 1 sự kiện, 39 cửa sổ (3 dương)
+     s02_di_bo_01.csv: 16.6 s, 0 sự kiện, 44 cửa sổ (0 dương)
+     s02_roi_mu_01.csv: 103.1 s, 5 sự kiện, 296 cửa sổ (15 dương), btn bấm 800 mẫu
+BỎ   s03_di_bo_02.csv: mất 3 mẫu (thu lại, hoặc --allow-lost)
+BỎ   s03_nhay_mua_01.csv: hoạt động lạ 'nhay_mua' (xem docs/data_protocol.md)
+ghi C:\Users\ADMIN\AppData\Local\Temp\claude\d--hoctap-fpga-fpga2026gowin\4f873fbe-983f-43f7-9d9d-b0d332537d87\scratchpad\win_test\all.npz: 551 cửa sổ (NORMAL 521, IMPACT 15, FALL 15), 10 sự kiện, bỏ 2 file
+ 
+     s01_nga_truoc_01.csv: 17.4 s, 1 sự kiện, 43 cửa sổ (3 dương)
+     s01_nga_truoc_02.csv: 18.1 s, 1 sự kiện, 45 cửa sổ (3 dương)
+     s01_nga_truoc_03.csv: 17.6 s, 1 sự kiện, 44 cửa sổ (3 dương)
+     s01_nga_truoc_04.csv: 16.2 s, 1 sự kiện, 40 cửa sổ (3 dương)
+     s01_nga_truoc_05.csv: 16.2 s, 1 sự kiện, 39 cửa sổ (3 dương)
+BỎ   s03_nhay_mua_01.csv: hoạt động lạ 'nhay_mua' (xem docs/data_protocol.md)
+ghi C:\Users\ADMIN\AppData\Local\Temp\claude\d--hoctap-fpga-fpga2026gowin\4f873fbe-983f-43f7-9d9d-b0d332537d87\scratchpad\win_test\d3.npz: 211 cửa sổ (NORMAL 196, IMPACT 0, FALL 15), 5 sự kiện, bỏ 1 file
+ 
+s01_nga_truoc_01: 1 sự kiện, 3 cửa sổ dương (mong đợi 3)
+s01_nga_truoc_02: 1 sự kiện, 3 cửa sổ dương (mong đợi 3)
+s01_nga_truoc_03: 1 sự kiện, 3 cửa sổ dương (mong đợi 3)
+s01_nga_truoc_04: 1 sự kiện, 3 cửa sổ dương (mong đợi 3)
+s01_nga_truoc_05: 1 sự kiện, 3 cửa sổ dương (mong đợi 3)
+s02_roi_mu_01: 5 sự kiện, 15 cửa sổ dương (mong đợi 15)
+s01_nga_truoc_01: điểm sự kiện tìm được [822] so với D1×2 [822], lệch lớn nhất 0
+s01_nga_truoc_02: điểm sự kiện tìm được [924] so với D1×2 [924], lệch lớn nhất 0
+s01_nga_truoc_03: điểm sự kiện tìm được [934] so với D1×2 [934], lệch lớn nhất 0
+s01_nga_truoc_04: điểm sự kiện tìm được [836] so với D1×2 [836], lệch lớn nhất 0
+s01_nga_truoc_05: điểm sự kiện tìm được [752] so với D1×2 [752], lệch lớn nhất 0
+s02_roi_mu_01: điểm sự kiện tìm được [560, 2637, 4754, 6811, 8976] so với D1×2 [560, 2637, 4754, 6811, 8976], lệch lớn nhất 0
+TẤT CẢ PASS

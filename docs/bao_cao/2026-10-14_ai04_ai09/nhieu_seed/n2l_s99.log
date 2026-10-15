@@ -1,0 +1,23 @@
+n2l: ([16, 24, 32], 'flatten'); dữ liệu 53165 cửa sổ, người [101, 102, 103, 104, 105, 106], lớp {0: 51353, 3: 1812}
+epochs 30, lr 0.002, fall_frac 0.3, seed 99
+== LOSO ==
+  người 101: shift [7, 8, 8] ss 10  acc INT8 0.9988  Macro-F1 INT8 0.9895 FP32 0.9904  sự kiện 97/100 = 0.970  phiếu sinh hoạt 0.0/h
+  người 102: shift [7, 8, 8] ss 9  acc INT8 0.9983  Macro-F1 INT8 0.9895 FP32 0.9895  sự kiện 101/101 = 1.000  phiếu sinh hoạt 0.0/h
+  người 103: shift [7, 7, 8] ss 10  acc INT8 0.9989  Macro-F1 INT8 0.9923 FP32 0.9923  sự kiện 100/101 = 0.990  phiếu sinh hoạt 0.0/h
+  người 104: shift [7, 8, 8] ss 9  acc INT8 0.9967  Macro-F1 INT8 0.9748 FP32 0.9717  sự kiện 101/101 = 1.000  phiếu sinh hoạt 21.7/h
+  người 105: shift [7, 8, 8] ss 10  acc INT8 0.9355  Macro-F1 INT8 0.7225 FP32 0.7396  sự kiện 99/100 = 0.990  phiếu sinh hoạt 210.9/h
+  người 106: shift [8, 8, 8] ss 10  acc INT8 0.9971  Macro-F1 INT8 0.9780 FP32 0.9799  sự kiện 94/101 = 0.931  phiếu sinh hoạt 0.0/h
+  TỔNG LOSO n2l: Macro-F1 trung bình INT8 0.9411 (FP32 0.9439); accuracy INT8 0.9862; FP32→INT8 trùng nhãn 0.9980
+  T_SCORE | recall sự kiện | phiếu 2/3 nhầm trên sinh hoạt
+        0 | 592/604 = 0.980 | 109 lần / 2.63 h = 41.49/h
+  cú ngã bị lọt theo mã hoạt động (T = 0): {903: 5, 907: 1, 909: 1, 916: 2, 917: 1, 920: 2}
+        4 | 585/604 = 0.969 | 31 lần / 2.63 h = 11.80/h
+        8 | 578/604 = 0.957 | 18 lần / 2.63 h = 6.85/h
+       16 | 547/604 = 0.906 | 12 lần / 2.63 h = 4.57/h
+       32 | 471/604 = 0.780 | 2 lần / 2.63 h = 0.76/h
+       64 | 314/604 = 0.520 | 0 lần / 2.63 h = 0.00/h
+  ma trận nhầm lẫn INT8 (hàng = thật 0..3): [[50672, 0, 0, 681], [0, 0, 0, 0], [0, 0, 0, 0], [51, 0, 0, 1761]]
+== mô hình cuối trên mọi người ==
+  PASS  INT8 theo lô trùng golden_model.forward (lớp, SCORE, 4 logit): 1000/1000
+xuất C:\Users\ADMIN\AppData\Local\Temp\claude\d--hoctap-fpga-fpga2026gowin\4f873fbe-983f-43f7-9d9d-b0d332537d87\scratchpad\seeds\n2l_s99: shift [7, 8, 8], score_shift 10, 8288 weight, 76 bias
+thời gian 954 s

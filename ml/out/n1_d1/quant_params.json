@@ -1,0 +1,31 @@
+{
+  "arch": "n1",
+  "input_shape": [
+    128,
+    6
+  ],
+  "input_dtype": "signed int8",
+  "channel_order": [
+    "ax",
+    "ay",
+    "az",
+    "gx",
+    "gy",
+    "gz"
+  ],
+  "input_memory_order": "sample-major: sample*6 + channel",
+  "conv1_shift": 8,
+  "conv2_shift": 8,
+  "head": "gap",
+  "score_shift": 5,
+  "classes": {
+    "0": "NORMAL",
+    "1": "IMPACT",
+    "2": "RESERVED",
+    "3": "FALL"
+  },
+  "weight_count": 3168,
+  "bias_count": 52,
+  "source": "ml/train_cnn.py (numpy, PTQ shift lũy thừa 2, bias cộng sẵn 2^(n-1))",
+  "gap_shift": 5
+}

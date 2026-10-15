@@ -1,0 +1,54 @@
+cnn_core golden test: 50 vectors, conv1_shift=8 conv2_shift=8
+v0: cycles=699800 class=3 logits=438 979 395 1614 PASS
+v1: cycles=699800 class=3 logits=465 1205 465 1717 PASS
+v2: cycles=699800 class=1 logits=276 2820 -1161 2164 PASS
+v3: cycles=699800 class=3 logits=1205 139 -990 3303 PASS
+v4: cycles=699800 class=3 logits=538 -264 685 935 PASS
+v5: cycles=699800 class=3 logits=1208 540 773 1216 PASS
+v6: cycles=699800 class=1 logits=615 2136 655 1757 PASS
+v7: cycles=699800 class=1 logits=63 3016 -1399 2349 PASS
+v8: cycles=699800 class=1 logits=1045 1990 -781 1715 PASS
+v9: cycles=699800 class=1 logits=946 1778 -788 1382 PASS
+v10: cycles=699800 class=1 logits=771 895 224 668 PASS
+v11: cycles=699800 class=1 logits=756 1617 -577 655 PASS
+v12: cycles=699800 class=1 logits=-54 2098 -1486 1007 PASS
+v13: cycles=699800 class=1 logits=717 919 98 492 PASS
+v14: cycles=699800 class=1 logits=635 643 11 284 PASS
+v15: cycles=699800 class=1 logits=564 692 114 265 PASS
+v16: cycles=699800 class=0 logits=862 594 -300 218 PASS
+v17: cycles=699800 class=0 logits=891 593 -173 171 PASS
+v18: cycles=699800 class=0 logits=763 79 -527 118 PASS
+v19: cycles=699800 class=1 logits=25 1939 -1197 1244 PASS
+v20: cycles=699800 class=3 logits=4338 547 1982 17811 PASS
+v21: cycles=699800 class=3 logits=766 12000 831 18437 PASS
+v22: cycles=699800 class=1 logits=9721 12456 312 8105 PASS
+v23: cycles=699800 class=1 logits=-3 13 -7 -2 PASS
+v24: cycles=699800 class=1 logits=11339 17436 1952 13237 PASS
+v25: cycles=699800 class=3 logits=3524 8569 -1207 11799 PASS
+v26: cycles=699800 class=3 logits=2821 -3792 -5302 7369 PASS
+v27: cycles=699800 class=3 logits=4510 255 1699 19005 PASS
+v28: cycles=699800 class=3 logits=3361 196 1391 19266 PASS
+v29: cycles=699800 class=3 logits=4347 484 2866 18035 PASS
+v30: cycles=699800 class=3 logits=4091 1656 2490 17227 PASS
+v31: cycles=699800 class=3 logits=3104 687 1103 18205 PASS
+v32: cycles=699800 class=3 logits=3972 1464 745 20130 PASS
+v33: cycles=699800 class=3 logits=3540 -544 1917 18988 PASS
+v34: cycles=699800 class=3 logits=3027 -93 3617 14879 PASS
+v35: cycles=699800 class=3 logits=4013 529 1469 19081 PASS
+v36: cycles=699800 class=3 logits=3269 -986 2241 16783 PASS
+v37: cycles=699800 class=3 logits=3295 1920 2423 18695 PASS
+v38: cycles=699800 class=3 logits=4766 2800 1805 17565 PASS
+v39: cycles=699800 class=3 logits=4076 640 3496 16436 PASS
+v40: cycles=699800 class=3 logits=4070 -1308 -22 19484 PASS
+v41: cycles=699800 class=3 logits=3460 -196 2243 21032 PASS
+v42: cycles=699800 class=3 logits=4400 -436 303 19196 PASS
+v43: cycles=699800 class=3 logits=2204 -2165 2911 19155 PASS
+v44: cycles=699800 class=3 logits=2637 104 1419 21921 PASS
+v45: cycles=699800 class=3 logits=3840 -693 3339 18693 PASS
+v46: cycles=699800 class=3 logits=3588 -474 4175 16183 PASS
+v47: cycles=699800 class=3 logits=4365 -380 2100 17683 PASS
+v48: cycles=699800 class=3 logits=4286 -126 1613 17595 PASS
+v49: cycles=699800 class=3 logits=2983 -1147 3369 18154 PASS
+------------------------------------------------------------
+KET QUA: 50/50 vector khop golden, cycles/inference=699800
+PASS

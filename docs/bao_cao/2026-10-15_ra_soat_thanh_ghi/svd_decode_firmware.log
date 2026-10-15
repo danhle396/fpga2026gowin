@@ -1,0 +1,59 @@
+board.c:23  SN_GPIO1->BCLR = 0x1e00: BCLR9, BCLR10, BCLR11, BCLR12
+board.c:24  SN_GPIO0->BCLR = 0xff: BCLR0, BCLR1, BCLR2, BCLR3, BCLR4, BCLR5, BCLR6, BCLR7
+board.c:25  SN_GPIO0->BSET = s_seg[s_seg_d]  (không hằng)
+board.c:26  SN_GPIO1->BSET = (1UL << (9 + s_seg_d))  (không hằng)
+board.c:56  SN_WDT->TC = 0x5afa00ff: TC=0xff, WDKEY=0x5afa
+board.c:57  SN_WDT->FEED = 0x5afa55aa: FV=0x55aa, WDKEY=0x5afa
+board.c:58  SN_WDT->CFG = 0x5afa0001: WDTEN, WDKEY=0x5afa
+board.c:63  SN_WDT->FEED = 0x5afa55aa: FV=0x55aa, WDKEY=0x5afa
+board.c:102  SN_SYS1->AHBCLKEN |= 0x10000: UART0CLKEN
+board.c:103  SN_PFPA->UART0 = 0xa: UTXD0=0x2, URXD0=0x2
+board.c:104  SN_UART0->LC = 0x83: WLS=0x3, DLAB
+board.c:105  SN_UART0->DLL = 0xd: DLL=0xd
+board.c:106  SN_UART0->DLM = 0x0: 0
+board.c:107  SN_UART0->LC = 0x3: WLS=0x3
+board.c:108  SN_UART0->FD = 0x100: OVER8
+board.c:109  SN_UART0->FIFOCTRL = 0x1: FIFOEN
+board.c:110  SN_UART0->CTRL = 0xc1: UARTEN, RXEN, TXEN
+board.c:111  SN_UART0->IE = 0x1: RDAIE
+board.c:125  SN_UART0->TH = s_tx[s_tx_t]  (không hằng)
+board.c:128  SN_UART0->IE &= ~(1UL << 1)  (xóa / đảo bit — rà bằng mắt)
+board.c:144  SN_UART0->IE |= 0x2: THREIE
+board.c:217  SN_GPIO2->IC = ris  (không hằng)
+board.c:222  SN_GPIO2->IS &= ~mask  (xóa / đảo bit — rà bằng mắt)
+board.c:223  SN_GPIO2->IBS &= ~mask  (xóa / đảo bit — rà bằng mắt)
+board.c:224  SN_GPIO2->IEV &= ~mask  (xóa / đảo bit — rà bằng mắt)
+board.c:225  SN_GPIO2->IC = mask  (không hằng)
+board.c:226  SN_GPIO2->IE |= mask  (không hằng)
+board.c:234  SN_FLASH->LPCTRL = 0x5afa0029: LPMODE=0x29, FMCKEY=0x5afa
+board.c:235  SN_SYS0->ANBCTRL = 0x1: IHRCFREQ[1:1]=1
+board.c:236  SN_SYS0->CLKCFG = 0x0: 0
+board.c:256  SN_GPIO0->BCLR = 0xff: BCLR0, BCLR1, BCLR2, BCLR3, BCLR4, BCLR5, BCLR6, BCLR7
+board.c:257  SN_GPIO0->MODE |= 0xff: MODE0, MODE1, MODE2, MODE3, MODE4, MODE5, MODE6, MODE7
+board.c:258  SN_GPIO1->BCLR = 0x1e00: BCLR9, BCLR10, BCLR11, BCLR12
+board.c:259  SN_GPIO1->MODE |= 0x1e00: MODE9, MODE10, MODE11, MODE12
+diag.c:152  SN_SYS1->AHBCLKEN |= 0x8000000: CRCCLKEN
+i2c0.c:34  SN_I2C0->CTRL = 0x200120: STA, I2CEN, ARBITRATION
+i2c0.c:35  SN_I2C0->CTRL = 0x200110: STO, I2CEN, ARBITRATION
+i2c0.c:36  SN_I2C0->TXDATA = b  (không hằng)
+i2c0.c:41  SN_SYS1->AHBCLKEN |= 0x200000: I2C0CLKEN
+i2c0.c:42  SN_PFPA->I2C0 = 0xa: SDA0=0x2, SCL0=0x2
+i2c0.c:43  SN_I2C0->CTRL = 0x0: 0
+i2c0.c:46  SN_I2C0->SCLHT = half  (không hằng)
+i2c0.c:47  SN_I2C0->SCLLT = half  (không hằng)
+i2c0.c:48  SN_I2C0->TOCTRL = 0xffff: TO=0xffff
+i2c0.c:49  SN_I2C0->CTRL = 0x200100: I2CEN, ARBITRATION
+i2c0.c:69  SN_I2C0->CTRL = CTRL_EN | CTRL_ARB | (i + 1u < n ? CTRL_ACK : CTRL_NACK)  (không hằng)
+spi_fpga.c:13  SN_CRC->CTRL = 0x4: RESET
+spi_fpga.c:20  SN_CRC->DATA = b  (không hằng)
+spi_fpga.c:37  SN_SPI0->CTRL0 |= 0xc0: FRESET=0x3
+spi_fpga.c:42  SN_SPI0->CLKDIV = clkdiv  (không hằng)
+spi_fpga.c:49  SN_SYS1->AHBCLKEN |= 0x8001000: SPI0CLKEN, CRCCLKEN
+spi_fpga.c:57  SN_PFPA->SPI0 = 0x2a: MISO0=0x2, MOSI0=0x2, SCK0=0x2
+spi_fpga.c:58  SN_SPI0->CTRL0 = 0x40700: DL=0x7, SELDIS
+spi_fpga.c:60  SN_SPI0->CTRL1 = 0x0: 0
+spi_fpga.c:61  SN_SPI0->CLKDIV = clkdiv  (không hằng)
+spi_fpga.c:62  SN_SPI0->CTRL0 |= 0x1: SPIEN
+spi_fpga.c:73  SN_SPI0->DATA = b  (không hằng)
+spi_fpga.c:85  SN_SPI0->DATA = b  (không hằng)
+--- 39 lệnh ghi hằng đã giải mã, 19 lệnh có biến / xóa bit, 0 dòng có cảnh báo

@@ -1,0 +1,18 @@
+      1 WARN  (NL0002) : The module "crc8" instantiated to "u_crc8" is swept in optimizing("C:\Users\ADMIN\AppData\Local\Temp\claude\d--hoctap-fpga-fpga2026gowin\4f873fbe-983f-43f7-9d9d-b0d332537d87\scratchpad\gl_p1\pnr\src\packet_parser.v":37)
+  Logic                       | 913/20736                           |  5%
+  Register                    | 589/16173                           |  4%
+  I/O Port                    | 6/207                               |  3%
+  BSRAM                       | 6/46                                | 14%
+  DSP                         | 1.25/24                             | 6%
+Max Frequency Summary: NO. Clock Name Constraint Actual Fmax Logic Level Entity 1 u_pll/rpll_inst/CLKOUT.default_gen_clk 50.143(MHz) 108.489(MHz) 3 TOP No timing paths to get frequency of clk27! No timing paths to get frequency of u_pll/rpll_inst/CLKOUTP.default_gen_clk! No timing paths to get frequency of u_pll/rpll_inst/CLKOUTD.default_gen_clk! No
+Total Negative Slack Summary: Clock Name Analysis Type Endpoints TNS Number of Endpoints clk27 Setup 0.000 0 clk27 Hold 0.000 0 u_pll/rpll_inst/CLKOUT.default_gen_clk Setup 0.000 0 u_pll/rpll_inst/CLKOUT.default_gen_clk Hold 0.000 0 u_pll/rpll_inst/CLKOUTP.default_gen_clk Setup 0.000 0 u_pll/rpll_inst/CLKOUTP.default_gen_clk Hold 0.000 0 u_pll/rpll_inst/CL
+-r--r--r-- 1 ADMIN 197121 7264154 Oct 15 14:11 impl/pnr/fpga_project.fs
+pROM trong netlist: 3, dòng INIT_RAM: 107
+tb_top_spi: 5 khung (cửa sổ [0, 7, 1, 2], khung 2 sai CRC), shift [8, 8]
+khung 0: IRQ sau 622607 chu ky; doc 5a 00 00 00 01 6d 11; mong doi 5a 00 00 00 02 73 74; IRQ sau doc = 0  FAIL
+khung 1: IRQ sau 699781 chu ky; doc 5a 02 00 00 02 63 c0; mong doi 5a 02 00 00 02 63 c0; IRQ sau doc = 0  PASS
+khung 2: CRC-8 sai -> khong co IRQ sau 100000 chu ky  PASS
+khung 3: IRQ sau 699781 chu ky; doc 5a 00 00 00 01 ef 96; mong doi 5a 00 00 00 01 ef 96; IRQ sau doc = 0  PASS
+khung 4: IRQ sau 699781 chu ky; doc 5a 00 00 00 01 c9 64; mong doi 5a 00 00 00 01 c9 64; IRQ sau doc = 0  PASS
+------------------------------------------------------------
+FAIL: 1 khung sai

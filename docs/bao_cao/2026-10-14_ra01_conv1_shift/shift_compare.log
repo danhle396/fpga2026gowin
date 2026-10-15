@@ -1,0 +1,16 @@
+[validation, n=3479] shift=(7,8): acc=96.26%  macroF1=0.9034  recallFALL=97.51%  F1/lớp=NORMAL:0.971 SIT_LIE:0.961 STUMBLE:0.702 FALL:0.979
+    bão hòa 127 sau pool: l1 0.475%  l2 0.100%   bằng 0: l1 46.5%  l2 54.3%
+    confusion (hàng = thật): [[1807, 1, 55, 15], [16, 353, 0, 2], [12, 0, 92, 1], [8, 10, 10, 1097]]
+[validation, n=3479] shift=(8,8): acc=95.66%  macroF1=0.8892  recallFALL=96.89%  F1/lớp=NORMAL:0.967 SIT_LIE:0.951 STUMBLE:0.660 FALL:0.979
+    bão hòa 127 sau pool: l1 0.035%  l2 0.005%   bằng 0: l1 49.4%  l2 58.0%
+    confusion (hàng = thật): [[1785, 5, 76, 12], [12, 359, 0, 0], [11, 0, 94, 0], [5, 20, 10, 1090]]
+    hai shift cho cùng nhãn ở 98.02% cửa sổ
+
+[test, n=3549] shift=(7,8): acc=94.59%  macroF1=0.8308  recallFALL=97.78%  F1/lớp=NORMAL:0.964 SIT_LIE:0.903 STUMBLE:0.485 FALL:0.970
+    bão hòa 127 sau pool: l1 0.367%  l2 0.078%   bằng 0: l1 47.9%  l2 54.1%
+    confusion (hàng = thật): [[1880, 6, 46, 12], [18, 327, 0, 30], [55, 0, 50, 0], [4, 16, 5, 1100]]
+[test, n=3549] shift=(8,8): acc=94.39%  macroF1=0.8446  recallFALL=96.71%  F1/lớp=NORMAL:0.965 SIT_LIE:0.893 STUMBLE:0.554 FALL:0.967
+    bão hòa 127 sau pool: l1 0.022%  l2 0.004%   bằng 0: l1 50.6%  l2 57.8%
+    confusion (hàng = thật): [[1865, 9, 61, 9], [16, 330, 0, 29], [38, 0, 67, 0], [3, 25, 9, 1088]]
+    hai shift cho cùng nhãn ở 97.75% cửa sổ
+

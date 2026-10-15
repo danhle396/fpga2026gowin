@@ -1,0 +1,8 @@
+2793:DFFS \u_cnn_core/u_controller/conv_start_s1  (
+2794-	.D(\u_cnn_core/u_controller/n70_10 ),
+2795-	.CLK(clk_50m),
+2796-	.SET(\u_cnn_core/u_controller/n70_12 ),
+2797-	.Q(\u_cnn_core/conv_start_Z )
+2798-);
+2799:defparam \u_cnn_core/u_controller/conv_start_s1 .INIT=1'b1;
+2800-LUT3 \u_cnn_core/u_weight_rom/dense_mac_b_0_s23  (

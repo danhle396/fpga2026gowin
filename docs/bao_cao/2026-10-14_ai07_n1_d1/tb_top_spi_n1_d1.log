@@ -1,0 +1,7 @@
+khung 0: IRQ sau 699781 chu ky; doc 5a 03 00 00 17 c9 eb; mong doi 5a 03 00 00 17 c9 eb; IRQ sau doc = 0  PASS
+khung 1: IRQ sau 699781 chu ky; doc 5a 00 00 00 0a 66 b7; mong doi 5a 00 00 00 0a 66 b7; IRQ sau doc = 0  PASS
+khung 2: CRC-8 sai -> khong co IRQ sau 100000 chu ky  PASS
+khung 3: IRQ sau 699781 chu ky; doc 5a 03 00 00 0f b1 7b; mong doi 5a 03 00 00 0f b1 7b; IRQ sau doc = 0  PASS
+khung 4: IRQ sau 699781 chu ky; doc 5a 03 00 00 16 2c 4b; mong doi 5a 03 00 00 16 2c 4b; IRQ sau doc = 0  PASS
+------------------------------------------------------------
+PASS

@@ -1,0 +1,11 @@
+tb_proto: 50 khung đúng (lớp golden {np.int64(0): np.int64(16), np.int64(1): np.int64(3), np.int64(2): np.int64(4), np.int64(3): np.int64(27)}) + 7 khung kịch bản; score_shift 0
+(0) doc khi chua co ket qua: toan 0  PASS
+(1) 50 khung dung: xong, CYCLES = 699800, so loi den day = 0
+(2) CRC sai -> STATUS 0x00, CLASS 0xFF, IRQ sau 0 chu ky
+(3) khung thieu byte -> STATUS 0x04
+(4) hai khung sat nhau: khung sau STATUS 0x07, khung truoc van ra ket qua dung
+(5) byte dau khong phai 0xA5: bo qua, khong IRQ  PASS
+(6) RUN 7 byte: IRQ ve 0; doc lai -> toan 0  PASS
+(7) RST_N: IRQ ve 0, MISO toan 0  PASS
+------------------------------------------------------------
+PASS

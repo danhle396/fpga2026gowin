@@ -1,0 +1,43 @@
+n1team_p1 rc=0 PASS
+n1team_p2 rc=0 PASS
+n1team_p4 rc=0 PASS
+n2_p1 rc=0 PASS
+n2_p2 rc=0 PASS
+n2_p4 rc=0 PASS
+n2l_p1 rc=0 PASS
+n2l_p2 rc=0 PASS
+n2l_p4 rc=0 PASS
+n2s_p1 rc=0 PASS
+n2s_p2 rc=0 PASS
+n2s_p4 rc=0 PASS
+tie_p1 rc=0 PASS
+tie_p4 rc=0 PASS
+
+## tb_e2_n1team_p1.log
+PASS
+## tb_e2_n1team_p2.log
+PASS
+## tb_e2_n1team_p4.log
+PASS
+## tb_e2_n2_p1.log
+PASS
+## tb_e2_n2_p2.log
+PASS
+## tb_e2_n2_p4.log
+PASS
+## tb_e2_n2l_p1.log
+PASS
+## tb_e2_n2l_p2.log
+PASS
+## tb_e2_n2l_p4.log
+PASS
+## tb_e2_n2s_p1.log
+PASS
+## tb_e2_n2s_p2.log
+PASS
+## tb_e2_n2s_p4.log
+PASS
+## tb_e2_tie_p1.log
+PASS
+## tb_e2_tie_p4.log
+PASS

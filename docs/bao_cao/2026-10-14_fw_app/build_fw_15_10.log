@@ -1,0 +1,15 @@
+C:\Users\ADMIN\AppData\Local\Arm\Packs\SONiX\SN32F4_DFP\1.1.1\Device\Source\system_SN32F400.c:199:3: warning: variable 'AHB_prescaler' is used uninitialized whenever switch default is taken [-Wsometimes-uninitialized]
+  199 |                 default: break; 
+      |                 ^~~~~~~
+C:\Users\ADMIN\AppData\Local\Arm\Packs\SONiX\SN32F4_DFP\1.1.1\Device\Source\system_SN32F400.c:202:21: note: uninitialized use occurs here
+  202 |         SystemCoreClock /= AHB_prescaler;
+      |                            ^~~~~~~~~~~~~
+C:\Users\ADMIN\AppData\Local\Arm\Packs\SONiX\SN32F4_DFP\1.1.1\Device\Source\system_SN32F400.c:160:24: note: initialize the variable 'AHB_prescaler' to silence this warning
+  160 |         uint32_t AHB_prescaler;
+      |                               ^
+      |                                = 0
+1 warning generated.
+    Total RO  Size (Code + RO Data)                10360 (  10.12kB)
+    Total RW  Size (RW Data + ZI Data)              5424 (   5.30kB)
+    Total ROM Size (Code + RO Data + RW Data)      10364 (  10.12kB)
+-rw-r--r-- 1 ADMIN 197121 29249 Oct 15 01:18 build/fw.hex

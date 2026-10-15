@@ -1,0 +1,33 @@
+<?xml version="1" encoding="UTF-8"?>
+<!DOCTYPE gowin-fpga-project>
+<Project>
+    <Template>FPGA</Template>
+    <Version>5</Version>
+    <Device name="GW2A-18C" pn="GW2A-LV18PG256C8/I7">gw2a18c-011</Device>
+    <FileList>
+        <File path="src/argmax4.v" type="file.verilog" enable="1"/>
+        <File path="src/bias_rom.v" type="file.verilog" enable="1"/>
+        <File path="src/cnn_controller.v" type="file.verilog" enable="1"/>
+        <File path="src/cnn_core.v" type="file.verilog" enable="1"/>
+        <File path="src/conv1d_engine.v" type="file.verilog" enable="1"/>
+        <File path="src/crc8.v" type="file.verilog" enable="1"/>
+        <File path="src/dense_engine.v" type="file.verilog" enable="1"/>
+        <File path="src/feature_ram.v" type="file.verilog" enable="1"/>
+        <File path="src/fpga_top.v" type="file.verilog" enable="1"/>
+        <File path="src/gap_buffer.v" type="file.verilog" enable="1"/>
+        <File path="src/gap_engine.v" type="file.verilog" enable="1"/>
+        <File path="src/gowin_rpll/pll_50m.v" type="file.verilog" enable="1"/>
+        <File path="src/input_buffer.v" type="file.verilog" enable="1"/>
+        <File path="src/mac_unit.v" type="file.verilog" enable="1"/>
+        <File path="src/maxpool1d_engine.v" type="file.verilog" enable="1"/>
+        <File path="src/packet_parser.v" type="file.verilog" enable="1"/>
+        <File path="src/requantize_relu.v" type="file.verilog" enable="1"/>
+        <File path="src/result_register.v" type="file.verilog" enable="1"/>
+        <File path="src/spi_result_tx.v" type="file.verilog" enable="1"/>
+        <File path="src/spi_slave.v" type="file.verilog" enable="1"/>
+        <File path="src/weight_rom.v" type="file.verilog" enable="1"/>
+        <File path="tb_cnn_core_golden.v" type="file.verilog" enable="1"/>
+        <File path="src/fpga_top.cst" type="file.cst" enable="1"/>
+        <File path="run_golden_sim.bat" type="file.other" enable="1"/>
+    </FileList>
+</Project>

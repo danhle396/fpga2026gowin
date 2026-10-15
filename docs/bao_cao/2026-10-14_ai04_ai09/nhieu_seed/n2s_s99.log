@@ -1,0 +1,23 @@
+n2s: ([8, 16, 16], 'flatten'); dữ liệu 53165 cửa sổ, người [101, 102, 103, 104, 105, 106], lớp {0: 51353, 3: 1812}
+epochs 30, lr 0.002, fall_frac 0.3, seed 99
+== LOSO ==
+  người 101: shift [7, 8, 8] ss 9  acc INT8 0.9951  Macro-F1 INT8 0.9589 FP32 0.9598  sự kiện 96/100 = 0.960  phiếu sinh hoạt 11.8/h
+  người 102: shift [8, 7, 8] ss 9  acc INT8 0.9993  Macro-F1 INT8 0.9957 FP32 0.9957  sự kiện 101/101 = 1.000  phiếu sinh hoạt 0.0/h
+  người 103: shift [7, 7, 8] ss 10  acc INT8 0.9982  Macro-F1 INT8 0.9870 FP32 0.9879  sự kiện 98/101 = 0.970  phiếu sinh hoạt 0.0/h
+  người 104: shift [7, 7, 8] ss 9  acc INT8 0.9960  Macro-F1 INT8 0.9702 FP32 0.9710  sự kiện 101/101 = 1.000  phiếu sinh hoạt 23.8/h
+  người 105: shift [8, 7, 8] ss 9  acc INT8 0.9561  Macro-F1 INT8 0.7750 FP32 0.7808  sự kiện 99/100 = 0.990  phiếu sinh hoạt 142.7/h
+  người 106: shift [8, 7, 8] ss 9  acc INT8 0.9979  Macro-F1 INT8 0.9845 FP32 0.9846  sự kiện 98/101 = 0.970  phiếu sinh hoạt 0.0/h
+  TỔNG LOSO n2s: Macro-F1 trung bình INT8 0.9452 (FP32 0.9466); accuracy INT8 0.9894; FP32→INT8 trùng nhãn 0.9991
+  T_SCORE | recall sự kiện | phiếu 2/3 nhầm trên sinh hoạt
+        0 | 593/604 = 0.982 | 84 lần / 2.63 h = 31.97/h
+  cú ngã bị lọt theo mã hoạt động (T = 0): {903: 2, 904: 1, 907: 1, 908: 1, 909: 3, 913: 1, 917: 1, 920: 1}
+        4 | 588/604 = 0.974 | 61 lần / 2.63 h = 23.22/h
+        8 | 579/604 = 0.959 | 46 lần / 2.63 h = 17.51/h
+       16 | 549/604 = 0.909 | 24 lần / 2.63 h = 9.13/h
+       32 | 464/604 = 0.768 | 12 lần / 2.63 h = 4.57/h
+       64 | 269/604 = 0.445 | 0 lần / 2.63 h = 0.00/h
+  ma trận nhầm lẫn INT8 (hàng = thật 0..3): [[50846, 0, 0, 507], [0, 0, 0, 0], [0, 0, 0, 0], [54, 0, 0, 1758]]
+== mô hình cuối trên mọi người ==
+  PASS  INT8 theo lô trùng golden_model.forward (lớp, SCORE, 4 logit): 1000/1000
+xuất C:\Users\ADMIN\AppData\Local\Temp\claude\d--hoctap-fpga-fpga2026gowin\4f873fbe-983f-43f7-9d9d-b0d332537d87\scratchpad\seeds\n2s_s99: shift [7, 7, 8], score_shift 9, 3184 weight, 44 bias
+thời gian 635 s

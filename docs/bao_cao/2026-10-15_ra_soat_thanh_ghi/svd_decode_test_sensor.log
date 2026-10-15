@@ -1,0 +1,14 @@
+board_sn32f407.c:123  SN_SYS1->AHBCLKEN |= 0x10000: UART0CLKEN
+board_sn32f407.c:124  SN_PFPA->UART0 = 0xa: UTXD0=0x2, URXD0=0x2
+board_sn32f407.c:126  SN_UART0->LC = 0x83: WLS=0x3, DLAB
+board_sn32f407.c:127  SN_UART0->DLL = 0xd: DLL=0xd
+board_sn32f407.c:128  SN_UART0->DLM = 0x0: 0
+board_sn32f407.c:129  SN_UART0->LC = 0x3: WLS=0x3
+board_sn32f407.c:130  SN_UART0->FD = 0x100: OVER8
+board_sn32f407.c:131  SN_UART0->FIFOCTRL = 0x1: FIFOEN
+board_sn32f407.c:132  SN_UART0->CTRL = 0xc1: UARTEN, RXEN, TXEN
+board_sn32f407.c:140  SN_UART0->TH = (uint8_t)c  (không hằng)
+board_sn32f407.c:147  SN_FLASH->LPCTRL = 0x5afa0029: LPMODE=0x29, FMCKEY=0x5afa
+board_sn32f407.c:148  SN_SYS0->ANBCTRL = 0x1: IHRCFREQ[1:1]=1
+board_sn32f407.c:149  SN_SYS0->CLKCFG = 0x0: 0
+--- 12 lệnh ghi hằng đã giải mã, 1 lệnh có biến / xóa bit, 0 dòng có cảnh báo

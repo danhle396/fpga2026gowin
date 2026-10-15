@@ -1,0 +1,24 @@
+n2: ([16, 16, 32], 'flatten'); dữ liệu 159468 cửa sổ, người [101, 102, 103, 104, 105, 106], lớp {0: 154032, 3: 5436}
+chỉ huấn luyện: ['C:/Users/ADMIN/AppData/Local/Temp/claude/d--hoctap-fpga-fpga2026gowin/4f873fbe-983f-43f7-9d9d-b0d332537d87/scratchpad/body/340539/d1_windows.npz', 'C:/Users/ADMIN/AppData/Local/Temp/claude/d--hoctap-fpga-fpga2026gowin/4f873fbe-983f-43f7-9d9d-b0d332537d87/scratchpad/body/340535/d1_windows.npz'] (106303 cửa sổ); tập kiểm LOSO 53165 cửa sổ
+epochs 30, lr 0.002, fall_frac 0.3, seed 99
+== LOSO ==
+  người 101: shift [7, 8, 7] ss 9  acc INT8 0.9991  Macro-F1 INT8 0.9922 FP32 0.9922  sự kiện 99/100 = 0.990  phiếu sinh hoạt 0.0/h
+  người 102: shift [7, 8, 8] ss 9  acc INT8 0.9989  Macro-F1 INT8 0.9932 FP32 0.9932  sự kiện 101/101 = 1.000  phiếu sinh hoạt 2.9/h
+  người 103: shift [7, 8, 7] ss 10  acc INT8 0.9992  Macro-F1 INT8 0.9941 FP32 0.9949  sự kiện 101/101 = 1.000  phiếu sinh hoạt 0.0/h
+  người 104: shift [7, 8, 8] ss 9  acc INT8 0.9959  Macro-F1 INT8 0.9694 FP32 0.9694  sự kiện 101/101 = 1.000  phiếu sinh hoạt 23.8/h
+  người 105: shift [7, 8, 8] ss 9  acc INT8 0.9908  Macro-F1 INT8 0.9311 FP32 0.9311  sự kiện 100/100 = 1.000  phiếu sinh hoạt 40.5/h
+  người 106: shift [8, 7, 8] ss 10  acc INT8 0.9983  Macro-F1 INT8 0.9874 FP32 0.9874  sự kiện 100/101 = 0.990  phiếu sinh hoạt 4.7/h
+  TỔNG LOSO n2: Macro-F1 trung bình INT8 0.9779 (FP32 0.9780); accuracy INT8 0.9968; FP32→INT8 trùng nhãn 0.9999
+  T_SCORE | recall sự kiện | phiếu 2/3 nhầm trên sinh hoạt
+        0 | 602/604 = 0.997 | 33 lần / 2.63 h = 12.56/h
+  cú ngã bị lọt theo mã hoạt động (T = 0): {920: 2}
+        4 | 601/604 = 0.995 | 25 lần / 2.63 h = 9.52/h
+        8 | 594/604 = 0.983 | 23 lần / 2.63 h = 8.75/h
+       16 | 584/604 = 0.967 | 16 lần / 2.63 h = 6.09/h
+       32 | 550/604 = 0.911 | 10 lần / 2.63 h = 3.81/h
+       64 | 415/604 = 0.687 | 3 lần / 2.63 h = 1.14/h
+  ma trận nhầm lẫn INT8 (hàng = thật 0..3): [[51195, 0, 0, 158], [0, 0, 0, 0], [0, 0, 0, 0], [11, 0, 0, 1801]]
+== mô hình cuối trên mọi người ==
+  PASS  INT8 theo lô trùng golden_model.forward (lớp, SCORE, 4 logit): 1000/1000
+xuất C:\Users\ADMIN\AppData\Local\Temp\claude\d--hoctap-fpga-fpga2026gowin\4f873fbe-983f-43f7-9d9d-b0d332537d87\scratchpad\body\n2_than_s99: shift [8, 8, 7], score_shift 9, 6368 weight, 68 bias
+thời gian 2030 s

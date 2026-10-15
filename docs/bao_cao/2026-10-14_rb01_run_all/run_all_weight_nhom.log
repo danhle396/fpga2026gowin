@@ -1,0 +1,22 @@
+thư mục làm việc: C:/Users/ADMIN/AppData/Local/Temp/claude/d--hoctap-fpga-fpga2026gowin/4f873fbe-983f-43f7-9d9d-b0d332537d87/scratchpad/runall_team
+weight: /d/hoctap/fpga/fpga2026gowin/FPGA_Fall_Detection_AI-20261012T141515Z-1-001/FPGA_Fall_Detection_AI/fpga_export
+PASS  golden (shift 8,8 đọc từ quant_params.json) khớp golden_vectors.npz: 20/20
+ghi   src/cnn_params.vh: CONV1_SHIFT = 8, CONV2_SHIFT = 8
+giữ   src/weights.mem (trùng từng byte với export)
+giữ   src/bias.mem (trùng từng byte với export)
+ghi   tb/vec_in.mem (15360 byte), tb/vec_exp.mem (20 vector x 5 từ)
+tb_top_spi: 5 khung (cửa sổ [0, 7, 1, 2], khung 2 sai CRC), shift [8, 8]
+chạy testbench:
+  tb_pin_probe: PASS  (0 s) — log C:/Users/ADMIN/AppData/Local/Temp/claude/d--hoctap-fpga-fpga2026gowin/4f873fbe-983f-43f7-9d9d-b0d332537d87/scratchpad/runall_team/tb_pin_probe.log
+  tb_top_spi: PASS  (31 s) — log C:/Users/ADMIN/AppData/Local/Temp/claude/d--hoctap-fpga-fpga2026gowin/4f873fbe-983f-43f7-9d9d-b0d332537d87/scratchpad/runall_team/tb_top_spi.log
+  tb_cnn_core_golden: PASS  (121 s) — log C:/Users/ADMIN/AppData/Local/Temp/claude/d--hoctap-fpga-fpga2026gowin/4f873fbe-983f-43f7-9d9d-b0d332537d87/scratchpad/runall_team/tb_cnn_core_golden.log
+
+| Testbench | Kết quả | Thời gian |
+|---|---|---|
+| tb_pin_probe | PASS | 0 s |
+| tb_top_spi | PASS | 31 s |
+| tb_cnn_core_golden | PASS | 121 s |
+Icarus: Icarus Verilog version 0.9.7  (v0_9_7)
+TẤT CẢ PASS
+
+[exited with code 0]

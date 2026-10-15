@@ -1,0 +1,9 @@
+mô hình n2_s7, VOTE_K 2/3, TILT bật (T_TILT 1450), STILL_BLOCKS 8, T_STILL_A/G 300/250, khối 16 mẫu 50 Hz, THÍ NGHIỆM X15: bất động ≥ 20 khối dù đầu thẳng
+604 bản ghi ngã, 499 bản ghi sinh hoạt = 2.65 giờ
+T_SCORE | ngã → SUSPECT | ngã → PRE_ALARM | trễ va chạm→SUSPECT trung vị / p90 | →PRE_ALARM trung vị / p90 | PRE_ALARM giả trên sinh hoạt | SUSPECT giả
+      8 | 577/604 = 0.955 | 433/604 = 0.717 | 0.88 / 1.06 s | 4.20 / 7.34 s | 4 = 1.51/h | 20 = 7.55/h
+        ngã không tới PRE_ALARM theo mã hoạt động: {901: 1, 902: 1, 903: 19, 905: 30, 906: 30, 907: 3, 908: 2, 909: 13, 911: 1, 913: 3, 914: 26, 916: 30, 917: 1, 920: 11}
+        → PRE_ALARM với ngã kết thúc NẰM (13 kiểu): 382/394 = 0.970
+        → PRE_ALARM với ngã ngã rồi ĐỨNG DẬY (4 kiểu): 4/120 = 0.033
+        → PRE_ALARM với ngã kết thúc QUỲ/NGỒI (3 kiểu): 47/90 = 0.522
+        PRE_ALARM giả theo mã hoạt động sinh hoạt: {806: 2, 815: 2}

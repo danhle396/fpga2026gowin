@@ -1,0 +1,15 @@
+mô hình n2s_d1, VOTE_K 2/3, TILT tắt, T_STILL_A/G 300/250, khối 16 mẫu 50 Hz
+604 bản ghi ngã, 499 bản ghi sinh hoạt = 2.65 giờ
+T_SCORE | ngã → SUSPECT | ngã → PRE_ALARM | trễ va chạm→SUSPECT trung vị / p90 | →PRE_ALARM trung vị / p90 | PRE_ALARM giả trên sinh hoạt | SUSPECT giả
+      0 | 596/604 = 0.987 | 580/604 = 0.960 | 0.84 / 1.03 s | 4.20 / 6.46 s | 30 = 11.32/h | 33 = 12.46/h
+        ngã không tới PRE_ALARM theo mã hoạt động: {903: 4, 905: 1, 906: 15, 907: 1, 911: 1, 917: 1, 920: 1}
+        PRE_ALARM giả theo mã hoạt động sinh hoạt: {803: 4, 806: 4, 808: 8, 809: 11, 815: 3}
+      8 | 579/604 = 0.959 | 566/604 = 0.937 | 0.88 / 1.04 s | 4.20 / 6.47 s | 16 = 6.04/h | 16 = 6.04/h
+        ngã không tới PRE_ALARM theo mã hoạt động: {903: 7, 904: 1, 905: 1, 906: 13, 907: 3, 908: 2, 909: 2, 911: 2, 913: 1, 917: 2, 918: 2, 920: 2}
+        PRE_ALARM giả theo mã hoạt động sinh hoạt: {803: 1, 806: 1, 808: 6, 809: 6, 815: 2}
+     16 | 557/604 = 0.922 | 547/604 = 0.906 | 0.90 / 1.12 s | 4.20 / 6.47 s | 6 = 2.26/h | 6 = 2.26/h
+        ngã không tới PRE_ALARM theo mã hoạt động: {903: 10, 904: 2, 905: 2, 906: 14, 907: 5, 908: 4, 909: 4, 910: 1, 911: 2, 913: 1, 917: 5, 918: 4, 920: 3}
+        PRE_ALARM giả theo mã hoạt động sinh hoạt: {808: 3, 809: 3}
+     32 | 490/604 = 0.811 | 482/604 = 0.798 | 0.92 / 1.16 s | 4.28 / 6.54 s | 3 = 1.13/h | 3 = 1.13/h
+        ngã không tới PRE_ALARM theo mã hoạt động: {902: 3, 903: 18, 904: 5, 905: 3, 906: 13, 907: 5, 908: 10, 909: 13, 910: 3, 911: 5, 912: 3, 913: 5, 914: 3, 915: 1, 916: 3, 917: 10, 918: 6, 919: 4, 920: 9}
+        PRE_ALARM giả theo mã hoạt động sinh hoạt: {808: 1, 809: 2}

@@ -1,0 +1,12 @@
+đếm lệnh trên firmware\build\test_o3.bin
+  N1 SisFall (nhóm AI): 2,387,682 lệnh (MULS 244,791, LDR/STR 1,032,340, nhánh lấy 79,154) → nhân 1 chu kỳ: 3,579,103 chu kỳ = 74.6 ms; nhân 32 chu kỳ: 11,167,624 = 232.7 ms ở 48 MHz (+ ≈ 26.5 ms nếu Flash 1 wait-state)
+  N1 D1: 2,387,739 lệnh (MULS 244,791, LDR/STR 1,032,340, nhánh lấy 79,195) → nhân 1 chu kỳ: 3,579,242 chu kỳ = 74.6 ms; nhân 32 chu kỳ: 11,167,763 = 232.7 ms ở 48 MHz (+ ≈ 26.5 ms nếu Flash 1 wait-state)
+  N2S D1: 1,251,984 lệnh (MULS 123,308, LDR/STR 548,129, nhánh lấy 42,798) → nhân 1 chu kỳ: 1,886,481 chu kỳ = 39.3 ms; nhân 32 chu kỳ: 5,709,029 = 118.9 ms ở 48 MHz (+ ≈ 13.9 ms nếu Flash 1 wait-state)
+  N2 D1: 2,365,745 lệnh (MULS 245,292, LDR/STR 1,022,394, nhánh lấy 77,998) → nhân 1 chu kỳ: 3,544,907 chu kỳ = 73.9 ms; nhân 32 chu kỳ: 11,148,959 = 232.3 ms ở 48 MHz (+ ≈ 26.3 ms nếu Flash 1 wait-state)
+  N2L D1: 3,068,910 lệnh (MULS 325,164, LDR/STR 1,311,186, nhánh lấy 101,083) → nhân 1 chu kỳ: 4,583,034 chu kỳ = 95.5 ms; nhân 32 chu kỳ: 14,663,118 = 305.5 ms ở 48 MHz (+ ≈ 34.1 ms nếu Flash 1 wait-state)
+đếm lệnh trên firmware\build\test_oz.bin
+  N1 SisFall (nhóm AI): 3,108,004 lệnh (MULS 221,872, LDR/STR 682,165, nhánh lấy 286,105) → nhân 1 chu kỳ: 4,363,151 chu kỳ = 90.9 ms; nhân 32 chu kỳ: 11,241,183 = 234.2 ms ở 48 MHz (+ ≈ 38.3 ms nếu Flash 1 wait-state)
+  N1 D1: 3,108,061 lệnh (MULS 221,872, LDR/STR 682,165, nhánh lấy 286,048) → nhân 1 chu kỳ: 4,363,094 chu kỳ = 90.9 ms; nhân 32 chu kỳ: 11,241,126 = 234.2 ms ở 48 MHz (+ ≈ 38.3 ms nếu Flash 1 wait-state)
+  N2S D1: 1,613,019 lệnh (MULS 111,202, LDR/STR 363,885, nhánh lấy 149,207) → nhân 1 chu kỳ: 2,276,090 chu kỳ = 47.4 ms; nhân 32 chu kỳ: 5,723,352 = 119.2 ms ở 48 MHz (+ ≈ 19.9 ms nếu Flash 1 wait-state)
+  N2 D1: 3,065,960 lệnh (MULS 222,274, LDR/STR 670,077, nhánh lấy 282,186) → nhân 1 chu kỳ: 4,301,181 chu kỳ = 89.6 ms; nhân 32 chu kỳ: 11,191,675 = 233.2 ms ở 48 MHz (+ ≈ 37.8 ms nếu Flash 1 wait-state)
+  N2L D1: 4,018,605 lệnh (MULS 301,890, LDR/STR 857,325, nhánh lấy 369,285) → nhân 1 chu kỳ: 5,615,272 chu kỳ = 117.0 ms; nhân 32 chu kỳ: 14,973,862 = 312.0 ms ở 48 MHz (+ ≈ 49.6 ms nếu Flash 1 wait-state)

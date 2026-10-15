@@ -1,0 +1,21 @@
+mô hình n2s_d1, VOTE_K 2/3, TILT bật (T_TILT 1024), STILL_BLOCKS 8, T_STILL_A/G 300/250, khối 16 mẫu 50 Hz
+604 bản ghi ngã, 499 bản ghi sinh hoạt = 2.65 giờ
+T_SCORE | ngã → SUSPECT | ngã → PRE_ALARM | trễ va chạm→SUSPECT trung vị / p90 | →PRE_ALARM trung vị / p90 | PRE_ALARM giả trên sinh hoạt | SUSPECT giả
+      0 | 596/604 = 0.987 | 343/604 = 0.568 | 0.84 / 1.03 s | 4.08 / 5.32 s | 13 = 4.91/h | 33 = 12.46/h
+        ngã không tới PRE_ALARM theo mã hoạt động: {901: 6, 902: 15, 903: 30, 904: 10, 905: 30, 906: 30, 907: 3, 909: 25, 910: 4, 911: 3, 913: 4, 914: 30, 916: 30, 917: 1, 918: 10, 920: 30}
+        → PRE_ALARM với ngã kết thúc NẰM (13 kiểu): 338/394 = 0.858
+        → PRE_ALARM với ngã ngã rồi ĐỨNG DẬY (4 kiểu): 0/120 = 0.000
+        → PRE_ALARM với ngã kết thúc QUỲ/NGỒI (3 kiểu): 5/90 = 0.056
+        PRE_ALARM giả theo mã hoạt động sinh hoạt: {806: 4, 808: 5, 809: 3, 815: 1}
+      8 | 579/604 = 0.959 | 335/604 = 0.555 | 0.88 / 1.04 s | 4.08 / 5.26 s | 8 = 3.02/h | 16 = 6.04/h
+        ngã không tới PRE_ALARM theo mã hoạt động: {901: 6, 902: 15, 903: 30, 904: 11, 905: 30, 906: 30, 907: 5, 908: 2, 909: 25, 910: 4, 911: 4, 913: 5, 914: 30, 916: 30, 917: 2, 918: 10, 920: 30}
+        → PRE_ALARM với ngã kết thúc NẰM (13 kiểu): 330/394 = 0.838
+        → PRE_ALARM với ngã ngã rồi ĐỨNG DẬY (4 kiểu): 0/120 = 0.000
+        → PRE_ALARM với ngã kết thúc QUỲ/NGỒI (3 kiểu): 5/90 = 0.056
+        PRE_ALARM giả theo mã hoạt động sinh hoạt: {806: 1, 808: 5, 809: 2}
+     16 | 557/604 = 0.922 | 328/604 = 0.543 | 0.90 / 1.12 s | 4.08 / 5.20 s | 4 = 1.51/h | 6 = 2.26/h
+        ngã không tới PRE_ALARM theo mã hoạt động: {901: 6, 902: 15, 903: 30, 904: 11, 905: 30, 906: 30, 907: 7, 908: 4, 909: 25, 910: 4, 911: 4, 913: 5, 914: 30, 916: 30, 917: 5, 918: 10, 920: 30}
+        → PRE_ALARM với ngã kết thúc NẰM (13 kiểu): 323/394 = 0.820
+        → PRE_ALARM với ngã ngã rồi ĐỨNG DẬY (4 kiểu): 0/120 = 0.000
+        → PRE_ALARM với ngã kết thúc QUỲ/NGỒI (3 kiểu): 5/90 = 0.056
+        PRE_ALARM giả theo mã hoạt động sinh hoạt: {808: 3, 809: 1}

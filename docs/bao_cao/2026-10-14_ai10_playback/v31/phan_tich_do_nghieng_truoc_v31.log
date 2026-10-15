@@ -1,0 +1,12 @@
+ngã nằm tới PRE_ALARM: 375; az_tb trung vị 333, p90 1038, max 1434
+báo giả: 7; az_tb: [(48, 805), (185, 805), (365, 805), (382, 805), (469, 805), (1038, 815), (1059, 815)]
+  T_TILT  1450 (45°): giữ 100.0 % ngã nằm, còn 7/7 báo giả
+  T_TILT  1200 (54°): giữ 94.4 % ngã nằm, còn 7/7 báo giả
+  T_TILT  1024 (60°): giữ 89.1 % ngã nằm, còn 5/7 báo giả
+  T_TILT   800 (67°): giữ 79.5 % ngã nằm, còn 5/7 báo giả
+  T_TILT   600 (73°): giữ 64.0 % ngã nằm, còn 5/7 báo giả
+  T_TILT   400 (79°): giữ 51.5 % ngã nằm, còn 4/7 báo giả
+ngã nằm: az_tb nhỏ nhất -1074, số cú có az_tb < -1450: 0, < -1024: 1
+  hai phía −1450 < az_tb < 1450: giữ 100.0 % ngã nằm, còn 7/7 báo giả
+  hai phía −1600 < az_tb < 1450: giữ 100.0 % ngã nằm, còn 7/7 báo giả
+  hai phía −1800 < az_tb < 1450: giữ 100.0 % ngã nằm, còn 7/7 báo giả

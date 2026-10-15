@@ -1,0 +1,126 @@
+*** GOWIN Tcl Command Line Console  *** 
+current device: GW2A-18C  GW2A-LV18PG256C8/I7
+add new file: "src/argmax4.v"
+add new file: "src/bias_rom.v"
+add new file: "src/cnn_controller.v"
+add new file: "src/cnn_core.v"
+add new file: "src/conv1d_engine.v"
+add new file: "src/dense_engine.v"
+add new file: "src/feature_ram.v"
+add new file: "src/gap_buffer.v"
+add new file: "src/gap_engine.v"
+add new file: "src/input_buffer.v"
+add new file: "src/mac_unit.v"
+add new file: "src/maxpool1d_engine.v"
+add new file: "src/requantize_relu.v"
+add new file: "src/spi_slave.v"
+add new file: "src/weight_rom.v"
+add new file: "src/gowin_rpll/pll_50m.v"
+add new file: "src/fpga_top.v"
+add new file: "src/packet_parser.v"
+add new file: "src/crc8.v"
+add new file: "src/result_register.v"
+add new file: "src/spi_result_tx.v"
+add new file: "src/fpga_top.cst"
+add new file: "src/top.sdc"
+GowinSynthesis start
+Running parser ...
+Analyzing Verilog file 'C:\Users\ADMIN\AppData\Local\Temp\claude\d--hoctap-fpga-fpga2026gowin\4f873fbe-983f-43f7-9d9d-b0d332537d87\scratchpad\pnr_p1\src\argmax4.v'
+Analyzing Verilog file 'C:\Users\ADMIN\AppData\Local\Temp\claude\d--hoctap-fpga-fpga2026gowin\4f873fbe-983f-43f7-9d9d-b0d332537d87\scratchpad\pnr_p1\src\bias_rom.v'
+Analyzing Verilog file 'C:\Users\ADMIN\AppData\Local\Temp\claude\d--hoctap-fpga-fpga2026gowin\4f873fbe-983f-43f7-9d9d-b0d332537d87\scratchpad\pnr_p1\src\cnn_controller.v'
+Analyzing Verilog file 'C:\Users\ADMIN\AppData\Local\Temp\claude\d--hoctap-fpga-fpga2026gowin\4f873fbe-983f-43f7-9d9d-b0d332537d87\scratchpad\pnr_p1\src\cnn_core.v'
+Analyzing Verilog file 'C:\Users\ADMIN\AppData\Local\Temp\claude\d--hoctap-fpga-fpga2026gowin\4f873fbe-983f-43f7-9d9d-b0d332537d87\scratchpad\pnr_p1\src\conv1d_engine.v'
+Analyzing Verilog file 'C:\Users\ADMIN\AppData\Local\Temp\claude\d--hoctap-fpga-fpga2026gowin\4f873fbe-983f-43f7-9d9d-b0d332537d87\scratchpad\pnr_p1\src\dense_engine.v'
+Analyzing Verilog file 'C:\Users\ADMIN\AppData\Local\Temp\claude\d--hoctap-fpga-fpga2026gowin\4f873fbe-983f-43f7-9d9d-b0d332537d87\scratchpad\pnr_p1\src\feature_ram.v'
+Analyzing Verilog file 'C:\Users\ADMIN\AppData\Local\Temp\claude\d--hoctap-fpga-fpga2026gowin\4f873fbe-983f-43f7-9d9d-b0d332537d87\scratchpad\pnr_p1\src\gap_buffer.v'
+Analyzing Verilog file 'C:\Users\ADMIN\AppData\Local\Temp\claude\d--hoctap-fpga-fpga2026gowin\4f873fbe-983f-43f7-9d9d-b0d332537d87\scratchpad\pnr_p1\src\gap_engine.v'
+Analyzing Verilog file 'C:\Users\ADMIN\AppData\Local\Temp\claude\d--hoctap-fpga-fpga2026gowin\4f873fbe-983f-43f7-9d9d-b0d332537d87\scratchpad\pnr_p1\src\input_buffer.v'
+Analyzing Verilog file 'C:\Users\ADMIN\AppData\Local\Temp\claude\d--hoctap-fpga-fpga2026gowin\4f873fbe-983f-43f7-9d9d-b0d332537d87\scratchpad\pnr_p1\src\mac_unit.v'
+Analyzing Verilog file 'C:\Users\ADMIN\AppData\Local\Temp\claude\d--hoctap-fpga-fpga2026gowin\4f873fbe-983f-43f7-9d9d-b0d332537d87\scratchpad\pnr_p1\src\maxpool1d_engine.v'
+Analyzing Verilog file 'C:\Users\ADMIN\AppData\Local\Temp\claude\d--hoctap-fpga-fpga2026gowin\4f873fbe-983f-43f7-9d9d-b0d332537d87\scratchpad\pnr_p1\src\requantize_relu.v'
+Analyzing Verilog file 'C:\Users\ADMIN\AppData\Local\Temp\claude\d--hoctap-fpga-fpga2026gowin\4f873fbe-983f-43f7-9d9d-b0d332537d87\scratchpad\pnr_p1\src\spi_slave.v'
+Analyzing Verilog file 'C:\Users\ADMIN\AppData\Local\Temp\claude\d--hoctap-fpga-fpga2026gowin\4f873fbe-983f-43f7-9d9d-b0d332537d87\scratchpad\pnr_p1\src\weight_rom.v'
+Analyzing Verilog file 'C:\Users\ADMIN\AppData\Local\Temp\claude\d--hoctap-fpga-fpga2026gowin\4f873fbe-983f-43f7-9d9d-b0d332537d87\scratchpad\pnr_p1\src\gowin_rpll\pll_50m.v'
+Analyzing Verilog file 'C:\Users\ADMIN\AppData\Local\Temp\claude\d--hoctap-fpga-fpga2026gowin\4f873fbe-983f-43f7-9d9d-b0d332537d87\scratchpad\pnr_p1\src\fpga_top.v'
+Analyzing included file 'C:\Users\ADMIN\AppData\Local\Temp\claude\d--hoctap-fpga-fpga2026gowin\4f873fbe-983f-43f7-9d9d-b0d332537d87\scratchpad\pnr_p1\src\cnn_params.vh'("C:\Users\ADMIN\AppData\Local\Temp\claude\d--hoctap-fpga-fpga2026gowin\4f873fbe-983f-43f7-9d9d-b0d332537d87\scratchpad\pnr_p1\src\fpga_top.v":1)
+Back to file 'C:\Users\ADMIN\AppData\Local\Temp\claude\d--hoctap-fpga-fpga2026gowin\4f873fbe-983f-43f7-9d9d-b0d332537d87\scratchpad\pnr_p1\src\fpga_top.v'("C:\Users\ADMIN\AppData\Local\Temp\claude\d--hoctap-fpga-fpga2026gowin\4f873fbe-983f-43f7-9d9d-b0d332537d87\scratchpad\pnr_p1\src\fpga_top.v":1)
+Analyzing Verilog file 'C:\Users\ADMIN\AppData\Local\Temp\claude\d--hoctap-fpga-fpga2026gowin\4f873fbe-983f-43f7-9d9d-b0d332537d87\scratchpad\pnr_p1\src\packet_parser.v'
+Analyzing Verilog file 'C:\Users\ADMIN\AppData\Local\Temp\claude\d--hoctap-fpga-fpga2026gowin\4f873fbe-983f-43f7-9d9d-b0d332537d87\scratchpad\pnr_p1\src\crc8.v'
+Analyzing Verilog file 'C:\Users\ADMIN\AppData\Local\Temp\claude\d--hoctap-fpga-fpga2026gowin\4f873fbe-983f-43f7-9d9d-b0d332537d87\scratchpad\pnr_p1\src\result_register.v'
+Analyzing Verilog file 'C:\Users\ADMIN\AppData\Local\Temp\claude\d--hoctap-fpga-fpga2026gowin\4f873fbe-983f-43f7-9d9d-b0d332537d87\scratchpad\pnr_p1\src\spi_result_tx.v'
+Compiling module 'fpga_top'("C:\Users\ADMIN\AppData\Local\Temp\claude\d--hoctap-fpga-fpga2026gowin\4f873fbe-983f-43f7-9d9d-b0d332537d87\scratchpad\pnr_p1\src\fpga_top.v":3)
+Compiling module 'pll_50m'("C:\Users\ADMIN\AppData\Local\Temp\claude\d--hoctap-fpga-fpga2026gowin\4f873fbe-983f-43f7-9d9d-b0d332537d87\scratchpad\pnr_p1\src\gowin_rpll\pll_50m.v":10)
+Compiling module 'spi_slave'("C:\Users\ADMIN\AppData\Local\Temp\claude\d--hoctap-fpga-fpga2026gowin\4f873fbe-983f-43f7-9d9d-b0d332537d87\scratchpad\pnr_p1\src\spi_slave.v":1)
+Compiling module 'packet_parser'("C:\Users\ADMIN\AppData\Local\Temp\claude\d--hoctap-fpga-fpga2026gowin\4f873fbe-983f-43f7-9d9d-b0d332537d87\scratchpad\pnr_p1\src\packet_parser.v":1)
+Compiling module 'crc8'("C:\Users\ADMIN\AppData\Local\Temp\claude\d--hoctap-fpga-fpga2026gowin\4f873fbe-983f-43f7-9d9d-b0d332537d87\scratchpad\pnr_p1\src\crc8.v":1)
+Compiling module 'input_buffer'("C:\Users\ADMIN\AppData\Local\Temp\claude\d--hoctap-fpga-fpga2026gowin\4f873fbe-983f-43f7-9d9d-b0d332537d87\scratchpad\pnr_p1\src\input_buffer.v":1)
+Extracting RAM for identifier 'mem'("C:\Users\ADMIN\AppData\Local\Temp\claude\d--hoctap-fpga-fpga2026gowin\4f873fbe-983f-43f7-9d9d-b0d332537d87\scratchpad\pnr_p1\src\input_buffer.v":13)
+Compiling module 'cnn_core'("C:\Users\ADMIN\AppData\Local\Temp\claude\d--hoctap-fpga-fpga2026gowin\4f873fbe-983f-43f7-9d9d-b0d332537d87\scratchpad\pnr_p1\src\cnn_core.v":1)
+Compiling module 'cnn_controller'("C:\Users\ADMIN\AppData\Local\Temp\claude\d--hoctap-fpga-fpga2026gowin\4f873fbe-983f-43f7-9d9d-b0d332537d87\scratchpad\pnr_p1\src\cnn_controller.v":1)
+Compiling module 'weight_rom'("C:\Users\ADMIN\AppData\Local\Temp\claude\d--hoctap-fpga-fpga2026gowin\4f873fbe-983f-43f7-9d9d-b0d332537d87\scratchpad\pnr_p1\src\weight_rom.v":1)
+Extracting RAM for identifier 'mem'("C:\Users\ADMIN\AppData\Local\Temp\claude\d--hoctap-fpga-fpga2026gowin\4f873fbe-983f-43f7-9d9d-b0d332537d87\scratchpad\pnr_p1\src\weight_rom.v":12)
+Compiling module 'bias_rom'("C:\Users\ADMIN\AppData\Local\Temp\claude\d--hoctap-fpga-fpga2026gowin\4f873fbe-983f-43f7-9d9d-b0d332537d87\scratchpad\pnr_p1\src\bias_rom.v":1)
+Extracting RAM for identifier 'mem'("C:\Users\ADMIN\AppData\Local\Temp\claude\d--hoctap-fpga-fpga2026gowin\4f873fbe-983f-43f7-9d9d-b0d332537d87\scratchpad\pnr_p1\src\bias_rom.v":11)
+Compiling module 'mac_unit'("C:\Users\ADMIN\AppData\Local\Temp\claude\d--hoctap-fpga-fpga2026gowin\4f873fbe-983f-43f7-9d9d-b0d332537d87\scratchpad\pnr_p1\src\mac_unit.v":1)
+Compiling module 'conv1d_engine'("C:\Users\ADMIN\AppData\Local\Temp\claude\d--hoctap-fpga-fpga2026gowin\4f873fbe-983f-43f7-9d9d-b0d332537d87\scratchpad\pnr_p1\src\conv1d_engine.v":1)
+Compiling module 'requantize_relu'("C:\Users\ADMIN\AppData\Local\Temp\claude\d--hoctap-fpga-fpga2026gowin\4f873fbe-983f-43f7-9d9d-b0d332537d87\scratchpad\pnr_p1\src\requantize_relu.v":1)
+Compiling module 'feature_ram'("C:\Users\ADMIN\AppData\Local\Temp\claude\d--hoctap-fpga-fpga2026gowin\4f873fbe-983f-43f7-9d9d-b0d332537d87\scratchpad\pnr_p1\src\feature_ram.v":1)
+Extracting RAM for identifier 'mem'("C:\Users\ADMIN\AppData\Local\Temp\claude\d--hoctap-fpga-fpga2026gowin\4f873fbe-983f-43f7-9d9d-b0d332537d87\scratchpad\pnr_p1\src\feature_ram.v":16)
+Compiling module 'maxpool1d_engine'("C:\Users\ADMIN\AppData\Local\Temp\claude\d--hoctap-fpga-fpga2026gowin\4f873fbe-983f-43f7-9d9d-b0d332537d87\scratchpad\pnr_p1\src\maxpool1d_engine.v":1)
+Compiling module 'gap_engine'("C:\Users\ADMIN\AppData\Local\Temp\claude\d--hoctap-fpga-fpga2026gowin\4f873fbe-983f-43f7-9d9d-b0d332537d87\scratchpad\pnr_p1\src\gap_engine.v":1)
+Compiling module 'gap_buffer'("C:\Users\ADMIN\AppData\Local\Temp\claude\d--hoctap-fpga-fpga2026gowin\4f873fbe-983f-43f7-9d9d-b0d332537d87\scratchpad\pnr_p1\src\gap_buffer.v":1)
+Extracting RAM for identifier 'mem'("C:\Users\ADMIN\AppData\Local\Temp\claude\d--hoctap-fpga-fpga2026gowin\4f873fbe-983f-43f7-9d9d-b0d332537d87\scratchpad\pnr_p1\src\gap_buffer.v":13)
+Compiling module 'dense_engine'("C:\Users\ADMIN\AppData\Local\Temp\claude\d--hoctap-fpga-fpga2026gowin\4f873fbe-983f-43f7-9d9d-b0d332537d87\scratchpad\pnr_p1\src\dense_engine.v":1)
+Compiling module 'argmax4'("C:\Users\ADMIN\AppData\Local\Temp\claude\d--hoctap-fpga-fpga2026gowin\4f873fbe-983f-43f7-9d9d-b0d332537d87\scratchpad\pnr_p1\src\argmax4.v":1)
+Compiling module 'result_register'("C:\Users\ADMIN\AppData\Local\Temp\claude\d--hoctap-fpga-fpga2026gowin\4f873fbe-983f-43f7-9d9d-b0d332537d87\scratchpad\pnr_p1\src\result_register.v":1)
+Compiling module 'spi_result_tx'("C:\Users\ADMIN\AppData\Local\Temp\claude\d--hoctap-fpga-fpga2026gowin\4f873fbe-983f-43f7-9d9d-b0d332537d87\scratchpad\pnr_p1\src\spi_result_tx.v":1)
+NOTE  (EX0101) : Current top module is "fpga_top"
+[5%] Running netlist conversion ...
+Running device independent optimization ...
+[10%] Optimizing Phase 0 completed
+[15%] Optimizing Phase 1 completed
+[25%] Optimizing Phase 2 completed
+Running inference ...
+[30%] Inferring Phase 0 completed
+[40%] Inferring Phase 1 completed
+[50%] Inferring Phase 2 completed
+[55%] Inferring Phase 3 completed
+Running technical mapping ...
+[60%] Tech-Mapping Phase 0 completed
+[65%] Tech-Mapping Phase 1 completed
+[75%] Tech-Mapping Phase 2 completed
+[80%] Tech-Mapping Phase 3 completed
+[90%] Tech-Mapping Phase 4 completed
+WARN  (NL0002) : The module "crc8" instantiated to "u_crc8" is swept in optimizing("C:\Users\ADMIN\AppData\Local\Temp\claude\d--hoctap-fpga-fpga2026gowin\4f873fbe-983f-43f7-9d9d-b0d332537d87\scratchpad\pnr_p1\src\packet_parser.v":37)
+[95%] Generate netlist file "C:\Users\ADMIN\AppData\Local\Temp\claude\d--hoctap-fpga-fpga2026gowin\4f873fbe-983f-43f7-9d9d-b0d332537d87\scratchpad\pnr_p1\impl\gwsynthesis\fpga_project.vg" completed
+[100%] Generate report file "C:\Users\ADMIN\AppData\Local\Temp\claude\d--hoctap-fpga-fpga2026gowin\4f873fbe-983f-43f7-9d9d-b0d332537d87\scratchpad\pnr_p1\impl\gwsynthesis\fpga_project_syn.rpt.html" completed
+GowinSynthesis finish
+Reading netlist file: "C:\Users\ADMIN\AppData\Local\Temp\claude\d--hoctap-fpga-fpga2026gowin\4f873fbe-983f-43f7-9d9d-b0d332537d87\scratchpad\pnr_p1\impl\gwsynthesis\fpga_project.vg"
+Parsing netlist file "C:\Users\ADMIN\AppData\Local\Temp\claude\d--hoctap-fpga-fpga2026gowin\4f873fbe-983f-43f7-9d9d-b0d332537d87\scratchpad\pnr_p1\impl\gwsynthesis\fpga_project.vg" completed
+Processing netlist completed
+Reading constraint file: "C:\Users\ADMIN\AppData\Local\Temp\claude\d--hoctap-fpga-fpga2026gowin\4f873fbe-983f-43f7-9d9d-b0d332537d87\scratchpad\pnr_p1\src\fpga_top.cst"
+Physical Constraint parsed completed
+Running placement......
+[10%] Placement Phase 0 completed
+[20%] Placement Phase 1 completed
+[30%] Placement Phase 2 completed
+[50%] Placement Phase 3 completed
+Running routing......
+[60%] Routing Phase 0 completed
+[70%] Routing Phase 1 completed
+[80%] Routing Phase 2 completed
+[90%] Routing Phase 3 completed
+Running timing analysis......
+[95%] Timing analysis completed
+Placement and routing completed
+Bitstream generation in progress......
+Bitstream generation completed
+Running power analysis......
+[100%] Power analysis completed
+Generate file "C:\Users\ADMIN\AppData\Local\Temp\claude\d--hoctap-fpga-fpga2026gowin\4f873fbe-983f-43f7-9d9d-b0d332537d87\scratchpad\pnr_p1\impl\pnr\fpga_project.power.html" completed
+Generate file "C:\Users\ADMIN\AppData\Local\Temp\claude\d--hoctap-fpga-fpga2026gowin\4f873fbe-983f-43f7-9d9d-b0d332537d87\scratchpad\pnr_p1\impl\pnr\fpga_project.pin.html" completed
+Generate file "C:\Users\ADMIN\AppData\Local\Temp\claude\d--hoctap-fpga-fpga2026gowin\4f873fbe-983f-43f7-9d9d-b0d332537d87\scratchpad\pnr_p1\impl\pnr\fpga_project.rpt.html" completed
+Generate file "C:\Users\ADMIN\AppData\Local\Temp\claude\d--hoctap-fpga-fpga2026gowin\4f873fbe-983f-43f7-9d9d-b0d332537d87\scratchpad\pnr_p1\impl\pnr\fpga_project.rpt.txt" completed
+Generate file "C:\Users\ADMIN\AppData\Local\Temp\claude\d--hoctap-fpga-fpga2026gowin\4f873fbe-983f-43f7-9d9d-b0d332537d87\scratchpad\pnr_p1\impl\pnr\fpga_project.tr.html" completed
+Wed Oct 14 21:59:52 2026
+

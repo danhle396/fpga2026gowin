@@ -1,0 +1,4 @@
+13766 mẫu thô, 423 khung có CRC, 0 cửa sổ bị bỏ (FPGA bận)
+CRC của MCU trùng Python: 423/423
+khoảng cách mẫu 10–10 ms, mất 0 mẫu (A.9: ≥ 15 ms là mất)
+KẾT LUẬN FW-10: chưa đủ 1.000 khung

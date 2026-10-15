@@ -1,0 +1,4 @@
+13766 mẫu thô, 423 khung có CRC, 0 cửa sổ bị bỏ (FPGA bận)
+CRC của MCU trùng Python: 421/423; khung sai đầu tiên SEQ 37: MCU C14C, Python C14D
+khoảng cách mẫu 10–10 ms, mất 0 mẫu (A.9: ≥ 15 ms là mất)
+KẾT LUẬN FW-10: FAIL

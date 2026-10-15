@@ -1,0 +1,6 @@
+dữ liệu: 137.7 s ở 100 Hz, hoạt động D1 [901, 910, 905, 801, 815, 806] (người 104)
+lượt 1 (firmware, Unicorn): 423 khung ghi v3
+lượt 2 (RTL top v3 + E2, Icarus, thư mục C:\Users\ADMIN\AppData\Local\Temp\claude\d--hoctap-fpga-fpga2026gowin\4f873fbe-983f-43f7-9d9d-b0d332537d87\scratchpad\cosim_fix): 423 khung đọc
+   khung ghi của firmware == golden và khung đọc của RTL == golden: 423/423; CYCLES [258080]; lớp golden {0: 411, 3: 12}
+lượt 3 (firmware app_core đọc khung RTL): 423/423 khung đọc qua spi_parse_v3; kết quả == golden: True; 4 lần đổi trạng thái == golden: True (MONITOR → SUSPECT → PRE_ALARM → ALARM)
+KẾT LUẬN mô phỏng ghép: PASS

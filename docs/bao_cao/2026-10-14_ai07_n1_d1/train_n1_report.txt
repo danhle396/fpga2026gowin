@@ -1,0 +1,16 @@
+dữ liệu: 53165 cửa sổ, người [101, 102, 103, 104, 105, 106], lớp {0: 51353, 3: 1812}
+epochs 30, lr 0.002, T_SCORE 0, seed 20261014
+== LOSO: huấn luyện trên 5 người, thử trên người còn lại ==
+  người 101: shift (8,8) n=  9716  acc FP32 0.9782 INT8 0.9782  Macro-F1 FP32 0.8333 INT8 0.8347  trùng nhãn 0.9975 | sự kiện INT8: 78/100 = 0.780, FP32 0.750 | phiếu 2/3 trên sinh hoạt: 15 lần / 0.51 h = 29.41/h
+  người 102: shift (8,8) n=  7158  acc FP32 0.9795 INT8 0.9795  Macro-F1 FP32 0.8817 INT8 0.8810  trùng nhãn 0.9972 | sự kiện INT8: 83/101 = 0.822, FP32 0.842 | phiếu 2/3 trên sinh hoạt: 9 lần / 0.34 h = 26.11/h
+  người 103: shift (8,8) n=  8325  acc FP32 0.9792 INT8 0.9798  Macro-F1 FP32 0.8772 INT8 0.8797  trùng nhãn 0.9980 | sự kiện INT8: 95/101 = 0.941, FP32 0.931 | phiếu 2/3 trên sinh hoạt: 6 lần / 0.42 h = 14.45/h
+  người 104: shift (8,8) n=  9366  acc FP32 0.9827 INT8 0.9812  Macro-F1 FP32 0.8886 INT8 0.8808  trùng nhãn 0.9966 | sự kiện INT8: 100/101 = 0.990, FP32 0.990 | phiếu 2/3 trên sinh hoạt: 11 lần / 0.46 h = 23.85/h
+  người 105: shift (8,8) n=  9971  acc FP32 0.9656 INT8 0.9663  Macro-F1 FP32 0.7737 INT8 0.7769  trùng nhãn 0.9979 | sự kiện INT8: 75/100 = 0.750, FP32 0.750 | phiếu 2/3 trên sinh hoạt: 13 lần / 0.47 h = 27.69/h
+  người 106: shift (7,8) n=  8629  acc FP32 0.9874 INT8 0.9877  Macro-F1 FP32 0.9069 INT8 0.9099  trùng nhãn 0.9992 | sự kiện INT8: 84/101 = 0.832, FP32 0.822 | phiếu 2/3 trên sinh hoạt: 0 lần / 0.43 h = 0.00/h
+  TỔNG LOSO (INT8): recall sự kiện 515/604 = 0.853; Macro-F1 trung bình FP32 0.8602 INT8 0.8605; accuracy INT8 0.9788; phiếu 2/3 trên sinh hoạt 54 lần / 2.63 h = 20.55/h; FP32→INT8 trùng nhãn 0.9977
+  ma trận nhầm lẫn INT8 cộng 6 lượt (hàng = thật 0..3, cột = dự đoán 0..3): [[50490, 0, 0, 863], [0, 0, 0, 0], [0, 0, 0, 0], [282, 0, 0, 1530]]
+== mô hình cuối: huấn luyện trên mọi người ==
+  trên tập huấn luyện (không phải số đánh giá): n= 53165  acc FP32 0.9812 INT8 0.9809  Macro-F1 FP32 0.8834 INT8 0.8812  trùng nhãn 0.9978 | sự kiện INT8: 577/604 = 0.955, FP32 0.960 | phiếu 2/3 trên sinh hoạt: 40 lần / 2.63 h = 15.22/h
+  PASS  suy luận INT8 theo lô trùng golden_model.forward từng bit (lớp, SCORE, 4 logit) trên 2000/2000 cửa sổ ngẫu nhiên
+xuất D:\hoctap\fpga\fpga2026gowin\ml\out\n1_d1\fpga_export: conv1_shift 8, conv2_shift 8, score_shift 5
+thời gian 520 s

@@ -1,0 +1,4 @@
+E2: LANES=4 NL=2 HEAD_GAP=1, 10 vector
+KET QUA: 10/10 vector khop golden (logit + lop), cycles/inference = 75924..75924
+TUNG TANG: l1 10/10, l2 10/10 (N1: khong co l3)
+PASS
