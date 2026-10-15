@@ -419,6 +419,7 @@ Ký hiệu: `(cổng · tầng)`. Chỉ đánh `[x]` khi đạt *Pass* và có b
 ### TH — tích hợp, đo đạc, tài liệu
 
 - [ ] **TH-01** (G0·1) Repo Git; cấu trúc `docs/ firmware/ rtl/ ml/ tools/`; chép Phụ lục A thành `docs/spec.md`; tạo `docs/bao_cao/` — *Pass:* cả nhóm clone được
+  - 15/10: repo GitHub private `danhle396/fpga2026gowin`; cấu trúc và `docs/bao_cao/` có sẵn. `docs/spec.md` sinh bằng `tools/sync_spec.py` từ Phụ lục A (bản gốc vẫn là Phụ lục A; `--check` báo lệch). Máy thứ hai đã clone và chạy được cả chuỗi kiểm ([may2_icarus12](docs/bao_cao/2026-10-15_may2_icarus12/README.md)). **Còn thiếu:** từng thành viên tự clone được (mời vào repo private)
 - [ ] **TH-02** (G0·1) Xác nhận Phụ lục E trên board thật: tìm sơ đồ `32F407 EVK V1.0.pdf` và chép vào `docs/datasheet/` (sơ đồ Kiwi và datasheet MCU đã chép 14/10); tám chân MCU mới chọn ở E.1 có ra header và còn trống không; dò 6 chân J1 của Kiwi theo E.4 — *Pass:* mọi dòng ở E.1 có dấu "đã kiểm"; không chân nào trùng chân nạp; đo I/O hai board đều 3,3 V
 - [ ] **TH-03** (G0·1) Vật tư: logic analyzer 8 kênh, mũ bảo hộ, cảm biến đội mũ (micro-switch hoặc module hồng ngoại phản xạ), đệm ≥ 10 cm, power bank, cáp 4 lõi ≤ 50 cm — *Pass:* đủ đồ
 - [ ] **TH-04** (G1·1) Gắn IMU lên mũ theo A.1; ghi `AZ_dung_yen` — *Pass:* lắc mạnh không lỏng; giá trị ≈ +2048
@@ -973,6 +974,7 @@ uint16_t crc16_ccitt(const uint8_t *p, uint32_t n)
 | 2026-10-15 | Thêm `CLAUDE.md` (Claude Code tự đọc trên mọi máy: bắt đầu phiên, luật, thay phiên nhiều tài khoản, môi trường); `params_src.txt` ghi đường dẫn tương đối với gốc dự án (`export_mem.py`, `gen_tb_proto.py`, `cosim.py`), viết lại 4 file có sẵn; `.gitignore` thêm log Keil | Để nhiều máy và nhiều tài khoản Claude thay phiên chạy dự án qua Git mà không hỏng đường dẫn; xuất lại `n2_p1` vẫn trùng từng byte |
 | 2026-10-15 | Repo GitHub private `danhle396/fpga2026gowin`; `.gitattributes` (LF cho script/mã/`.txt`, `.fs` nhị phân); hook Claude Code `.claude/settings.json`: SessionStart tự `git pull` + báo trạng thái, Stop chặn khi còn thay đổi chưa commit/push và yêu cầu Chốt phiên | Để nhiều máy và nhiều tài khoản Claude thay phiên mà không mất việc; bản clone từ GitHub: SHA256 3 bitstream OK, `verify_spec_v3.py` TẤT CẢ PASS |
 | 2026-10-15 | **RB-01 xong**: `run_all` 7/7 PASS trên Icarus 12.0 ở máy thứ hai (DESKTOP-A00FJKC, clone từ GitHub; cài Python 3.12.10 + Icarus 12 bằng winget). Cùng máy: `verify_spec_v3` và `m0_test` TẤT CẢ PASS, Keil `fw.uvprojx` 0 lỗi (15.360 + 1.680, trùng), **dựng lại bitstream 1 trùng từng dòng `.fs`** trừ dấu thời gian (Logic 907, 105,196 MHz) | Pass của RB-01 cần cả bản Icarus mới; bitstream của đợt B không còn phụ thuộc máy gốc. [may2_icarus12](docs/bao_cao/2026-10-15_may2_icarus12/README.md) |
+| 2026-10-15 | TH-01 phần máy: `docs/spec.md` sinh từ Phụ lục A bằng `tools/sync_spec.py` (`--check` vào bộ kiểm nhanh của CLAUDE.md) | TH-01 yêu cầu bản SPEC riêng; sinh tự động để không thành nguồn thứ hai lệch luật. Chưa [x]: cần từng thành viên clone được |
 
 ---
 

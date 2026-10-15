@@ -63,6 +63,7 @@ Lệnh kiểm nhanh sau khi `git pull` (không cần board):
 
 ```bash
 python -I tools/verify_spec_v3.py ml/src "FPGA_Fall_Detection_AI-20261012T141515Z-1-001/FPGA_Fall_Detection_AI/fpga_export"
+python -I tools/sync_spec.py --check         # docs/spec.md trùng Phụ lục A (sửa Phụ lục A thì chạy lại không có --check)
 bash rtl/tb/run_all.sh                       # 7 testbench, khoảng 5 phút
 bash firmware/build.sh test && python -I tools/m0_test.py
 ```
