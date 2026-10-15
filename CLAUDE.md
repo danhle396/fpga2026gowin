@@ -11,6 +11,15 @@
 
 Khi file và trí nhớ khác nhau, **file thắng**. Mọi con số phải lấy từ file hoặc từ phép đo; không bịa. Chưa chắc thì ghi `[CẦN XÁC MINH – nguồn: …]`.
 
+### Lệnh ngắn dùng khi thay phiên
+
+- **"Chạy tiếp dự án"** (hoặc "Tiếp"):
+  1. Làm bước 1–3 ở trên.
+  2. Kiểm máy này có công cụ nào (mục 4).
+  3. Đọc mục "ĐANG DỞ" cuối Phụ lục D nếu có.
+  4. Tự chọn việc có giá trị nhất làm được trên máy này. Việc nào cần board hoặc dữ liệu mới thì viết hướng dẫn cho người cầm board, không tự bịa số đo.
+- **"Chốt phiên"**: làm đủ bốn việc ở mục 3 (Phụ lục D, TRẠNG THÁI, bằng chứng, commit + push).
+
 ## 2. Luật bắt buộc (tóm tắt; bản đầy đủ ở `PROMPT_KHOI_CONG.md`)
 
 - Ba file `PROJECT_MASTER.md`, `DE_CUONG_v2.md`, `THAY_DOI_SO_VOI_v1.md` phải khớp nhau từng con số. Mỗi lần sửa thì thêm **một dòng Phụ lục D** (ngày, việc, lý do).
