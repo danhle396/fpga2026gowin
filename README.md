@@ -63,4 +63,4 @@ python -I tools/gen_cnn_params.py --export <fpga_export>   # ghi src/cnn_params.
 
 ## Công cụ máy
 
-Gowin EDA V1.9.11.03 Education · Keil MDK-ARM 5.43 (Arm Compiler 6.24) · Icarus Verilog 0.9.7 · Python 3 với numpy (thêm pyserial cho board; unicorn cho kiểm firmware trên PC; matplotlib cho hình).
+Gowin EDA V1.9.11.03 Education · Keil MDK-ARM 5.43 (Arm Compiler 6.24) · Icarus Verilog 0.9.7 hoặc 12.0 · Python 3 với numpy (thêm pyserial cho board; unicorn cho kiểm firmware trên PC; matplotlib cho hình).

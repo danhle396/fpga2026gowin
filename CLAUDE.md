@@ -54,7 +54,8 @@ Khi file và trí nhớ khác nhau, **file thắng**. Mọi con số phải lấ
 | Git Bash (Windows) | mọi script `.sh` | |
 | Python 3.12 + `numpy`, `matplotlib`, `pyserial`, `pymupdf` | `tools/`, `ml/` | Gọi với `python -I`. Console Windows dùng cp1252, nên script phải gọi `sys.stdout.reconfigure(encoding="utf-8")` |
 | `unicorn` (pip, nên cài vào venv riêng) | `tools/m0_test.py`, `tools/cosim.py`: chạy mã máy Cortex-M0 trên PC | |
-| Icarus Verilog (máy gốc: 0.9.7 ở `C:\iverilog\bin`) | mọi testbench | Chỉ dùng cú pháp `-g2001`. Script tự thêm `/c/iverilog/bin` vào PATH nếu không thấy `iverilog` |
+| Icarus Verilog (máy gốc: 0.9.7; máy thứ hai: 12.0 cài bằng `winget install Icarus.Verilog`; cả hai ở `C:\iverilog\bin`) | mọi testbench | Chỉ dùng cú pháp `-g2001`. Script tự thêm `/c/iverilog/bin` vào PATH nếu không thấy `iverilog` |
+| (máy chưa có Python) | | `winget install Python.Python.3.12 --scope user`, tạo venv rồi `pip install numpy matplotlib pyserial pymupdf pypdf unicorn`. Git Bash có thể bắt trúng alias Microsoft Store khi gọi `python3`: chép `python.exe` của venv thành `python3.exe` rồi đưa thư mục `Scripts` của venv lên đầu PATH |
 | Gowin EDA V1.9.11.03 Education | `rtl/v3/pnr_v3.sh`, `rtl/gl/run_gl.sh` | Mặc định `/c/Gowin/Gowin_V1.9.11.03_Education_x64/IDE/bin/gw_sh.exe`; đổi bằng biến `GW_SH`, `GW_SIMLIB` |
 | Keil MDK-ARM 5.43 (Arm Compiler 6.24) + pack SONiX SN32F4_DFP | `firmware/keil/fw.uvprojx`, `firmware/build.sh` | Máy gốc cài ở `%LOCALAPPDATA%\Keil_v5`. Build không mở giao diện: `UV4.exe -r <project> -j0 -o log.txt` |
 

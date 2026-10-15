@@ -1,0 +1,25 @@
+cnn_core golden test: 20 vectors, conv1_shift=8 conv2_shift=8
+v0: cycles=699800 class=0 logits=627 198 30 -51 PASS
+v1: cycles=699800 class=0 logits=495 16 397 -129 PASS
+v2: cycles=699800 class=0 logits=457 287 198 -87 PASS
+v3: cycles=699800 class=0 logits=534 140 531 -161 PASS
+v4: cycles=699800 class=0 logits=525 231 304 -76 PASS
+v5: cycles=699800 class=0 logits=560 200 293 -62 PASS
+v6: cycles=699800 class=0 logits=550 193 274 -37 PASS
+v7: cycles=699800 class=2 logits=367 299 611 -241 PASS
+v8: cycles=699800 class=2 logits=493 227 520 -172 PASS
+v9: cycles=699800 class=2 logits=430 116 549 -217 PASS
+v10: cycles=699800 class=0 logits=599 309 465 -68 PASS
+v11: cycles=699800 class=2 logits=548 181 707 -146 PASS
+v12: cycles=699800 class=0 logits=1330 -259 1085 449 PASS
+v13: cycles=699800 class=0 logits=1536 134 1136 358 PASS
+v14: cycles=699800 class=0 logits=1655 20 922 419 PASS
+v15: cycles=699800 class=0 logits=1611 151 948 457 PASS
+v16: cycles=699800 class=0 logits=1387 112 986 110 PASS
+v17: cycles=699800 class=0 logits=1414 -241 1003 312 PASS
+v18: cycles=699800 class=0 logits=803 100 450 12 PASS
+v19: cycles=699800 class=0 logits=1808 -659 1480 629 PASS
+------------------------------------------------------------
+KET QUA: 20/20 vector khop golden, cycles/inference=699800
+PASS
+tb_cnn_core_golden.v:132: $finish called at 279921690000 (1ps)

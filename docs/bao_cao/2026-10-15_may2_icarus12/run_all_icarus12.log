@@ -1,0 +1,28 @@
+thư mục làm việc: <scratchpad>/runall_iv12
+weight: /e/FPGA2026_GOWIN/fpga2026gowin/FPGA_Fall_Detection_AI-20261012T141515Z-1-001/FPGA_Fall_Detection_AI/fpga_export
+PASS  golden (shift 8,8 đọc từ quant_params.json) khớp golden_vectors.npz: 20/20
+ghi   src/cnn_params.vh: CONV1_SHIFT = 8, CONV2_SHIFT = 8, SCORE_SHIFT = 0
+giữ   src/weights.mem (trùng từng byte với export)
+giữ   src/bias.mem (trùng từng byte với export)
+ghi   tb/vec_in.mem (15360 byte), tb/vec_exp.mem (20 vector x 5 từ)
+tb_top_spi: 5 khung (cửa sổ [0, 7, 1, 2], khung 2 sai CRC), shift [8, 8]
+chạy testbench:
+  tb_pin_probe: PASS  (1 s) — log <scratchpad>/runall_iv12/tb_pin_probe.log
+  tb_top_spi: PASS  (70 s) — log <scratchpad>/runall_iv12/tb_top_spi.log
+  tb_cnn_core_golden: PASS  (222 s) — log <scratchpad>/runall_iv12/tb_cnn_core_golden.log
+  tb_e1_layers: PASS  (109 s) — log <scratchpad>/runall_iv12/tb_e1_layers.log
+  tb_proto_v3_e1: PASS  (128 s) — log <scratchpad>/runall_iv12/tb_proto_v3_e1.log
+  tb_e2 P=1: PASS  (33 s) — log <scratchpad>/runall_iv12/tb_e2_p1.log
+  tb_e2 P=4: PASS  (20 s) — log <scratchpad>/runall_iv12/tb_e2_p4.log
+
+| Testbench | Kết quả | Thời gian |
+|---|---|---|
+| tb_pin_probe | PASS | 1 s |
+| tb_top_spi | PASS | 70 s |
+| tb_cnn_core_golden | PASS | 222 s |
+| tb_e1_layers | PASS | 109 s |
+| tb_proto_v3_e1 | PASS | 128 s |
+| tb_e2 (P = 1) | PASS | 33 s |
+| tb_e2 (P = 4) | PASS | 20 s |
+Icarus: Icarus Verilog version 12.0 (devel) (s20150603-1539-g2693dd32b)
+TẤT CẢ PASS
