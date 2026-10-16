@@ -93,7 +93,7 @@ def main():
     ap.add_argument("--still-upright", type=int, default=0, help="thí nghiệm X15 (0 = tắt, đúng SPEC v3.1)")
     ap.add_argument("--tag", default="")
     a = ap.parse_args()
-    D = np.load(a.trials)
+    D = dict(np.load(a.trials))      # nạp một lần: NpzFile đọc lại cả mảng mỗi lần truy cập D["data"]
     params = [m / "loso_params.npz" for m in a.model]
     lines = []
 

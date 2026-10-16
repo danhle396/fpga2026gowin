@@ -26,7 +26,7 @@ def main():
     ap.add_argument("--t-score", type=int, default=8)
     ap.add_argument("--within-ms", type=int, default=2000)
     a = ap.parse_args()
-    D = np.load(a.trials)
+    D = dict(np.load(a.trials))
     params = a.model / "loso_params.npz"
     have = {int(k.split("/", 1)[0]) for k in np.load(params).files}
     cfg = dict(t_score=a.t_score, vote_k=2, tilt_en=1, still_blocks=sm.DEFAULT["still_blocks"], t_tilt=1450,

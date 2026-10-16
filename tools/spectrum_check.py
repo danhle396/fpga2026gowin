@@ -60,7 +60,7 @@ def main():
     ap.add_argument("--log", nargs="*", default=[], type=pathlib.Path, help="file LOG 100 Hz đi bộ trên mũ")
     ap.add_argument("--act", type=int, default=801)
     a = ap.parse_args()
-    D = np.load(ROOT / "ml" / "data" / "public" / "d1_trials_50hz.npz")
+    D = dict(np.load(ROOT / "ml" / "data" / "public" / "d1_trials_50hz.npz"))
     xs = [D["data"][D["start"][i]:D["start"][i] + D["length"][i]] for i in np.flatnonzero(D["act"] == a.act)]
     f1 = report(f"D1 act {a.act} ({len(xs)} bản ghi, 50 Hz nội suy từ 25 Hz)", xs)
     # đối chứng tổng hợp: cùng D1 nhưng thêm thành phần 15 Hz nhỏ → công cụ phải thấy băng cao tăng
