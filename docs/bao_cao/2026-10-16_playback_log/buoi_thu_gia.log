@@ -1,0 +1,9 @@
+mô hình D:\hoctap\fpga\fpga2026gowin\ml\out\n2_11_d1\params_int8.npz, T_SCORE 8, trễ kết quả 30 ms; 48 file, bỏ 0
+NGÃ kết thúc nằm: 24/24 vào PRE_ALARM; trễ va chạm → PRE_ALARM trung vị 3.95 s, lớn nhất 4.67 s; người ['s01', 's02']
+  Pass TH-10 (≥ 18/20 cú ngã vào PRE_ALARM): ĐẠT
+NGÃ rồi đứng dậy: 0/8 vào PRE_ALARM (phải 0) → ĐÚNG
+NGÃ kết thúc ngồi: 0/8 vào PRE_ALARM (X15: SPEC v3.1 chỉ báo khi nằm)
+NORMAL: 0.18 giờ từ 2 người ['s01', 's02']; PRE_ALARM giả 2 = 11.04/giờ; theo hoạt động {'cui_nhat': 0, 'di_bo': 0, 'nam_xuong': 2}
+  Pass (≤ 1 PRE_ALARM giả/giờ, ≥ 2 giờ từ ≥ 2 người): chưa đủ 2 giờ / 2 người
+VA ĐẬP va_mu: 6 va đập, 0 lần vào PRE_ALARM (mỗi lần phải hủy được trong 10 s)
+  đường lùi IMPACT (va mũ khi đang đội > 2/20 vào PRE_ALARM thì phải thu IMPACT): 0/6 → không cần

@@ -1,0 +1,6 @@
+mô hình D:\hoctap\fpga\fpga2026gowin\ml\out\n2_11_d1\params_int8.npz, T_SCORE 8, trễ kết quả 30 ms; 4 file, bỏ 3
+  bỏ s00_di_bo_01.csv: s00 dành cho file thử trên bàn (đợt B), không vào dữ liệu; mã 200 đã là h0
+  bỏ s01_nga_truoc_01.csv: mất 1 mẫu
+  bỏ s01_nhay_01.csv: hoạt động lạ 'nhay' (xem docs/data_protocol.md)
+NGÃ kết thúc nằm: 1/1 vào PRE_ALARM; trễ va chạm → PRE_ALARM trung vị 4.17 s, lớn nhất 4.17 s; người ['s02']
+  Pass TH-10 (≥ 18/20 cú ngã vào PRE_ALARM): chưa đủ 20 cú

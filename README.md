@@ -26,7 +26,7 @@ MPU6050 trên mũ → SONiX SN32F407 (EVK V1.0) → SPI → Kiwi Primer 20K (Gow
 | `ml/src/` | `golden_model.py` (đáp án số nguyên), `cnn_numpy.py`, `rom_layout.py`, `safety_model.py` |
 | `ml/train_cnn.py` | Huấn luyện N1 / N2 / N2-S / N2-L bằng numpy, LOSO, xuất INT8 |
 | `ml/data/public/` | Bộ D1 (Özdemir & Barshan) đã chuyển về SPEC; thêm kênh ngực, thắt lưng chỉ để huấn luyện (`--train-only`) |
-| `tools/` | Công cụ: kiểm SPEC, xuất ROM, sinh vector, phát lại, HIL, ghi log, mô phỏng ghép |
+| `tools/` | Công cụ (`playback_log.py` chấm buổi thử trên mũ): kiểm SPEC, xuất ROM, sinh vector, phát lại, HIL, ghi log, mô phỏng ghép |
 | `test_sensor/` | Bộ test MPU6050 (FW-02) |
 
 ## Chạy các bộ kiểm (không cần board)

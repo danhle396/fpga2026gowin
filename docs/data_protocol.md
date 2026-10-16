@@ -75,6 +75,7 @@ Lớp IMPACT chỉ phải thu để huấn luyện (≥ 250 va đập) nếu bu�
 ## 6. Sau mỗi buổi
 
 ```
+python -I tools/playback_log.py ml/data/raw --detail                             # chấm Pass: ngã → PRE_ALARM, báo giả/giờ, va mũ (mô hình của bitstream 3)
 python -I tools/windowing.py ml/data/raw --out ml/data/d2/d2_windows.npz       # D2 (bỏ qua file nga_*)
 python -I tools/windowing.py ml/data/raw --only-falls --out ml/data/d3/d3_windows.npz
 ```

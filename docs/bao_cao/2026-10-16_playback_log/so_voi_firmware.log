@@ -1,0 +1,3 @@
+133 s; firmware 15 lần đổi trạng thái, playback_log 15; TRÙNG: True
+chuỗi: [(0, 'MONITOR'), (8980, 'SUSPECT'), (12150, 'PRE_ALARM'), (14150, 'MONITOR'), (32980, 'SUSPECT'), (36150, 'PRE_ALARM'), (38150, 'MONITOR'), (54740, 'SUSPECT'), (57910, 'PRE_ALARM'), (59910, 'MONITOR'), (97300, 'SUSPECT'), (105300, 'MONITOR'), (120660, 'SUSPECT'), (124150, 'PRE_ALARM'), (126150, 'MONITOR')]
+số lần nhấn hủy: 4
