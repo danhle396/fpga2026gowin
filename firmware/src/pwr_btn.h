@@ -5,6 +5,8 @@
  *       hơn cũng không thành SOS.
  *   Hệ thống BẬT, FSM ở MONITOR: nhấn nhanh 2 lần (mỗi lần < PB_TAP_MS, lần 2 bắt đầu < PB_GAP_MS sau khi nhả
  *       lần 1) → TẮT; FSM về STANDBY sau WEAR_OFF_MS.
+ *   Vừa TẮT mà FSM còn ở MONITOR / SUSPECT (tới WEAR_OFF_MS): lần nhấn cũng chỉ là cử chỉ BẬT (giữ 2 s), không
+ *       chuyển cho FSM — nếu không, giữ nút để bật lại sẽ thành SOS → ALARM trong lúc đang tắt (sửa 16/10).
  *   Mọi cử chỉ khác chuyển nguyên cho FSM (A.8): giữ 3 s = SOS, nhấn ở PRE_ALARM = CANCEL, giữ 1 s ở ALARM = tắt còi.
  * Lúc cấp nguồn hệ thống BẬT. Nút đã chống dội ở keys_scan (20 ms).
  */

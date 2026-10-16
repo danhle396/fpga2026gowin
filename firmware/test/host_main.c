@@ -207,6 +207,15 @@ static void mode_pwr_btn(void)
     pa_tap();
     check("nut: vua TAT ma nga trong 3 s -> van PRE_ALARM, nut van CANCEL duoc",
           off2 && fell && PA.fsm.st == ST_MONITOR && PA.fsm.why == WHY_CANCEL);
+
+    /* vừa TẮT (FSM còn MONITOR 3 s) mà giữ nút để bật lại: phải BẬT sau 2 s, giữ tiếp không được thành SOS */
+    pa_reset(); pa_tap(); pa_run(200, 0); pa_tap();
+    int off3 = !PA.pb.on && PA.fsm.st == ST_MONITOR;
+    pa_run(500, 0); pa_run(3500, 1);
+    int on3 = PA.pb.on && PA.fsm.st != ST_ALARM;
+    pa_run(100, 0);
+    check("nut: vua TAT, giu 3,5 s trong luc FSM con MONITOR -> BAT lai, khong SOS",
+          off3 && on3 && PA.pb.on && PA.fsm.st == ST_MONITOR);
 }
 
 static void mode_safety(void)

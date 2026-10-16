@@ -18,7 +18,10 @@ uint8_t pwr_btn_tick(pwr_btn_t *p, uint32_t now, uint8_t down, uint8_t fsm_st)
     p->prev = down;
     if (press) {
         p->t_down = now;
-        p->mask = (fsm_st == ST_STANDBY);                   /* hệ thống TẮT: lần nhấn này chỉ dùng để BẬT */
+        /* Lần nhấn chỉ dùng để BẬT khi: FSM ở STANDBY, hoặc vừa TẮT mà FSM còn ở MONITOR / SUSPECT (3 s chờ
+         * WEAR_OFF_MS). Nếu không che ở đây, giữ nút để bật lại trong 3 s đó sẽ thành SOS → ALARM khi đang tắt.
+         * PRE_ALARM / ALARM vẫn nhận nút (CANCEL, tắt còi). */
+        p->mask = (fsm_st == ST_STANDBY) || (!p->on && (fsm_st == ST_MONITOR || fsm_st == ST_SUSPECT));
         p->tap_ok = p->on && fsm_st == ST_MONITOR;
         if (p->taps && (!p->tap_ok || now - p->t_up > PB_GAP_MS))
             p->taps = 0;
