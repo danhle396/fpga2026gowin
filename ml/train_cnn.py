@@ -146,6 +146,8 @@ def main():
     ap.add_argument("--fall-frac", type=float, default=0.3)
     ap.add_argument("--seed", type=int, default=20261014)
     ap.add_argument("--ema", type=float, default=0.0, help="trung bình trượt mũ trọng số, ví dụ 0.995 (0 = tắt)")
+    ap.add_argument("--subjects", type=int, nargs="*", default=[],
+                    help="chỉ dùng các người này; mô hình ml/out/*_d1 (13–15/10) là 101 102 103 104 105 106")
     ap.add_argument("--no-loso", action="store_true")
     ap.add_argument("--verbose", action="store_true")
     a = ap.parse_args()
@@ -158,6 +160,9 @@ def main():
         lines.append(s)
 
     D = load([a.data] + a.extra, a.train_only)
+    if a.subjects:                  # chỉ giữ các người này (cả --train-only), vd. tái lập mô hình trên 6 người đầu
+        keep = np.isin(D["subject"], a.subjects)
+        D = {k: v[keep] for k, v in D.items()}
     subj = np.unique(D["subject"][D["test"]])
     log(f"{a.arch}: {cn.ARCH[a.arch]}; dữ liệu {len(D['y'])} cửa sổ, người {subj.tolist()}, "
         f"lớp {dict(zip(*map(np.ndarray.tolist, np.unique(D['y'], return_counts=True))))}")

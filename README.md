@@ -48,6 +48,11 @@ python tools/export_mem.py --params ml/out/n2s_d1/params_int8.npz --engine e2 --
 
 ## Chuỗi mô hình → phần cứng
 
+Các mô hình đã lưu trong `ml/out/*_d1/` (gồm `n2_d1` của bitstream 3) được huấn luyện ngày 13–15/10 trên **6 người 101–106**. Từ 16/10, `ml/data/public/` có 8 người. Lưu ý:
+- Không có `--out`, lệnh dưới **ghi đè** `ml/out/<arch>_d1/`. Thử nghiệm thì đặt `--out` ra ngoài repo.
+- `--subjects 101 102 103 104 105 106` chọn lại đúng 6 người cũ.
+- Huấn luyện lại chỉ tái lập về mặt thống kê, không tái lập từng bit, vì số thực float khác nhau giữa các máy. Nguồn cố định cho RTL và firmware là `params_int8.npz` và các file `.mem` đã lưu.
+
 ```bash
 python ml/train_cnn.py --arch n2s                        # LOSO + mô hình cuối → ml/out/n2s_d1/
 python tools/export_mem.py --params ml/out/n2s_d1/params_int8.npz --engine e2 --lanes 1 --out <thư mục>
