@@ -2,3 +2,6 @@ RTL trả về 7 byte đầu 5a ee 01 03 00 06 43; firmware mong đợi 5a ee 01
 khung 20 byte của RTL: 5a ee 01 03 00 06 43 7f ff 80 00 80 00 7f ff 03 f0 20 c0 ce
 RTL trả về 7 byte đầu 5a ee 01 03 00 06 43; firmware mong đợi 5a ee 01 00 1a e0 6b → FAIL
 khung 20 byte của RTL: 5a ee 01 03 00 06 43 7f ff 80 00 80 00 7f ff 03 f0 20 c0 ce
+== bitstream 2 (v3 + E1):
+RTL trả về 7 byte đầu 5a ee 01 03 7f 89 3b; firmware mong đợi 5a ee 01 03 7f 89 3b → PASS
+khung 20 byte của RTL: 5a ee 01 03 7f 89 3b 10 f2 02 23 07 be 45 93 0a ad 98 b2 12

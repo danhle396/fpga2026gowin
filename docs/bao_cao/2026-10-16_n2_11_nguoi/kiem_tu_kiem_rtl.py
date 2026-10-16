@@ -1,6 +1,7 @@
 # Kiểm đáp án tự kiểm A.10 của firmware với RTL: khung tự kiểm (SEQ 0xEE, payload LFSR) đi qua tb_stream (top v3 + E2,
 # weight của một bản xuất E2), so 7 byte đầu khung RTL trả về với selftest_frame7 trong header của firmware.
-#   python -I docs/bao_cao/2026-10-16_n2_11_nguoi/kiem_tu_kiem_rtl.py ml/out/e2_matrix/n2_11_p1 firmware/src/selftest_expect_v3_e2_n2.h
+#   python -I docs/bao_cao/2026-10-16_n2_11_nguoi/kiem_tu_kiem_rtl.py ml/out/e2_matrix/n2_11_p1 firmware/src/selftest_expect_v3_e2_n2.h   # bitstream 3
+#   python -I docs/bao_cao/2026-10-16_n2_11_nguoi/kiem_tu_kiem_rtl.py e1 firmware/src/selftest_expect.h                                    # bitstream 2 (v3 + E1, weight của nhóm)
 import os
 import pathlib
 import re
@@ -16,23 +17,32 @@ import golden_model as gm  # noqa: E402
 
 def main():
     sys.stdout.reconfigure(encoding="utf-8")
-    e2, hdr = pathlib.Path(sys.argv[1]), pathlib.Path(sys.argv[2])
+    e1 = sys.argv[1] == "e1"
+    e2, hdr = (None if e1 else pathlib.Path(sys.argv[1])), pathlib.Path(sys.argv[2])
     want = bytes(int(v, 16) for v in re.search(r"selftest_frame7\[7\] = \{([^}]*)\}", hdr.read_text(encoding="utf-8"))
                  .group(1).replace("0x", "").split(","))
     frame = gm.write_frame(0xEE, gm.selftest_payload())
     W = pathlib.Path(tempfile.mkdtemp())
     (W / "tb").mkdir()
     shutil.copytree(ROOT / "Document Board Kiwi Primer 20K" / "Kiwi20K_FallDetection_FPGA" / "src", W / "src")
-    shutil.copy(e2 / "cnn_params.vh", W / "src" / "cnn_params.vh")
-    shutil.copy(e2 / "weights.mem", W / "src" / "weights_e2.mem")
-    shutil.copy(e2 / "bias.mem", W / "src" / "bias_e2.mem")
+    if e1:                                          # weight E1 của nhóm, đúng như pnr_v3.sh tổng hợp vào bitstream 2
+        subprocess.run([sys.executable, "-I", str(ROOT / "tools" / "gen_cnn_params.py"), "--project", str(W)],
+                       check=True, capture_output=True)
+        core = [W / "src" / f"{m}.v" for m in ("cnn_core", "cnn_controller", "conv1d_engine", "requantize_relu",
+                "maxpool1d_engine", "feature_ram", "gap_engine", "gap_buffer", "dense_engine", "argmax4", "mac_unit",
+                "weight_rom", "bias_rom")]
+    else:
+        shutil.copy(e2 / "cnn_params.vh", W / "src" / "cnn_params.vh")
+        shutil.copy(e2 / "weights.mem", W / "src" / "weights_e2.mem")
+        shutil.copy(e2 / "bias.mem", W / "src" / "bias_e2.mem")
+        core = [ROOT / "rtl" / "e2" / "cnn_e2.v"]
     (W / "tb" / "stream_frames.mem").write_text("".join(f"{b:02X}\n" for b in frame), newline="\n")
     env = dict(os.environ)
     env["PATH"] = r"C:\iverilog\bin;" + env.get("PATH", "")
     V3 = ROOT / "rtl" / "v3"
     src = [V3 / "tb_stream.v", V3 / "fpga_top_v3.v", V3 / "packet_parser_v3.v", V3 / "result_frame_v3.v",
            V3 / "spi_result_tx_v3.v", V3 / "crc16_ccitt.v", ROOT / "rtl" / "tb" / "pll_50m_sim.v",
-           W / "src" / "spi_slave.v", W / "src" / "input_buffer.v", ROOT / "rtl" / "e2" / "cnn_e2.v"]
+           W / "src" / "spi_slave.v", W / "src" / "input_buffer.v"] + core
     subprocess.run(["iverilog", "-g2001", "-I", "src", "-DTB_NF=1", "-s", "tb_stream", "-o", "s.vvp"] + [str(s) for s in src],
                    cwd=W, env=env, check=True)
     subprocess.run(["vvp", "s.vvp"], cwd=W, env=env, check=True, capture_output=True)

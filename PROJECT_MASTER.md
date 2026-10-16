@@ -1021,6 +1021,7 @@ uint16_t crc16_ccitt(const uint8_t *p, uint32_t n)
 | 2026-10-16 | Bản nháp báo cáo kỹ thuật cuối (TH-11) `docs/bao_cao_cuoi/BAO_CAO_KY_THUAT_nhap.md` | Hạn nộp 31/10; mọi số mô phỏng và dữ liệu công khai đã có, chỉ còn điền các ô [CHỜ ĐO] sau đợt B và buổi thử đội mũ. Số trong báo cáo lấy đúng từ các báo cáo 16/10 (N2 11 người, bitstream 3) |
 | 2026-10-16 | Kiểm đáp án tự kiểm A.10 của firmware (`selftest_expect_v3_e2_n2.h`) với RTL bitstream 3: khung SEQ 0xEE qua `tb_stream` | 7 byte RTL trả về trùng `selftest_frame7` → PASS; phép âm với đáp án của mô hình 6 người → FAIL. B10 sẽ không vấp ở bước tự kiểm. [n2_11_nguoi](docs/bao_cao/2026-10-16_n2_11_nguoi/README.md) |
 | 2026-10-16 | Kiểm đáp án tự kiểm của firmware cho **bitstream 1** (PROTO 1, E1) với RTL qua chân SPI (`kiem_tu_kiem_b1.sh`) | 4/4 khung tự kiểm trả về đúng lớp 3, logit 17811 như `selftest_expect.h`; khung sai CRC không IRQ. B8 bước 1 (`rc=0 class=3 PASS`) có căn cứ |
+| 2026-10-16 | Kiểm đáp án tự kiểm cho **bitstream 2** (v3 + E1) với RTL (`kiem_tu_kiem_rtl.py e1`) | 7 byte trùng `selftest_frame7` → PASS. Cả 3 bitstream nay đều có đáp án tự kiểm của firmware đã đối chiếu với RTL |
 
 ---
 
