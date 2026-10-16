@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 # tools/logger.py — ghi luồng LOG 100 Hz của MCU ra CSV và báo mất mẫu (SPEC v3, A.9).
-# Đã kiểm cú pháp; chưa chạy với board vì firmware LOG chưa có (việc FW-06, AI-03).
+# Firmware có chế độ LOG từ 14/10 (FW-06; lệnh "LOG" hoặc giữ SW6 lúc khởi động); chưa chạy với board (bước B5).
 import argparse
 import pathlib
 import sys

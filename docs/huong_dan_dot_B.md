@@ -81,11 +81,12 @@ Nếu P2.8 hoặc P2.9 "CO FLASH": **dừng**, gửi lại. Khi đó phải đ�
    
    Rồi mỗi 0,32 s có một dòng kết quả với `err` = 1 (timeout) cho tới khi nối FPGA.
 3. Gõ `LOG` và Enter: luồng mẫu 100 Hz. Ghi 10 phút bằng `python tools/logger.py --port COMx --subject s00 --activity bench --trial 1 --seconds 600` (tắt terminal trước).
-4. Đặt yên rồi gõ `STAT`: đọc offset gyro dư. Chi tiết ở FW-05: trung bình 500 mẫu phải trong ±2 LSB.
+4. **FW-05 (offset gyro dư):** board phải nằm yên suốt lúc ghi. Chạy `python tools/gyro_residual.py ml/data/raw/s00_bench_01.csv`. Ở chế độ LOG, gyro đã được trừ offset hiệu chuẩn lúc khởi động, nên trung bình 500 mẫu đầu của mỗi trục phải trong ±2 LSB. Dòng thứ hai in 500 mẫu lệch nhất trên cả 10 phút, dùng để xem độ trôi. (Lệnh `STAT` chỉ in bộ đếm `raw`, `lost`, `timeout`…, không in offset.)
+5. Mở terminal lại, gõ `STAT`: `lost` phải bằng 0.
 
 | Pass | Gửi lại |
 |---|---|
-| WHO_AM_I và 7 thanh ghi đúng; logger báo "mất 0 mẫu -> PASS" sau 10 phút | dòng khởi động, kết quả logger, dòng `STAT` |
+| WHO_AM_I và 7 thanh ghi đúng; logger báo "mất 0 mẫu -> PASS" sau 10 phút; `gyro_residual.py` in PASS | dòng khởi động, kết quả logger, hai dòng của `gyro_residual.py`, dòng `STAT` |
 
 Nếu `MPU6050 loi ... i2c=2` (timeout): hạ `I2C_HZ` trong `app_main.c` xuống 100000 rồi nạp lại.
 
