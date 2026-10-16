@@ -93,3 +93,19 @@ Với mỗi lần vào PRE_ALARM ở T_SCORE 8, script đo đỉnh |a| trong 3 s
 | Firmware → RTL → firmware (6 bản ghi D1 của người 104, 137,7 s) | **423/423 khung** khớp golden, CYCLES 258.080; firmware đọc đúng 423/423; 4 lần đổi trạng thái trùng golden (MONITOR → SUSPECT → PRE_ALARM → ALARM) | `cosim_n2_11_p1_6_ban_ghi.log` |
 
 Lượng tử mất ≤ 0,0001 Macro-F1; RTL và netlist không mất gì. Toàn bộ sai số còn lại nằm ở mô hình và dữ liệu. Chưa đo trên chip: TH-09 cần ≥ 2.000 cửa sổ qua HIL với `--params ml/out/n2_11_d1/params_int8.npz`.
+
+## 6. Quét `VOTE_K` (`n2_11_s*_playback_k3.txt`)
+
+Trung bình 3 seed:
+
+| Cấu hình | Ngã nằm → PRE_ALARM | PRE_ALARM giả/giờ | Trễ va chạm → SUSPECT, trung vị / p90 |
+|---|---|---|---|
+| **VOTE_K 2, T_SCORE 8** (SPEC hiện tại) | 96,2 % | 1,11 | 0,86 / 1,04 s |
+| VOTE_K 3, T_SCORE 0 | 96,9 % | 1,29 | 1,15 / 1,32 s |
+| VOTE_K 3, T_SCORE 4 | 96,4 % | 1,04 | 1,16 / 1,33 s |
+| VOTE_K 3, T_SCORE 8 | 94,9 % | 0,68 | 1,17 / 1,36 s |
+
+**Không đổi.**
+- VOTE_K 3 với T_SCORE 4 nhỉnh hơn một chút ở cả hai chỉ tiêu, nhưng chênh lệch chỉ 0–1 lần báo giả mỗi seed (trên 5,43 giờ), tức trong nhiễu.
+- Đổi lại, trễ SUSPECT tăng thêm khoảng 0,3 s, p90 lên 1,33–1,36 s, sát giới hạn 1,5 s của đề cương.
+- Giữ VOTE_K 2 / T_SCORE 8. Chốt `VOTE_K` và `T_SCORE` (AI-10) trên buổi thử đội mũ, chấm bằng `tools/playback_log.py`; công cụ này nhận `--t-score`.

@@ -3,7 +3,7 @@
 # rồi in các chỉ tiêu Pass của đề cương v2.1 (AI-05 / AI-08 / TH-10, docs/data_protocol.md mục 5).
 #
 #   python -I tools/playback_log.py ml/data/raw                       # mô hình của bitstream 3 (ml/out/n2_11_d1)
-#   python -I tools/playback_log.py ml/data/raw --params <params_int8.npz> --t-score 8 --detail
+#   python -I tools/playback_log.py ml/data/raw --params <params_int8.npz> --t-score 8 --vote-k 2 --detail
 #
 # Chuỗi giống hệt tham chiếu Python mà tools/m0_test.py đã kiểm trùng firmware/src/app_core.c (test_app): decimate + q8
 # của golden_model → cửa sổ 128 mẫu 50 Hz bước 16 → mô hình INT8 → kết quả đến sau LAT tick (10 ms/tick) → khối bất
@@ -81,13 +81,14 @@ def main():
     ap.add_argument("src", nargs="+", type=pathlib.Path, help="thư mục hoặc file .csv của tools/logger.py")
     ap.add_argument("--params", type=pathlib.Path, default=DEFAULT_PARAMS)
     ap.add_argument("--t-score", type=int, default=8)
+    ap.add_argument("--vote-k", type=int, default=2, help="số cửa sổ FALL trong 3 cửa sổ gần nhất để vào SUSPECT")
     ap.add_argument("--lat", type=int, default=3, help="tick (10 ms) từ lúc cửa sổ đóng tới khi có kết quả")
     ap.add_argument("--auto-cancel-ms", type=int, default=2000,
                     help="file NORMAL / va đập: vào PRE_ALARM thì giả lập nhấn hủy sau ngần ấy ms (âm = không hủy)")
     ap.add_argument("--detail", action="store_true", help="in từng file")
     a = ap.parse_args()
     Q, ss = load_params(a.params)
-    cfg = dict(t_score=a.t_score)
+    cfg = dict(t_score=a.t_score, vote_k=a.vote_k)
     files = sorted(f for s in a.src for f in (s.rglob("*.csv") if s.is_dir() else [s]))
     falls, impacts, normal = [], [], []
     skipped = []
@@ -121,7 +122,7 @@ def main():
         if a.detail:
             print(row)
 
-    print(f"mô hình {a.params}, T_SCORE {a.t_score}, trễ kết quả {a.lat * 10} ms; {len(files)} file, bỏ {len(skipped)}")
+    print(f"mô hình {a.params}, T_SCORE {a.t_score}, VOTE_K {a.vote_k}/3, trễ kết quả {a.lat * 10} ms; {len(files)} file, bỏ {len(skipped)}")
     for name, why in skipped:
         print(f"  bỏ {name}: {why}")
     if falls:
