@@ -12,6 +12,7 @@
 #include "blocks.h"
 #include "safety.h"
 #include "spi_frame.h"
+#include "pwr_btn.h"
 
 #define APP_FRAME   1u              /* app_on_raw: có cửa sổ mới cần gửi */
 #define APP_BLOCK   2u              /* app_on_raw: vừa đóng một khối */
@@ -27,6 +28,9 @@ typedef struct {
     uint8_t     last_cls, last_score;
     uint32_t    n_raw, n_frames, n_ok, n_err;
     uint32_t    t_beep;             /* bíp IMPACT tới thời điểm này */
+    pwr_btn_t   pb;                 /* một nút: bật/tắt + CANCEL + SOS (BTN_POWER) */
+    uint8_t     pwr_ev;             /* PB_EV_ON / PB_EV_OFF gần nhất, để bíp xác nhận */
+    uint32_t    t_pwr;
 } app_t;
 
 void     app_init(app_t *a, const safety_cfg_t *sc, const blocks_cfg_t *bc, uint32_t now);

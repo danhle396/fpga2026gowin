@@ -131,6 +131,84 @@ static void to_prealarm(void) { to_suspect(); safety_on_block(&S, STILL_BLOCKS, 
 
 static void blk_fill(blocks_t *b, const int16_t r[6], int n) { for (int i = 0; i < n; i++) blocks_push(b, r); }
 
+/* một nút: bật/tắt + CANCEL + SOS (pwr_btn.h), qua app_tick như firmware thật; WEAR phần cứng = 1 */
+static app_t PA;
+static uint32_t PT;
+static void pa_reset(void)
+{
+    safety_cfg_t c;
+    blocks_cfg_t bc = { T_STILL_A, T_STILL_G };
+    safety_default_cfg(&c);
+    PT = 0;
+    app_init(&PA, &c, &bc, 0);
+    PT += 10; app_tick(&PA, PT, 1, 0);
+}
+static void pa_run(uint32_t ms, uint8_t btn) { for (uint32_t e = 0; e < ms; e += 10) { PT += 10; app_tick(&PA, PT, 1, btn); } }
+static void pa_fall(void)                   /* 2 phiếu FALL → SUSPECT, rồi bất động + đầu nằm → PRE_ALARM */
+{
+    safety_on_result(&PA.fsm, CLS_FALL, 100); safety_on_result(&PA.fsm, CLS_FALL, 100); pa_run(10, 0);
+    safety_on_block(&PA.fsm, STILL_BLOCKS, 500); pa_run(10, 0);
+}
+static void pa_tap(void) { pa_run(100, 1); pa_run(10, 0); }
+
+static void mode_pwr_btn(void)
+{
+    pa_reset();
+    check("nut: cap nguon la BAT -> MONITOR", PA.pb.on && PA.fsm.st == ST_MONITOR);
+
+    pa_tap(); pa_run(200, 0); pa_run(100, 1); PT += 10; app_tick(&PA, PT, 1, 0);
+    int off_ev = !PA.pb.on && PA.pwr_ev == PB_EV_OFF && app_buzzer(&PA, PT) && app_buzzer(&PA, PT + 590);
+    int quiet = !app_buzzer(&PA, PT + 610);
+    pa_run(2980, 0);                                /* t_wear_on = tick trước tick TẮT: STANDBY ở +2990 ms */
+    int still_mon = PA.fsm.st == ST_MONITOR;
+    pa_run(10, 0);
+    check("nut: nhan nhanh 2 lan o MONITOR -> TAT, bip dai 0,6 s, STANDBY sau 3 s",
+          off_ev && quiet && still_mon && PA.fsm.st == ST_STANDBY);
+
+    pa_run(1000, 1); pa_run(100, 0);
+    check("nut: o STANDBY giu 1 s chua du -> van TAT", !PA.pb.on && PA.fsm.st == ST_STANDBY);
+
+    pa_run(2000, 1);                                /* t_down = tick đầu của đoạn giữ: mới giữ 1,99 s */
+    int not_yet = !PA.pb.on;
+    pa_run(10, 1);
+    uint32_t t_on = PT;
+    int on_ev = PA.pb.on && PA.pwr_ev == PB_EV_ON;
+    int beep2 = app_buzzer(&PA, t_on + 50) && !app_buzzer(&PA, t_on + 150) && app_buzzer(&PA, t_on + 250) &&
+                !app_buzzer(&PA, t_on + 310);
+    pa_run(4000, 1);                                /* giữ tiếp, tổng 6 s: không được thành SOS */
+    int no_sos = PA.fsm.st == ST_MONITOR;
+    pa_run(100, 0);
+    check("nut: o STANDBY giu 2 s -> BAT, 2 bip ngan; giu tiep toi 6 s khong thanh SOS",
+          not_yet && on_ev && beep2 && no_sos && PA.fsm.st == ST_MONITOR && PA.pb.on);
+
+    pa_reset(); pa_run(2990, 1);
+    int pre = PA.fsm.st == ST_MONITOR;
+    pa_run(20, 1);
+    check("nut: dang BAT giu 3 s -> SOS (ALARM), nhu A.8", pre && PA.fsm.st == ST_ALARM && PA.pb.on);
+
+    pa_reset(); pa_tap(); pa_run(800, 0); pa_tap();
+    check("nut: 2 lan nhan cach nhau 0,8 s -> van BAT", PA.pb.on && PA.fsm.st == ST_MONITOR);
+
+    pa_reset(); pa_tap(); pa_run(100, 0); pa_run(500, 1); pa_run(10, 0);
+    check("nut: nhan ngan roi giu 0,5 s -> van BAT", PA.pb.on);
+
+    pa_reset(); pa_fall();
+    int in_pre = PA.fsm.st == ST_PRE_ALARM;
+    pa_tap();
+    int cancelled = PA.fsm.st == ST_MONITOR && PA.fsm.why == WHY_CANCEL;
+    pa_run(100, 0); pa_tap();
+    check("nut: o PRE_ALARM nhan = CANCEL; nhan them ngay sau do khong lam TAT",
+          in_pre && cancelled && PA.pb.on && PA.fsm.st == ST_MONITOR);
+
+    pa_reset(); pa_tap(); pa_run(200, 0); pa_tap();
+    int off2 = !PA.pb.on && PA.fsm.st == ST_MONITOR;
+    pa_run(500, 0); pa_fall();
+    int fell = PA.fsm.st == ST_PRE_ALARM;
+    pa_tap();
+    check("nut: vua TAT ma nga trong 3 s -> van PRE_ALARM, nut van CANCEL duoc",
+          off2 && fell && PA.fsm.st == ST_MONITOR && PA.fsm.why == WHY_CANCEL);
+}
+
 static void mode_safety(void)
 {
     /* ---- khối ---- */
@@ -319,6 +397,8 @@ static void mode_safety(void)
         app_display(&ap, 15000, sg);
         check("LED 7 doan: loi FPGA hien Err", sg[0] == 0x79 && sg[1] == 0x50 && sg[2] == 0x50);
     }
+
+    mode_pwr_btn();
 
     put("TONG: "); put_dec(s_pass); put(" PASS, "); put_dec(s_fail); put(" FAIL\n");
 }

@@ -132,8 +132,8 @@ Chế độ RUN đọc 7 byte; chế độ HIL đọc 20 byte. Không có kết 
 
 | Chuyển trạng thái | Điều kiện |
 |---|---|
-| MONITOR → STANDBY | `WEAR = 0` (công tắc TẮT) liên tục 3 s |
-| STANDBY → MONITOR | `WEAR = 1` (công tắc BẬT) |
+| MONITOR → STANDBY | `WEAR = 0` (hệ thống TẮT bằng nút) liên tục 3 s |
+| STANDBY → MONITOR | `WEAR = 1` (hệ thống BẬT) |
 | MONITOR → SUSPECT | `fall_votes ≥ VOTE_K` và mũ đã được đội trong 3 s gần nhất |
 | SUSPECT → PRE_ALARM | `still_run ≥ STILL_BLOCKS` và (nếu `TILT_EN`) **`\|az_tb\| < T_TILT`**: đầu nằm ngang, lệch 45°–135° khỏi phương thẳng đứng (v3.1, 15/10) |
 | SUSPECT → MONITOR | Quá `SUSPECT_TIMEOUT` |
@@ -143,6 +143,14 @@ Chế độ RUN đọc 7 byte; chế độ HIL đọc 20 byte. Không có kết 
 | ALARM → COOLDOWN → MONITOR | Giữ CANCEL 1 s; chờ `COOLDOWN_TIME` |
 
 Từ SUSPECT trở đi bỏ qua WEAR. IMPACT khi đang đội (chỉ khi bật lớp này): một tiếng bíp + ghi log. Ưu tiên: CANCEL > timeout > phiếu CNN > khối.
+
+**Nút (v3.2).** Chỉ có một nút. `pwr_btn.c` nằm ngoài FSM và tạo WEAR = trạng thái bật/tắt:
+- cấp nguồn = BẬT;
+- ở STANDBY, giữ ≥ 2 s = BẬT; lần nhấn này không đưa vào FSM;
+- ở MONITOR, nhấn nhanh 2 lần (mỗi lần < 0,4 s, lần 2 bắt đầu < 0,6 s sau khi nhả lần 1) = TẮT;
+- mọi cử chỉ khác đưa nguyên vào FSM như trên (giữ 3 s = SOS, nhấn ở PRE_ALARM = CANCEL, giữ 1 s ở ALARM).
+
+Còi xác nhận: BẬT = 2 bíp 100 ms, TẮT = 1 bíp 600 ms.
 
 | Tham số | Giá trị đầu | Chốt ở |
 |---|---|---|
@@ -176,6 +184,6 @@ MCU tạo payload 768 byte bằng LFSR Galois 16 bit (đa thức 0xB400, mầm 0
 | 2026-10-03 | v1: đeo thắt lưng, 100 Hz, 3 lớp Conv |
 | 2026-10-12 | v2: mũ, 50 Hz, 2 lớp Conv, kênh trước, UINT8 |
 | 2026-10-12 | v3: lấy RTL hiện có làm gốc (vị trí trước, 0..127, dịch sàn); cảm biến 100 Hz ±16 g ±2000 °/s, MCU giảm còn 50 Hz; bước 0,32 s + bỏ phiếu; N1/N2; E1/E2; lớp 0 NORMAL, 1 IMPACT, 3 FALL; giao thức v3; bỏ CONFIRM, thêm SOS và tự kiểm |
-| 2026-10-16 | **v3.2** (đi cùng đề cương v2.1): A.4 chỉ huấn luyện 2 lớp 0 NORMAL và 3 FALL, lớp 1 IMPACT để dành; A.8 đầu vào WEAR là công tắc bật/tắt hệ thống trên mũ. Không đổi khung, số học, FSM hay vector; mô hình đã có vốn là 2 lớp vì D1 không có IMPACT |
+| 2026-10-16 | **v3.2** (đi cùng đề cương v2.1): A.4 chỉ huấn luyện 2 lớp 0 NORMAL và 3 FALL, lớp 1 IMPACT để dành; A.8 đầu vào WEAR là trạng thái bật/tắt do một nút bấm tạo (`pwr_btn.c`), thêm quy ước nút. Không đổi khung, số học, FSM hay vector; mô hình đã có vốn là 2 lớp vì D1 không có IMPACT |
 | 2026-10-15 | **v3.1**: A.8 điều kiện nghiêng thành hai phía `\|az_tb\| < T_TILT` (trước: `az_tb < T_TILT`). Lý do: phát lại D1 cho thấy 15/22 PRE_ALARM giả có `az_tb` ≈ −2040 (đầu lộn ngược khi cúi gập sau khi vấp, nhặt đồ), còn 375/375 cú ngã nằm tới PRE_ALARM có `az_tb` ≥ −1074. Không đổi khung, số học hay vector |
 | 2026-10-14 | v3 (làm rõ, không đổi số học hay khung): A.7 thêm quy ước một bộ đệm kết quả và giá trị `STATUS` cho từng lỗi; `cnn_params.vh` thêm `CNN_SCORE_SHIFT` (lấy từ `score_shift` trong json) |

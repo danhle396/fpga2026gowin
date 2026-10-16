@@ -440,6 +440,11 @@
               <FilePath>..\src\app_core.c</FilePath>
             </File>
             <File>
+              <FileName>pwr_btn.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\src\pwr_btn.c</FilePath>
+            </File>
+            <File>
               <FileName>i2c0.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\src\i2c0.c</FilePath>

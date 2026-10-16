@@ -29,6 +29,7 @@ Trong `app_main.c`: `FW_PROTO` (1 = RTL hiện có, 3 = `rtl/v3/fpga_top_v3`) v�
 | `spi_frame.c` | FW-08: khung ghi v3 / PROTO 1, kiểm khung đọc, payload LFSR | có | 610 khung, 92 ca khung đọc |
 | `blocks.c`, `safety.c` | FW-11: khối bất động, bỏ phiếu, Safety FSM | có | 49 ca; trùng `ml/src/safety_model.py` trên 240.000 tick |
 | `gyro_cal.c` | FW-05 | có | Unicorn |
+| `pwr_btn.c` | một nút cho bật/tắt + CANCEL + SOS (đề cương v2.1): ở STANDBY giữ 2 s = bật; ở MONITOR nhấn nhanh 2 lần = tắt; còn lại như A.8. `BTN_POWER` trong `fw_config.h` | có | 9 ca (mode 4 của `test/host_main.c`); phép âm `BTN_POWER=0` → 4 ca FAIL |
 | `app_core.c` | lõi vòng lặp chính | có | 131 s dữ liệu D1 trùng chuỗi golden từng kết quả và từng lần đổi trạng thái |
 | `cnn_mcu.c` | FW-15: CNN thuần trên MCU | có | khớp golden 50/50 trên 5 mô hình; đếm lệnh |
 | `board.c` | clock 48 MHz, SysTick, UART ngắt, phím, còi, WEAR, watchdog, ngắt P2 | không | biên dịch |

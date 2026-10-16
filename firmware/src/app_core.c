@@ -9,6 +9,7 @@ void app_init(app_t *a, const safety_cfg_t *sc, const blocks_cfg_t *bc, uint32_t
     pre_init(&a->pre);
     blocks_init(&a->blk, bc);
     safety_init(&a->fsm, sc, now);
+    pwr_btn_init(&a->pb, 1);                        /* cấp nguồn là hệ thống BẬT */
 }
 
 void app_set_gyro_offset(app_t *a, const int16_t off[3])
@@ -59,6 +60,11 @@ void app_on_result(app_t *a, int rc, const spi_result_t *r)
 
 void app_tick(app_t *a, uint32_t now, uint8_t wear, uint8_t cancel)
 {
+#if BTN_POWER
+    cancel = pwr_btn_tick(&a->pb, now, cancel, (uint8_t)a->fsm.st);
+    wear = (uint8_t)(wear && a->pb.on);
+    if (a->pb.ev) { a->pwr_ev = a->pb.ev; a->t_pwr = now; }
+#endif
     safety_tick(&a->fsm, now, wear, cancel);
     if (a->fsm.events & SAFETY_EV_BEEP)
         a->t_beep = now + 100u;                     /* IMPACT khi đang đội: bíp 100 ms */
@@ -70,7 +76,13 @@ uint8_t app_buzzer(const app_t *a, uint32_t now)
     switch (a->fsm.st) {
     case ST_PRE_ALARM: return (t % 1000u) < 150u;   /* bíp ngắn mỗi giây trong lúc đếm ngược 10 s */
     case ST_ALARM:     return (t % 500u) < 350u;    /* hú liên tục */
-    default:           return (int32_t)(a->t_beep - now) > 0;
+    default:
+        if (a->pwr_ev) {
+            uint32_t d = now - a->t_pwr;
+            if (a->pwr_ev == PB_EV_ON && d < 300u) return d < 100u || d >= 200u;   /* BẬT: 2 bíp ngắn */
+            if (a->pwr_ev == PB_EV_OFF && d < 600u) return 1;                      /* TẮT: 1 bíp dài */
+        }
+        return (int32_t)(a->t_beep - now) > 0;
     }
 }
 

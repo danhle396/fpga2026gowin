@@ -8,7 +8,7 @@
 > **TRẠNG THÁI (2026-10-15): Tầng 1 · chưa qua cổng G0 → 0 % theo cổng.** Mọi việc không cần board của tầng 1 và phần lớn tầng 2 đã xong ở mức mô phỏng; **chưa dòng nào chạy trên board**
 > - **RTL:** E1 (P = 1, N1) khớp golden 50/50 có bão hòa, 13,96 ms, Fmax 105,20 MHz (15/10, sau khi sửa lỗi `conv_start` khởi tạo bằng 1 mà mô phỏng netlist tìm ra; bitstream 1, 2 đã dựng lại). **Giao thức v3** (`rtl/v3/`, RA-03 [x]) qua chân SPI 50/50 + 7 kịch bản lỗi. **Engine E2** (`rtl/e2/`, RB-03/RB-04/RA-07/RA-08 [x] mô phỏng): 12 cấu hình 50/50 ở mọi tầng; N2-S 2,65 ms (P = 1) / 0,80 ms (P = 4); top v3 + E2 105,58 MHz, Logic 8 %. Bitstream dựng sẵn để nạp thẳng: [bitstreams/](bitstreams/README.md) (PROTO 1 + E1 cho đợt B; v3 + E1; v3 + E2 + N2 107,25 MHz). Mô phỏng ghép firmware ↔ RTL: 423/423 khung khớp golden. **Netlist sau P&R của cả 3 bitstream (mô phỏng gate-level, `rtl/gl/run_gl.sh`): PASS** sau khi sửa lỗi `conv_start` lên nguồn bằng 1, lỗi mà chỉ mô phỏng netlist mới thấy; phép âm lật 1 bit weight → FAIL. Verify toàn dự án sau khi dọn 15/10: mọi bộ kiểm PASS ([docs/bao_cao/2026-10-15_verify_sau_don/](docs/bao_cao/2026-10-15_verify_sau_don/README.md))
 > - **SPEC v3.1 (15/10):** điều kiện nghiêng hai phía `|az_tb| < T_TILT` → báo giả khi phát lại D1 giảm từ 5,9 xuống 1,3/giờ (gộp 3 mô hình: 0,75/giờ), recall ngã nằm giữ 95,5 %
-> - **Đề cương v2.1 (16/10): gọn đề tài** theo hướng tham khảo: mạng **2 lớp NORMAL / FALL**; va đập mũ loại bằng trình tự ba pha của FSM (bất động + đầu nằm ngang + 10 s hủy); **công tắc bật/tắt** trên P2.3 thay cảm biến đội mũ; huấn luyện chỉ bằng D1, D2 + D3 gộp thành một buổi thử nhỏ (≥ 20 cú ngã, ≥ 2 giờ đội mũ từ ≥ 2 người, 20 va mũ, 20 rơi mũ); LED 7 đoạn thay OLED. Không đổi phần cứng, RTL, khung, FSM. [THAY_DOI mục Điều chỉnh v2.1](THAY_DOI_SO_VOI_v1.md)
+> - **Đề cương v2.1 (16/10): gọn đề tài** theo hướng tham khảo: mạng **2 lớp NORMAL / FALL**; va đập mũ loại bằng trình tự ba pha của FSM (bất động + đầu nằm ngang + 10 s hủy); **một nút bấm** (giữ 2 s = bật, nhấn nhanh 2 lần = tắt, CANCEL, SOS; `firmware/src/pwr_btn.c`) thay cảm biến đội mũ; huấn luyện chỉ bằng D1, D2 + D3 gộp thành một buổi thử nhỏ (≥ 20 cú ngã, ≥ 2 giờ đội mũ từ ≥ 2 người, 20 va mũ, 20 rơi mũ); LED 7 đoạn thay OLED. Không đổi phần cứng, RTL, khung, FSM. [THAY_DOI mục Điều chỉnh v2.1](THAY_DOI_SO_VOI_v1.md)
 > - **AI:** D1 **11/17 người** từ 16/10 (101–110, 203; 1.180 cú ngã, 109.970 cửa sổ; phần cũ trùng từng byte; [d1_11_nguoi](docs/bao_cao/2026-10-16_d1_11_nguoi/README.md)). **Nhóm quyết chỉ dùng kênh đầu** (16/10); hộp chứa hai board + MPU6050 + nút đặt trên đỉnh mũ. Các số dưới đây vẫn là LOSO **trên 6 người**, trung bình 3 seed: **N2 Macro-F1 0,968, recall sự kiện 98,7 %**, N2-S 0,945 / 98,6 % (N1 một seed 0,861 / 85,3 %). Chọn sơ bộ **N2** vì ổn định hơn qua seed và báo nhầm ít hơn; N2-S làm phương án nhỏ (AI-09). Chênh lệch giữa các seed lớn: cần D2/D3 mới chốt. **D1 8 người (16/10), N2 chỉ đầu, 3 seed: Macro-F1 0,977, recall sự kiện 99,6 %; T_SCORE 8: ngã nằm → PRE_ALARM 96,3 %, PRE_ALARM giả 0,68/giờ** (lần đầu TB đạt cả hai chỉ tiêu trên D1; trễ PRE_ALARM với ngã nằm yên trong 2 s: p90 4,36 s) ([ai09_8_nguoi](docs/bao_cao/2026-10-16_ai09_8_nguoi/README.md)). Phát lại qua FSM (AI-10, TB 3 seed, N2, SPEC v3.1): SUSPECT trung vị 0,84 s, ngã nằm → PRE_ALARM 95,5 %, **PRE_ALARM giả 1,26/giờ** (gộp 3 seed: 0,75/giờ) trên sinh hoạt D1; chỉ tiêu ≤ 1 cần xác nhận trên mũ. **Thêm dữ liệu ngực + thắt lưng của D1 chỉ để huấn luyện (15/10, AI-09): ngã nằm 96,4 %, PRE_ALARM giả 0,88/giờ (gộp 3 seed: 96,2 % / 0,38)** — đề nghị giữ. X15 đã đo: nhánh "bất động dù đầu thẳng" báo nhầm cả ngã đã đứng dậy → đề nghị không thêm. Chưa có D2 (IMPACT, NORMAL khi đội mũ), D3
 > - **FW:** [firmware/](firmware/README.md) đủ chức năng tầng 1 (RUN/LOG/TRC/HIL/DIAG, tự kiểm A.10, watchdog), Keil 0 lỗi, 16 KB / 32 KB Flash, 5,4 KB / 8 KB RAM. Phần C thuần (tiền xử lý, khung, FSM, lõi vòng lặp, CNN MCU-only) chạy mã máy Cortex-M0 trong Unicorn và **trùng golden từng byte / từng lần đổi trạng thái**; phần chạm ngoại vi mới chỉ biên dịch. Công cụ đợt B sẵn: `check_frames.py`, `hil_test.py`, `logger.py`, `sensor_check.py`
 > - Chân: SPI trên J12 (P1.0/P1.1/P1.2), CS P2.8, IRQ P2.9 (J7), I²C J13; FPGA J1-3..8 (+ RST_N J1-8 ở top v3). **Chưa đo trên board**; đo VDD = 3,3 V trước khi nối
@@ -324,6 +324,7 @@ Ký hiệu: `(cổng · tầng)`. Chỉ đánh `[x]` khi đạt *Pass* và có b
   - **Phần máy xong 14/10:** lệnh `HIL`: MCU nhận khung 772 byte (kiểm CRC khung PC gửi), chuyển sang FPGA, trả nguyên 20 byte. Bộ đệm riêng 772 byte thay vì dùng lại `ring` (RAM còn đủ: 5,4 KB / 8 KB). PC: [tools/hil_test.py](tools/hil_test.py)
 - [ ] **FW-14** (G6·2) WEAR, SOS, tự kiểm khi bật nguồn (A.10), watchdog, RST_N sau 3 lỗi liên tiếp — *Pass:* rút dây SPI → hiện ERR, cắm lại tự hồi phục; nạp bitstream sai weight → tự kiểm báo FAIL
   - **Một phần 14/10 (chỉ biên dịch):** tự kiểm A.10 lúc khởi động so với [firmware/src/selftest_expect.h](firmware/src/selftest_expect.h) (sinh bởi `export_mem.py` cho đúng weight trong bitstream), watchdog ≈ 1 s (khóa 0x5AFA, nạp 0x55AA; WDTPRE reset = chia 1 theo datasheet 3.4.2, tần số ILRC [CẦN XÁC MINH – nguồn: lệnh `w`, X16]), RST_N sau 3 lỗi liên tiếp (`spi_fpga.c`), WEAR qua `WEAR_PRESENT`. SOS đã có trong Safety FSM
+  - **16/10, một nút (nhóm chọn):** [firmware/src/pwr_btn.c](firmware/src/pwr_btn.c) ngoài FSM tạo WEAR từ nút. 9 ca mới trong `host_main.c` (mode 4) chạy mã máy Cortex-M0 trong Unicorn, tất cả PASS: cấp nguồn, tắt, bật, giữ 6 s khi bật không thành SOS, SOS, hai lần nhấn cách xa, nhấn rồi giữ, CANCEL ở PRE_ALARM, ngã ngay sau khi tắt. Phép âm `BTN_POWER=0`: 4 ca bật/tắt FAIL. Keil 0 lỗi 0 cảnh báo, Code 16.092 (+732 B). Lõi firmware vẫn trùng golden (402 kết quả). Chưa thử trên board (bước B9)
 - [ ] **FW-15** (G6·2) Bản đối chứng `cnn_mcu.c` (project riêng): golden model bằng C số nguyên — *Pass:* khớp golden trên 50 vector; có số ms mỗi lần đo bằng GPIO
   - **Phần máy xong 14/10:** [firmware/src/cnn_mcu.c](firmware/src/cnn_mcu.c) chạy N1, N2, N2-S, N2-L. Trong Unicorn: **khớp golden 50/50 trên 5 mô hình** (lớp, SCORE, 4 logit). Đếm lệnh Cortex-M0 một lần suy luận (`-O3`): N1 2,39 triệu lệnh → **74,6 ms** nếu nhân 1 chu kỳ, **232,7 ms** nếu nhân 32 chu kỳ (X7), cộng tới ≈ 26 ms nếu Flash 1 wait-state; N2 2,37 triệu lệnh → 73,9–232,3 ms (đề cương làm tròn "khoảng 2,4 triệu lệnh, 74–232 ms"); N2-S 39,3–118,9 ms. Là dự toán từ số lệnh thật, chưa đo GPIO trên chip. Bằng chứng: [docs/bao_cao/2026-10-14_fw15_mcu_only/](docs/bao_cao/2026-10-14_fw15_mcu_only/)
 - [ ] **FW-16** (·3) Ghi sự kiện vào Flash; `GATE_EN` bỏ qua cửa sổ khi 8 khối gần nhất đều bất động
@@ -428,7 +429,7 @@ Ký hiệu: `(cổng · tầng)`. Chỉ đánh `[x]` khi đạt *Pass* và có b
 - [ ] **TH-01** (G0·1) Repo Git; cấu trúc `docs/ firmware/ rtl/ ml/ tools/`; chép Phụ lục A thành `docs/spec.md`; tạo `docs/bao_cao/` — *Pass:* cả nhóm clone được
   - 15/10: repo GitHub private `danhle396/fpga2026gowin`; cấu trúc và `docs/bao_cao/` có sẵn. `docs/spec.md` sinh bằng `tools/sync_spec.py` từ Phụ lục A (bản gốc vẫn là Phụ lục A; `--check` báo lệch). Máy thứ hai đã clone và chạy được cả chuỗi kiểm ([may2_icarus12](docs/bao_cao/2026-10-15_may2_icarus12/README.md)). **Còn thiếu:** từng thành viên tự clone được (mời vào repo private)
 - [ ] **TH-02** (G0·1) Xác nhận Phụ lục E trên board thật: tìm sơ đồ `32F407 EVK V1.0.pdf` và chép vào `docs/datasheet/` (sơ đồ Kiwi và datasheet MCU đã chép 14/10); tám chân MCU mới chọn ở E.1 có ra header và còn trống không; dò 6 chân J1 của Kiwi theo E.4 — *Pass:* mọi dòng ở E.1 có dấu "đã kiểm"; không chân nào trùng chân nạp; đo I/O hai board đều 3,3 V
-- [ ] **TH-03** (G0·1) Vật tư: logic analyzer 8 kênh, mũ bảo hộ, công tắc gạt bật/tắt hệ thống (v2.1, nối P2.3 xuống GND), đệm ≥ 10 cm, power bank, cáp 4 lõi ≤ 50 cm — *Pass:* đủ đồ
+- [ ] **TH-03** (G0·1) Vật tư: logic analyzer 8 kênh, mũ bảo hộ, một nút nhấn (v2.1, nối song song SW3: P2.4 xuống GND), đệm ≥ 10 cm, power bank, cáp 4 lõi ≤ 50 cm — *Pass:* đủ đồ
 - [ ] **TH-04** (G1·1) Gắn IMU lên mũ theo A.1; ghi `AZ_dung_yen` — *Pass:* lắc mạnh không lỏng; giá trị ≈ +2048
 - [ ] **TH-05** (G2·1) Ảnh logic analyzer một giao dịch ghi, một giao dịch đọc — *Pass:* lưu trong `docs/bao_cao/`
 - [ ] **TH-06** (G3·1) An toàn và tổ chức buổi thu: đệm, bảo hộ, người đứng cạnh, giấy đồng ý — *Pass:* mọi người tham gia đã ký
@@ -485,7 +486,7 @@ Quy tắc testbench: đọc file bằng `$readmemh`, tự so, in `PASS` hoặc `
 | MCU hoặc FPGA nóng, đọc sai | VDD của EVK đang là 5 V (SW1 hoặc jumper J1 sai) | Đặt theo E.4 bước 1, đo VDD trước khi cắm dây |
 | Khung SPI đọc về sai lẻ tẻ, MISO có hai mức lạ | Flash SPI của EVK cũng đang được chọn | Giữ P1.8 mức cao; làm phép thử E.4 bước 2 |
 | Huấn luyện 99 % nhưng thử thật kém | Chia ngẫu nhiên theo cửa sổ; mũ gắn lệch chiều | Dùng LOSO; kiểm `AZ_dung_yen` |
-| Báo giả khi đặt mũ xuống bàn | Quên tắt công tắc; mũ nằm nghiêng và bất động | Tắt công tắc trước khi tháo mũ; CANCEL trong 10 s; đường lùi: lớp IMPACT hoặc quy tắc rơi tự do |
+| Báo giả khi đặt mũ xuống bàn | Quên tắt hệ thống; mũ nằm nghiêng và bất động | Nhấn nhanh 2 lần để tắt trước khi tháo mũ; CANCEL trong 10 s; đường lùi: lớp IMPACT hoặc quy tắc rơi tự do |
 | HIL lệch vài cửa sổ hiếm | Giá trị biên, bão hòa | Lấy đúng cửa sổ đó làm test vector, so từng tầng |
 
 ---
@@ -501,7 +502,8 @@ Mọi tính năng tầng 2–3 tắt được mà không hỏng tầng 1.
 | `DECIM` | `config.h` + `windowing.py` | 2 | 2 | 1 = mạng nhận 100 Hz, cửa sổ 1,28 s. Chỉ dùng được khi mọi nguồn huấn luyện có ≥ 100 Hz; D1 chỉ có 25 Hz nên hiện không dùng được |
 | `VOTE_K` | `config.h` | 1 | 2 | Một cửa sổ FALL là đủ |
 | `TILT_EN` | `config.h` | 0 | 1 | Chỉ cần bất động |
-| `WEAR_PRESENT` | `firmware/src/board.h` | 0 | 1 (khi đã nối công tắc bật/tắt vào P2.3) | Coi như hệ thống luôn bật |
+| `WEAR_PRESENT` | `firmware/src/board.h` | 0 | 0 (v2.1 bật/tắt bằng nút; chỉ đặt 1 nếu có cảm biến đội mũ trên P2.3) | Coi như luôn đội |
+| `BTN_POWER` | `firmware/src/fw_config.h` | 1 | 1 | Nút chỉ còn CANCEL/SOS, hệ thống luôn bật |
 | `SOS_EN`, `SELFTEST_EN` | `config.h` | 0 | 1 | Bỏ tính năng |
 | `PROTO` | `config.h` + RTL | 3 | 3 | 1 = khung CRC-8 hiện có |
 | `GATE_EN` | `config.h` | 0 | 0 | (tầng 3) |
@@ -509,13 +511,13 @@ Mọi tính năng tầng 2–3 tắt được mà không hỏng tầng 1.
 | Nếu… | Thì… | Mất gì |
 |---|---|---|
 | D1 không dùng được trên mũ (AI-14 không đạt sau các bước a, b, c) | Tự thu ≥ 250 cú ngã từ ≥ 8 người như kế hoạch cũ | Khoảng 1 tuần; phải sửa lại mục dữ liệu của đề cương |
-| D2 ít | **Đã áp dụng ở v2.1 (16/10):** gộp IMPACT vào NORMAL (2 lớp), dựa vào công tắc bật/tắt và FSM; đề cương đã sửa | Macro-F1 thành 2 lớp |
+| D2 ít | **Đã áp dụng ở v2.1 (16/10):** gộp IMPACT vào NORMAL (2 lớp), dựa vào nút bật/tắt và FSM; đề cương đã sửa | Macro-F1 thành 2 lớp |
 | N2 không hơn N1 | Giữ N1 | Không mất gì |
 | E2 chưa xong | Chạy N2 trên E1 mở rộng, ≈ 14 ms | Chỉ mất chỉ tiêu ≤ 6 ms; mô hình và các chỉ tiêu nhận dạng không bị ảnh hưởng |
 | Giao thức v3 chậm | `PROTO = 1` | SEQ, STATUS, CRC-16 |
 | Timing không đạt 50 MHz | Chạy 27 MHz không PLL, SCK ≤ 2 MHz | Thời gian suy luận gấp 1,86 lần |
 | I²C phần cứng trục trặc | `i2c_soft.c` | ≈ 1,2 ms mỗi mẫu |
-| Không làm được cảm biến đội mũ | **Đã áp dụng ở v2.1:** công tắc gạt bật/tắt trên P2.3, `WEAR_PRESENT = 1` | Không phát hiện được mũ văng khi chưa SUSPECT (vốn cũng không xét sau SUSPECT) |
+| Không làm được cảm biến đội mũ | **Đã áp dụng ở v2.1:** một nút bấm bật/tắt (`pwr_btn.c`, `BTN_POWER = 1`) | Không phát hiện được mũ văng khi chưa SUSPECT (vốn cũng không xét sau SUSPECT) |
 | Chưa có OLED | Hiện trạng thái bằng LED 7 đoạn 4 số trên EVK (P0.0–P0.7, P1.9–P1.12), quét bằng ngắt timer | Chữ hiển thị rút gọn; đề cương ghi OLED nên phải nêu trong báo cáo |
 | Hỏng phần cứng lúc demo | Video dự phòng + HIL trên PC | — |
 
@@ -565,9 +567,9 @@ Không có tuần đệm. Cuối tuần 3 phải có mũ tầng 1; nếu trễ t
 
 ## 12. Kịch bản demo (3–5 phút)
 
-1. Bật nguồn: tự kiểm FPGA, LED 7 đoạn hiện trạng thái MONITOR. Đội mũ, bật công tắc, đi lại, cúi, quay đầu.
-2. Tắt công tắc → `STANDBY`, tháo mũ, thả rơi mũ → không báo động.
-3. Đội lại, bật công tắc, va mũ vào xà → không báo động (người vẫn đứng, không bất động).
+1. Bật nguồn: tự kiểm FPGA, LED 7 đoạn hiện trạng thái MONITOR. Đội mũ, đi lại, cúi, quay đầu.
+2. Nhấn nhanh 2 lần (bíp dài) → `STANDBY`, tháo mũ, thả rơi mũ → không báo động.
+3. Đội lại, giữ nút 2 s (2 bíp ngắn) để bật, va mũ vào xà → không báo động (người vẫn đứng, không bất động).
 4. Ngã trên đệm, nằm yên → `SUSPECT` → `PRE_ALARM`, đếm ngược → bấm CANCEL.
 5. Ngã lần nữa, không bấm → `ALARM`.
 6. Đứng dậy, giữ nút 3 s → báo động SOS.
@@ -585,7 +587,7 @@ Luôn có video dự phòng.
 | Ngã giả lập có giống ngã thật? | Không hoàn toàn. Cả D1 lẫn D3 đều là ngã giả lập của người tình nguyện; phạm vi đề tài ghi rõ điều này; báo cáo kèm số ca tuyệt đối; đánh giá tách người |
 | Huấn luyện bằng dữ liệu người khác thu, cảm biến buộc ở đầu chứ không nằm trên mũ, thì có đúng với mũ không? | Không mặc nhiên đúng, nên nhóm đo: AI-14 đo độ chênh ở tuần 3, và mọi mô hình đều phải qua D3 (≥ 20 cú ngã khi đội mũ, v2.1) cùng thử trực tiếp ≥ 18/20. Lý do chọn cách này: đã có sẵn 604 cú ngã của 6 người (bộ đầy đủ là 17 người) thay cho 250 cú phải tự thu, và người tình nguyện chỉ phải ngã ≥ 40 lần |
 | Người ngã còn tỉnh nhưng không dậy được? | Nút SOS giữ 3 s; trạng thái SUSPECT vẫn được ghi log |
-| Mũ văng khỏi đầu khi ngã? | Từ SUSPECT trở đi bỏ qua công tắc (WEAR); mũ nằm yên và nghiêng vẫn dẫn tới báo động — cố ý thiên về an toàn |
+| Mũ văng khỏi đầu khi ngã? | Từ SUSPECT trở đi bỏ qua trạng thái bật/tắt (WEAR); mũ nằm yên và nghiêng vẫn dẫn tới báo động — cố ý thiên về an toàn |
 | Lượng tử hóa mất bao nhiêu? | Bảng FP32 / INT8 / RTL; trên SisFall đã đo −1 đến −2 điểm recall FALL |
 | Làm sao biết phần cứng tính đúng? | HIL ≥ 2.000 cửa sổ khớp từng bit; tự kiểm LFSR mỗi lần bật nguồn |
 | Số ≤ 6 ms lấy từ đâu? | E2 đã có trong mô phỏng (14/10): N2 5,15 ms, N2-S 2,65 ms với 1 làn, khớp golden ở mọi tầng 50/50; bản E1 đo được 13,96 ms. Chưa đo trên chip |
@@ -730,8 +732,8 @@ Chế độ RUN đọc 7 byte; chế độ HIL đọc 20 byte. Không có kết 
 
 | Chuyển trạng thái | Điều kiện |
 |---|---|
-| MONITOR → STANDBY | `WEAR = 0` (công tắc TẮT) liên tục 3 s |
-| STANDBY → MONITOR | `WEAR = 1` (công tắc BẬT) |
+| MONITOR → STANDBY | `WEAR = 0` (hệ thống TẮT bằng nút) liên tục 3 s |
+| STANDBY → MONITOR | `WEAR = 1` (hệ thống BẬT) |
 | MONITOR → SUSPECT | `fall_votes ≥ VOTE_K` và mũ đã được đội trong 3 s gần nhất |
 | SUSPECT → PRE_ALARM | `still_run ≥ STILL_BLOCKS` và (nếu `TILT_EN`) **`\|az_tb\| < T_TILT`**: đầu nằm ngang, lệch 45°–135° khỏi phương thẳng đứng (v3.1, 15/10) |
 | SUSPECT → MONITOR | Quá `SUSPECT_TIMEOUT` |
@@ -741,6 +743,14 @@ Chế độ RUN đọc 7 byte; chế độ HIL đọc 20 byte. Không có kết 
 | ALARM → COOLDOWN → MONITOR | Giữ CANCEL 1 s; chờ `COOLDOWN_TIME` |
 
 Từ SUSPECT trở đi bỏ qua WEAR. IMPACT khi đang đội (chỉ khi bật lớp này): một tiếng bíp + ghi log. Ưu tiên: CANCEL > timeout > phiếu CNN > khối.
+
+**Nút (v3.2).** Chỉ có một nút. `pwr_btn.c` nằm ngoài FSM và tạo WEAR = trạng thái bật/tắt:
+- cấp nguồn = BẬT;
+- ở STANDBY, giữ ≥ 2 s = BẬT; lần nhấn này không đưa vào FSM;
+- ở MONITOR, nhấn nhanh 2 lần (mỗi lần < 0,4 s, lần 2 bắt đầu < 0,6 s sau khi nhả lần 1) = TẮT;
+- mọi cử chỉ khác đưa nguyên vào FSM như trên (giữ 3 s = SOS, nhấn ở PRE_ALARM = CANCEL, giữ 1 s ở ALARM).
+
+Còi xác nhận: BẬT = 2 bíp 100 ms, TẮT = 1 bíp 600 ms.
 
 | Tham số | Giá trị đầu | Chốt ở |
 |---|---|---|
@@ -774,7 +784,7 @@ MCU tạo payload 768 byte bằng LFSR Galois 16 bit (đa thức 0xB400, mầm 0
 | 2026-10-03 | v1: đeo thắt lưng, 100 Hz, 3 lớp Conv |
 | 2026-10-12 | v2: mũ, 50 Hz, 2 lớp Conv, kênh trước, UINT8 |
 | 2026-10-12 | v3: lấy RTL hiện có làm gốc (vị trí trước, 0..127, dịch sàn); cảm biến 100 Hz ±16 g ±2000 °/s, MCU giảm còn 50 Hz; bước 0,32 s + bỏ phiếu; N1/N2; E1/E2; lớp 0 NORMAL, 1 IMPACT, 3 FALL; giao thức v3; bỏ CONFIRM, thêm SOS và tự kiểm |
-| 2026-10-16 | **v3.2** (đi cùng đề cương v2.1): A.4 chỉ huấn luyện 2 lớp 0 NORMAL và 3 FALL, lớp 1 IMPACT để dành; A.8 đầu vào WEAR là công tắc bật/tắt hệ thống trên mũ. Không đổi khung, số học, FSM hay vector; mô hình đã có vốn là 2 lớp vì D1 không có IMPACT |
+| 2026-10-16 | **v3.2** (đi cùng đề cương v2.1): A.4 chỉ huấn luyện 2 lớp 0 NORMAL và 3 FALL, lớp 1 IMPACT để dành; A.8 đầu vào WEAR là trạng thái bật/tắt do một nút bấm tạo (`pwr_btn.c`), thêm quy ước nút. Không đổi khung, số học, FSM hay vector; mô hình đã có vốn là 2 lớp vì D1 không có IMPACT |
 | 2026-10-15 | **v3.1**: A.8 điều kiện nghiêng thành hai phía `\|az_tb\| < T_TILT` (trước: `az_tb < T_TILT`). Lý do: phát lại D1 cho thấy 15/22 PRE_ALARM giả có `az_tb` ≈ −2040 (đầu lộn ngược khi cúi gập sau khi vấp, nhặt đồ), còn 375/375 cú ngã nằm tới PRE_ALARM có `az_tb` ≥ −1074. Không đổi khung, số học hay vector |
 | 2026-10-14 | v3 (làm rõ, không đổi số học hay khung): A.7 thêm quy ước một bộ đệm kết quả và giá trị `STATUS` cho từng lỗi; `cnn_params.vh` thêm `CNN_SCORE_SHIFT` (lấy từ `score_shift` trong json) |
 
@@ -994,6 +1004,7 @@ uint16_t crc16_ccitt(const uint8_t *p, uint32_t n)
 | 2026-10-16 | **Đề cương v2.1 + SPEC v3.2: gọn đề tài.** Mạng 2 lớp NORMAL / FALL (IMPACT để dành); công tắc bật/tắt thay cảm biến đội mũ; huấn luyện chỉ bằng D1; D2 + D3 thành một buổi thử nhỏ chỉ để kiểm tra; chỉ tiêu rơi mũ đổi thành "đếm và hủy được"; LED 7 đoạn thay OLED. Sửa DE_CUONG_v2 (23 chỗ + ghi chú phiên bản), THAY_DOI (dòng 5, 9, 14, 18, mục Điều chỉnh v2.1, đoạn giải trình), file này (tóm tắt, 4.4, G3, G5, G6, AI-05, AI-07, AI-08, RA-06, TH-03, TH-10, mục 9, mục 10, demo, A.4, A.8, E.1) | Nhóm yêu cầu làm ở mức vừa sức, gần hướng tham khảo (2 lớp, ESP32 → MCU + FPGA). Số liệu cho phép: trên D1 8 người, mạng 2 lớp + FSM v3.1 cho ngã nằm → PRE_ALARM 96,3 %, 0,68 báo giả/giờ, trễ p90 4,36 s với ngã nằm yên trong 2 s ([ai09_8_nguoi](docs/bao_cao/2026-10-16_ai09_8_nguoi/README.md)). Firmware đã có đầu vào WEAR trên P2.3 nên công tắc không cần sửa mã. Đường lùi: bật lại lớp IMPACT (đầu ra 4 logit sẵn) hoặc quy tắc rơi tự do nếu buổi thử có > 2/20 va mũ vào PRE_ALARM |
 | 2026-10-16 | **D1 lên 11/17 người** (101–110, 203; 1.180 cú ngã); **nhóm quyết chỉ dùng kênh đầu** (AI-09: bỏ dữ liệu thân); thiết kế hộp trên đỉnh mũ (hai board + MPU6050 + nút + pin). `playback_d1.py`, `spectrum_check.py` nạp `.npz` một lần (phát lại 15–20 phút → 80 s, kết quả trùng) | Một lượt tải UCI giữ được 87 phút. Nạp lười làm mỗi bản ghi giải nén lại cả mảng 12 MB, và làm hỏng lượt phát lại N2 + dữ liệu thân khi file bị chép đè. Hộp trên đỉnh mũ đặt cảm biến ở đỉnh đầu, giống vị trí cảm biến đầu của D1. [d1_11_nguoi](docs/bao_cao/2026-10-16_d1_11_nguoi/README.md) |
 | 2026-10-16 | **Chốt mô hình phần cứng: N2 chỉ dữ liệu đầu trên E2 (bitstream 3)**; N1/E1 chỉ để thông mạch SPI (B7). Tiến trình dài chuyển sang Task Scheduler (tác vụ `fpga2026_jobs`) | N1 trên 8 người: Macro-F1 0,842, recall 87,0 %, không đạt ≥ 95 % và ≤ 6 ms; N2: 0,977, 99,6 %, 5,15 ms. Tiến trình chạy tách qua WMI bị tắt im lặng sau vài phút (lô N2 11 người, chuỗi phần cứng, tải). [ai09_8_nguoi](docs/bao_cao/2026-10-16_ai09_8_nguoi/README.md) |
+| 2026-10-16 | **Một nút cho bật/tắt + CANCEL + SOS** (nhóm chọn cách 2): `firmware/src/pwr_btn.c/.h`, `BTN_POWER` trong `fw_config.h`, ghép vào `app_tick`; SPEC v3.2 thêm quy ước nút ở A.8; E.1 nút ngoài nối song song SW3 (P2.4); thay mọi chỗ "công tắc bật/tắt" ở DE_CUONG_v2, THAY_DOI và file này; B9 của hướng dẫn đợt B viết lại | Hộp trên đỉnh mũ chỉ có 1 nút. Không sửa Safety FSM, nên FSM vẫn trùng `safety_model.py` (240.000 tick). 9/9 ca nút PASS trên mã máy, phép âm bắt được; giữ 2 s để bật không vô tình thành SOS; ngã ngay sau khi tắt vẫn báo động và vẫn CANCEL được |
 
 ---
 
@@ -1026,9 +1037,9 @@ Vỏ LQFP48 của SN32F407F chỉ đưa ra các chân: P0.0–P0.7, P0.10, P0.11
 | I²C SCL | P0.10 (42), SCL0 lựa chọn 2 · header J13 `SCL_P010` | MPU6050 SCL, OLED SCL | — | datasheet + EVK + header |
 | I²C SDA | P0.11 (43), SDA0 lựa chọn 2 · J13 `SDA_P011` | MPU6050 SDA, OLED SDA | — | datasheet + EVK + header |
 | INT cảm biến | P2.2 (13) · J7 `P22`, vào, kéo xuống, ngắt cạnh lên | MPU6050 INT | — | datasheet + header |
-| WEAR | P2.3 (14) · J7 `P23`, vào, kéo lên | Công tắc gạt bật/tắt hệ thống xuống GND (v2.1; đóng = BẬT); đặt `WEAR_PRESENT 1` | — | datasheet + header |
+| WEAR | P2.3 (14) · J7 `P23`, vào, kéo lên | Không dùng ở v2.1 (bật/tắt bằng nút, `pwr_btn.c`); dự trữ cho cảm biến đội mũ, khi đó đặt `WEAR_PRESENT 1` | — | datasheet + header |
 | UART0 TX / RX | P3.1 (30) / P3.2 (31), lựa chọn 2 · header J10 `UTX_P31` / `URX_P32` | Mạch USB-UART (RX / TX) | — | datasheet + EVK + header |
-| CANCEL / SOS | Phím SW3: ROW0 = P1.4 (45) ra mức 0, COL0 = P2.4 (15) vào kéo lên, nhấn = 0 | Phím ma trận trên EVK | — | EVK |
+| Nút duy nhất: BẬT/TẮT + CANCEL + SOS (v2.1) | Phím SW3: ROW0 = P1.4 (45) ra mức 0, COL0 = P2.4 (15) vào kéo lên, nhấn = 0. Nút ngoài trên hộp nối song song SW3 (P2.4 xuống GND) | Phím ma trận trên EVK; P2.4 ra header hay không **[CẦN XÁC MINH trên board]**, nếu không thì hàn song song vào SW3 | — | EVK |
 | Nút đánh dấu, cũng là nút chọn chế độ LOG lúc khởi động | Phím SW6: ROW0 = P1.4, COL3 = P2.7 (18) vào kéo lên | Phím ma trận trên EVK | — | EVK |
 | LED báo | P3.8 (1), mức thấp = sáng | LED D6 trên EVK | — | EVK |
 | Còi | P3.0 (29), CT16B0_PWM0 lựa chọn 1 | Còi trên EVK | — | datasheet + EVK; cực tính chưa thử |

@@ -2,7 +2,7 @@
 ## CUỘC THI THIẾT KẾ FPGA VÀ MCU MỞ RỘNG KHU VỰC MIỀN TRUNG 2026
 
 *Bản cập nhật (v2), ngày 12/10/2026 — thay cho bản đã nộp. Các điểm thay đổi được liệt kê trong tài liệu kèm theo "Thay đổi so với bản v1".*
-*Bản v2.1, ngày 16/10/2026. Gọn lại sau khi nộp v2: mạng còn 2 lớp (NORMAL, FALL); va đập mũ được loại bằng trình tự ba pha của Safety FSM; công tắc bật/tắt thay cho cảm biến đội mũ; không tự thu dữ liệu huấn luyện, chỉ có một buổi thử trên mũ. Chi tiết ở mục "Điều chỉnh v2.1" của tài liệu kèm theo.*
+*Bản v2.1, ngày 16/10/2026. Gọn lại sau khi nộp v2: mạng còn 2 lớp (NORMAL, FALL); va đập mũ được loại bằng trình tự ba pha của Safety FSM; một nút bấm duy nhất (bật/tắt, CANCEL, SOS) thay cho cảm biến đội mũ; không tự thu dữ liệu huấn luyện, chỉ có một buổi thử trên mũ. Chi tiết ở mục "Điều chỉnh v2.1" của tài liệu kèm theo.*
 
 ---
 
@@ -28,13 +28,13 @@
 
 **Đặt vấn đề.** Công nhân công trường, nhà máy và người làm việc một mình có nguy cơ té ngã kèm chấn thương đầu mà không có người phát hiện kịp. Mũ bảo hộ là vật bắt buộc phải đội, có vị trí cố định trên cơ thể và ở gần đầu, nên là nơi phù hợp để gắn cảm biến quán tính. Khó khăn riêng của mũ là các va đập không phải ngã: rơi mũ, va mũ vào vật cản, tháo và đội mũ. Một cú ngã gồm ba pha nối tiếp nhau — mất thăng bằng, va chạm, nằm yên [1], [2] — nên muốn phân biệt ngã với một cú va mũ thì phải xét được trình tự trước và sau va chạm, không chỉ riêng xung va chạm.
 
-**Giải pháp.** Nhóm xây dựng một mũ bảo hộ gắn MPU6050. Vi điều khiển SN32F407 đọc cảm biến ở 100 Hz, lọc và giảm mẫu còn 50 Hz, lượng tử hóa về INT8 và giữ cửa sổ 128 mẫu (2,56 s). Cứ 0,32 s, MCU gửi một cửa sổ sang FPGA Gowin qua SPI. Mạng 1D-CNN INT8 do nhóm tự viết bằng RTL phân loại cửa sổ thành FALL hoặc NORMAL và báo cho MCU bằng chân ngắt. MCU kết hợp kết quả của ba cửa sổ liên tiếp với phép đo bất động và tư thế của đầu để quyết định cảnh báo tại chỗ bằng LED 7 đoạn, còi và LED. Người đội bật hoặc tắt hệ thống bằng một công tắc trên mũ. Thiết bị chạy độc lập, không cần PC hay Internet.
+**Giải pháp.** Nhóm xây dựng một mũ bảo hộ gắn MPU6050. Vi điều khiển SN32F407 đọc cảm biến ở 100 Hz, lọc và giảm mẫu còn 50 Hz, lượng tử hóa về INT8 và giữ cửa sổ 128 mẫu (2,56 s). Cứ 0,32 s, MCU gửi một cửa sổ sang FPGA Gowin qua SPI. Mạng 1D-CNN INT8 do nhóm tự viết bằng RTL phân loại cửa sổ thành FALL hoặc NORMAL và báo cho MCU bằng chân ngắt. MCU kết hợp kết quả của ba cửa sổ liên tiếp với phép đo bất động và tư thế của đầu để quyết định cảnh báo tại chỗ bằng LED 7 đoạn, còi và LED. Người đội bật, tắt hệ thống và hủy cảnh báo bằng một nút bấm duy nhất trên hộp. Thiết bị chạy độc lập, không cần PC hay Internet.
 
 **Tính mới so với hướng tham khảo.** Đề tài tham khảo hướng mũ bảo hộ thông minh của nhóm EDL_AIOT (Cuộc thi Thiết kế điện tử Việt Nam 2025; mô hình học sâu chạy trên ESP32-S3, hai lớp ngã / không ngã). Các điểm khác của nhóm:
 
 1. Toàn bộ suy luận chạy trên **bộ tăng tốc 1D-CNN INT8 viết bằng RTL**, không dùng IP tăng tốc AI đóng gói sẵn. Kết quả phần cứng được yêu cầu **khớp từng bit** với mô hình tham chiếu số nguyên.
 2. **Suy luận dày**: mỗi sự kiện được mạng nhìn ba lần ở ba vị trí khác nhau trong cửa sổ, rồi bỏ phiếu 2 trên 3. Cách làm này tương tự làm mượt kết quả trên cửa sổ trượt trong nhận dạng từ khóa [7].
-3. **Phân biệt ngã với va đập mũ bằng trình tự ba pha**, thay vì dạy mạng thêm một lớp IMPACT. Mạng chỉ trả lời một câu hỏi: cửa sổ này có giống một cú ngã không. Safety FSM xác nhận hai pha sau va chạm: bất động 2,56 s và đầu nằm ngang (lệch 45°–135° so với phương thẳng đứng). Sau đó còn 10 s để người dùng hủy. Một cú va mũ khi đang đội (người vẫn đứng, vẫn cử động) không qua được hai pha này. Công tắc bật/tắt trên mũ thay cho cảm biến đội mũ. Nhờ vậy mạng giữ 2 lớp như hướng tham khảo, không cần tự thu hàng trăm va đập mũ để huấn luyện.
+3. **Phân biệt ngã với va đập mũ bằng trình tự ba pha**, thay vì dạy mạng thêm một lớp IMPACT. Mạng chỉ trả lời một câu hỏi: cửa sổ này có giống một cú ngã không. Safety FSM xác nhận hai pha sau va chạm: bất động 2,56 s và đầu nằm ngang (lệch 45°–135° so với phương thẳng đứng). Sau đó còn 10 s để người dùng hủy. Một cú va mũ khi đang đội (người vẫn đứng, vẫn cử động) không qua được hai pha này. Một nút bấm duy nhất (giữ 2 s để bật, nhấn nhanh 2 lần để tắt) thay cho cảm biến đội mũ. Nhờ vậy mạng giữ 2 lớp như hướng tham khảo, không cần tự thu hàng trăm va đập mũ để huấn luyện.
 4. Mạng **giữ thứ tự thời gian** đến lớp cuối, để phân biệt được trình tự "đứng → va chạm → nằm" của một cú ngã với "va chạm rồi tiếp tục hoạt động" của một cú va mũ.
 
 **Các lớp nhận diện**
@@ -46,7 +46,7 @@
 
 **Va đập mũ** (va mũ vào vật, gõ vào mũ khi đang đội; rơi mũ; tháo và đội mũ) không phải một lớp của mạng mà được xử lý ở các tầng sau:
 - va đập khi đang đội: người vẫn đứng và cử động, nên không qua điều kiện bất động và đầu nằm ngang;
-- tháo mũ để xuống: người dùng tắt công tắc trước, hệ thống về STANDBY;
+- tháo mũ để xuống: người dùng tắt hệ thống trước (nhấn nhanh 2 lần), hệ thống về STANDBY;
 - mũ rơi khi hệ thống đang bật và nằm nghiêng dưới đất: có thể vào PRE-ALARM, khi đó người dùng hủy bằng CANCEL trong 10 s đếm ngược.
 
 Phần cứng vẫn xuất 4 logit. Chỉ số 1 (IMPACT) và 2 (suýt ngã) được để dành cho mục tiêu mở rộng, nên thêm lớp chỉ cần huấn luyện lại, không phải sửa RTL. Tư thế nằm sau ngã không phải một lớp; Safety FSM suy ra từ độ bất động và tư thế của đầu.
@@ -62,7 +62,7 @@ Phần cứng vẫn xuất 4 logit. Chỉ số 1 (IMPACT) và 2 (suýt ngã) đ�
  │ ±16 g, ±2000 °/s │  INT    │ Lọc [1,3,3,1]/8, ↓2 → 50 Hz│  mỗi 0,32 s    │ Bộ đệm cửa sổ (BSRAM)        │
  └──────────────────┘────────►│ Lượng tử INT8, ring 128×6  │                │ 1D-CNN INT8 (RTL tự viết)    │
  ┌──────────────────┐         │                            │◄───────────────│  Conv → Pool → … → Dense     │
- │ Công tắc BẬT/TẮT │────────►│ Khối bất động + độ nghiêng │  IRQ + 7 byte  │ Argmax + Score               │
+ │ Nút bấm (1 nút)  │────────►│ Khối bất động + độ nghiêng │  IRQ + 7 byte  │ Argmax + Score               │
  │ Nút CANCEL / SOS │────────►│ Bỏ phiếu 2/3 → Safety FSM  │───────────────►│ Thanh ghi kết quả, IRQ       │
  └──────────────────┘         │ LED 7 đoạn·còi·LED·UART log│     RST_N      └──────────────────────────────┘
                               └────────────────────────────┘
@@ -121,8 +121,7 @@ Mô hình trên sẽ được so sánh với mô hình 2 lớp Conv + Global Ave
 | LED 7 đoạn có sẵn trên EVK (OLED SSD1306 tùy chọn) | GPIO quét LED (OLED: I²C dùng chung, cập nhật từng trang) | Sonix MCU | 3,3 V |
 | Còi | PWM qua transistor | Sonix MCU | 3,3 V / 5 V |
 | LED đỏ / xanh | GPIO | Sonix MCU | 3,3 V |
-| Nút CANCEL (giữ 3 s = SOS) | GPIO, chống dội bằng phần mềm | Sonix MCU | 3,3 V |
-| Công tắc BẬT/TẮT hệ thống trên mũ | GPIO P2.3 kéo lên; đóng (nối GND) = hệ thống hoạt động | Sonix MCU | 3,3 V |
+| Một nút bấm trên hộp: giữ 2 s khi đang TẮT = bật, nhấn nhanh 2 lần khi đang theo dõi = tắt, nhấn khi đếm ngược = CANCEL, giữ 3 s = SOS | GPIO P2.4 kéo lên (song song phím SW3 của EVK), nhấn = GND, chống dội 20 ms bằng phần mềm | Sonix MCU | 3,3 V |
 | PC gỡ lỗi / thu dữ liệu | UART 460800 baud | Sonix MCU | USB 5 V |
 
 **Lưu ý thiết kế.** (i) MCU chạy được từ 1,8 V đến 5,5 V và mức logic theo VDD [10]; nhóm cấp VDD = 3,3 V cho board MCU bằng bộ ổn áp 3,3 V có sẵn trên board [12] và đo lại trước khi nối với FPGA và cảm biến. (ii) Chân SPI và IRQ phía FPGA đặt trên header J1 của board, thuộc bank 0 và 1 cấp 3,3 V, ràng buộc ở chuẩn LVCMOS33 [11]. (iii) Nếu gắn thêm OLED: một lần làm tươi toàn bộ mất khoảng 25 ms, dài hơn chu kỳ lấy mẫu 10 ms, nên chỉ cập nhật từng trang xen giữa các lần đọc cảm biến. (iv) Cáp I²C từ mũ tới hộp mạch không dài quá 50 cm.
@@ -130,8 +129,8 @@ Mô hình trên sẽ được so sánh với mô hình 2 lớp Conv + Global Ave
 ### 4. Thiết bị & linh kiện đề nghị BTC hỗ trợ
 
 - **Bo mạch / mạch nạp:** 01 Kiwi Primer 20K; 01 SN32F407_EVK; 01 SN-LINK-V3 (nếu BTC chưa cấp cho đội).
-- **Cảm biến / module:** 01 MPU6050; còi, LED, nút nhấn, công tắc gạt, dây nối; 01 OLED SSD1306 I²C (tùy chọn).
-- **Nhóm tự chuẩn bị:** mũ bảo hộ, công tắc bật/tắt gắn trên mũ, hộp và đai gắn mạch, pin dự phòng 5 V, đệm tập.
+- **Cảm biến / module:** 01 MPU6050; còi, LED, nút nhấn, dây nối; 01 OLED SSD1306 I²C (tùy chọn).
+- **Nhóm tự chuẩn bị:** mũ bảo hộ, hộp gắn trên đỉnh mũ chứa hai board, cảm biến, nút bấm và pin, pin dự phòng 5 V, đệm tập.
 
 ---
 
@@ -141,7 +140,7 @@ Mô hình trên sẽ được so sánh với mô hình 2 lớp Conv + Global Ave
 
 **Gowin FPGA (RTL).** SPI Slave đồng bộ SCK, CS, MOSI vào miền clock hệ thống bằng chuỗi flip-flop; bộ phân tích khung kiểm CRC-16 và ghi cửa sổ vào BSRAM; bộ tăng tốc 1D-CNN gồm một khối nhân–cộng dồn dùng chung chạy tuần tự qua các lớp, hai RAM đặc trưng dùng luân phiên, ROM trọng số và ROM bias khởi tạo từ file `.mem`; khối Argmax tính lớp thắng và điểm tin cậy (hiệu giữa logit lớn nhất và lớn nhì, bão hòa về 0…127); thanh ghi kết quả và chân IRQ. Dữ liệu trong RAM được xếp theo thứ tự thời gian nên cửa sổ tích chập là một dải địa chỉ liên tiếp, bộ sinh địa chỉ chỉ cần bộ đếm. Bộ đếm chu kỳ trong RTL ghi lại thời gian của từng lần suy luận.
 
-**Sonix MCU (firmware).** Cấu hình MPU6050 ở 100 Hz, bộ lọc số 44 Hz, dải ±16 g và ±2000 °/s; đọc 14 byte theo ngắt data-ready (ISR chỉ đặt cờ); hiệu chuẩn độ lệch con quay khi khởi động. Bộ lọc giảm mẫu số nguyên `(r₀ + 3r₁ + 3r₂ + r₃ + 4) >> 3` đưa tín hiệu về 50 Hz, suy giảm 13,8 dB ở 30 Hz và 30,6 dB ở 40 Hz để hạn chế chồng phổ. Lượng tử hóa về INT8 bằng dịch phải có làm tròn và bão hòa: một mức bằng 1/16 g hoặc 3,9 °/s. MCU không trích đặc trưng thủ công cho mạng. Cùng một đoạn mã tiền xử lý được dùng khi tạo dữ liệu huấn luyện và khi chạy trên thiết bị. Ngoài ra MCU chạy Safety FSM, điều khiển LED 7 đoạn, còi, LED, đọc nút CANCEL và công tắc bật/tắt, ghi log qua UART, có watchdog.
+**Sonix MCU (firmware).** Cấu hình MPU6050 ở 100 Hz, bộ lọc số 44 Hz, dải ±16 g và ±2000 °/s; đọc 14 byte theo ngắt data-ready (ISR chỉ đặt cờ); hiệu chuẩn độ lệch con quay khi khởi động. Bộ lọc giảm mẫu số nguyên `(r₀ + 3r₁ + 3r₂ + r₃ + 4) >> 3` đưa tín hiệu về 50 Hz, suy giảm 13,8 dB ở 30 Hz và 30,6 dB ở 40 Hz để hạn chế chồng phổ. Lượng tử hóa về INT8 bằng dịch phải có làm tròn và bão hòa: một mức bằng 1/16 g hoặc 3,9 °/s. MCU không trích đặc trưng thủ công cho mạng. Cùng một đoạn mã tiền xử lý được dùng khi tạo dữ liệu huấn luyện và khi chạy trên thiết bị. Ngoài ra MCU chạy Safety FSM, điều khiển LED 7 đoạn, còi, LED, đọc nút bấm (bật/tắt, CANCEL, SOS), ghi log qua UART, có watchdog.
 
 **Giao tiếp FPGA–MCU.** SPI mode 0, MCU làm master, kèm chân IRQ và RST_N.
 
@@ -157,9 +156,9 @@ CRC-16/CCITT (đa thức 0x1021, khởi tạo 0xFFFF). Nếu CRC sai, trường 
 
 | Trạng thái | Điều kiện vào | Hành động |
 |---|---|---|
-| STANDBY | Công tắc ở vị trí TẮT liên tục 3 s | Không xét cảnh báo |
-| MONITOR | Công tắc BẬT | LED 7 đoạn hiển thị trạng thái |
-| SUSPECT | Ít nhất 2 trong 3 cửa sổ gần nhất là FALL với điểm tin cậy vượt ngưỡng | Theo dõi bất động; từ đây công tắc không hủy được chuỗi xác nhận (công tắc có thể bị va khi ngã), muốn hủy phải bấm CANCEL |
+| STANDBY | Hệ thống TẮT (nhấn nhanh 2 lần khi đang theo dõi) quá 3 s | Không xét cảnh báo; giữ nút 2 s để BẬT |
+| MONITOR | Hệ thống BẬT (khi cấp nguồn, hoặc giữ nút 2 s) | LED 7 đoạn hiển thị trạng thái |
+| SUSPECT | Ít nhất 2 trong 3 cửa sổ gần nhất là FALL với điểm tin cậy vượt ngưỡng | Theo dõi bất động; từ đây nút không tắt được hệ thống (tránh vô tình tắt khi đang ngã); hủy bằng CANCEL ở PRE-ALARM |
 | PRE-ALARM | Bất động liên tục 2,56 s và đầu nằm ngang (lệch 45°–135° so với phương thẳng đứng) trong vòng 8 s kể từ SUSPECT | Còi ngắt quãng, LED đỏ nháy, đếm ngược 10 s; CANCEL → MONITOR |
 | ALARM | Hết đếm ngược; hoặc người dùng giữ nút 3 s (SOS) | Còi liên tục, LED đỏ, ghi log; giữ CANCEL 1 s để tắt, chờ 30 s |
 
@@ -195,7 +194,7 @@ CRC-16/CCITT (đa thức 0x1021, khởi tạo 0xFFFF). Nếu CRC sai, trường 
 | Tuần | Nội dung | Mốc kiểm chứng |
 |---|---|---|
 | 1 | Chốt đặc tả và sơ đồ chân; firmware ghi dữ liệu 100 Hz; gắn cảm biến lên mũ; thu thử 1–2 người; chuyển bộ dữ liệu [4] về định dạng của thiết bị; sửa giao thức SPI trong RTL | Log 10 phút không mất mẫu; RTL khớp mô hình tham chiếu |
-| 2 | Kết nối SPI thật; tiền xử lý trên MCU; phiên bản RTL đầu chạy trên chip; công tắc bật/tắt và còi | 1.000 vòng gửi – ngắt – đọc không lỗi; kết quả trên chip khớp mô hình tham chiếu |
+| 2 | Kết nối SPI thật; tiền xử lý trên MCU; phiên bản RTL đầu chạy trên chip; nút bấm (bật/tắt, CANCEL, SOS) và còi | 1.000 vòng gửi – ngắt – đọc không lỗi; kết quả trên chip khớp mô hình tham chiếu |
 | 3 | Bộ tính mới và mô hình huấn luyện trên [4] lên chip; Safety FSM và giao diện; lắp mũ bản 1; thử nhanh độ chênh giữa [4] và mũ | **Tầng 1: mũ chạy độc lập**, ngã trên đệm 10 lần có ≥ 8 lần vào PRE-ALARM |
 | 4 | Buổi thử trên mũ (ngã trên đệm, sinh hoạt, va và rơi mũ); kiểm thử phần cứng trong vòng lặp; bản đối chứng trên MCU | Đánh giá tách người đạt chỉ tiêu; phần cứng khớp 100 % trên ≥ 2.000 cửa sổ |
 | 5 | Thử với người mới, đếm báo giả, đo độ trễ và công suất; chỉnh ngưỡng; báo cáo, video, slide | Đủ các chỉ tiêu cam kết |
@@ -221,7 +220,7 @@ CRC-16/CCITT (đa thức 0x1021, khởi tạo 0xFFFF). Nếu CRC sai, trường 
 | Sai lệch giữa mô hình Python và phần cứng | So từng lớp bằng vector kiểm; tham số lượng tử sinh tự động từ một file duy nhất |
 | Lỗi truyền SPI, FPGA treo | CRC-16, timeout, bỏ cửa sổ lỗi, reset qua RST_N |
 | Cảm biến bão hòa khi va đập mạnh | Dữ liệu thô đã ghi ở ±16 g; đổi thang lượng tử rồi huấn luyện lại |
-| Báo giả do va mũ, cúi gập, nằm xuống | Bỏ phiếu 2/3, điều kiện bất động và đầu nằm ngang, đếm ngược 10 s có CANCEL, công tắc bật/tắt |
+| Báo giả do va mũ, cúi gập, nằm xuống | Bỏ phiếu 2/3, điều kiện bất động và đầu nằm ngang, đếm ngược 10 s có CANCEL, nút tắt hệ thống |
 
 **Chỉ tiêu cam kết.** Các số dưới đây là mục tiêu, sẽ được đo và báo cáo ở vòng chung kết.
 

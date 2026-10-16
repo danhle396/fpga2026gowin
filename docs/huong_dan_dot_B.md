@@ -131,17 +131,23 @@ Rồi gõ `4` (4 MHz) và `s`: vẫn phải 100/100.
 |---|---|
 | check_frames: "CRC của MCU trùng Python: N/N", "mất 0 mẫu"; hil_test: "500 khớp golden, 0 sai" → **PASS** | hai dòng kết luận + file `trc.log` |
 
-## B9. Công tắc bật/tắt hệ thống (đề cương v2.1, FW-14)
+## B9. Nút bấm duy nhất: bật/tắt, CANCEL, SOS (đề cương v2.1, FW-14)
 
-1. Rút nguồn. Nối công tắc gạt giữa `P23` (header J7, chân P2.3) và GND. Chân này đã có điện trở kéo lên trong firmware: **đóng = BẬT**.
-2. Trong `firmware/src/board.h`, đặt `#define WEAR_PRESENT 1`. Build, nạp, reset không giữ phím.
-3. Gạt TẮT, chờ hơn 3 s: terminal in dòng `S,<t_ms>,STANDBY,...`. Gạt BẬT: in `S,<t_ms>,MONITOR,...`.
+1. Rút nguồn. Nối nút nhấn ngoài (loại nhấn–nhả) **song song với phím SW3**: một chân vào P2.4, một chân vào GND. Nếu P2.4 không ra header thì hàn song song vào hai chân của SW3. Firmware mặc định đã bật tính năng (`BTN_POWER 1` trong `firmware/src/fw_config.h`); giữ `WEAR_PRESENT 0`.
+2. Nạp `firmware/keil/fw.uvprojx`, reset không giữ phím. Terminal ở chế độ RUN in mỗi lần đổi trạng thái là `S,<t_ms>,<trạng thái>,<lý do>`.
+3. Thử lần lượt, ghi các dòng `S,...`:
+
+| Thao tác | Mong đợi |
+|---|---|
+| Cấp nguồn | `S,...,MONITOR,...` (hệ thống BẬT) |
+| Nhấn nhanh 2 lần | 1 bíp dài; sau 3 s có `S,...,STANDBY,...`; LED 7 đoạn `oFF` |
+| Ở STANDBY giữ 1 s rồi nhả | không đổi |
+| Ở STANDBY giữ 2 s | 2 bíp ngắn, `S,...,MONITOR,...`; giữ tiếp tới 6 s vẫn MONITOR (không SOS) |
+| Ở MONITOR giữ 3 s | `S,...,ALARM,...` (SOS); giữ 1 s nữa để tắt còi |
 
 | Pass | Gửi lại |
 |---|---|
-| TẮT > 3 s → STANDBY; BẬT → MONITOR; ở STANDBY lắc mạnh hay đặt nghiêng board không vào SUSPECT | các dòng `S,...` trên terminal |
-
-Lưu ý: chưa nối công tắc thì phải giữ `WEAR_PRESENT 0`. Nếu không, chân P2.3 luôn ở mức cao, firmware hiểu là TẮT và sẽ không bao giờ báo động.
+| Đúng cả 5 dòng của bảng | các dòng `S,...` trên terminal |
 
 ---
 

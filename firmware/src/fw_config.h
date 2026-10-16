@@ -52,5 +52,10 @@
 #define COOLDOWN_MS     30000
 #define SOS_HOLD_MS     3000
 #define ALARM_HOLD_MS   1000
+/* Một nút cho bật/tắt + CANCEL + SOS (pwr_btn.h, đề cương v2.1). 1 = cờ "hệ thống bật" của nút thay cho WEAR
+ * (WEAR thật, nếu có, vẫn AND vào); 0 = nút chỉ là CANCEL/SOS như A.8. */
+#ifndef BTN_POWER
+#define BTN_POWER       1
+#endif
 
 #endif
