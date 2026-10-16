@@ -131,6 +131,18 @@ Rồi gõ `4` (4 MHz) và `s`: vẫn phải 100/100.
 |---|---|
 | check_frames: "CRC của MCU trùng Python: N/N", "mất 0 mẫu"; hil_test: "500 khớp golden, 0 sai" → **PASS** | hai dòng kết luận + file `trc.log` |
 
+## B9. Công tắc bật/tắt hệ thống (đề cương v2.1, FW-14)
+
+1. Rút nguồn. Nối công tắc gạt giữa `P23` (header J7, chân P2.3) và GND. Chân này đã có điện trở kéo lên trong firmware: **đóng = BẬT**.
+2. Trong `firmware/src/board.h`, đặt `#define WEAR_PRESENT 1`. Build, nạp, reset không giữ phím.
+3. Gạt TẮT, chờ hơn 3 s: terminal in dòng `S,<t_ms>,STANDBY,...`. Gạt BẬT: in `S,<t_ms>,MONITOR,...`.
+
+| Pass | Gửi lại |
+|---|---|
+| TẮT > 3 s → STANDBY; BẬT → MONITOR; ở STANDBY lắc mạnh hay đặt nghiêng board không vào SUSPECT | các dòng `S,...` trên terminal |
+
+Lưu ý: chưa nối công tắc thì phải giữ `WEAR_PRESENT 0`. Nếu không, chân P2.3 luôn ở mức cao, firmware hiểu là TẮT và sẽ không bao giờ báo động.
+
 ---
 
 ## Sau đợt B

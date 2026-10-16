@@ -44,14 +44,14 @@ Tự kiểm gia tốc: `2048 → 16`, `−2048 → −16`, `16384 → 127`, `−
 | Weight / bias / MAC | 3.168 / 52 / 225.408 | 6.368 / 68 / 227.328 |
 | Mỗi ô thời gian nhìn | 16 mẫu = 0,32 s, sau đó mất thứ tự | 36 mẫu = 0,72 s, 16 ô giữ thứ tự |
 
-Lớp: `0 = NORMAL`, `1 = IMPACT`, `2 = dự trữ`, `3 = FALL`. Lớp dự trữ: weight 0, bias −2^30.
+Lớp: `0 = NORMAL`, `1 = IMPACT`, `2 = dự trữ`, `3 = FALL`. **Từ v3.2 chỉ huấn luyện 0 và 3**; 1 để dành (bật lại khi cần, không đổi RTL), đầu ra vẫn 4 logit. Lớp dự trữ: weight 0, bias −2^30.
 `SCORE = clamp((logit_top1 − logit_top2) >> SCORE_SHIFT, 0, 127)`. Argmax: bằng nhau thì chọn chỉ số nhỏ.
 
 **Nhãn cửa sổ.** Điểm sự kiện = mẫu có `|a|` lệch khỏi 1 g nhiều nhất trong đoạn nút đánh dấu được bấm; `p` là vị trí của nó trong cửa sổ. Với D1 không có nút đánh dấu: lấy trên cả bản ghi của một lần ngã (mỗi bản ghi chỉ chứa một sự kiện) và kiểm bằng mắt 20 bản ghi; các bản ghi hoạt động thường ngày của D1 cho toàn cửa sổ NORMAL.
 
 | `p` | Nhãn |
 |---|---|
-| 56 .. 103 | Nhãn của sự kiện (FALL hoặc IMPACT) |
+| 56 .. 103 | Nhãn của sự kiện (FALL; IMPACT nếu bật lớp này) |
 | 24 .. 55 hoặc 104 .. 127 | Bỏ khỏi tập huấn luyện |
 | Còn lại, hoặc không có sự kiện | NORMAL |
 
@@ -132,8 +132,8 @@ Chế độ RUN đọc 7 byte; chế độ HIL đọc 20 byte. Không có kết 
 
 | Chuyển trạng thái | Điều kiện |
 |---|---|
-| MONITOR → STANDBY | `WEAR = 0` liên tục 3 s |
-| STANDBY → MONITOR | `WEAR = 1` |
+| MONITOR → STANDBY | `WEAR = 0` (công tắc TẮT) liên tục 3 s |
+| STANDBY → MONITOR | `WEAR = 1` (công tắc BẬT) |
 | MONITOR → SUSPECT | `fall_votes ≥ VOTE_K` và mũ đã được đội trong 3 s gần nhất |
 | SUSPECT → PRE_ALARM | `still_run ≥ STILL_BLOCKS` và (nếu `TILT_EN`) **`\|az_tb\| < T_TILT`**: đầu nằm ngang, lệch 45°–135° khỏi phương thẳng đứng (v3.1, 15/10) |
 | SUSPECT → MONITOR | Quá `SUSPECT_TIMEOUT` |
@@ -142,7 +142,7 @@ Chế độ RUN đọc 7 byte; chế độ HIL đọc 20 byte. Không có kết 
 | MONITOR, SUSPECT → ALARM | Giữ CANCEL 3 s (SOS) |
 | ALARM → COOLDOWN → MONITOR | Giữ CANCEL 1 s; chờ `COOLDOWN_TIME` |
 
-Từ SUSPECT trở đi bỏ qua WEAR. IMPACT khi đang đội: một tiếng bíp + ghi log. Ưu tiên: CANCEL > timeout > phiếu CNN > khối.
+Từ SUSPECT trở đi bỏ qua WEAR. IMPACT khi đang đội (chỉ khi bật lớp này): một tiếng bíp + ghi log. Ưu tiên: CANCEL > timeout > phiếu CNN > khối.
 
 | Tham số | Giá trị đầu | Chốt ở |
 |---|---|---|
@@ -176,5 +176,6 @@ MCU tạo payload 768 byte bằng LFSR Galois 16 bit (đa thức 0xB400, mầm 0
 | 2026-10-03 | v1: đeo thắt lưng, 100 Hz, 3 lớp Conv |
 | 2026-10-12 | v2: mũ, 50 Hz, 2 lớp Conv, kênh trước, UINT8 |
 | 2026-10-12 | v3: lấy RTL hiện có làm gốc (vị trí trước, 0..127, dịch sàn); cảm biến 100 Hz ±16 g ±2000 °/s, MCU giảm còn 50 Hz; bước 0,32 s + bỏ phiếu; N1/N2; E1/E2; lớp 0 NORMAL, 1 IMPACT, 3 FALL; giao thức v3; bỏ CONFIRM, thêm SOS và tự kiểm |
+| 2026-10-16 | **v3.2** (đi cùng đề cương v2.1): A.4 chỉ huấn luyện 2 lớp 0 NORMAL và 3 FALL, lớp 1 IMPACT để dành; A.8 đầu vào WEAR là công tắc bật/tắt hệ thống trên mũ. Không đổi khung, số học, FSM hay vector; mô hình đã có vốn là 2 lớp vì D1 không có IMPACT |
 | 2026-10-15 | **v3.1**: A.8 điều kiện nghiêng thành hai phía `\|az_tb\| < T_TILT` (trước: `az_tb < T_TILT`). Lý do: phát lại D1 cho thấy 15/22 PRE_ALARM giả có `az_tb` ≈ −2040 (đầu lộn ngược khi cúi gập sau khi vấp, nhặt đồ), còn 375/375 cú ngã nằm tới PRE_ALARM có `az_tb` ≥ −1074. Không đổi khung, số học hay vector |
 | 2026-10-14 | v3 (làm rõ, không đổi số học hay khung): A.7 thêm quy ước một bộ đệm kết quả và giá trị `STATUS` cho từng lỗi; `cnn_params.vh` thêm `CNN_SCORE_SHIFT` (lấy từ `score_shift` trong json) |

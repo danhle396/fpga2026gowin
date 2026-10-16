@@ -57,13 +57,18 @@ python tools/logger.py --port COMx --subject <người> --activity <hoạt độ
 
 ## 5. Chỉ tiêu số lượng
 
+**Đề cương v2.1 (16/10):** mạng chỉ có 2 lớp và chỉ huấn luyện bằng bộ công khai D1. Mọi dữ liệu tự thu ở đây **chỉ để kiểm tra** thiết bị. Các file va đập (`roi_mu`, `va_mu`…) vẫn bấm nút đánh dấu, để đếm xem va đập nào dẫn tới PRE_ALARM.
+
 | Đợt | Việc | Chỉ tiêu (Pass) |
 |---|---|---|
-| D2 đợt 1 (AI-05, G3) | IMPACT | ≥ 100 sự kiện (rơi, va, đặt mạnh, tháo/đội) |
-| | NORMAL khi đội mũ | ≥ 30 phút từ ≥ 2 người |
-| D2 đợt 2 (AI-08, G5) | IMPACT | ≥ 250, trong đó ≥ 80 va đập khi đang đội |
-| | NORMAL khi đội mũ | ≥ 2 giờ từ ≥ 4 người, có ≥ 50 tình huống `suyt_nga` |
-| D3 (AI-03, AI-08) | ngã trên đệm | ≥ 40 cú từ ≥ 3 người; ≥ 2 người không có dữ liệu trong huấn luyện |
+| Buổi thử nhỏ (AI-05, G3) | NORMAL khi đội mũ | ≥ 30 phút từ ≥ 2 người |
+| | ngã trên đệm | ≥ 10 cú |
+| | va mũ khi đang đội / rơi mũ khi hệ thống bật | 10 / 10 lần |
+| Buổi thử chính (AI-08, G5) | NORMAL khi đội mũ | ≥ 2 giờ tổng từ ≥ 2 người, có cúi nhặt, nằm xuống, `suyt_nga` |
+| | ngã trên đệm (D3) | ≥ 20 cú từ ≥ 2 người không có dữ liệu trong huấn luyện |
+| | va mũ khi đang đội / rơi mũ khi hệ thống bật | 20 / 20 lần |
+
+Lớp IMPACT chỉ phải thu để huấn luyện (≥ 250 va đập) nếu buổi thử có hơn 2/20 lần va mũ vào PRE_ALARM (đường lùi trong đề cương).
 
 Ưu tiên thu `nam_xuong`, `cui_nhat` và `suyt_nga`. Phát lại D1 (AI-10) cho thấy báo giả đến chủ yếu từ nằm xuống giường, nhặt đồ và vấp.
 
