@@ -56,6 +56,7 @@ Theo từng người, Macro-F1 qua 3 seed:
 | Netlist sau P&R, 3 khung + 7 kịch bản | **PASS**. FF INIT = 1 chỉ gồm các khởi tạo cố ý. Bản phát hành trùng bản đã mô phỏng (khác 0 dòng trừ dấu thời gian) | `gl_b3.log` |
 | Đáp án tự kiểm A.10 cho firmware | `firmware/src/selftest_expect_v3_e2_n2.h`: lớp 3, SCORE 0, logit {63183, −158442, −2³⁰, 63644} | |
 | Đáp án tự kiểm của firmware ↔ RTL: khung SEQ 0xEE qua `tb_stream` (top v3 + E2, weight mới) | 7 byte đầu RTL trả về `5a ee 01 03 00 06 43` == `selftest_frame7` → **PASS**; phép âm với header 6 người cũ → FAIL | `kiem_tu_kiem_rtl.log` (`kiem_tu_kiem_rtl.py`) |
+| Tương tự cho **bitstream 1** (PROTO 1, E1, weight SisFall), kiểm cho B8: 5 khung tự kiểm qua chân SPI của `fpga_top`, mong đợi lấy từ `selftest_expect.h` | RTL trả về `5a 03 00 00 45 93 4c` (lớp 3, logit 17811) ở cả 4 khung đúng; khung sai CRC không có IRQ → **PASS** | `kiem_tu_kiem_b1.log` (`kiem_tu_kiem_b1.sh`) |
 | Keil `fw.uvprojx` | 0 lỗi, 0 cảnh báo | `keil_fw.log` |
 
 - `bitstreams/3_v3_e2_n2/` đã thay `.fs`, báo cáo và `cnn_params.vh`; SHA256 mới.

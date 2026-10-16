@@ -1020,6 +1020,7 @@ uint16_t crc16_ccitt(const uint8_t *p, uint32_t n)
 | 2026-10-16 | `docs/huong_dan_dot_B.md`: thêm **B10** chuyển sang bitstream 3 (dây RST_N P2.1 → J1-8, `FW_BITSTREAM 3`, tự kiểm mong đợi `rc=0 class=3 PASS`, check_frames `--proto 3`, HIL 2.000 cửa sổ với `--params ml/out/n2_11_d1`); viết lại "Sau đợt B" theo đề cương v2.1 (buổi thử chỉ để kiểm tra, chấm bằng `playback_log.py`, báo giả D1 11 người 1,11/giờ) | Hướng dẫn chỉ dẫn tới bitstream 1, chưa có đường lên mô hình demo; đoạn cuối còn số 6 người và kế hoạch thu D2 để huấn luyện đã bỏ ở v2.1 |
 | 2026-10-16 | Bản nháp báo cáo kỹ thuật cuối (TH-11) `docs/bao_cao_cuoi/BAO_CAO_KY_THUAT_nhap.md` | Hạn nộp 31/10; mọi số mô phỏng và dữ liệu công khai đã có, chỉ còn điền các ô [CHỜ ĐO] sau đợt B và buổi thử đội mũ. Số trong báo cáo lấy đúng từ các báo cáo 16/10 (N2 11 người, bitstream 3) |
 | 2026-10-16 | Kiểm đáp án tự kiểm A.10 của firmware (`selftest_expect_v3_e2_n2.h`) với RTL bitstream 3: khung SEQ 0xEE qua `tb_stream` | 7 byte RTL trả về trùng `selftest_frame7` → PASS; phép âm với đáp án của mô hình 6 người → FAIL. B10 sẽ không vấp ở bước tự kiểm. [n2_11_nguoi](docs/bao_cao/2026-10-16_n2_11_nguoi/README.md) |
+| 2026-10-16 | Kiểm đáp án tự kiểm của firmware cho **bitstream 1** (PROTO 1, E1) với RTL qua chân SPI (`kiem_tu_kiem_b1.sh`) | 4/4 khung tự kiểm trả về đúng lớp 3, logit 17811 như `selftest_expect.h`; khung sai CRC không IRQ. B8 bước 1 (`rc=0 class=3 PASS`) có căn cứ |
 
 ---
 
