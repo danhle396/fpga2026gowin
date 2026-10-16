@@ -3,7 +3,7 @@
 # Firmware ở chế độ HIL (gửi "HIL"): nhận khung ghi 772 byte, chuyển sang FPGA, trả nguyên 20 byte khung đọc.
 #
 #   python tools/hil_test.py --port COM5 --n 500                        # weight SisFall của nhóm, PROTO 1
-#   python tools/hil_test.py --port COM5 --n 2000 --proto 3 --params ml/out/n2s_d1/params_int8.npz
+#   python tools/hil_test.py --port COM5 --n 2000 --proto 3 --params ml/out/n2_11_d1/params_int8.npz   # bitstream 3
 #   python tools/hil_test.py --mock --n 200 [--mock-error 37]           # không cần board: thử chính công cụ
 #
 # Cửa sổ: D1 thật (FALL và NORMAL), khung tự kiểm LFSR, các mẫu cực trị, rồi ngẫu nhiên. Đáp án: golden_model.forward.

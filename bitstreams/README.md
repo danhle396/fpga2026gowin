@@ -17,7 +17,7 @@ Mỗi thư mục có:
 **Dùng cho đợt B:**
 - Bước B7 (`docs/huong_dan_dot_B.md`) nạp `1_e1_proto1_sisfall`. Không cần ai chạy lại Run All trong Gowin.
 - Khi PROTO 1 chạy 100/100, chuyển sang `2_v3_e1_sisfall`: cùng mô hình, thêm CRC-16/SEQ/STATUS. Firmware đặt `FW_BITSTREAM 2`, nối thêm dây P2.1 (`P21`, J7) → J1-8 (RST_N).
-- Rồi chuyển sang `3_v3_e2_n2` (`FW_BITSTREAM 3`): mô hình tầng 2, nhanh gấp 2,7 lần.
+- Rồi chuyển sang `3_v3_e2_n2` (`FW_BITSTREAM 3`): mô hình tầng 2, nhanh gấp 2,7 lần. HIL cho bản này phải so với **đúng mô hình đã nạp**: `python tools/hil_test.py --port COMx --n 2000 --proto 3 --params ml/out/n2_11_d1/params_int8.npz` (TH-09). Dùng `--params` của mô hình khác thì mọi cửa sổ sẽ báo sai lệch dù chip chạy đúng.
 
 **Mô phỏng netlist sau P&R** (`bash rtl/gl/run_gl.sh <thư mục> p1 | v3 | ml/out/e2_matrix/n2_11_p1`): chạy chính netlist Gowin xuất cho file `.fs` này (dựng lại không có tùy chọn netlist cho file trùng bit), kể cả nội dung ROM weight. Lần chạy đầu 15/10 tìm ra lỗi: `cnn_controller.v` để `conv_start` không có giá trị khởi tạo, Gowin chọn `INIT = 1`, nên vừa nạp cấu hình engine conv đã tự chạy và **khung đầu tiên sau khi bật nguồn cho kết quả sai** (đúng khung tự kiểm A.10 của firmware). Đã sửa bằng cách khởi tạo 0 mọi thanh ghi điều khiển; chi tiết ở `docs/bao_cao/2026-10-15_loi_init_conv_start/`.
 

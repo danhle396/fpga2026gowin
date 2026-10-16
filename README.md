@@ -35,7 +35,7 @@ MPU6050 trên mũ → SONiX SN32F407 (EVK V1.0) → SPI → Kiwi Primer 20K (Gow
 python tools/verify_spec_v3.py ml/src "FPGA_Fall_Detection_AI-20261012T141515Z-1-001/FPGA_Fall_Detection_AI/fpga_export"  # golden: TẤT CẢ PASS
 bash rtl/tb/run_all.sh                                   # 7 testbench RTL (Icarus -g2001), ≈ 4,5 phút
 bash firmware/build.sh test && python tools/m0_test.py   # firmware C trên Cortex-M0 giả lập (pip install unicorn)
-python tools/cosim.py --e2 ml/out/e2_matrix/n2s_p1       # ghép firmware ↔ RTL trên dữ liệu ngã thật
+python tools/cosim.py --e2 ml/out/e2_matrix/n2_11_p1     # ghép firmware ↔ RTL trên dữ liệu ngã thật (mô hình của bitstream 3)
 bash rtl/v3/run_tb_proto.sh --ng 50                       # giao thức v3 qua chân SPI, 50 khung + 7 kịch bản lỗi
 bash rtl/gl/run_gl.sh <thư mục> ml/out/e2_matrix/n2_11_p1 3  # NETLIST sau P&R của Gowin (gate-level), 10–30 phút
 ```
@@ -48,7 +48,7 @@ python tools/export_mem.py --params ml/out/n2s_d1/params_int8.npz --engine e2 --
 
 ## Chuỗi mô hình → phần cứng
 
-Các mô hình đã lưu trong `ml/out/*_d1/` (gồm `n2_d1` của bitstream 3) được huấn luyện ngày 13–15/10 trên **6 người 101–106**. Từ 16/10, `ml/data/public/` có 8 người. Lưu ý:
+**Mô hình của bitstream 3 là `ml/out/n2_11_d1/`** (N2 chỉ kênh đầu, D1 11 người, seed 20261014; xuất E2 ở `ml/out/e2_matrix/n2_11_p1/`). Các mô hình khác trong `ml/out/*_d1/` (`n1_d1`, `n2_d1`, `n2s_d1`, `n2t_d1`) được huấn luyện ngày 13–15/10 trên **6 người 101–106**, chỉ giữ để đối chiếu. Lưu ý:
 - Không có `--out`, lệnh dưới **ghi đè** `ml/out/<arch>_d1/`. Thử nghiệm thì đặt `--out` ra ngoài repo.
 - `--subjects 101 102 103 104 105 106` chọn lại đúng 6 người cũ.
 - Huấn luyện lại chỉ tái lập về mặt thống kê, không tái lập từng bit, vì số thực float khác nhau giữa các máy. Nguồn cố định cho RTL và firmware là `params_int8.npz` và các file `.mem` đã lưu.
