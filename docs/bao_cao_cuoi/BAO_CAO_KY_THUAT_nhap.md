@@ -135,7 +135,7 @@ Hai kết quả phụ:
 
 | Chỉ tiêu (đề cương v2.1) | Mục tiêu | Đã đo (mô phỏng / dữ liệu công khai) | Trên chip / trên mũ | Bằng chứng |
 |---|---|---|---|---|
-| Hoạt động độc lập; tự kiểm khi bật nguồn | Không cần PC | Tự kiểm có đáp án tính sẵn từ mô hình tham chiếu, cho đúng trọng số trong bitstream | **[CHỜ ĐO]** | `2026-10-16_n2_11_nguoi` |
+| Hoạt động độc lập; tự kiểm khi bật nguồn | Không cần PC | Khung tự kiểm qua RTL của bitstream 3 trả về đúng 7 byte mà firmware mong đợi (phép âm với đáp án của mô hình cũ thì FAIL) | **[CHỜ ĐO]** | `2026-10-16_n2_11_nguoi` |
 | Độ nhạy FALL mức sự kiện / Macro-F1 hai lớp | ≥ 95 % / ≥ 0,90 | **99,6 % / 0,983** (TB 3 seed, 11 người) | không áp dụng | `2026-10-16_n2_11_nguoi` |
 | Thử trực tiếp trên mũ | ≥ 18/20 cú ngã vào PRE-ALARM | Phát lại 769 cú ngã kết thúc nằm của bộ công khai: 96,2 % | **[CHỜ ĐO]** | như trên |
 | Báo giả sau Safety FSM | ≤ 1 lần/giờ | Phát lại 5,43 giờ sinh hoạt: **1,11/giờ** (0,92 / 0,74 / 1,66), toàn bộ từ "chủ động nằm xuống giường"; gộp 3 mô hình 0,74/giờ | **[CHỜ ĐO]**, đội mũ ≥ 2 giờ | như trên |

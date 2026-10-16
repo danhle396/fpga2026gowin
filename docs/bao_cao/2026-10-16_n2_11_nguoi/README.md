@@ -55,6 +55,7 @@ Theo từng người, Macro-F1 qua 3 seed:
 | P&R | Logic 1.473 (8 %), BSRAM 8/46, DSP 2,25/24, **Fmax 98,12 MHz** (bản cũ 107,25), 157,6 mW ước lượng | `pnr_b3.log` |
 | Netlist sau P&R, 3 khung + 7 kịch bản | **PASS**. FF INIT = 1 chỉ gồm các khởi tạo cố ý. Bản phát hành trùng bản đã mô phỏng (khác 0 dòng trừ dấu thời gian) | `gl_b3.log` |
 | Đáp án tự kiểm A.10 cho firmware | `firmware/src/selftest_expect_v3_e2_n2.h`: lớp 3, SCORE 0, logit {63183, −158442, −2³⁰, 63644} | |
+| Đáp án tự kiểm của firmware ↔ RTL: khung SEQ 0xEE qua `tb_stream` (top v3 + E2, weight mới) | 7 byte đầu RTL trả về `5a ee 01 03 00 06 43` == `selftest_frame7` → **PASS**; phép âm với header 6 người cũ → FAIL | `kiem_tu_kiem_rtl.log` (`kiem_tu_kiem_rtl.py`) |
 | Keil `fw.uvprojx` | 0 lỗi, 0 cảnh báo | `keil_fw.log` |
 
 - `bitstreams/3_v3_e2_n2/` đã thay `.fs`, báo cáo và `cnn_params.vh`; SHA256 mới.
