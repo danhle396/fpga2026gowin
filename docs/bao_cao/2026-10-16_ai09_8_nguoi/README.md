@@ -45,7 +45,15 @@ PRE_ALARM giả ở T_SCORE 8 chỉ còn đến từ 815 (chủ động nằm xu
 
 1. **Ở T_SCORE 8, N2 chỉ dữ liệu đầu đạt cả hai chỉ tiêu hệ thống của tầng 2 trên D1:** ngã nằm → PRE_ALARM ≥ 95 % (TB 96,3 %, seed thấp nhất 96,2 %) và ≤ 1 PRE_ALARM giả/giờ (TB 0,68, seed cao nhất 0,77). Với 6 người, trung bình báo giả là 1,26/giờ, chưa đạt.
 2. **Số mẫu báo giả rất nhỏ:** 2–3 lần trong 3,88 giờ. Một hay hai lần chênh là đổi kết luận. Chỉ tiêu ≤ 1/giờ vẫn phải xác nhận trên mũ (D2, TH-10).
-3. **Thời gian tới PRE_ALARM:** trung vị đạt (4,12 s ≤ 5 s), p90 thì không (5,92 s). DE_CUONG_v2 (bảng chỉ tiêu) ghi "→ PRE-ALARM ≤ 5 s **khi người nằm yên trong 2 s sau va chạm**". Phép phát lại này chưa lọc theo điều kiện đó, nên p90 có thể gồm cả những cú ngã mà người còn cử động lâu hơn 2 s. Việc tiếp theo: tính lại độ trễ chỉ trên các cú ngã có khối bất động đầu tiên trong vòng 2 s sau va chạm. Nếu vẫn vượt 5 s thì xem lại `STILL_BLOCKS` (8 khối = 2,56 s bất động). Ghi thành rủi ro, chưa đổi SPEC.
+3. **Thời gian tới PRE_ALARM: đạt khi tính đúng điều kiện của đề cương.** DE_CUONG_v2 ghi "→ PRE-ALARM ≤ 5 s khi người nằm yên trong 2 s sau va chạm". [tre_nam_yen_2s.py](tre_nam_yen_2s.py) chỉ lấy những cú ngã có chuỗi khối bất động (≥ 8 khối) bắt đầu trong vòng 2 s sau va chạm. Script dùng cùng suy luận và FSM với `playback_d1.py` và tái lập đúng 533 PRE_ALARM, p90 5,92 s của bảng trên. Kết quả, giống nhau ở cả 3 seed (`tre_nam_yen_2s_s*.txt`):
+
+   | Nhóm cú ngã | Tới PRE_ALARM | Trễ trung vị | p90 | Lớn nhất | > 5 s |
+   |---|---|---|---|---|---|
+   | Mọi cú ngã tới PRE_ALARM | 533 | 4,12 s | 5,92 s | 8,76 s | 112–113 |
+   | Đạt điều kiện (462 cú) | 358–359/462 | 3,84 s | 4,36–4,37 s | 6,68 s | 2 (cả hai là 903, kết thúc quỳ/ngồi) |
+   | **Đạt điều kiện, nhóm ngã NẰM (366 cú)** | **355/366 = 97,0 %** | **3,82–3,84 s** | **4,36 s** | **4,56 s** | **0** |
+
+   p90 5,92 s đến từ những cú ngã mà người còn cử động quá 2 s sau va chạm, nên nằm ngoài chỉ tiêu. Không cần đổi `STILL_BLOCKS`.
 4. **Tái lập giữa hai máy:** huấn luyện lại `n2_d1` (6 người, seed 20261014) trên máy thứ hai cho Macro-F1 0,9591 so với 0,9584, recall T8 95,5 % so với 95,7 %, phiếu nhầm 11,42 so với 11,04/giờ (`repro_n2_d1_may2.log`). Chênh lệch do khác máy (≈ 0,001) nhỏ hơn nhiều so với chênh lệch giữa các seed (0,958–0,977).
 
 ## N2 + dữ liệu thân (ngực, thắt lưng chỉ để huấn luyện)

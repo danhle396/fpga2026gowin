@@ -1,0 +1,5 @@
+mô hình n2_8_s20261014, T_SCORE 8, 840 cú ngã; đạt điều kiện 'nằm yên trong 2 s sau va chạm' (≥ 8 khối): 462 (366 thuộc nhóm ngã NẰM)
+  đạt điều kiện: tới PRE_ALARM 359/462; trễ trung vị 3.84 s, p90 4.36 s, lớn nhất 6.68 s; > 5 s: 2
+  đạt điều kiện, nhóm NẰM: tới PRE_ALARM 355/366; trễ trung vị 3.84 s, p90 4.36 s, lớn nhất 4.56 s; > 5 s: 0
+  mọi cú ngã tới PRE_ALARM: tới PRE_ALARM 533/533; trễ trung vị 4.12 s, p90 5.92 s, lớn nhất 8.76 s; > 5 s: 112
+  đạt điều kiện mà > 5 s (mã hoạt động, s): [(903, np.float64(6.32)), (903, np.float64(6.68))]
