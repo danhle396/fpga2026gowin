@@ -1,0 +1,22 @@
+n1: ([16, 32], 'gap'); dữ liệu 79111 cửa sổ, người [101, 102, 103, 104, 105, 106, 107, 108], lớp {0: 76591, 3: 2520}
+epochs 30, lr 0.002, fall_frac 0.3, seed 7
+== LOSO ==
+  người 101: shift [7, 8] ss 6  acc INT8 0.9734  Macro-F1 INT8 0.8229 FP32 0.8202  sự kiện 85/100 = 0.850  phiếu sinh hoạt 31.4/h
+  người 102: shift [7, 8] ss 6  acc INT8 0.9786  Macro-F1 INT8 0.8790 FP32 0.8802  sự kiện 86/101 = 0.851  phiếu sinh hoạt 11.6/h
+  người 103: shift [7, 8] ss 6  acc INT8 0.9680  Macro-F1 INT8 0.8325 FP32 0.8349  sự kiện 95/101 = 0.941  phiếu sinh hoạt 16.9/h
+  người 104: shift [7, 8] ss 6  acc INT8 0.9782  Macro-F1 INT8 0.8684 FP32 0.8679  sự kiện 101/101 = 1.000  phiếu sinh hoạt 17.3/h
+  người 105: shift [8, 8] ss 6  acc INT8 0.9560  Macro-F1 INT8 0.7730 FP32 0.7699  sự kiện 98/100 = 0.980  phiếu sinh hoạt 66.0/h
+  người 106: shift [8, 8] ss 6  acc INT8 0.9798  Macro-F1 INT8 0.8697 FP32 0.8630  sự kiện 87/101 = 0.861  phiếu sinh hoạt 11.7/h
+  người 107: shift [8, 8] ss 5  acc INT8 0.9825  Macro-F1 INT8 0.8402 FP32 0.8360  sự kiện 81/117 = 0.692  phiếu sinh hoạt 8.1/h
+  người 108: shift [8, 8] ss 6  acc INT8 0.9814  Macro-F1 INT8 0.8573 FP32 0.8603  sự kiện 111/119 = 0.933  phiếu sinh hoạt 29.5/h
+  TỔNG LOSO n1: Macro-F1 trung bình INT8 0.8429 (FP32 0.8416); accuracy INT8 0.9752; FP32→INT8 trùng nhãn 0.9977
+  T_SCORE | recall sự kiện | phiếu 2/3 nhầm trên sinh hoạt
+        0 | 744/840 = 0.886 | 94 lần / 3.85 h = 24.39/h
+  cú ngã bị lọt theo mã hoạt động (T = 0): {902: 3, 903: 23, 904: 2, 905: 2, 906: 9, 907: 7, 908: 8, 909: 21, 910: 1, 913: 2, 914: 1, 916: 4, 917: 1, 918: 1, 920: 11}
+        4 | 724/840 = 0.862 | 73 lần / 3.85 h = 18.94/h
+        8 | 704/840 = 0.838 | 65 lần / 3.85 h = 16.86/h
+       16 | 660/840 = 0.786 | 42 lần / 3.85 h = 10.90/h
+       32 | 560/840 = 0.667 | 24 lần / 3.85 h = 6.23/h
+       64 | 301/840 = 0.358 | 8 lần / 3.85 h = 2.08/h
+  ma trận nhầm lẫn INT8 (hàng = thật 0..3): [[74935, 0, 0, 1656], [0, 0, 0, 0], [0, 0, 0, 0], [306, 0, 0, 2214]]
+== mô hình cuối trên mọi người ==

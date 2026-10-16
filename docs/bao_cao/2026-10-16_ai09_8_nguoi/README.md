@@ -72,3 +72,19 @@ PRE_ALARM giả ở T_SCORE 8 chỉ còn đến từ 815 (chủ động nằm xu
 - Trên 6 người (15/10), thêm dữ liệu thân có vẻ có lợi. Lên 8 người thì lợi thế mất: bắt thêm 1,5 điểm recall nhưng số phiếu nhầm gấp đôi, và Macro-F1 thấp hơn.
 - **Nhóm quyết chỉ dùng kênh đầu (16/10).** Số liệu này ủng hộ quyết định đó. Theo tiêu chí AI-09, dữ liệu thân chỉ được giữ nếu không làm tăng báo nhầm, mà ở đây báo nhầm tăng.
 - Lượt phát lại FSM của mô hình đầu + thân bị `EOFError` (file dữ liệu bị chép đè khi đang đọc, xem [d1_11_nguoi](../2026-10-16_d1_11_nguoi/README.md)). Theo quyết định trên nên không chạy lại.
+
+## N1 (mô hình đơn giản nhất, đúng RTL E1 của đồng đội) so với N2 — LOSO 8 người, chỉ dữ liệu đầu
+
+Mục đích: xem bản gọn nhất (bitstream 1, không cần E2) có đủ chỉ tiêu không. File: `n1_8_s*_loso.log`. Mô hình cuối và phát lại FSM của N1 bị dừng giữa chừng: tiến trình chạy tách qua WMI bị tắt, nên chuyển sang Task Scheduler.
+
+| 3 seed (20261014 / 7 / 99) | N1: 2 conv + GAP, 3.168 weight | N2: 3 conv + Dense, 6.368 weight |
+|---|---|---|
+| Macro-F1 INT8 | 0,8386 / 0,8429 / 0,8460 → 0,842 | 0,9707 / 0,9803 / 0,9806 → **0,977** |
+| Recall sự kiện, T_SCORE 0 | 84,6 / 88,6 / 87,7 % → 87,0 % | **99,6 %** |
+| Recall sự kiện, T_SCORE 8 | 81,5 / 83,8 / 84,3 % → 83,2 % | **97,7 %** |
+| Phiếu nhầm/giờ trước FSM, T_SCORE 8 | 14,0 / 16,9 / 15,1 → 15,3 | **4,15** |
+| Suy luận trên FPGA | 13,96 ms (E1) | **5,15 ms (E2)** |
+
+**Kết luận: demo bằng N2 trên E2 (bitstream 3).** N1 không đạt recall ≥ 95 % và không đạt suy luận ≤ 6 ms. N1/E1 (bitstream 1) chỉ dùng để thông mạch SPI lần đầu (bước B7).
+
+Đề cương đã ghi nguyên tắc "dùng mô hình nhỏ nhất đạt chỉ tiêu", và N2 là mô hình nhỏ nhất đạt: N2 cũng chỉ có 6.368 trọng số.

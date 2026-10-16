@@ -1,0 +1,22 @@
+n1: ([16, 32], 'gap'); dữ liệu 79111 cửa sổ, người [101, 102, 103, 104, 105, 106, 107, 108], lớp {0: 76591, 3: 2520}
+epochs 30, lr 0.002, fall_frac 0.3, seed 99
+== LOSO ==
+  người 101: shift [8, 8] ss 5  acc INT8 0.9712  Macro-F1 INT8 0.8043 FP32 0.8114  sự kiện 78/100 = 0.780  phiếu sinh hoạt 31.4/h
+  người 102: shift [8, 8] ss 5  acc INT8 0.9746  Macro-F1 INT8 0.8614 FP32 0.8585  sự kiện 85/101 = 0.842  phiếu sinh hoạt 17.4/h
+  người 103: shift [8, 7] ss 6  acc INT8 0.9691  Macro-F1 INT8 0.8376 FP32 0.8354  sự kiện 96/101 = 0.950  phiếu sinh hoạt 14.5/h
+  người 104: shift [8, 8] ss 6  acc INT8 0.9806  Macro-F1 INT8 0.8777 FP32 0.8771  sự kiện 99/101 = 0.980  phiếu sinh hoạt 15.2/h
+  người 105: shift [8, 8] ss 5  acc INT8 0.9604  Macro-F1 INT8 0.7756 FP32 0.7730  sự kiện 87/100 = 0.870  phiếu sinh hoạt 42.6/h
+  người 106: shift [8, 8] ss 6  acc INT8 0.9797  Macro-F1 INT8 0.8713 FP32 0.8702  sự kiện 89/101 = 0.881  phiếu sinh hoạt 14.1/h
+  người 107: shift [8, 8] ss 5  acc INT8 0.9837  Macro-F1 INT8 0.8582 FP32 0.8626  sự kiện 90/117 = 0.769  phiếu sinh hoạt 14.6/h
+  người 108: shift [7, 8] ss 6  acc INT8 0.9852  Macro-F1 INT8 0.8821 FP32 0.8809  sự kiện 113/119 = 0.950  phiếu sinh hoạt 19.7/h
+  TỔNG LOSO n1: Macro-F1 trung bình INT8 0.8460 (FP32 0.8461); accuracy INT8 0.9763; FP32→INT8 trùng nhãn 0.9977
+  T_SCORE | recall sự kiện | phiếu 2/3 nhầm trên sinh hoạt
+        0 | 737/840 = 0.877 | 82 lần / 3.85 h = 21.27/h
+  cú ngã bị lọt theo mã hoạt động (T = 0): {902: 4, 903: 26, 904: 3, 905: 1, 906: 4, 907: 6, 908: 10, 909: 22, 910: 5, 911: 3, 912: 2, 913: 4, 914: 1, 916: 1, 917: 1, 918: 2, 919: 1, 920: 7}
+        4 | 725/840 = 0.863 | 73 lần / 3.85 h = 18.94/h
+        8 | 708/840 = 0.843 | 58 lần / 3.85 h = 15.05/h
+       16 | 667/840 = 0.794 | 47 lần / 3.85 h = 12.19/h
+       32 | 570/840 = 0.679 | 26 lần / 3.85 h = 6.75/h
+       64 | 330/840 = 0.393 | 12 lần / 3.85 h = 3.11/h
+  ma trận nhầm lẫn INT8 (hàng = thật 0..3): [[75030, 0, 0, 1561], [0, 0, 0, 0], [0, 0, 0, 0], [313, 0, 0, 2207]]
+== mô hình cuối trên mọi người ==
