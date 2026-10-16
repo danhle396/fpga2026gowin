@@ -1,0 +1,25 @@
+mô hình n2_11_s20261014 + n2_11_s7 + n2_11_s99, VOTE_K 2/3, TILT bật (T_TILT 1450), STILL_BLOCKS 8, T_STILL_A/G 300/250, khối 16 mẫu 50 Hz
+1180 bản ghi ngã, 961 bản ghi sinh hoạt = 5.43 giờ
+T_SCORE | ngã → SUSPECT | ngã → PRE_ALARM | trễ va chạm→SUSPECT trung vị / p90 | →PRE_ALARM trung vị / p90 | PRE_ALARM giả trên sinh hoạt | SUSPECT giả
+      0 | 1160/1180 = 0.983 | 754/1180 = 0.639 | 0.82 / 1.00 s | 4.05 / 5.83 s | 10 = 1.84/h | 36 = 6.63/h
+        ngã không tới PRE_ALARM theo mã hoạt động: {901: 3, 902: 2, 903: 57, 904: 5, 905: 59, 906: 59, 907: 2, 909: 57, 910: 2, 911: 3, 912: 1, 914: 58, 916: 58, 917: 1, 918: 2, 920: 57}
+        → PRE_ALARM với ngã kết thúc NẰM (13 kiểu): 748/769 = 0.973
+        → PRE_ALARM với ngã ngã rồi ĐỨNG DẬY (4 kiểu): 0/234 = 0.000
+        → PRE_ALARM với ngã kết thúc QUỲ/NGỒI (3 kiểu): 6/177 = 0.034
+        PRE_ALARM giả theo mã hoạt động sinh hoạt: {815: 10}
+      8 | 1137/1180 = 0.964 | 741/1180 = 0.628 | 0.88 / 1.08 s | 4.04 / 5.84 s | 4 = 0.74/h | 10 = 1.84/h
+        ngã không tới PRE_ALARM theo mã hoạt động: {901: 3, 902: 4, 903: 57, 904: 6, 905: 59, 906: 59, 907: 4, 908: 1, 909: 57, 910: 2, 911: 3, 912: 1, 913: 1, 914: 58, 916: 58, 917: 4, 918: 5, 920: 57}
+        → PRE_ALARM với ngã kết thúc NẰM (13 kiểu): 735/769 = 0.956
+        → PRE_ALARM với ngã ngã rồi ĐỨNG DẬY (4 kiểu): 0/234 = 0.000
+        → PRE_ALARM với ngã kết thúc QUỲ/NGỒI (3 kiểu): 6/177 = 0.034
+        PRE_ALARM giả theo mã hoạt động sinh hoạt: {815: 4}
+     16 | 1042/1180 = 0.883 | 693/1180 = 0.587 | 0.92 / 1.10 s | 4.04 / 5.82 s | 0 = 0.00/h | 0 = 0.00/h
+        ngã không tới PRE_ALARM theo mã hoạt động: {901: 3, 902: 8, 903: 58, 904: 10, 905: 59, 906: 59, 907: 8, 908: 9, 909: 57, 910: 3, 911: 3, 912: 5, 913: 5, 914: 58, 915: 1, 916: 58, 917: 15, 918: 8, 919: 2, 920: 58}
+        → PRE_ALARM với ngã kết thúc NẰM (13 kiểu): 689/769 = 0.896
+        → PRE_ALARM với ngã ngã rồi ĐỨNG DẬY (4 kiểu): 0/234 = 0.000
+        → PRE_ALARM với ngã kết thúc QUỲ/NGỒI (3 kiểu): 4/177 = 0.023
+     32 | 775/1180 = 0.657 | 528/1180 = 0.447 | 0.96 / 1.12 s | 4.00 / 5.59 s | 0 = 0.00/h | 0 = 0.00/h
+        ngã không tới PRE_ALARM theo mã hoạt động: {901: 3, 902: 11, 903: 59, 904: 28, 905: 59, 906: 59, 907: 23, 908: 20, 909: 58, 910: 11, 911: 16, 912: 14, 913: 11, 914: 58, 915: 12, 916: 58, 917: 41, 918: 29, 919: 23, 920: 59}
+        → PRE_ALARM với ngã kết thúc NẰM (13 kiểu): 527/769 = 0.685
+        → PRE_ALARM với ngã ngã rồi ĐỨNG DẬY (4 kiểu): 0/234 = 0.000
+        → PRE_ALARM với ngã kết thúc QUỲ/NGỒI (3 kiểu): 1/177 = 0.006

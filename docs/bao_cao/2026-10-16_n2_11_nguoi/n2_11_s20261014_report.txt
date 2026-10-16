@@ -1,0 +1,28 @@
+n2: ([16, 16, 32], 'flatten'); dữ liệu 109970 cửa sổ, người [101, 102, 103, 104, 105, 106, 107, 108, 109, 110, 203], lớp {0: 106433, 3: 3537}
+epochs 30, lr 0.002, fall_frac 0.3, seed 20261014
+== LOSO ==
+  người 101: shift [7, 8, 8] ss 10  acc INT8 0.9989  Macro-F1 INT8 0.9904 FP32 0.9895  sự kiện 98/100 = 0.980  phiếu sinh hoạt 2.0/h
+  người 102: shift [7, 8, 8] ss 10  acc INT8 0.9990  Macro-F1 INT8 0.9940 FP32 0.9932  sự kiện 101/101 = 1.000  phiếu sinh hoạt 0.0/h
+  người 103: shift [7, 7, 7] ss 10  acc INT8 0.9995  Macro-F1 INT8 0.9966 FP32 0.9966  sự kiện 101/101 = 1.000  phiếu sinh hoạt 0.0/h
+  người 104: shift [7, 8, 8] ss 9  acc INT8 0.9965  Macro-F1 INT8 0.9733 FP32 0.9740  sự kiện 101/101 = 1.000  phiếu sinh hoạt 19.5/h
+  người 105: shift [8, 7, 8] ss 10  acc INT8 0.9936  Macro-F1 INT8 0.9499 FP32 0.9470  sự kiện 100/100 = 1.000  phiếu sinh hoạt 34.1/h
+  người 106: shift [7, 8, 8] ss 10  acc INT8 0.9984  Macro-F1 INT8 0.9883 FP32 0.9891  sự kiện 101/101 = 1.000  phiếu sinh hoạt 0.0/h
+  người 107: shift [8, 8, 8] ss 10  acc INT8 0.9979  Macro-F1 INT8 0.9816 FP32 0.9816  sự kiện 117/117 = 1.000  phiếu sinh hoạt 3.2/h
+  người 108: shift [8, 8, 8] ss 10  acc INT8 0.9975  Macro-F1 INT8 0.9770 FP32 0.9790  sự kiện 119/119 = 1.000  phiếu sinh hoạt 3.3/h
+  người 109: shift [7, 8, 8] ss 10  acc INT8 0.9956  Macro-F1 INT8 0.9640 FP32 0.9654  sự kiện 114/119 = 0.958  phiếu sinh hoạt 12.3/h
+  người 110: shift [7, 8, 8] ss 9  acc INT8 0.9993  Macro-F1 INT8 0.9950 FP32 0.9950  sự kiện 120/120 = 1.000  phiếu sinh hoạt 0.0/h
+  người 203: shift [7, 8, 7] ss 9  acc INT8 0.9994  Macro-F1 INT8 0.9957 FP32 0.9957  sự kiện 100/100 = 1.000  phiếu sinh hoạt 0.0/h
+  TỔNG LOSO n2: Macro-F1 trung bình INT8 0.9823 (FP32 0.9824); accuracy INT8 0.9977; FP32→INT8 trùng nhãn 0.9999
+  T_SCORE | recall sự kiện | phiếu 2/3 nhầm trên sinh hoạt
+        0 | 1172/1179 = 0.994 | 37 lần / 5.39 h = 6.87/h
+  cú ngã bị lọt theo mã hoạt động (T = 0): {903: 5, 907: 1, 920: 1}
+        4 | 1164/1179 = 0.987 | 24 lần / 5.39 h = 4.46/h
+        8 | 1152/1179 = 0.977 | 14 lần / 5.39 h = 2.60/h
+       16 | 1098/1179 = 0.931 | 5 lần / 5.39 h = 0.93/h
+       32 | 920/1179 = 0.780 | 0 lần / 5.39 h = 0.00/h
+       64 | 545/1179 = 0.462 | 0 lần / 5.39 h = 0.00/h
+  ma trận nhầm lẫn INT8 (hàng = thật 0..3): [[106215, 0, 0, 218], [0, 0, 0, 0], [0, 0, 0, 0], [37, 0, 0, 3500]]
+== mô hình cuối trên mọi người ==
+  PASS  INT8 theo lô trùng golden_model.forward (lớp, SCORE, 4 logit): 1000/1000
+xuất C:\Users\ADMIN\AppData\Local\Temp\claude\d--hoctap-fpga-fpga2026gowin\4f873fbe-983f-43f7-9d9d-b0d332537d87\scratchpad\runs11\n2_11_s20261014: shift [8, 8, 8], score_shift 9, 6368 weight, 68 bias
+thời gian 2073 s

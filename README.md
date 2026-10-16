@@ -37,7 +37,7 @@ bash rtl/tb/run_all.sh                                   # 7 testbench RTL (Icar
 bash firmware/build.sh test && python tools/m0_test.py   # firmware C trên Cortex-M0 giả lập (pip install unicorn)
 python tools/cosim.py --e2 ml/out/e2_matrix/n2s_p1       # ghép firmware ↔ RTL trên dữ liệu ngã thật
 bash rtl/v3/run_tb_proto.sh --ng 50                       # giao thức v3 qua chân SPI, 50 khung + 7 kịch bản lỗi
-bash rtl/gl/run_gl.sh <thư mục> ml/out/e2_matrix/n2_p1 3  # NETLIST sau P&R của Gowin (gate-level), 10–30 phút
+bash rtl/gl/run_gl.sh <thư mục> ml/out/e2_matrix/n2_11_p1 3  # NETLIST sau P&R của Gowin (gate-level), 10–30 phút
 ```
 
 Trước khi chạy `cosim.py`, tạo thư mục xuất:

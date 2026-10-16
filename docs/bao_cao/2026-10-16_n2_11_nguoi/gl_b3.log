@@ -1,0 +1,29 @@
+  Logic                       | 1473/20736                          |  8%
+  Register                    | 1084/16173                          |  7%
+  I/O Port                    | 7/207                               |  4%
+  BSRAM                       | 8/46                                | 18%
+  DSP                         | 2.25/24                             | 10%
+Max Frequency Summary: NO. Clock Name Constraint Actual Fmax Logic Level Entity 1 u_pll/rpll_inst/CLKOUT.default_gen_clk 50.143(MHz) 98.116(MHz) 8 TOP No timing paths to get frequency of clk27! No timing paths to get frequency of u_pll/rpll_inst/CLKOUTP.default_gen_clk! No timing paths to get frequency of u_pll/rpll_inst/CLKOUTD.default_gen_clk! No 
+Total Negative Slack Summary: Clock Name Analysis Type Endpoints TNS Number of Endpoints clk27 Setup 0.000 0 clk27 Hold 0.000 0 u_pll/rpll_inst/CLKOUT.default_gen_clk Setup 0.000 0 u_pll/rpll_inst/CLKOUT.default_gen_clk Hold 0.000 0 u_pll/rpll_inst/CLKOUTP.default_gen_clk Setup 0.000 0 u_pll/rpll_inst/CLKOUTP.default_gen_clk Hold 0.000 0 u_pll/rpll_inst/CL
+-r--r--r-- 1 ADMIN 197121 7264154 Oct 16 21:16 impl/pnr/fpga_project.fs
+pROM trong netlist: 5, dòng INIT_RAM: 197
+FF có INIT=1:
+      3   rst_sync
+      1   u_cnn/L
+     16   u_frame/crc
+      1   u_frame/f[2]
+      1   u_frame/top2
+     16   u_parser/crc
+      2   u_parser/state
+      3   u_tx/cs_sync
+tb_proto: 3 khung đúng (lớp golden {3: 3}) + 7 khung kịch bản; score_shift 9
+(0) doc khi chua co ket qua: toan 0  PASS
+(1) 3 khung dung: xong, CYCLES = 258080, so loi den day = 0
+(2) CRC sai -> STATUS 0x00, CLASS 0xFF, IRQ sau 0 chu ky
+(3) khung thieu byte -> STATUS 0x04
+(4) hai khung sat nhau: khung sau STATUS 0x07, khung truoc van ra ket qua dung
+(5) byte dau khong phai 0xA5: bo qua, khong IRQ  PASS
+(6) RUN 7 byte: IRQ ve 0; doc lai -> toan 0  PASS
+(7) RST_N: IRQ ve 0, MISO toan 0  PASS
+------------------------------------------------------------
+PASS

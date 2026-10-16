@@ -75,5 +75,5 @@ bash firmware/build.sh test && python -I tools/m0_test.py
 ## 5. Đang ở đâu (cập nhật mỗi khi đổi mốc lớn)
 
 - Tầng 1, **chưa qua G0**. Mọi thứ đã kiểm trong mô phỏng, chưa chạy trên chip.
-- Mô hình phần cứng đã chốt (16/10): **N2, chỉ kênh đầu, 2 lớp NORMAL / FALL (SPEC v3.2)** trên **E2, 1 làn, giao thức v3** (bitstream 3). Dữ liệu ngực/thắt lưng đã bỏ. Bitstream 3 hiện vẫn mang N2 huấn luyện trên 6 người; bản 11 người đang làm (xem Phụ lục D).
+- Mô hình phần cứng đã chốt (16/10): **N2, chỉ kênh đầu, 2 lớp NORMAL / FALL (SPEC v3.2)** trên **E2, 1 làn, giao thức v3** (bitstream 3). Dữ liệu ngực/thắt lưng đã bỏ. Bitstream 3 mang N2 11 người (`ml/out/n2_11_d1`, 16/10): LOSO Macro-F1 0,983; FSM T_SCORE 8 ngã nằm 96,2 %, báo giả 1,11/giờ (từ "nằm xuống giường").
 - Việc tiếp theo: đợt B theo `docs/huong_dan_dot_B.md`, dùng `bitstreams/1_e1_proto1_sisfall` **bản ngày 15/10** (kiểm `SHA256.txt` trước khi nạp).

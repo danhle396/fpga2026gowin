@@ -1,0 +1,8 @@
+  Logic                       | 1473/20736                          |  8%
+  Register                    | 1084/16173                          |  7%
+  I/O Port                    | 7/207                               |  4%
+  BSRAM                       | 8/46                                | 18%
+  DSP                         | 2.25/24                             | 10%
+Max Frequency Summary: NO. Clock Name Constraint Actual Fmax Logic Level Entity 1 u_pll/rpll_inst/CLKOUT.default_gen_clk 50.143(MHz) 98.116(MHz) 8 TOP No timing paths to get frequency of clk27! No timing paths to get frequency of u_pll/rpll_inst/CLKOUTP.default_gen_clk! No timing paths to get frequency of u_pll/rpll_inst/CLKOUTD.default_gen_clk! No 
+Total Negative Slack Summary: Clock Name Analysis Type Endpoints TNS Number of Endpoints clk27 Setup 0.000 0 clk27 Hold 0.000 0 u_pll/rpll_inst/CLKOUT.default_gen_clk Setup 0.000 0 u_pll/rpll_inst/CLKOUT.default_gen_clk Hold 0.000 0 u_pll/rpll_inst/CLKOUTP.default_gen_clk Setup 0.000 0 u_pll/rpll_inst/CLKOUTP.default_gen_clk Hold 0.000 0 u_pll/rpll_inst/CL
+-r--r--r-- 1 ADMIN 197121 7264154 Oct 16 21:16 impl/pnr/fpga_project.fs

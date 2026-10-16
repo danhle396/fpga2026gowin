@@ -1,0 +1,5 @@
+mô hình n2_11_s7, T_SCORE 8, 1180 cú ngã; đạt điều kiện 'nằm yên trong 2 s sau va chạm' (≥ 8 khối): 650 (514 thuộc nhóm ngã NẰM)
+  đạt điều kiện: tới PRE_ALARM 498/650; trễ trung vị 3.80 s, p90 4.32 s, lớn nhất 6.68 s; > 5 s: 2
+  đạt điều kiện, nhóm NẰM: tới PRE_ALARM 494/514; trễ trung vị 3.80 s, p90 4.32 s, lớn nhất 4.56 s; > 5 s: 0
+  mọi cú ngã tới PRE_ALARM: tới PRE_ALARM 743/743; trễ trung vị 4.06 s, p90 5.84 s, lớn nhất 8.76 s; > 5 s: 168
+  đạt điều kiện mà > 5 s (mã hoạt động, s): [(903, np.float64(6.32)), (903, np.float64(6.68))]

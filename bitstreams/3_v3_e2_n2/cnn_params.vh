@@ -5,7 +5,7 @@
 `define CNN_LANES 1
 `define CNN_NLAYERS 3
 `define CNN_HEAD_GAP 0
-`define CNN_SCORE_SHIFT 10
+`define CNN_SCORE_SHIFT 9
 `define CNN_ROM_WORDS 6368
 `define CNN_BIAS_WORDS 68
 `define CNN_CONV1_SHIFT 5'd8
