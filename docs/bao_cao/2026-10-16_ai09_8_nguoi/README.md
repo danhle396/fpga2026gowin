@@ -22,6 +22,10 @@
 
 - **Tác dụng của 2 người thêm vào tập huấn luyện:** trên cùng 6 người kiểm tra (101–106), Macro-F1 tăng 0,9683 → 0,9762 (+0,008) và số cú ngã bị lọt giảm từ khoảng 8 xuống 1–3 trên 604. Đây là so sánh có cặp: cùng người kiểm tra, cùng 3 seed.
 - **Người 105 vẫn yếu nhất:** Macro-F1 0,86 / 0,92 / 0,95; phiếu nhầm 23–83/giờ trước FSM. Giống lần 6 người.
+  - Cửa sổ sinh hoạt của 105 bị gọi FALL, trung bình 3 seed: 807 *Topallama* (đi khập khiễng) 24,0; 809 *Ayak burkulması* (trẹo chân) 21,7; 808 *Tökezleme* (vấp) 18,0; 815 (nằm xuống giường) 11,7; 803 (chạy chậm) 11,3; 806 (cúi nhặt) 9,0.
+  - Ở người khác, đứng đầu là 808 (12,7), 812 *Kanepe* (ngồi phịch xuống sofa, 11,3) và 803 (10,3).
+  - Đều là động tác gần giống suýt ngã. Safety FSM lọc hết: không lượt nào thành PRE_ALARM, vì người vẫn đứng và cử động.
+  - Ủng hộ việc ưu tiên thu `suyt_nga` trong `docs/data_protocol.md`. Nên thêm đi khập khiễng và trẹo chân vào phần mô tả của `suyt_nga`.
 
 ## Mức hệ thống (Safety FSM v3.1)
 

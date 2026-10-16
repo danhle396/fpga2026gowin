@@ -43,7 +43,7 @@ python tools/logger.py --port COMx --subject <người> --activity <hoạt độ
 | `nam_xuong` | D2 | NORMAL | chủ động nằm xuống đệm hoặc giường, nằm yên 10 s, ngồi dậy | không |
 | `lam_viec` | D2 | NORMAL | thao tác làm việc: khuân vác nhẹ, với tay lên cao, gõ búa | không |
 | `chay` | D2 | NORMAL | chạy chậm | không |
-| `suyt_nga` | D2 | NORMAL (lớp 2 dự trữ ở tầng 3) | vấp rồi lấy lại thăng bằng, trượt chân nhẹ | không |
+| `suyt_nga` | D2 | NORMAL (lớp 2 dự trữ ở tầng 3) | vấp rồi lấy lại thăng bằng, trượt chân nhẹ, trẹo chân, đi khập khiễng vài bước | không |
 | `nga_truoc`, `nga_sau`, `nga_trai`, `nga_phai` | D3 | FALL | ngã trên đệm theo hướng, **nằm yên 10 s** sau ngã | không (mỗi file 1 lần ngã) |
 | `nga_dung_day` | D3 | FALL | ngã trên đệm rồi tự đứng dậy sau 2–3 s | không |
 | `nga_ngoi` | D3 | FALL | ngã ngồi, giữ tư thế ngồi 10 s | không |
