@@ -1,0 +1,25 @@
+n2: ([16, 16, 32], 'flatten'); dữ liệu 79111 cửa sổ, người [101, 102, 103, 104, 105, 106, 107, 108], lớp {0: 76591, 3: 2520}
+epochs 30, lr 0.002, fall_frac 0.3, seed 7
+== LOSO ==
+  người 101: shift [7, 8, 8] ss 9  acc INT8 0.9995  Macro-F1 INT8 0.9957 FP32 0.9940  sự kiện 100/100 = 1.000  phiếu sinh hoạt 0.0/h
+  người 102: shift [7, 8, 8] ss 9  acc INT8 0.9994  Macro-F1 INT8 0.9966 FP32 0.9966  sự kiện 101/101 = 1.000  phiếu sinh hoạt 0.0/h
+  người 103: shift [7, 8, 7] ss 10  acc INT8 0.9990  Macro-F1 INT8 0.9932 FP32 0.9932  sự kiện 101/101 = 1.000  phiếu sinh hoạt 0.0/h
+  người 104: shift [7, 8, 8] ss 9  acc INT8 0.9972  Macro-F1 INT8 0.9787 FP32 0.9771  sự kiện 101/101 = 1.000  phiếu sinh hoạt 15.2/h
+  người 105: shift [7, 8, 8] ss 10  acc INT8 0.9899  Macro-F1 INT8 0.9241 FP32 0.9224  sự kiện 99/100 = 0.990  phiếu sinh hoạt 44.7/h
+  người 106: shift [7, 8, 8] ss 9  acc INT8 0.9987  Macro-F1 INT8 0.9907 FP32 0.9899  sự kiện 101/101 = 1.000  phiếu sinh hoạt 0.0/h
+  người 107: shift [7, 7, 8] ss 9  acc INT8 0.9976  Macro-F1 INT8 0.9789 FP32 0.9789  sự kiện 117/117 = 1.000  phiếu sinh hoạt 8.1/h
+  người 108: shift [7, 8, 8] ss 10  acc INT8 0.9984  Macro-F1 INT8 0.9845 FP32 0.9831  sự kiện 119/119 = 1.000  phiếu sinh hoạt 3.3/h
+  TỔNG LOSO n2: Macro-F1 trung bình INT8 0.9803 (FP32 0.9794); accuracy INT8 0.9974; FP32→INT8 trùng nhãn 0.9998
+  T_SCORE | recall sự kiện | phiếu 2/3 nhầm trên sinh hoạt
+        0 | 839/840 = 0.999 | 35 lần / 3.85 h = 9.08/h
+  cú ngã bị lọt theo mã hoạt động (T = 0): {917: 1}
+        4 | 836/840 = 0.995 | 25 lần / 3.85 h = 6.49/h
+        8 | 826/840 = 0.983 | 18 lần / 3.85 h = 4.67/h
+       16 | 797/840 = 0.949 | 9 lần / 3.85 h = 2.33/h
+       32 | 694/840 = 0.826 | 1 lần / 3.85 h = 0.26/h
+       64 | 472/840 = 0.562 | 0 lần / 3.85 h = 0.00/h
+  ma trận nhầm lẫn INT8 (hàng = thật 0..3): [[76401, 0, 0, 190], [0, 0, 0, 0], [0, 0, 0, 0], [17, 0, 0, 2503]]
+== mô hình cuối trên mọi người ==
+  PASS  INT8 theo lô trùng golden_model.forward (lớp, SCORE, 4 logit): 1000/1000
+xuất E:\FPGA2026_GOWIN\runs\n2_8_s7: shift [7, 8, 7], score_shift 9, 6368 weight, 68 bias
+thời gian 1749 s
