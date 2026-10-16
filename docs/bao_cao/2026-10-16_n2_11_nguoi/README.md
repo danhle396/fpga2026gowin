@@ -78,3 +78,15 @@ Với mỗi lần vào PRE_ALARM ở T_SCORE 8, script đo đỉnh |a| trong 3 s
 - Nhưng 5 % ngã nằm thật cũng có đỉnh dưới khoảng 2,56 g. Ngưỡng 2,5 g kéo tỉ lệ ngã nằm → PRE_ALARM từ 96,2 % xuống khoảng 92 %, dưới chỉ tiêu 95 %. Ngưỡng 2,0 g thì gần như không loại được báo giả.
 - D1 lấy mẫu 25 Hz rồi nội suy, nên đỉnh va chạm bị san phẳng. Trên mũ thật (100 Hz, lọc rồi giảm còn 50 Hz), đỉnh của cú ngã sẽ cao hơn.
 - Ghi lại thành **ứng viên**: "cổng va chạm: đỉnh |a| ≥ X g trong 3 s trước SUSPECT". Sẽ đo X trên các cú ngã ở buổi thử đội mũ, rồi mới quyết.
+
+## 5. Bảng FP32 / INT8 / RTL của mô hình lên chip (mẫu AI-11)
+
+| Mắt xích | Kết quả | Nguồn |
+|---|---|---|
+| FP32 → INT8 (LOSO, 3 seed) | Macro-F1 0,9824 → 0,9823 · 0,9813 → 0,9813 · 0,9848 → 0,9847; trùng nhãn 0,9999 | `n2_11_s*_report.txt` |
+| Ma trận nhầm lẫn INT8, cộng 3 seed (mức cửa sổ) | NORMAL → FALL 658 / 318.641 (0,21 %); FALL lọt 92 / 10.611; recall cửa sổ FALL 99,13 %, precision 94,11 % | như trên |
+| INT8 → RTL E2 (mô phỏng RTL) | `tb_e2` 50/50 từng tầng; `tb_proto` 10 khung + 7 kịch bản | `tb_e2_n2_11_p1.log`, `tb_proto_n2_11_p1.log` |
+| INT8 → netlist sau P&R | 3 khung + 7 kịch bản PASS | `gl_b3.log` |
+| Firmware → RTL → firmware (6 bản ghi D1 của người 104, 137,7 s) | **423/423 khung** khớp golden, CYCLES 258.080; firmware đọc đúng 423/423; 4 lần đổi trạng thái trùng golden (MONITOR → SUSPECT → PRE_ALARM → ALARM) | `cosim_n2_11_p1_6_ban_ghi.log` |
+
+Lượng tử mất ≤ 0,0001 Macro-F1; RTL và netlist không mất gì. Toàn bộ sai số còn lại nằm ở mô hình và dữ liệu. Chưa đo trên chip: TH-09 cần ≥ 2.000 cửa sổ qua HIL với `--params ml/out/n2_11_d1/params_int8.npz`.
