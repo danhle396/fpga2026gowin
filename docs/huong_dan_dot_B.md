@@ -149,13 +149,40 @@ Rồi gõ `4` (4 MHz) và `s`: vẫn phải 100/100.
 |---|---|
 | Đúng cả 5 dòng của bảng | các dòng `S,...` trên terminal |
 
+## B10. Chuyển sang bitstream 3 — mô hình sẽ demo (RA-05/07, TH-09)
+
+Chỉ làm khi B7–B8 đạt (PROTO 1 chạy 100/100). Bitstream 3 là giao thức v3 + engine E2 + **N2 chỉ kênh đầu, D1 11 người**, cũng là mô hình dùng để demo.
+
+1. Rút nguồn. Nối thêm **P2.1 (`P21`, J7) → J1-8 (RST_N)**. Năm dây của B7 giữ nguyên.
+2. Kiểm `bitstreams/3_v3_e2_n2/SHA256.txt` (`sha256sum -c SHA256.txt`), rồi nạp `bitstreams/3_v3_e2_n2/fpga_project.fs` bằng Gowin Programmer.
+3. Trong `firmware/src/app_main.c` đổi `#define FW_BITSTREAM 1` thành `3`. Build (F7) rồi nạp (F8).
+4. Reset, không giữ phím. Mong đợi dòng `tu kiem FPGA (A.10): rc=0 class=3  PASS`. Đáp án nằm trong `firmware/src/selftest_expect_v3_e2_n2.h`; firmware so trọn 7 byte đầu của khung đọc.
+5. **FW-10:** `python tools/check_frames.py --port COMx --seconds 400 --out trc3.log --proto 3`
+6. **TH-09:** `python tools/hil_test.py --port COMx --n 2000 --proto 3 --params ml/out/n2_11_d1/params_int8.npz`. **Phải đúng `--params` này**: dùng file của mô hình khác thì mọi cửa sổ sẽ báo sai lệch dù chip chạy đúng.
+
+| Pass | Gửi lại |
+|---|---|
+| Tự kiểm PASS; check_frames "N/N", mất 0 mẫu; hil_test "2000 khớp golden, 0 sai", CYCLES = 258080 (5,15 ms) | dòng tự kiểm, hai dòng kết luận, file `trc3.log` |
+
+Nếu tự kiểm FAIL mà B8 đã đạt, kiểm theo thứ tự:
+- dây RST_N;
+- đã nạp đúng `.fs` (kiểm SHA256);
+- đã đổi `FW_BITSTREAM` thành 3 rồi build lại chưa.
+
 ---
 
 ## Sau đợt B
 
-Khi B1–B8 đạt: cổng G0 và phần lớn G2 đóng được.
+Khi B1–B8 đạt: cổng G0 và phần lớn G2 đóng được. Khi B10 đạt: phần chip của mô hình demo đã xong.
 
-Việc tiếp theo cần người là **thu D2 đợt 1** (AI-05, không ai phải ngã), theo `docs/data_protocol.md`. Lý do: AI-09 / AI-10 chỉ chốt được khi có dữ liệu đội mũ. Trên D1, báo giả hiện là 1,26 lần/giờ (SPEC v3.1, N2), hoặc 0,88 lần/giờ khi thêm dữ liệu ngực và thắt lưng, so với chỉ tiêu ≤ 1. Các nguồn báo giả còn lại (nằm xuống giường, cúi gập) phải đo lại trên mũ.
+Việc tiếp theo cần người là **buổi thử trên mũ** (đề cương v2.1; AI-05 / AI-08; quy trình ở `docs/data_protocol.md`). Dữ liệu này chỉ để kiểm tra, không dùng huấn luyện:
+- đội mũ ≥ 2 giờ từ ≥ 2 người, có cúi nhặt, nằm xuống, suýt ngã;
+- ngã trên đệm;
+- va mũ và rơi mũ.
+
+Chấm ngay sau buổi bằng `python -I tools/playback_log.py ml/data/raw --detail`.
+
+Lý do cần buổi thử: trên D1 (11 người), báo giả là 1,11 lần/giờ, nhỉnh hơn chỉ tiêu ≤ 1, và toàn bộ đến từ "chủ động nằm xuống giường". Chỉ đo trên mũ thật mới biết con số thật.
 
 Thư mục cần biết:
 - `firmware/README.md`: lệnh firmware.

@@ -7,7 +7,7 @@ MPU6050 trên mũ → SONiX SN32F407 (EVK V1.0) → SPI → Kiwi Primer 20K (Gow
 | [CLAUDE.md](CLAUDE.md) | **Đọc đầu tiên mỗi phiên AI**: cách bắt đầu phiên, luật, cách thay phiên giữa nhiều máy và nhiều tài khoản Claude, công cụ cần cài |
 | [PROJECT_MASTER.md](PROJECT_MASTER.md) | Kế hoạch, cổng G0–G7, danh sách việc, **Phụ lục A = SPEC v3 (luật)**, chân và nối dây (Phụ lục E) |
 | [DE_CUONG_v2.md](DE_CUONG_v2.md), [THAY_DOI_SO_VOI_v1.md](THAY_DOI_SO_VOI_v1.md) | Đề cương nộp BTC và các thay đổi |
-| [docs/huong_dan_dot_B.md](docs/huong_dan_dot_B.md) | **Làm gì khi cầm board**: 8 bước có Pass |
+| [docs/huong_dan_dot_B.md](docs/huong_dan_dot_B.md) | **Làm gì khi cầm board**: 10 bước có Pass (B10 = chuyển sang bitstream 3, mô hình demo) |
 | [docs/data_protocol.md](docs/data_protocol.md) | Quy trình thu dữ liệu trên mũ (D2, D3) |
 | [docs/bao_cao/](docs/bao_cao/) | Bằng chứng theo ngày cho mọi việc đã đánh [x] |
 
