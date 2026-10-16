@@ -1,15 +1,18 @@
 # Phân bố az_tb (độ nghiêng đầu, LSB, 2048 = thẳng) và still_run lúc vào PRE_ALARM: ngã nằm thật so với báo giả.
+import pathlib
 import sys
 import numpy as np
-sys.path.insert(0, r"D:\hoctap\fpga\fpga2026gowin\tools")
-sys.path.insert(0, r"D:\hoctap\fpga\fpga2026gowin\ml\src")
+ROOT = pathlib.Path(__file__).resolve().parents[4]                 # gốc repo
+sys.path.insert(0, str(ROOT / "tools"))
+sys.path.insert(0, str(ROOT / "ml" / "src"))
 sys.stdout.reconfigure(encoding="utf8")
 import playback_d1 as pb   # noqa: E402
 import cnn_numpy as cn     # noqa: E402
 import safety_model as sm  # noqa: E402
 
-D = np.load(r"D:\hoctap\fpga\fpga2026gowin\ml\data\public\d1_trials_50hz.npz")
-M = r"D:\hoctap\fpga\fpga2026gowin\ml\out\n2_d1\loso_params.npz"
+D = np.load(ROOT / "ml" / "data" / "public" / "d1_trials_50hz.npz")
+M = ROOT / "ml" / "out" / "n2_d1" / "loso_params.npz"
+HAVE = {int(k.split("/", 1)[0]) for k in np.load(M).files}    # mô hình 6 người: chỉ phân tích 101–106
 
 
 def play_detail(x, cls, sc, cfg):
@@ -33,7 +36,7 @@ def play_detail(x, cls, sc, cfg):
 
 
 true_az, false_az = [], []
-for s in np.unique(D["subject"]):
+for s in [s for s in np.unique(D["subject"]) if int(s) in HAVE]:
     Q, ss = pb.load_fold(M, s)
     for i in np.flatnonzero(D["subject"] == s):
         act = int(D["act"][i])

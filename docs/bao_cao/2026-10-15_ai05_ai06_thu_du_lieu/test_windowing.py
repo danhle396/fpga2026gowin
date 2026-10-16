@@ -6,8 +6,10 @@ import sys
 import numpy as np
 sys.stdout.reconfigure(encoding="utf8")
 
-ROOT = pathlib.Path(r"D:\hoctap\fpga\fpga2026gowin")
-S = pathlib.Path(r"C:\Users\ADMIN\AppData\Local\Temp\claude\d--hoctap-fpga-fpga2026gowin\4f873fbe-983f-43f7-9d9d-b0d332537d87\scratchpad\win_test")
+import tempfile
+
+ROOT = pathlib.Path(__file__).resolve().parents[3]                 # gốc repo, máy nào cũng chạy được
+S = pathlib.Path(tempfile.gettempdir()) / "fpga2026_win_test"
 raw_dir = S / "raw"
 if S.exists():
     import shutil

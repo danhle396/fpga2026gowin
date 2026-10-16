@@ -48,6 +48,8 @@ def parse_name(path):
         raise ValueError(f"hoạt động lạ '{act}' (xem docs/data_protocol.md)")
     if subj == "h0":
         sid = 200
+    elif subj.startswith("s") and subj[1:].isdigit() and int(subj[1:]) == 0:
+        raise ValueError("s00 dành cho file thử trên bàn (đợt B), không vào dữ liệu; mã 200 đã là h0")
     elif subj.startswith("s") and subj[1:].isdigit():
         sid = 200 + int(subj[1:])
     else:

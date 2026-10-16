@@ -24,9 +24,9 @@ Theo chiến lược dữ liệu ở mục 4.4 của `PROJECT_MASTER.md`:
 
 ```
 python tools/logger.py --port COMx --subject <người> --activity <hoạt động> --trial <n>
-→ ml/data/raw/<người>_<hoạt động>_<n>.csv
+→ ml/data/raw/<người>_<hoạt động>_<nn>.csv        (<nn> = số lần, hai chữ số: 01, 02, …)
 ```
-- `<người>` là `s01`, `s02`… Riêng **`h0`** dành cho va đập khi *không* đội mũ: một người thu hàng loạt, chỉ dùng để huấn luyện.
+- `<người>` là `s01`, `s02`… Riêng **`h0`** dành cho va đập khi *không* đội mũ: một người thu hàng loạt, chỉ dùng để huấn luyện. **`s00`** chỉ dùng cho file thử trên bàn ở đợt B (B5); `windowing.py` bỏ qua mọi file `s00_*`.
 - `<hoạt động>` phải nằm trong bảng dưới; `tools/windowing.py` từ chối tên lạ.
 
 | `<hoạt động>` | Nguồn | Lớp | Mô tả | Nút đánh dấu SW6 |
