@@ -60,6 +60,15 @@ PRE_ALARM giả ở T_SCORE 8 chỉ còn đến từ 815 (chủ động nằm xu
    p90 5,92 s đến từ những cú ngã mà người còn cử động quá 2 s sau va chạm, nên nằm ngoài chỉ tiêu. Không cần đổi `STILL_BLOCKS`.
 4. **Tái lập giữa hai máy:** huấn luyện lại `n2_d1` (6 người, seed 20261014) trên máy thứ hai cho Macro-F1 0,9591 so với 0,9584, recall T8 95,5 % so với 95,7 %, phiếu nhầm 11,42 so với 11,04/giờ (`repro_n2_d1_may2.log`). Chênh lệch do khác máy (≈ 0,001) nhỏ hơn nhiều so với chênh lệch giữa các seed (0,958–0,977).
 
-## N2 + dữ liệu thân (ngực, thắt lưng chỉ để huấn luyện)
+## N2 + dữ liệu thân (ngực, thắt lưng chỉ để huấn luyện) — LOSO, không phát lại
 
-Đang chạy (`n2t_8_s*`, bắt đầu 16/10 08:59). Kết quả sẽ thêm vào đây.
+| 8 người, 3 seed | Chỉ đầu | Đầu + thân |
+|---|---|---|
+| Macro-F1 INT8 (20261014 / 7 / 99) | 0,9707 / 0,9803 / 0,9806 → **0,9772** | 0,9542 / 0,9792 / 0,9766 → 0,9700 |
+| Macro-F1 trên người 101–106 | **0,9762** | 0,9682 |
+| Recall sự kiện, T_SCORE 8 | 97,3 / 98,3 / 97,4 % → 97,7 % | 98,8 / 100 / 98,9 % → **99,2 %** |
+| Phiếu 2/3 nhầm/giờ trước FSM, T_SCORE 8 | 5,71 / 4,67 / 2,08 → **4,15** | 9,60 / 8,04 / 7,00 → 8,21 |
+
+- Trên 6 người (15/10), thêm dữ liệu thân có vẻ có lợi. Lên 8 người thì lợi thế mất: bắt thêm 1,5 điểm recall nhưng số phiếu nhầm gấp đôi, và Macro-F1 thấp hơn.
+- **Nhóm quyết chỉ dùng kênh đầu (16/10).** Số liệu này ủng hộ quyết định đó. Theo tiêu chí AI-09, dữ liệu thân chỉ được giữ nếu không làm tăng báo nhầm, mà ở đây báo nhầm tăng.
+- Lượt phát lại FSM của mô hình đầu + thân bị `EOFError` (file dữ liệu bị chép đè khi đang đọc, xem [d1_11_nguoi](../2026-10-16_d1_11_nguoi/README.md)). Theo quyết định trên nên không chạy lại.

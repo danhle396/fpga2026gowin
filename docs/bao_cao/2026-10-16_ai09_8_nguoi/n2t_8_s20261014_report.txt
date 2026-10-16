@@ -1,0 +1,26 @@
+n2: ([16, 16, 32], 'flatten'); dữ liệu 237320 cửa sổ, người [101, 102, 103, 104, 105, 106, 107, 108], lớp {0: 229757, 3: 7563}
+chỉ huấn luyện: ['ml/data/public/d1_windows_nguc_340539.npz', 'ml/data/public/d1_windows_that_lung_340535.npz'] (158209 cửa sổ); tập kiểm LOSO 79111 cửa sổ
+epochs 30, lr 0.002, fall_frac 0.3, seed 20261014
+== LOSO ==
+  người 101: shift [7, 8, 7] ss 9  acc INT8 0.9990  Macro-F1 INT8 0.9913 FP32 0.9940  sự kiện 99/100 = 0.990  phiếu sinh hoạt 0.0/h
+  người 102: shift [7, 8, 8] ss 9  acc INT8 0.9992  Macro-F1 INT8 0.9949 FP32 0.9940  sự kiện 101/101 = 1.000  phiếu sinh hoạt 0.0/h
+  người 103: shift [7, 7, 7] ss 9  acc INT8 0.9993  Macro-F1 INT8 0.9949 FP32 0.9966  sự kiện 101/101 = 1.000  phiếu sinh hoạt 0.0/h
+  người 104: shift [7, 8, 8] ss 9  acc INT8 0.9957  Macro-F1 INT8 0.9679 FP32 0.9679  sự kiện 101/101 = 1.000  phiếu sinh hoạt 19.5/h
+  người 105: shift [8, 8, 8] ss 10  acc INT8 0.9457  Macro-F1 INT8 0.7481 FP32 0.7644  sự kiện 100/100 = 1.000  phiếu sinh hoạt 159.7/h
+  người 106: shift [7, 8, 8] ss 10  acc INT8 0.9983  Macro-F1 INT8 0.9874 FP32 0.9866  sự kiện 101/101 = 1.000  phiếu sinh hoạt 2.3/h
+  người 107: shift [7, 8, 8] ss 10  acc INT8 0.9965  Macro-F1 INT8 0.9688 FP32 0.9701  sự kiện 113/117 = 0.966  phiếu sinh hoạt 13.0/h
+  người 108: shift [7, 8, 8] ss 9  acc INT8 0.9979  Macro-F1 INT8 0.9804 FP32 0.9804  sự kiện 119/119 = 1.000  phiếu sinh hoạt 3.3/h
+  TỔNG LOSO n2: Macro-F1 trung bình INT8 0.9542 (FP32 0.9568); accuracy INT8 0.9913; FP32→INT8 trùng nhãn 0.9987
+  T_SCORE | recall sự kiện | phiếu 2/3 nhầm trên sinh hoạt
+        0 | 835/840 = 0.994 | 95 lần / 3.85 h = 24.65/h
+  cú ngã bị lọt theo mã hoạt động (T = 0): {907: 1, 920: 4}
+        4 | 835/840 = 0.994 | 60 lần / 3.85 h = 15.57/h
+        8 | 830/840 = 0.988 | 37 lần / 3.85 h = 9.60/h
+       16 | 818/840 = 0.974 | 14 lần / 3.85 h = 3.63/h
+       32 | 751/840 = 0.894 | 10 lần / 3.85 h = 2.59/h
+       64 | 530/840 = 0.631 | 0 lần / 3.85 h = 0.00/h
+  ma trận nhầm lẫn INT8 (hàng = thật 0..3): [[75925, 0, 0, 666], [0, 0, 0, 0], [0, 0, 0, 0], [24, 0, 0, 2496]]
+== mô hình cuối trên mọi người ==
+  PASS  INT8 theo lô trùng golden_model.forward (lớp, SCORE, 4 logit): 1000/1000
+xuất E:\FPGA2026_GOWIN\runs\n2t_8_s20261014: shift [7, 8, 8], score_shift 9, 6368 weight, 68 bias
+thời gian 2324 s
