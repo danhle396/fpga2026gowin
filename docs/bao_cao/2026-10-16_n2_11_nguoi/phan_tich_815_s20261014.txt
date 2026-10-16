@@ -1,0 +1,7 @@
+mô hình n2_11_s20261014, T_SCORE 8: 741 ngã nằm tới PRE_ALARM, 5 PRE_ALARM giả
+đỉnh |a| (g) trong 3.0 s trước SUSPECT, ngã nằm: min 1.62 · p1 2.03 · p5 2.56 · p10 2.84 · trung vị 4.71
+báo giả (mã, người, đỉnh g): [(815, 105, 1.96), (815, 109, 2.15), (815, 109, 2.17), (815, 109, 2.24), (815, 109, 2.5)]
+ngưỡng 1.5 g: giữ 100.0 % ngã nằm, loại 0/5 báo giả
+ngưỡng 2.0 g: giữ  99.1 % ngã nằm, loại 1/5 báo giả
+ngưỡng 2.5 g: giữ  95.4 % ngã nằm, loại 4/5 báo giả
+ngưỡng 3.0 g: giữ  87.0 % ngã nằm, loại 5/5 báo giả

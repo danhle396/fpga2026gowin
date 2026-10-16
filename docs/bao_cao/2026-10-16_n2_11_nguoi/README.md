@@ -61,3 +61,20 @@ Theo từng người, Macro-F1 qua 3 seed:
 - **Fmax giảm** từ 107,25 xuống 98,12 MHz. Weight khác thì nội dung ROM và cách đặt, đi dây khác. Mức này vẫn gần gấp đôi clock 50,143 MHz và trên mức cam kết ≥ 55 MHz; mục tiêu mở rộng ≥ 100 MHz thuộc tầng 3.
 - Khung tự kiểm cho ra lớp FALL với SCORE 0: logit của FALL chỉ hơn NORMAL 461 đơn vị. Không ảnh hưởng gì, vì tự kiểm so **từng bit** cả 4 logit. Ngoài ra, vì hai logit sát nhau, một sai lệch nhỏ trong phép tính cũng dễ làm đổi cả lớp trả về.
 - **Chưa chạy trên chip.**
+
+## 4. Báo giả còn lại (815): một cổng "có va chạm" có giúp được không? (`phan_tich_815.py`, `phan_tich_815_s*.txt`)
+
+Với mỗi lần vào PRE_ALARM ở T_SCORE 8, script đo đỉnh |a| trong 3 s trước lúc vào SUSPECT.
+
+| | seed 20261014 | seed 7 | seed 99 |
+|---|---|---|---|
+| Đỉnh \|a\| của các báo giả 815 (g) | 1,96 – 2,50 (5 lần) | 1,96 – 2,50 (4 lần) | 1,69 – 2,50 (9 lần) |
+| Ngã nằm tới PRE_ALARM: p1 / p5 / trung vị (g) | 2,03 / 2,56 / 4,71 | 2,14 / 2,59 / 4,72 | 2,03 / 2,57 / 4,71 |
+| Ngưỡng 2,0 g: giữ ngã nằm / loại báo giả | 99,1 % / 1 trên 5 | 99,5 % / 1 trên 4 | 99,1 % / 2 trên 9 |
+| Ngưỡng 2,5 g: giữ ngã nằm / loại báo giả | 95,4 % / 4 trên 5 | 96,3 % / 3 trên 4 | 95,4 % / 8 trên 9 |
+
+**Kết luận: chưa thêm vào SPEC.**
+- Báo giả 815 đều là va chạm nhẹ, đỉnh ≤ 2,5 g, và phần lớn đến từ người 109.
+- Nhưng 5 % ngã nằm thật cũng có đỉnh dưới khoảng 2,56 g. Ngưỡng 2,5 g kéo tỉ lệ ngã nằm → PRE_ALARM từ 96,2 % xuống khoảng 92 %, dưới chỉ tiêu 95 %. Ngưỡng 2,0 g thì gần như không loại được báo giả.
+- D1 lấy mẫu 25 Hz rồi nội suy, nên đỉnh va chạm bị san phẳng. Trên mũ thật (100 Hz, lọc rồi giảm còn 50 Hz), đỉnh của cú ngã sẽ cao hơn.
+- Ghi lại thành **ứng viên**: "cổng va chạm: đỉnh |a| ≥ X g trong 3 s trước SUSPECT". Sẽ đo X trên các cú ngã ở buổi thử đội mũ, rồi mới quyết.

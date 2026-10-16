@@ -1,0 +1,7 @@
+mô hình n2_11_s99, T_SCORE 8: 741 ngã nằm tới PRE_ALARM, 9 PRE_ALARM giả
+đỉnh |a| (g) trong 3.0 s trước SUSPECT, ngã nằm: min 1.62 · p1 2.03 · p5 2.57 · p10 2.84 · trung vị 4.71
+báo giả (mã, người, đỉnh g): [(815, 109, 1.69), (815, 105, 1.96), (815, 107, 2.08), (815, 109, 2.15), (815, 109, 2.17), (815, 109, 2.24), (815, 109, 2.3), (815, 107, 2.36), (815, 109, 2.5)]
+ngưỡng 1.5 g: giữ 100.0 % ngã nằm, loại 0/9 báo giả
+ngưỡng 2.0 g: giữ  99.1 % ngã nằm, loại 2/9 báo giả
+ngưỡng 2.5 g: giữ  95.4 % ngã nằm, loại 8/9 báo giả
+ngưỡng 3.0 g: giữ  87.0 % ngã nằm, loại 9/9 báo giả
