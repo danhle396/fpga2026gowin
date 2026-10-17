@@ -1,6 +1,6 @@
 # bitstreams/ — bitstream đã dựng sẵn cho Kiwi Primer 20K
 
-Dựng ngày 15/10/2026 bằng Gowin EDA V1.9.11.03 Education. **Bitstream 1 và 2 dựng lại chiều 15/10**, sau khi mô phỏng netlist phát hiện lỗi `conv_start` lên nguồn bằng 1 (xem dưới); bản cũ hơn thì đừng nạp (`gw_sh`, script `rtl/v3/pnr_v3.sh`) trên bản sao project. Chân theo Phụ lục E.3 (J1-3..J1-8, LVCMOS33); clock 27 MHz ở H11 → rPLL 50,143 MHz. Nạp bằng Gowin Programmer (SRAM để thử, Flash để giữ sau khi tắt nguồn). Kiểm tra file trước khi nạp: `sha256sum -c SHA256.txt`.
+Dựng bằng Gowin EDA V1.9.11.03 Education (`gw_sh`, script `rtl/v3/pnr_v3.sh`) trên bản sao project. **Bitstream 1 và 2 dựng lại chiều 15/10** sau khi mô phỏng netlist phát hiện lỗi `conv_start` lên nguồn bằng 1 (xem dưới); **bitstream 3 dựng lại 16/10** với N2 11 người. Bản cũ hơn thì đừng nạp. Chân theo Phụ lục E.3 (J1-3..J1-8, LVCMOS33); clock 27 MHz ở H11 → rPLL 50,143 MHz. Nạp bằng Gowin Programmer (SRAM để thử, Flash để giữ sau khi tắt nguồn). Kiểm tra file trước khi nạp: `sha256sum -c SHA256.txt`.
 
 | Thư mục | Top / engine / mô hình | Giao thức | Firmware: `FW_BITSTREAM` trong `app_main.c` | Đã kiểm trong mô phỏng | P&R |
 |---|---|---|---|---|---|
