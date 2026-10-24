@@ -9,7 +9,7 @@ if [ -n "$(git status --porcelain)" ]; then
     echo "CẢNH BÁO: repo có thay đổi chưa commit từ trước. KHÔNG git pull; hỏi người dùng trước khi làm tiếp:"
     git status --short | head -20
 else
-    out=$(GIT_TERMINAL_PROMPT=0 timeout 60 git pull --ff-only 2>&1)
+    out=$( { GIT_TERMINAL_PROMPT=0 timeout 60 git fetch -q origin && git merge --ff-only @{u}; } 2>&1 )
     rc=$?
     if [ $rc -eq 0 ]; then
         echo "git pull: $(echo "$out" | tail -1)"
