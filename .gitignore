@@ -14,3 +14,5 @@ fpga/*.gprj.user
 ket_qua_board/
 # cấu hình Claude Code riêng từng máy
 .claude/settings.local.json
+# WiFi riêng của từng máy cho sketch ESP32
+esp32/mu_nga_hub/wifi_rieng.h

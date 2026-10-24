@@ -40,6 +40,9 @@ extern "C" {
 #define LED_PIN         2           // LED trên ESP32 DevKit: sáng/nháy theo còi + LED của Safety FSM
 #define BTN_PIN         0           // nút BOOT: CANCEL phụ (OR với nút SW3 của MCU)
 #define USB_BAUD        460800
+#if __has_include("wifi_rieng.h")
+#include "wifi_rieng.h"          // WiFi riêng của máy: tạo file này cạnh .ino, không lên git
+#endif
 #ifndef WIFI_STA_SSID
 #define WIFI_STA_SSID   "test1"     // hotspot thử của nhóm; đổi bằng -DWIFI_STA_SSID=... khi build
 #endif

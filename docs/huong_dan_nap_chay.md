@@ -33,7 +33,7 @@ MCU in chữ ra chân TX, tức là sang ESP32. ESP32 chuyển các dòng đó l
 
 1. Arduino IDE → Boards Manager → cài **esp32 by Espressif Systems** (đã build thử bản 3.0.7; bản 2.0.x cũng chạy được).
 2. Mở `esp32/mu_nga_hub/mu_nga_hub.ino`, chọn board **ESP32 Dev Module** và cổng COM của ESP32.
-3. WiFi: mặc định `test1` / `12345678` (hotspot thử của nhóm). Đổi ở đầu file nếu cần.
+3. WiFi: mặc định `test1` / `12345678`. Dùng WiFi khác thì tạo file `esp32/mu_nga_hub/wifi_rieng.h` (không lên git) gồm 2 dòng `#define WIFI_STA_SSID "..."` và `#define WIFI_STA_PASSWORD "..."`; **đừng ghi mật khẩu vào .ino**.
 4. Upload. Không phải cài thêm thư viện nào.
 
 Các file `.c`/`.h` trong thư mục sketch là **bản chép** từ `firmware/src`. Sửa ở `firmware/src` rồi chạy `bash esp32/dong_bo_core.sh`; `rtl/tb/run_all.sh` sẽ báo FAIL nếu hai nơi lệch nhau.
