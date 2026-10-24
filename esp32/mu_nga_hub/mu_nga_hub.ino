@@ -220,7 +220,17 @@ void setup()
     s_server.begin();
     s_web.on("/", HTTP_GET, []() { s_web.send_P(200, "text/html; charset=utf-8", TRANG_WEB); });
     s_web.on("/data", HTTP_GET, web_data);
-    s_web.on("/huy", HTTP_POST, []() { s_web_cancel_until = millis() + 300; s_web.send(200, "text/plain", "ok"); });
+    // Nút web giả lập nút trên mũ, nhưng chỉ đúng việc được hỏi: một lần nhấn ở MONITOR không được tính (2 lần = TẮT)
+    s_web.on("/huy", HTTP_POST, []() {
+        uint8_t st = H.app.fsm.st;
+        if (st == ST_PRE_ALARM)  { s_web_cancel_until = millis() + 300;  s_web.send(200, "text/plain", "da huy canh bao"); }
+        else if (st == ST_ALARM) { s_web_cancel_until = millis() + 1300; s_web.send(200, "text/plain", "da tat bao dong"); }
+        else                     { s_web.send(409, "text/plain", "chi huy duoc khi dang CANH BAO / BAO DONG"); }
+    });
+    s_web.on("/bat", HTTP_POST, []() {
+        if (H.app.fsm.st == ST_STANDBY) { s_web_cancel_until = millis() + 2300; s_web.send(200, "text/plain", "dang bat"); }
+        else                            { s_web.send(409, "text/plain", "he thong dang bat"); }
+    });
     s_web.begin();
     delay(500);                                 // FPGA nạp cấu hình từ flash sau khi cấp nguồn
 

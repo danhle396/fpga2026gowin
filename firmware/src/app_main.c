@@ -72,7 +72,7 @@ int main(void)
 
     /* ---- gửi mẫu cho ESP32 ---- */
     uint8_t f[NODE_SAMPLE_FRAME], seq = 0, keys = 0;
-    uint32_t t_tick = board_millis(), t_stat = t_tick, t_last = t_tick, n = 0, n_err = 0, n_lost = 0, n_reinit = 0;
+    uint32_t t_tick = board_millis(), t_stat = t_tick, t_last = t_tick, n = 0, n_err = 0, n_lost = 0, n_reinit = 0, t_retry = t_tick;
     for (;;) {
         uint32_t now = board_millis();
         board_wdt_feed();
@@ -91,13 +91,16 @@ int main(void)
                 n_err++;
             }
         }
-        if (n && now - t_last > 200u) {
-            /* 24/10 trên board: MPU6050 ngừng ra mẫu sau khi nguồn chập chờn (reset về chế độ ngủ, I2C vẫn trả lời).
-             * Quá 200 ms không có mẫu mới thì ghi lại cấu hình A.1; offset gyro giữ nguyên. */
+        if (n && now - t_last > 200u && (int32_t)(now - t_retry) >= 0) {
+            /* 24/10 trên board: MPU6050 ngừng ra mẫu (lần 1: reset về chế độ ngủ, I2C vẫn trả lời; lần 2: không trả lời,
+             * "thanh ghi sai=-1" — nghi lỏng dây hoặc bus I2C bị treo). Quá 200 ms không có mẫu mới: khởi động lại I2C0 rồi
+             * ghi lại cấu hình A.1, thử lại mỗi 1 s; offset gyro giữ nguyên. -1 = không trả lời WHO_AM_I: kiểm dây. */
+            i2c0_init(I2C_HZ);
             int bad2 = imu_init(&who);
-            put_kv("# MPU6050 khong co mau moi > 200 ms: cau hinh lai, thanh ghi sai=", bad2); uart_puts("\n");
+            put_kv("# MPU6050 khong co mau moi: cau hinh lai, ket qua=", bad2);
+            uart_puts(bad2 < 0 ? " (khong tra loi I2C: kiem day SDA/SCL/VCC/GND)\n" : "\n");
             n_reinit++;
-            t_last = now;
+            t_retry = now + 1000u;                                 /* thử lại sau 1 s */
         }
         if (now - t_tick >= 10u) {                                  /* khe 10 ms: phím, LED */
             t_tick += 10u;

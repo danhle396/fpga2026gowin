@@ -21,7 +21,7 @@ h1{font-size:18px;margin:0 0 12px}.muted{color:var(--mute)}
 .big{font-size:26px;font-weight:700}.row{display:flex;justify-content:space-between;gap:8px;padding:3px 0;border-bottom:1px dashed var(--line)}
 .row:last-child{border:0}canvas{width:100%;height:190px;display:block}
 button{font:inherit;padding:10px 14px;border-radius:10px;border:1px solid var(--line);background:var(--card);color:var(--ink);cursor:pointer}
-button.do{background:var(--bad);color:#fff;border:0}
+button.do{background:var(--bad);color:#fff;border:0}button:disabled{opacity:.35;cursor:default}
 #ev{font:12px/1.5 ui-monospace,Consolas,monospace;max-height:240px;overflow:auto;white-space:pre-wrap;margin:0}
 .lg{display:flex;gap:14px;font-size:12px}.lg i{display:inline-block;width:10px;height:10px;border-radius:2px;margin-right:4px;vertical-align:-1px}
 </style></head><body><main>
@@ -30,8 +30,9 @@ button.do{background:var(--bad);color:#fff;border:0}
 <div class="grid" style="margin-top:12px">
  <div class="card"><div class="muted">Kết quả CNN mới nhất (FPGA)</div><div class="big" id="cls">–</div><div class="muted" id="scr"></div></div>
  <div class="card"><div class="muted">Tự kiểm FPGA lúc khởi động</div><div class="big" id="tk">–</div><div class="muted" id="tkd"></div></div>
- <div class="card"><div class="muted">Hành động</div><p style="margin:8px 0"><button class="do" onclick="huy()">Hủy cảnh báo</button></p>
-  <div class="muted" style="font-size:12px">Tương đương nhấn nút trên mũ (SW3). Giữ ≥ 3 s ở MONITOR là SOS.</div></div>
+ <div class="card"><div class="muted">Hành động</div><p style="margin:8px 0;display:flex;gap:8px;flex-wrap:wrap">
+  <button class="do" id="bh" onclick="lenh('/huy')">Hủy cảnh báo</button><button id="bb" onclick="lenh('/bat')">Bật lại hệ thống</button></p>
+  <div class="muted" style="font-size:12px" id="tb">Hủy chỉ dùng khi CẢNH BÁO / BÁO ĐỘNG. Bật lại khi hệ thống TẮT.</div></div>
 </div>
 <div class="card" style="margin-top:12px"><div class="row"><b>Gia tốc |a| (g), 30 s gần nhất</b>
  <span class="lg"><span><i style="background:var(--info)"></i>|a|</span><span><i style="background:var(--bad)"></i>cửa sổ FALL</span></span></div>
@@ -58,6 +59,8 @@ function ve(d){
  const s=d.s,R=(a,b)=>'<div class="row"><span>'+a+'</span><b>'+b+'</b></div>';
  document.getElementById('tke').innerHTML=R('Mẫu nhận',s.mau)+R('Mẫu mất',s.mat)+R('Khung hỏng',s.hong)+R('Cửa sổ gửi FPGA',s.gui)+R('FPGA trả OK',s.ok)+R('Timeout',s.to)+R('Lỗi khác',s.loi);
  const ev=document.getElementById('ev');ev.textContent=d.ev.slice().reverse().join('\n');
+ document.getElementById('bh').disabled=!(d.st=='PRE_ALARM'||d.st=='ALARM');
+ document.getElementById('bb').disabled=d.st!='STANDBY';
  bieu(d);
 }
 function bieu(d){
@@ -69,9 +72,10 @@ function bieu(d){
  for(let v=0;v<=maxg;v++){g.beginPath();g.moveTo(0,Y(v));g.lineTo(W,Y(v));g.stroke();g.fillText(v+' g',4,Y(v)-2)}
  g.fillStyle=css.getPropertyValue('--bad');
  for(const p of d.res){if(p[1]==3&&p[0]>=t0){g.globalAlpha=.25;g.fillRect(X(p[0]-2560),0,X(p[0])-X(p[0]-2560),Hh);g.globalAlpha=1}}
+ if(!d.acc.length||d.acc[d.acc.length-1][0]<t1-2000){g.fillStyle=css.getPropertyValue('--warn');g.font='14px system-ui';g.fillText('Không có mẫu mới từ cảm biến (kiểm dây MPU6050)',40,Hh/2)}
  g.strokeStyle=css.getPropertyValue('--info');g.lineWidth=2;g.beginPath();let f=1;
  for(const p of d.acc){if(p[0]<t0)continue;const x=X(p[0]),y=Y(p[1]/100);f?g.moveTo(x,y):g.lineTo(x,y);f=0}g.stroke();
 }
-async function huy(){try{await fetch('/huy',{method:'POST'})}catch(e){}}
+async function lenh(u){try{const r=await fetch(u,{method:'POST'});document.getElementById('tb').textContent=await r.text()}catch(e){}}
 setInterval(lay,300);lay();
 </script></body></html>)HTML";
