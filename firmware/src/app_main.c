@@ -39,6 +39,7 @@ int main(void)
     board_init();
     board_wdt_init();
     uart_puts("\n# mu bao ho - MCU nut cam bien (" __DATE__ " " __TIME__ ")\n");
+    put_kv("# HCLK=", (int32_t)SystemCoreClock); uart_puts("\n");
 
     /* ---- cảm biến (FW-04) ---- */
     i2c0_init(I2C_HZ);

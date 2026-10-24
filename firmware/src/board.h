@@ -17,7 +17,7 @@ void     board_delay_ms(uint32_t ms);
 void     board_led(int on);
 
 /* UART0 460800 8N1, buffer vòng + ngắt cho cả TX (512 B) và RX (1024 B) — việc FW-06.
- * uart_putc chờ khi buffer TX đầy (không bỏ byte); uart_tx_free() để biết còn chỗ. */
+ * uart_putc chờ THRE rồi ghi (phát kiểu hỏi vòng, không bỏ byte). */
 void     uart_putc(char c);
 void     uart_puts(const char *s);
 void     uart_put_dec(int32_t v);

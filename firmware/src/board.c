@@ -89,73 +89,48 @@ void board_led(int on)
     else    PIN_SET(SN_GPIO3, 8);
 }
 
-/* ---------------- UART0 8N1, buffer vòng + ngắt (FW-06) ----------------
- * Baud = PCLK / (OVER × DL); 48 MHz, OVER8 = 1, DL = 52 → 115.385 baud (lệch +0,16 %): nối ESP32 GPIO16 (v2.2). */
-#define UART_DL 52u
-#define TXN 512u
-#define RXN 1024u
-static volatile uint8_t  s_tx[TXN], s_rx[RXN];
-static volatile uint16_t s_tx_h, s_tx_t, s_rx_h, s_rx_t;
+/* ---------------- UART0 8N1, phát kiểu hỏi vòng (FW-06) ----------------
+ * Baud = PCLK / (OVER × DL); 48 MHz, OVER8 = 1, DL = 52 → 115.385 baud (lệch +0,16 %): nối ESP32 GPIO16 (v2.2).
+ * Chạy board lần 1 (24/10): phát bằng ngắt THRE không chạy (ESP32 nhận 0 byte, rồi 6 byte khi tự đẩy byte đầu),
+ * nên phát kiểu chờ THRE rồi ghi TH như uart.c của nhóm đã chạy được. Một khung mẫu 21 byte ≈ 1,8 ms trong khe 10 ms.
+ * MCU không có dây RX (phần cứng cố định): uart_getc đọc thẳng thanh ghi, không dùng ngắt. */
+#define UART_BAUD 115200u
 volatile uint32_t g_uart_rx_overflow;
 
 static void uart_init(void)
 {
     SN_SYS1->AHBCLKEN |= (1UL << 16);           /* UART0CLKEN */
     SN_PFPA->UART0 = (2UL << 2) | 2UL;          /* URXD0 = P3.2, UTXD0 = P3.1 */
+    SN_UART0->CTRL = 0;
     SN_UART0->LC  = 0x83;                       /* DLAB = 1, 8N1 */
-    SN_UART0->DLL = UART_DL;
+    SN_UART0->DLL = (SystemCoreClock + 4u * UART_BAUD) / (8u * UART_BAUD);    /* OVER8: 48 MHz → 52 */
     SN_UART0->DLM = 0;
     SN_UART0->LC  = 0x03;
-    SN_UART0->FD  = (1UL << 8);                 /* OVER8 = 1 */
-    SN_UART0->FIFOCTRL = 0x01;
+    SN_UART0->FD  = (1UL << 8);                 /* OVER8 = 1, MUL = 1, DIVADD = 0 */
+    SN_UART0->IE  = 0;
+    SN_UART0->FIFOCTRL = 0x07;                  /* bật FIFO, xóa FIFO TX/RX */
     SN_UART0->CTRL = (1UL << 0) | (1UL << 6) | (1UL << 7);     /* UARTEN, RXEN, TXEN */
-    SN_UART0->IE = (1UL << 0);                  /* RDAIE; THREIE bật khi có byte cần gửi */
-    NVIC_EnableIRQ(UART0_IRQn);
 }
 
-void UART0_IRQHandler(void)
+int uart_getc(void)
 {
-    while (SN_UART0->LS & 1UL) {                /* RDR */
-        uint8_t b = (uint8_t)SN_UART0->RB;
-        uint16_t n = (uint16_t)((s_rx_h + 1u) % RXN);
-        if (n == s_rx_t) g_uart_rx_overflow++;
-        else { s_rx[s_rx_h] = b; s_rx_h = n; }
-    }
-    if (SN_UART0->LS & (1UL << 5)) {            /* THRE */
-        if (s_tx_t != s_tx_h) {
-            SN_UART0->TH = s_tx[s_tx_t];
-            s_tx_t = (uint16_t)((s_tx_t + 1u) % TXN);
-        } else {
-            SN_UART0->IE &= ~(1UL << 1);        /* hết byte: tắt THREIE */
-        }
-    }
+    return (SN_UART0->LS & 1UL) ? (int)(uint8_t)SN_UART0->RB : -1;     /* RDR */
 }
 
 uint16_t uart_tx_free(void)
 {
-    return (uint16_t)((s_tx_t + TXN - s_tx_h - 1u) % TXN);
+    return 1u;
 }
 
 void uart_putc(char c)
 {
-    uint16_t n = (uint16_t)((s_tx_h + 1u) % TXN);
-    while (n == s_tx_t) { }                     /* đầy: chờ ngắt xả bớt */
-    s_tx[s_tx_h] = (uint8_t)c;
-    s_tx_h = n;
-    /* Bộ phát đang rỗng thì tự ghi byte đầu: ngắt THRE chỉ đến SAU một lần ghi TH, bật THREIE khi THR vốn đã rỗng
-     * có thể không bao giờ có ngắt (24/10: ESP32 không nhận byte nào). Cách này giống uart.c của nhóm đã chạy được. */
-    __disable_irq();
-    if ((SN_UART0->LS & (1UL << 5)) && s_tx_t != s_tx_h) {         /* THRE */
-        SN_UART0->TH = s_tx[s_tx_t];
-        s_tx_t = (uint16_t)((s_tx_t + 1u) % TXN);
-    }
-    SN_UART0->IE |= (1UL << 1);                 /* THREIE: các byte sau do ngắt đẩy */
-    __enable_irq();
+    while (!(SN_UART0->LS & (1UL << 5))) { }   /* THRE */
+    SN_UART0->TH = (uint8_t)c;
 }
 
 void uart_flush(void)
 {
-    while (s_tx_t != s_tx_h) { }
+    while (!(SN_UART0->LS & (1UL << 6))) { }   /* TEMT: đã phát xong cả thanh ghi dịch */
 }
 
 void uart_puts(const char *s)
@@ -180,15 +155,6 @@ void uart_put_hex(uint32_t v, int digits)
 {
     while (digits--)
         uart_putc("0123456789ABCDEF"[(v >> (4 * digits)) & 0xFu]);
-}
-
-int uart_getc(void)
-{
-    if (s_rx_t == s_rx_h)
-        return -1;
-    uint8_t b = s_rx[s_rx_t];
-    s_rx_t = (uint16_t)((s_rx_t + 1u) % RXN);
-    return b;
 }
 
 /* ---------------- phím SW3 / SW6 ---------------- */
@@ -220,6 +186,7 @@ static void clock_48mhz(void)
     SN_FLASH->LPCTRL = 0x5AFA0029;              /* nhiều wait-state nhất trước khi tăng clock; */
     SN_SYS0->ANBCTRL_b.IHRCFREQ = 1;            /* SystemCoreClockUpdate() hạ về 0x5AFA0019 cho 48 MHz */
     SN_SYS0->CLKCFG = 0x0;                      /* SYSCLK = IHRC 48 MHz */
+    SN_SYS0->AHBCP = 0;                         /* HCLK = SYSCLK / 1 (như board.c của nhóm; 24/10: thiếu dòng này UART chậm 4 lần) */
     while ((SN_SYS0->CLKCFG & 0x70) != 0x0) { }
     SystemCoreClockUpdate();
 }
