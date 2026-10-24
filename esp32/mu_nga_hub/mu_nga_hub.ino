@@ -43,15 +43,9 @@ extern "C" {
 #define LED_PIN         2           // LED trên ESP32 DevKit: sáng/nháy theo còi + LED của Safety FSM
 #define BTN_PIN         0           // nút BOOT: CANCEL phụ (OR với nút SW3 của MCU)
 #define USB_BAUD        460800
-#if __has_include("wifi_rieng.h")
-#include "wifi_rieng.h"          // WiFi riêng của máy: tạo file này cạnh .ino, không lên git
-#endif
-#ifndef WIFI_STA_SSID
-#define WIFI_STA_SSID   "test1"     // hotspot thử của nhóm; đổi bằng -DWIFI_STA_SSID=... khi build
-#endif
-#ifndef WIFI_STA_PASSWORD
-#define WIFI_STA_PASSWORD "12345678"
-#endif
+// WiFi của nhóm (mạng duy nhất đang dùng). Mang đi nơi khác thì sửa 2 dòng này rồi nạp lại ESP32.
+#define WIFI_STA_SSID     "Tro Bao Tran T4"
+#define WIFI_STA_PASSWORD "thy0905542257"
 #define WIFI_TCP_PORT   3333
 
 static hub_t H;

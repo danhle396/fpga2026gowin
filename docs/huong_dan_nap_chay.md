@@ -33,7 +33,7 @@ MCU in chữ ra chân TX, tức là sang ESP32. ESP32 chuyển các dòng đó l
 
 1. Arduino IDE → Boards Manager → cài **esp32 by Espressif Systems** (đã build thử bản 3.0.7; bản 2.0.x cũng chạy được).
 2. Mở `esp32/mu_nga_hub/mu_nga_hub.ino`, chọn board **ESP32 Dev Module** và cổng COM của ESP32.
-3. WiFi: mặc định `test1` / `12345678`. Dùng WiFi khác thì tạo file `esp32/mu_nga_hub/wifi_rieng.h` (không lên git) gồm 2 dòng `#define WIFI_STA_SSID "..."` và `#define WIFI_STA_PASSWORD "..."`; **đừng ghi mật khẩu vào .ino**.
+3. WiFi: `Tro Bao Tran T4` (ghi ở đầu `mu_nga_hub.ino`). Mang đi nơi khác (thi, demo) thì sửa `WIFI_STA_SSID`, `WIFI_STA_PASSWORD` sang hotspot điện thoại rồi nạp lại ESP32.
 4. Upload. Không phải cài thêm thư viện nào.
 
 Các file `.c`/`.h` trong thư mục sketch là **bản chép** từ `firmware/src`. Sửa ở `firmware/src` rồi chạy `bash esp32/dong_bo_core.sh`; `rtl/tb/run_all.sh` sẽ báo FAIL nếu hai nơi lệch nhau.
@@ -53,7 +53,7 @@ Trang tự cập nhật 3 lần/giây và không cần Internet.
 
 
 - **Qua USB của ESP32:** `python -I tools/ghi_uart.py --port COMx --buoc chay --giay 60`. `COMx` là cổng của ESP32; baud mặc định 460800 đã khớp.
-- **Qua WiFi:** laptop vào cùng hotspot. IP của ESP32 in ở dòng `# WiFi ... IP ...` trên USB. Chạy `python -I tools/ghi_uart.py --tcp <IP> --buoc chay --giay 60`, hoặc công cụ của nhóm `wifi_live_log.py --host <IP>`.
+- **Qua WiFi:** laptop vào cùng mạng `Tro Bao Tran T4`. IP của ESP32 in ở dòng `# WiFi ... IP ...` trên USB. Chạy `python -I tools/ghi_uart.py --tcp <IP> --buoc chay --giay 60`, hoặc công cụ của nhóm `wifi_live_log.py --host <IP>`.
 
 Mong đợi sau khi bật nguồn:
 
