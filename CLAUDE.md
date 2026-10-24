@@ -76,6 +76,7 @@ bash firmware/build.sh test && python -I tools/m0_test.py
 
 - Tầng 1, **chưa qua G0**. Mọi thứ đã kiểm trong mô phỏng, chưa chạy trên chip.
 - Mô hình phần cứng đã chốt (16/10): **N2, chỉ kênh đầu, 2 lớp NORMAL / FALL (SPEC v3.2)** trên **E2, 1 làn, giao thức v3** (bitstream 3). Dữ liệu ngực/thắt lưng đã bỏ. Bitstream 3 mang N2 11 người (`ml/out/n2_11_d1`, 16/10): LOSO Macro-F1 0,983; FSM T_SCORE 8 ngã nằm 96,2 %, báo giả 1,11/giờ (từ "nằm xuống giường").
+- **Phần cứng nối cố định (24/10, v2.2):** MCU → UART → **ESP32** → SPI → FPGA; ESP32 chạy lõi C (`hub.c` + `app_core`), MCU `FW_NODE 1` chỉ đọc cảm biến. Làm theo [docs/huong_dan_nap_chay.md](docs/huong_dan_nap_chay.md); các bước B6–B10 của `huong_dan_dot_B.md` (nối dây MCU ↔ FPGA, pin_probe) không áp dụng.
 - **Chân FPGA nằm trên header J2 từ 24/10** (theo sơ đồ nối thực tế của nhóm; Phụ lục E.1, `docs/bao_cao/2026-10-24_so_do_noi_nhom/`). ESP32 của nhóm phải tháo khỏi J2 khi chạy hệ thống.
 - **Một project FPGA, một project MCU (24/10):** `fpga/fpga_project.gprj` (nguồn RTL sản phẩm duy nhất ở `fpga/src/`; bản dựng = `bitstreams/3_v3_e2_n2`) và `firmware/keil/fw.uvprojx` (mặc định `FW_BITSTREAM 3` trong `fw_config.h`). Sửa RTL thì sửa trong `fpga/src/`.
 - Việc tiếp theo: đợt B theo `docs/huong_dan_dot_B.md`: B7 nạp `bitstreams/3_v3_e2_n2` bản ngày 24/10 (kiểm `SHA256.txt` trước khi nạp); bitstream 1 chỉ là đường lùi (B10).

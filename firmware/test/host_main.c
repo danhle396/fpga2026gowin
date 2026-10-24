@@ -655,6 +655,131 @@ static void mode_gcal(uint32_t n, const int16_t *raw)
     out_bytes(g.off, 6);
 }
 
+/* ---------------- mode 11: lõi ESP32 (hub.c) với FPGA giả lập, phần cứng nối cố định theo codecanthiet ----------------
+ * IN: mô hình (như mode 8) rồi [n_bytes u32][t_score u8][tilt_en u8][engine_ms u8][0] rồi n_bytes byte luồng UART của MCU
+ *     (khung node_link + dòng chữ xen giữa). Mỗi mẫu tách được là một khe 10 ms: hub_sample, hub_tick, rồi hỏi vòng
+ *     ở các mili giây 1..9. FPGA giả lập: nhận khung ghi v3, kiểm CRC-16, chạy cnn_mcu, có kết quả sau engine_ms,
+ *     trả toàn 0 khi chưa có (như spi_result_tx_v3.v).
+ * OUT: 'R' SEQ CLASS SCORE (lúc FPGA nhận khung); 'S' t(u32) trạng thái lý do; cuối cùng 'T' 6 × u32:
+ *      mẫu, khung gửi, OK, timeout, lỗi, bỏ qua; rồi 'L' u32 số dòng chữ, u32 số khung hỏng. */
+#include "hub.h"
+#include "node_link.h"
+static hub_t H;
+static node_rx_t NR;
+static struct {
+    cnn_model_t *m;
+    uint32_t now, ready_at;
+    uint8_t  has, rd[7];
+    uint8_t  bad_crc;
+} FS;
+
+static void fs_write(const uint8_t *b, uint16_t n, void *ctx)
+{
+    (void)ctx;
+    if (n != SPI_FRAME_V3 || b[0] != SPI_HDR_WRITE ||
+        crc16_ccitt(b, SPI_FRAME_V3 - 2) != (uint16_t)((b[SPI_FRAME_V3 - 2] << 8) | b[SPI_FRAME_V3 - 1])) {
+        FS.bad_crc++;
+        return;
+    }
+    uint8_t score;
+    uint8_t cls = (uint8_t)cnn_mcu_run(FS.m, (const int8_t *)&b[2], 0, &score);
+    FS.rd[0] = SPI_HDR_READ; FS.rd[1] = b[1]; FS.rd[2] = 0x01; FS.rd[3] = cls; FS.rd[4] = score;
+    uint16_t c = crc16_ccitt(FS.rd, 5);
+    FS.rd[5] = (uint8_t)(c >> 8); FS.rd[6] = (uint8_t)c;
+    FS.has = 1;
+    FS.ready_at = FS.now;
+    OUT_BASE[s_out++] = 'R';
+    OUT_BASE[s_out++] = b[1];
+    OUT_BASE[s_out++] = cls;
+    OUT_BASE[s_out++] = score;
+}
+
+static void fs_read(uint8_t *b, uint8_t n, void *ctx)
+{
+    (void)ctx;
+    memset(b, 0, n);
+    if (FS.has && FS.now >= FS.ready_at) {          /* chốt lúc CS xuống: đọc trọn khung */
+        memcpy(b, FS.rd, n < 7 ? n : 7);
+        FS.has = 0;
+    }
+}
+
+static void mode_hub(const uint8_t *p)
+{
+    cnn_model_t m;
+    uint32_t nvec, nb;
+    p = parse_model(p, &m, &nvec);
+    memcpy(&nb, p, 4);
+    uint8_t t_score = p[4], tilt = p[5], eng = p[6];
+    p += 8;
+    FS.m = &m;
+    hub_io_t io = { fs_write, fs_read, 0 };
+    hub_init(&H, 0);
+    H.app.fsm.cfg.t_score = t_score;
+    H.app.fsm.cfg.tilt_en = tilt;
+    node_rx_init(&NR);
+    uint32_t k = 0, n_text = 0;
+    for (uint32_t i = 0; i < nb; i++) {
+        int e = node_rx_byte(&NR, p[i]);
+        if (e == NODE_TEXT) { n_text++; continue; }
+        if (e != NODE_SAMPLE) continue;
+        uint32_t t = 10u * k;
+        FS.now = t;
+        hub_sample(&H, &io, NR.r, NR.keys, t);
+        if (FS.has) FS.ready_at = t + eng;
+        hub_tick(&H, t, 0);
+        if (H.app.fsm.events & SAFETY_EV_STATE) {
+            OUT_BASE[s_out++] = 'S';
+            out_bytes(&t, 4);
+            OUT_BASE[s_out++] = (uint8_t)H.app.fsm.st;
+            OUT_BASE[s_out++] = H.app.fsm.why;
+        }
+        for (uint32_t ms = 1; ms < 10; ms++) {
+            FS.now = t + ms;
+            (void)hub_poll(&H, &io, t + ms);
+        }
+        k++;
+    }
+    OUT_BASE[s_out++] = 'T';
+    uint32_t st[6] = { H.n_samples, H.n_sent, H.n_ok, H.n_timeout, H.n_err, H.n_skip };
+    out_bytes(st, sizeof st);
+    OUT_BASE[s_out++] = 'L';
+    out_bytes(&n_text, 4);
+    out_bytes(&NR.n_bad, 4);
+}
+
+/* ---------------- mode 12: node_link: đóng gói (MCU) rồi tách (ESP32) ----------------
+ * IN: n mẫu × [seq u8][keys u8][6 × INT16] (14 byte), rồi [m u32] và m byte luồng bất kỳ để tách.
+ * OUT: n khung đóng gói nối nhau (n × 21 byte), rồi các sự kiện tách: 'D' seq keys 6 × INT16 | 'T' len chữ | 'B';
+ *      cuối cùng 'Z' n_lost u32. */
+static void mode_node(uint32_t n, const uint8_t *p)
+{
+    for (uint32_t i = 0; i < n; i++, p += 14) {
+        int16_t r[6];
+        memcpy(r, p + 2, 12);
+        s_out += node_pack_sample(&OUT_BASE[s_out], p[0], r, p[1]);
+    }
+    uint32_t m;
+    memcpy(&m, p, 4);
+    p += 4;
+    node_rx_init(&NR);
+    for (uint32_t i = 0; i < m; i++) {
+        int e = node_rx_byte(&NR, p[i]);
+        if (e == NODE_SAMPLE) {
+            OUT_BASE[s_out++] = 'D'; OUT_BASE[s_out++] = NR.rx_seq; OUT_BASE[s_out++] = NR.keys;
+            out_bytes(NR.r, 12);
+        } else if (e == NODE_TEXT) {
+            uint8_t len = (uint8_t)strlen(NR.line);
+            OUT_BASE[s_out++] = 'T'; OUT_BASE[s_out++] = len;
+            out_bytes(NR.line, len);
+        } else if (e == NODE_BAD) {
+            OUT_BASE[s_out++] = 'B';
+        }
+    }
+    OUT_BASE[s_out++] = 'Z';
+    out_bytes(&NR.n_lost, 4);
+}
+
 int main(void)
 {
     uint32_t mode, n;
@@ -673,6 +798,8 @@ int main(void)
     case 8: mode_app((const uint8_t *)data); break;
     case 9: mode_gcal(n, (const int16_t *)data); break;
     case 10: mode_app_rtl((const uint8_t *)data); break;
+    case 11: mode_hub((const uint8_t *)data); break;
+    case 12: mode_node(n, (const uint8_t *)data); break;
     default: put("mode?\n"); break;
     }
     MBOX_EXIT = s_out;

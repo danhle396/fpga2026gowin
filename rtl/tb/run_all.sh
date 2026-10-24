@@ -110,6 +110,11 @@ fi
 NAMES+=("fpga/ (project chính): mô hình = n2_11_p1, tb_proto 3 khung + 7 kịch bản"); TIMES+=("$((SECONDS - t0)) s")
 echo "  fpga/: ${RESULTS[-1]}  ($((SECONDS - t0)) s) — log $WORK/fpga_main.log"
 
+# sketch ESP32 (phần cứng nối cố định 24/10) phải mang đúng bản lõi C của firmware/src
+if bash "$ROOT/esp32/dong_bo_core.sh" --check > "$WORK/esp32_sync.log" 2>&1; then RESULTS+=("PASS"); else RESULTS+=("FAIL"); fi
+NAMES+=("esp32/mu_nga_hub trùng firmware/src (lõi C)"); TIMES+=("0 s")
+echo "  esp32 sync: ${RESULTS[-1]}"
+
 echo
 echo "| Testbench | Kết quả | Thời gian |"
 echo "|---|---|---|"

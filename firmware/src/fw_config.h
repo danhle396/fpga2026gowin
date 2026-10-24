@@ -43,6 +43,18 @@
 #endif
 #define FW_PROTO        (FW_BITSTREAM == 1 ? 1 : 3)
 
+/* Phần cứng nối cố định theo codecanthiet của nhóm (24/10): MCU TX P3.1 → ESP32 GPIO16 (một chiều, 115200);
+ * ESP32 GPIO27/18/23/19 → Kiwi J2 (CS, SCK, MOSI, MISO); MCU không nối SPI/IRQ/RST_N với FPGA; INT của MPU6050 không nối.
+ *   FW_NODE 1: MCU là nút cảm biến: đọc MPU6050 100 Hz, gửi từng mẫu cho ESP32 (node_link.h); tiền xử lý, khung v3,
+ *              Safety FSM chạy trên ESP32 (hub.c, esp32/mu_nga_hub/). FW_NODE 0: MCU nối thẳng FPGA như thiết kế gốc.
+ *   IMU_INT_WIRED 0: không có dây INT → hỏi thanh ghi INT_STATUS (0x3A) của MPU6050 mỗi mili giây. */
+#ifndef FW_NODE
+#define FW_NODE         1
+#endif
+#ifndef IMU_INT_WIRED
+#define IMU_INT_WIRED   0
+#endif
+
 /* ---- A.8 khối và Safety FSM (giá trị đầu; chốt ở AI-10) ---- */
 #define BLK_SAMPLES     32      /* 32 mẫu thô 100 Hz = 0,32 s */
 #define T_STILL_A       300     /* LSB ở ±16 g, ≈ 0,15 g */

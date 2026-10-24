@@ -18,6 +18,7 @@ def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--port", required=True)
     ap.add_argument("--baud", type=int, default=460800)
+    ap.add_argument("--gui", default="", help="gửi lệnh này trước khi ghi, ví dụ LOG (ESP32 hub, esp32/mu_nga_hub)")
     ap.add_argument("--subject", required=True)                # vd: s01
     ap.add_argument("--activity", required=True)               # vd: fall_front
     ap.add_argument("--trial", type=int, required=True)
@@ -34,6 +35,8 @@ def main():
     ncol = None                                                # 9 cột, hoặc 8 nếu mạch ghi không có cột wear (A.9)
     t_end = time.time() + a.seconds if a.seconds else float("inf")
     with serial.Serial(a.port, a.baud, timeout=1) as ser, open(out, "w", newline="\n") as f:
+        if a.gui:
+            ser.write((a.gui + "\r\n").encode())
         try:
             while time.time() < t_end:
                 line = ser.readline().decode("ascii", "ignore").strip()

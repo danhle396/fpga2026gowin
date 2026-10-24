@@ -454,6 +454,11 @@
               <FileType>1</FileType>
               <FilePath>..\src\imu.c</FilePath>
             </File>
+            <File>
+              <FileName>node_link.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\src\node_link.c</FilePath>
+            </File>
           </Files>
         </Group>
         <Group>

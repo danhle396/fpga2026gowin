@@ -30,6 +30,15 @@ int imu_init(uint8_t *who_am_i)
     return bad;
 }
 
+int imu_data_ready(void)
+{
+    uint8_t v = 0;
+    int rc = i2c0_read(IMU_ADDR, 0x3A, &v, 1);
+    if (rc != I2C_OK)
+        return -1;
+    return (v & 0x01u) ? 1 : 0;
+}
+
 int imu_read(int16_t out[6])
 {
     uint8_t b[14];

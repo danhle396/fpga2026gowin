@@ -404,6 +404,121 @@ def test_app():
     return ok
 
 
+def node_pack(seq, r, keys):
+    """Khung node_link MCU → ESP32 (firmware/src/node_link.h), viết lại độc lập bằng Python."""
+    body = bytes([seq & 0xFF, 14, 0, ord("D")]) + struct.pack("<6h", *[int(v) for v in r]) + bytes([keys])
+    return b"\xF1\x7E" + body + struct.pack("<H", crc16(body))
+
+
+def test_node():
+    """node_link.c: đóng gói của MCU == Python từng byte; bên ESP32 tách đúng mẫu, dòng chữ, khung hỏng, mẫu mất."""
+    g = np.random.default_rng(11)
+    n = 50
+    raw = g.integers(-32768, 32768, (n, 6))
+    raw[0] = [0xF1 - 256 * 0, 0x7EF1, -1, 0, 32767, -32768]          # có byte F1 7E ngay trong dữ liệu
+    keys = g.integers(0, 4, n)
+    seqs = (np.arange(n) + 250) & 0xFF                                  # SEQ quay vòng qua 255 → 0
+    blob = b"".join(bytes([int(s), int(k)]) + struct.pack("<6h", *[int(v) for v in r])
+                    for s, k, r in zip(seqs, keys, raw))
+    exp_pack = b"".join(node_pack(s, r, k) for s, k, r in zip(seqs, keys, raw))
+    # luồng nhận: chữ xen giữa, một khung hỏng CRC (mẫu 20), bỏ hẳn mẫu 30–32 (mất 3 mẫu)
+    stream, exp_ev = b"# MPU6050 OK\r\n", [("T", "# MPU6050 OK")]
+    for i in range(n):
+        f = node_pack(seqs[i], raw[i], keys[i])
+        if i == 20:
+            f = f[:10] + bytes([f[10] ^ 0x55]) + f[11:]
+            exp_ev.append(("B",))
+        elif 30 <= i <= 32:
+            continue
+        else:
+            exp_ev.append(("D", int(seqs[i]), int(keys[i]), tuple(int(v) for v in raw[i])))
+        stream += f
+        if i == 10:
+            stream += b"STAT,1,2,3\n"
+            exp_ev.append(("T", "STAT,1,2,3"))
+    _, out = run(12, n, blob + struct.pack("<I", len(stream)) + stream)
+    got_pack, rest = out[:len(exp_pack)], out[len(exp_pack):]
+    ev, i = [], 0
+    while rest[i] != ord("Z"):
+        c = chr(rest[i])
+        if c == "D":
+            ev.append(("D", rest[i + 1], rest[i + 2], struct.unpack("<6h", rest[i + 3:i + 15]))); i += 15
+        elif c == "T":
+            ln = rest[i + 1]; ev.append(("T", rest[i + 2:i + 2 + ln].decode())); i += 2 + ln
+        else:
+            ev.append(("B",)); i += 1
+    lost = struct.unpack("<I", rest[i + 1:i + 5])[0]
+    ok = report(f"node_link.c: {n} khung MCU → ESP32 khớp Python từng byte (21 B/mẫu, CRC-16)", got_pack == exp_pack)
+    ok &= report(f"node_link.c tách luồng: {sum(e[0] == 'D' for e in ev)} mẫu, dòng chữ, 1 khung hỏng, mất {lost} mẫu",
+                 ev == exp_ev and lost == 4, f"mất {lost} (mong đợi 4 = 1 hỏng + 3 bỏ), sự kiện khớp {ev == exp_ev}")
+    return ok
+
+
+def test_hub():
+    """hub.c (chạy trên ESP32): luồng UART của MCU → app_core → khung v3 → FPGA giả lập (hỏi vòng, không IRQ) → FSM.
+    So với cùng tham chiếu Python của test_app (golden + safety_model), kết quả đến sau 1 khe 10 ms."""
+    import golden_model as gm
+    import safety_model as sm
+    ms = dict(cnn_models())
+    name = "N2 D1" if "N2 D1" in ms else list(ms)[0]
+    P = ms[name]
+    raw, acts = app_stream()
+    r = np.clip(raw.astype(np.int64), -32768, 32767)                  # MCU đã trừ offset gyro trước khi gửi
+    cancel = np.zeros(len(r), np.uint8)
+    for a0, dur in ((2500, 120), (5200, 40), (7400, 350), (9800, 120), (11500, 120)):
+        cancel[a0:a0 + dur] = 1
+    stream = b"# MPU6050 OK: WHO_AM_I=0x68\n# gyro_off,1,2,3\n"
+    for k in range(len(r)):
+        stream += node_pack(k, r[k], int(cancel[k]))
+        if k % 1000 == 999:
+            stream += b"STAT,raw,%d\n" % k
+    t_score, tilt, eng = 0, 1, 5
+    blob = cnn_blob(P, []) + struct.pack("<IBBBx", len(stream), t_score, tilt, eng) + stream
+    _, out = run(11, 0, blob, max_insn=4_000_000_000)
+    got_R, got_S, i = [], [], 0
+    while out[i] != ord("T"):
+        if out[i] == ord("R"):
+            got_R.append(tuple(out[i + 1:i + 4])); i += 4
+        else:
+            got_S.append((struct.unpack("<I", out[i + 1:i + 5])[0], out[i + 5], out[i + 6])); i += 7
+    st = struct.unpack("<6I", out[i + 1:i + 25])
+    n_text, n_bad = struct.unpack("<2I", out[i + 26:i + 34])
+    q = gm.q8(gm.decimate(r))
+    fsm, blk = sm.Safety(dict(t_score=t_score, tilt_en=tilt), 0), sm.Blocks(n=32)
+    exp_R, exp_S, pend, seq = [], [], None, 0
+    for k in range(len(r)):
+        if pend and pend[0] <= k:
+            fsm.on_result(pend[1], pend[2]); pend = None
+        if blk.push(r[k]):
+            fsm.on_block(blk.still_run, blk.az_tb)
+        if k % 2 == 1:
+            n = (k + 1) // 2
+            if n >= 128 and n % 16 == 0:
+                c, s, _ = gm.forward(q[n - 128:n], P)
+                exp_R.append((seq & 0xFF, c, s)); pend = (k + 1, c, s); seq += 1
+        fsm.tick(10 * k, 1, int(cancel[k]))
+        if fsm.events & sm.EV_STATE:
+            exp_S.append((10 * k, fsm.st, fsm.why))
+    stats_ok = st[0] == len(r) and st[1] == len(exp_R) and st[2] == len(exp_R) and st[3:] == (0, 0, 0)
+    ok = report(f"ESP32 hub.c ({name}) == golden + safety_model: {len(got_R)} khung qua FPGA giả lập (hỏi vòng sau "
+                f"{eng} ms), {len(got_S)} lần đổi trạng thái trên {len(r) / 100:.0f} s (hoạt động {acts})",
+                got_R == exp_R and got_S == exp_S and stats_ok and n_bad == 0 and n_text == 2 + len(r) // 1000,
+                f"đã đi qua {sorted({sm.NAMES[s[1]] for s in exp_S})}; thống kê mẫu/gửi/OK/timeout/lỗi/bỏ {st}"
+                if got_R == exp_R and got_S == exp_S else
+                f"R khớp {got_R == exp_R}, S khớp {got_S == exp_S}: C {got_S[:4]} / Py {exp_S[:4]}; thống kê {st}")
+    # FPGA không trả lời: mọi khung phải thành timeout, FSM vẫn chạy (lỗi hiện ERR, không kẹt)
+    blob = cnn_blob(P, []) + struct.pack("<IBBBx", len(stream), t_score, tilt, 200) + stream
+    _, out = run(11, 0, blob, max_insn=4_000_000_000)
+    j = out.index(b"T", len(out) - 34)
+    st2 = struct.unpack("<6I", out[j + 1:j + 25])
+    ok &= report(f"ESP32 hub.c: FPGA không trả lời trong {SPI_TIMEOUT_MS} ms → {st2[3]} timeout / {st2[1]} khung gửi, "
+                 f"0 OK, {st2[5]} cửa sổ bỏ qua lúc chờ", st2[2] == 0 and st2[3] == st2[1] and st2[1] > 0, f"{st2}")
+    return ok
+
+
+SPI_TIMEOUT_MS = 50
+
+
 def profile_cnn(bin_path):
     """Đếm lệnh Cortex-M0 cho một lần suy luận, rồi dự toán chu kỳ (TRM Cortex-M0: LDR/STR 2, nhánh lấy 3, BL 4,
     PUSH/POP 1+N, MULS 1 hoặc 32 tùy bộ nhân — X7)."""
@@ -431,7 +546,7 @@ def main():
         return
     if not BIN.exists():
         raise SystemExit("chưa có firmware/build/test.bin — chạy: bash firmware/build.sh test")
-    ok = test_consts() & test_pre() & test_parse() & test_safety() & test_fsm_equiv() & test_cnn_mcu() & test_app()
+    ok = test_consts() & test_pre() & test_parse() & test_safety() & test_fsm_equiv() & test_cnn_mcu() & test_app() & test_node() & test_hub()
     print("TẤT CẢ PASS" if ok else "CÓ FAIL")
     sys.exit(0 if ok else 1)
 

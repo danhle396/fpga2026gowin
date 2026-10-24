@@ -1,5 +1,7 @@
 # Hướng dẫn đợt B — làm trên board thật, từng bước
 
+> **Từ 24/10 phần cứng đã nối cố định (MCU → UART → ESP32 → SPI → FPGA): làm theo [huong_dan_nap_chay.md](huong_dan_nap_chay.md).** Ở file này còn dùng B1–B3 (nguồn, driver SN-Link, menu) với `FW_NODE 0`. Bỏ B6–B10 (nối dây MCU ↔ FPGA): **không nạp `pin_probe.fs`** khi ESP32 còn nối J2.
+
 Dành cho thành viên cầm board. Làm **đúng thứ tự**; xong mỗi bước, gửi lại cho trưởng nhóm (hoặc gửi AI) bằng lệnh `Cập nhật: B<số> ...` kèm số đo, ảnh hoặc file log ghi ở cột "Gửi lại". Bước nào không đạt Pass thì **dừng**, gửi `Kẹt: B<số> <triệu chứng>`, đừng làm bước sau.
 
 Chuẩn bị:

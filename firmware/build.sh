@@ -13,7 +13,7 @@ DFP="$(ls -d "$PACKS"/SONiX/SN32F4_DFP/*/ | sort -V | tail -1)Device"
 CMSIS="$(ls -d "$PACKS"/ARM/CMSIS/*/ | sort -V | tail -1)CMSIS/Core/Include"
 [ -x "$BIN/armclang.exe" ] || { echo "Không thấy armclang ở $BIN — đặt biến KEIL"; exit 1; }
 
-PURE="src/crc.c src/preprocess.c src/spi_frame.c src/blocks.c src/safety.c src/cnn_mcu.c src/gyro_cal.c src/app_core.c src/pwr_btn.c"
+PURE="src/node_link.c src/hub.c src/crc.c src/preprocess.c src/spi_frame.c src/blocks.c src/safety.c src/cnn_mcu.c src/gyro_cal.c src/app_core.c src/pwr_btn.c"
 OPT="${OPT:--Oz}"        # bản đo tốc độ FW-15: OPT=-O3
 CFLAGS="--target=arm-arm-none-eabi -mcpu=cortex-m0 -mthumb $OPT -std=c99 -Wall -Wextra -Wno-unused-parameter
         -D__MICROLIB -ffunction-sections -fdata-sections -I src"

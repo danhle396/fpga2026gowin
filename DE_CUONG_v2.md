@@ -3,6 +3,7 @@
 
 *Bản cập nhật (v2), ngày 12/10/2026 — thay cho bản đã nộp. Các điểm thay đổi được liệt kê trong tài liệu kèm theo "Thay đổi so với bản v1".*
 *Bản v2.1, ngày 16/10/2026. Gọn lại sau khi nộp v2: mạng còn 2 lớp (NORMAL, FALL); va đập mũ được loại bằng trình tự ba pha của Safety FSM; một nút bấm duy nhất (bật/tắt, CANCEL, SOS) thay cho cảm biến đội mũ; không tự thu dữ liệu huấn luyện, chỉ có một buổi thử trên mũ. Chi tiết ở mục "Điều chỉnh v2.1" của tài liệu kèm theo.*
+*Bản v2.2, ngày 24/10/2026. Mạch của nhóm đã nối cố định: SN32F407 đọc cảm biến và gửi từng mẫu qua UART sang ESP32; ESP32 làm master SPI tới FPGA và chạy cùng mã tiền xử lý + Safety FSM của firmware; không có dây IRQ, RST_N. RTL, bitstream, mô hình và chỉ tiêu không đổi. Chi tiết ở mục "Điều chỉnh v2.2" của tài liệu kèm theo.*
 
 ---
 
@@ -69,7 +70,7 @@ Phần cứng vẫn xuất 4 logit. Chỉ số 1 (IMPACT) và 2 (suýt ngã) đ�
                  PC chỉ dùng khi phát triển: thu dữ liệu, huấn luyện, kiểm thử HIL
 ```
 
-**Luồng hoạt động.** (1) MPU6050 phát ngắt data-ready ở 100 Hz; MCU đọc 14 byte qua I²C. (2) MCU lọc, giảm mẫu còn 50 Hz, lượng tử hóa INT8 và ghi vào buffer vòng 128 mẫu. (3) Mỗi 16 mẫu mới (0,32 s), MCU gửi khung 772 byte gồm cả cửa sổ và CRC-16. (4) FPGA kiểm CRC, chạy 1D-CNN, lưu lớp và điểm tin cậy, kéo IRQ lên mức cao. (5) MCU đọc khung kết quả 7 byte; IRQ trở về mức thấp. (6) Safety FSM yêu cầu 2 trong 3 cửa sổ gần nhất báo FALL, sau đó chờ người nằm bất động 2,56 s với đầu nằm ngang (lệch 45°–135° so với phương thẳng đứng), rồi đếm ngược 10 s và báo động; nút CANCEL hủy cảnh báo.
+**Luồng hoạt động** (bản v2.2: các bước (2)–(6) chạy trên ESP32 với cùng mã C, MCU gửi mẫu qua UART; FPGA được hỏi vòng thay cho IRQ). (1) MPU6050 phát ngắt data-ready ở 100 Hz; MCU đọc 14 byte qua I²C. (2) MCU lọc, giảm mẫu còn 50 Hz, lượng tử hóa INT8 và ghi vào buffer vòng 128 mẫu. (3) Mỗi 16 mẫu mới (0,32 s), MCU gửi khung 772 byte gồm cả cửa sổ và CRC-16. (4) FPGA kiểm CRC, chạy 1D-CNN, lưu lớp và điểm tin cậy, kéo IRQ lên mức cao. (5) MCU đọc khung kết quả 7 byte; IRQ trở về mức thấp. (6) Safety FSM yêu cầu 2 trong 3 cửa sổ gần nhất báo FALL, sau đó chờ người nằm bất động 2,56 s với đầu nằm ngang (lệch 45°–135° so với phương thẳng đứng), rồi đếm ngược 10 s và báo động; nút CANCEL hủy cảnh báo.
 
 ---
 

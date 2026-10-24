@@ -4,6 +4,7 @@
  */
 #include "SN32F400.h"
 #include "board.h"
+#include "fw_config.h"
 
 /* ---------------- SysTick 1 ms ---------------- */
 static volatile uint32_t s_ms;
@@ -89,8 +90,10 @@ void board_led(int on)
     else    PIN_SET(SN_GPIO3, 8);
 }
 
-/* ---------------- UART0 460800 8N1, buffer vòng + ngắt (FW-06) ----------------
- * Baud = PCLK / (OVER × DL); 48 MHz, OVER8 = 1, DL = 13 → 461.538 baud (lệch +0,16 %). */
+/* ---------------- UART0 8N1, buffer vòng + ngắt (FW-06) ----------------
+ * Baud = PCLK / (OVER × DL); 48 MHz, OVER8 = 1: DL = 13 → 461.538 baud (lệch +0,16 %) khi nối PC;
+ * DL = 52 → 115.385 baud (+0,16 %) khi FW_NODE (nối ESP32 GPIO16 như phần cứng của nhóm). */
+#define UART_DL (FW_NODE ? 52u : 13u)
 #define TXN 512u
 #define RXN 1024u
 static volatile uint8_t  s_tx[TXN], s_rx[RXN];
@@ -102,7 +105,7 @@ static void uart_init(void)
     SN_SYS1->AHBCLKEN |= (1UL << 16);           /* UART0CLKEN */
     SN_PFPA->UART0 = (2UL << 2) | 2UL;          /* URXD0 = P3.2, UTXD0 = P3.1 */
     SN_UART0->LC  = 0x83;                       /* DLAB = 1, 8N1 */
-    SN_UART0->DLL = 13;
+    SN_UART0->DLL = UART_DL;
     SN_UART0->DLM = 0;
     SN_UART0->LC  = 0x03;
     SN_UART0->FD  = (1UL << 8);                 /* OVER8 = 1 */

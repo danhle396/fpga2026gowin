@@ -12,5 +12,7 @@
 int  imu_init(uint8_t *who_am_i);
 /* Đọc burst 14 byte từ 0x3B, trả về AX AY AZ GX GY GZ (bỏ nhiệt độ). 0 = OK. */
 int  imu_read(int16_t out[6]);
+/* Hỏi INT_STATUS (0x3A): 1 = có mẫu mới (đọc xong thì cờ tự xóa), 0 = chưa, < 0 = lỗi I2C. Dùng khi không có dây INT. */
+int  imu_data_ready(void);
 
 #endif

@@ -21,6 +21,7 @@
 #include "spi_fpga.h"
 #include "spi_frame.h"
 #include "crc.h"
+#include "node_link.h"
 /* FW_BITSTREAM, FW_PROTO: fw_config.h (mặc định 3 = project chính fpga/). */
 #if FW_BITSTREAM == 3
 #include "selftest_expect_v3_e2_n2.h"
@@ -48,6 +49,65 @@ static void log_sample(uint32_t t, const int16_t r[6], uint8_t btn, uint8_t wear
     uart_putc(','); uart_put_dec(wear);
     uart_puts("\n");
 }
+
+/* Có mẫu mới của MPU6050: ngắt INT ở P2.2, hoặc (IMU_INT_WIRED 0, không có dây INT) hỏi INT_STATUS mỗi mili giây. */
+static int sample_ready(void)
+{
+#if IMU_INT_WIRED
+    if (!g_imu_int) return 0;
+    g_imu_int = 0;
+    return 1;
+#else
+    static uint32_t t_last;
+    uint32_t now = board_millis();
+    if (now == t_last) return 0;
+    t_last = now;
+    return imu_data_ready() == 1;
+#endif
+}
+
+#if FW_NODE
+/* ---------- NODE: MCU là nút cảm biến (phần cứng nối cố định theo codecanthiet) ----------
+ * Không có SPI/IRQ/RST_N tới FPGA, chỉ có UART TX → ESP32. Mỗi mẫu 100 Hz (gyro đã trừ offset, bão hòa như
+ * app_core.c) thành một khung node_link 21 byte; tiền xử lý, khung v3, CNN qua FPGA và Safety FSM chạy trên ESP32. */
+static void node_loop(const int16_t off[3])
+{
+    int16_t r[6];
+    uint8_t f[NODE_SAMPLE_FRAME], seq = 0, keys = 0;
+    uint32_t t_tick = board_millis(), t_stat = t_tick, n = 0, n_err = 0;
+    uart_puts("# NODE: mau 100 Hz -> ESP32 (node_link F1 7E, 115200)\n");
+    for (;;) {
+        uint32_t now = board_millis();
+        board_wdt_feed();
+        if (sample_ready()) {
+            if (n && now - s_t_last >= 15u) s_lost++;
+            s_t_last = now;
+            if (imu_read(r) == 0) {
+                for (int c = 3; c < 6; c++) {
+                    int32_t v = r[c] - off[c - 3];
+                    r[c] = (int16_t)(v > 32767 ? 32767 : v < -32768 ? -32768 : v);
+                }
+                uint16_t len = node_pack_sample(f, seq++, r, keys);
+                for (uint16_t i = 0; i < len; i++) uart_putc((char)f[i]);
+                n++;
+            } else {
+                n_err++;
+            }
+        }
+        if (now - t_tick >= 10u) {
+            t_tick += 10u;
+            uint8_t k = keys_scan(now);
+            keys = (uint8_t)(((k & KEY_SW3) ? 1u : 0u) | ((k & KEY_SW6) ? 2u : 0u));
+            board_led(((now / 500u) & 1u) != 0);            /* LED D6 nháy 1 Hz: đang gửi mẫu */
+        }
+        if (now - t_stat >= 5000u) {
+            t_stat = now;
+            put_kv("STAT,mau=", (int32_t)n); put_kv(",i2c_loi=", (int32_t)n_err); put_kv(",mat=", (int32_t)s_lost);
+            uart_puts("\n");
+        }
+    }
+}
+#endif
 
 /* ---------- A.10: tự kiểm khi bật nguồn ---------- */
 static int selftest(void)
@@ -158,17 +218,20 @@ int main(void)
     uint32_t t_hint = board_millis();
     while (!gc.done) {
         board_wdt_feed();
-        if (g_imu_int) {
-            g_imu_int = 0;
+        if (sample_ready()) {
             t_hint = board_millis();
             if (imu_read(r) == 0) gyro_cal_push(&gc, r);
         } else if (board_millis() - t_hint >= 2000u) {     /* không có ngắt: dây INT chưa nối thì báo thay vì đứng im */
             t_hint = board_millis();
-            uart_puts("# cho ngat INT cua MPU6050 (P2.2, J7): 2 s khong co mau - kiem day INT\n");
+            uart_puts(IMU_INT_WIRED ? "# cho ngat INT cua MPU6050 (P2.2, J7): 2 s khong co mau - kiem day INT\n"
+                                    : "# MPU6050: 2 s khong co mau moi (INT_STATUS) - kiem I2C\n");
         }
     }
     put_kv("# gyro_off,", gc.off[0]); put_kv(",", gc.off[1]); put_kv(",", gc.off[2]);
     put_kv(" lam_lai=", gc.restarts); uart_puts("\n");
+#if FW_NODE
+    node_loop(gc.off);                          /* không trở về */
+#endif
 
     /* ---- FPGA (FW-08, A.10) ---- */
     spi_fpga_init(SPI_DIV_RUN, FW_PROTO);
@@ -190,8 +253,7 @@ int main(void)
         board_wdt_feed();
 
         /* 1. mẫu cảm biến */
-        if (g_imu_int) {
-            g_imu_int = 0;
+        if (sample_ready()) {
             if (now - s_t_last >= 15u) s_lost++;
             s_t_last = now;
             if (imu_read(r) == 0) {

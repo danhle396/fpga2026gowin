@@ -7,9 +7,10 @@ MPU6050 trên mũ → SONiX SN32F407 (EVK V1.0) → SPI → Kiwi Primer 20K (Gow
 | Board | Project (mở bằng phần mềm) | Nạp thẳng không cần build |
 |---|---|---|
 | **FPGA** Kiwi Primer 20K | **`fpga/fpga_project.gprj`** (Gowin IDE: File → Open Project → Run All). Gồm toàn bộ RTL của sản phẩm: top giao thức v3, engine E2, mô hình N2, chân header J2 | `bitstreams/3_v3_e2_n2/fpga_project.fs` (trùng từng bit với file Run All sinh ra) |
-| **MCU** SN32F407 EVK | **`firmware/keil/fw.uvprojx`** (Keil: F7 build, F8 nạp). Mặc định `FW_BITSTREAM 3` trong `firmware/src/fw_config.h`, khớp sẵn với FPGA | — |
+| **ESP32** (trung tâm, phần cứng cố định 24/10) | **`esp32/mu_nga_hub/mu_nga_hub.ino`** (Arduino IDE, board ESP32 Dev Module): chạy tiền xử lý + Safety FSM, nói SPI với FPGA, log USB/WiFi | — |
+| **MCU** SN32F407 EVK | **`firmware/keil/fw.uvprojx`** (Keil: F7 build, F8 nạp). Mặc định `FW_NODE 1` trong `firmware/src/fw_config.h`: đọc MPU6050 100 Hz, gửi mẫu cho ESP32 qua UART 115200. `FW_NODE 0` = MCU nối thẳng FPGA (thiết kế gốc, `FW_BITSTREAM 3`) | — |
 
-Nối dây: Phụ lục E.1 của `PROJECT_MASTER.md`. Thứ tự làm trên board: [docs/huong_dan_dot_B.md](docs/huong_dan_dot_B.md). Các bitstream khác (`bitstreams/1_*`, `2_*`, `rtl/pin_probe/`) chỉ dùng để gỡ lỗi.
+Dây đã cố định theo `codecanthiet` của nhóm (MCU → UART → ESP32 → SPI → FPGA). Thứ tự làm trên board: [docs/huong_dan_nap_chay.md](docs/huong_dan_nap_chay.md). Các bitstream khác (`bitstreams/1_*`, `2_*`, `rtl/pin_probe/`) chỉ dùng để gỡ lỗi.
 
 | Tài liệu | Nội dung |
 |---|---|

@@ -20,9 +20,26 @@ Mục đích: gọn đề tài lại ở mức nhóm chắc chắn làm xong, g�
 
 Không đổi: phần cứng, RTL, giao thức SPI, cửa sổ và bước suy luận, Safety FSM (ngoài nguồn của tín hiệu WEAR, nay do nút tạo), chỉ tiêu độ nhạy, Macro-F1, thời gian suy luận, tài nguyên.
 
+## Điều chỉnh v2.2 (24/10/2026): phần cứng của nhóm đã nối cố định
+
+Mạch của nhóm đã nối cố định theo phiên bản thử trước đó (thư mục `codecanthiet` của nhóm), không tháo và không thêm dây:
+- SN32F407 chỉ có dây UART TX (P3.1) sang ESP32 (GPIO16), một chiều;
+- ESP32 làm master SPI tới Kiwi (GPIO27/18/23/19 → J2-16/10/11/13);
+- không có dây SPI, IRQ, RST_N giữa SN32F407 và FPGA, không có dây INT của MPU6050.
+
+| # | Hạng mục | Bản v2.1 | Bản v2.2 | Lý do |
+|---|---|---|---|---|
+| i | Luồng dữ liệu | MCU → SPI → FPGA → MCU | MCU → UART 115200 → ESP32 → SPI → FPGA → ESP32 | Theo dây đã cố định |
+| j | Nơi chạy tiền xử lý, khung v3, bỏ phiếu + Safety FSM, nút | SN32F407 | ESP32, **cùng mã C** (`firmware/src`: app_core, preprocess, blocks, safety, pwr_btn, spi_frame) qua `hub.c` | Kết quả FPGA không quay về MCU được. Mã C giữ nguyên nên các phép kiểm khớp golden vẫn áp dụng; `hub.c` thêm 2 phép kiểm khớp golden trên mã máy giả lập |
+| k | SN32F407 | Toàn bộ firmware | Nút cảm biến: đọc MPU6050 100 Hz (hỏi INT_STATUS thay cho chân INT), trừ offset gyro, gửi từng mẫu kèm trạng thái nút | Theo dây đã cố định |
+| l | IRQ, RST_N | Có | Không có dây: ESP32 hỏi vòng kết quả (FPGA chốt "có kết quả" lúc CS xuống, đọc sớm trả toàn 0); không reset FPGA từ xa | Theo dây đã cố định; RTL và bitstream không đổi |
+| m | Báo động tại chỗ | Còi + LED 7 đoạn trên EVK | LED trên ESP32 + log USB/WiFi; còi EVK không dùng được vì MCU không biết kết quả | Thiếu đường kết quả về MCU; thêm còi vào một chân trống của ESP32 là việc có thể làm sau |
+
+Không đổi: RTL và bitstream (`fpga/`, `bitstreams/3_v3_e2_n2`), giao thức A.7, mô hình N2, SPEC A.1–A.8, Safety FSM, chỉ tiêu.
+
 ## Những gì không đổi
 
-Tên đề tài; mũ bảo hộ gắn MPU6050; mạng 1D-CNN INT8 tự viết bằng RTL trên Kiwi Primer 20K; SN32F407 thu dữ liệu và ra quyết định; SPI mode 0 kèm chân IRQ và RST_N; khung gửi 772 byte; cửa sổ 128 mẫu ở 50 Hz (2,56 s); mô hình tham chiếu Python làm chuẩn; chạy độc lập khi trình diễn.
+Tên đề tài; mũ bảo hộ gắn MPU6050; mạng 1D-CNN INT8 tự viết bằng RTL trên Kiwi Primer 20K; SN32F407 thu dữ liệu và ra quyết định (từ v2.2: SN32F407 thu dữ liệu, ESP32 chạy cùng mã quyết định); SPI mode 0 kèm chân IRQ và RST_N (từ v2.2: không có IRQ, RST_N, ESP32 hỏi vòng); khung gửi 772 byte; cửa sổ 128 mẫu ở 50 Hz (2,56 s); mô hình tham chiếu Python làm chuẩn; chạy độc lập khi trình diễn.
 
 ## Bảng thay đổi
 
