@@ -14,10 +14,12 @@ MPU6050 ──I²C──► SN32F407 (MCU) ──UART 115200──► ESP32 ─�
 | Board | Nạp gì | Bằng gì |
 |---|---|---|
 | MCU SN32F407 | `firmware/keil/fw.uvprojx` (mặc định `FW_NODE 1`: chỉ đọc cảm biến và gửi cho ESP32) | Keil: F7, F8 (cần driver SN-Link, B2) |
-| FPGA Kiwi | `fpga/fpga_project.gprj` = `bitstreams/3_v3_e2_n2/fpga_project.fs` | Gowin Programmer, External Flash Mode (đã nạp 24/10) |
+| FPGA Kiwi | `fpga/fpga_project.gprj` = `fpga/bitstream/fpga_project.fs` | Gowin Programmer, External Flash Mode (đã nạp 24/10) |
 | ESP32 | `esp32/mu_nga_hub/mu_nga_hub.ino` | Arduino IDE |
 
-**Không nạp `rtl/pin_probe/pin_probe.fs` khi ESP32 còn nối J2.** Bitstream đó lái cả 6 chân J2 thành ngõ ra, sẽ tranh dây với ESP32. Bitstream chính an toàn: với các dây nối ESP32, FPGA chỉ nhận vào; riêng MISO là FPGA phát ra cho ESP32 nhận.
+**Chỉ nạp `fpga/bitstream/fpga_project.fs` vào FPGA.** Bitstream này an toàn với dây ESP32: trên CS, SCK, MOSI FPGA chỉ nhận vào, riêng MISO là FPGA phát ra cho ESP32 nhận. Bitstream khác có thể lái các chân J2 và tranh dây với ESP32.
+
+**Trước lần đầu:** đo VDD của EVK = 3,3 ± 0,1 V (jumper J5 `T_DATA`–`SWDIO_P35`, J4 `T_CLK`–`SWCLK_P36`, J3 `T_VDD`–`32F407_VDD`, J1 `SW_ON_3.3V`–`32F407_VDD`, SW1 ON). Keil cần **driver SN-Link** ("SN-Link_Driver for Keil Cortex-M" của SONiX, cài vào đúng thư mục Keil); thiếu driver thì F8 không làm gì.
 
 ## 1. MCU
 
@@ -86,6 +88,6 @@ Thời điểm trong LOG tính theo số mẫu MCU đã gửi (10 ms mỗi mẫu
 | `# chua nhan mau tu MCU` lặp lại | MCU đã nạp firmware mới chưa (LED D6 nháy 1 Hz); dây P3.1 → GPIO16; GND chung |
 | `khung_hong` tăng đều | Baud lệch: MCU phải là bản `FW_NODE 1` (115200) |
 | Tự kiểm `doc 00 00 ...` ở cả 1 MHz và 100 kHz | FPGA chưa có bitstream (bật lại nguồn Kiwi, hoặc nạp lại `fpga/`); dây SPI J2 |
-| Tự kiểm đọc ra byte lạ | Sai bitstream: phải là bản 24/10 (`sha256sum -c bitstreams/3_v3_e2_n2/SHA256.txt`) |
+| Tự kiểm đọc ra byte lạ | Sai bitstream: phải là bản 24/10 (`cd fpga/bitstream && sha256sum -c SHA256.txt`) |
 | `timeout` tăng, `ok` không tăng | FPGA không trả kết quả: thử `SPI 100`, gửi log cho AI |
 | `MCU # MPU6050 loi` | Dây I²C P0.10/P0.11 và nguồn 3,3 V của MPU6050 |

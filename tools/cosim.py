@@ -27,7 +27,6 @@ import golden_model as gm  # noqa: E402
 import m0_test as mt  # noqa: E402
 import safety_model as sm  # noqa: E402
 
-PROJ = ROOT / "Document Board Kiwi Primer 20K" / "Kiwi20K_FallDetection_FPGA"
 
 
 def stream(n_trials):
@@ -72,7 +71,7 @@ def main():
     if W.exists():
         shutil.rmtree(W)
     (W / "tb").mkdir(parents=True)
-    shutil.copytree(PROJ / "src", W / "src")
+    shutil.copytree(ROOT / "fpga" / "src", W / "src")
     shutil.copy(a.e2 / "cnn_params.vh", W / "src" / "cnn_params.vh")
     shutil.copy(a.e2 / "weights.mem", W / "src" / "weights_e2.mem")
     shutil.copy(a.e2 / "bias.mem", W / "src" / "bias_e2.mem")
@@ -80,8 +79,8 @@ def main():
     env = dict(os.environ)
     env["PATH"] = r"C:\iverilog\bin;" + env.get("PATH", "")
     V3 = ROOT / "fpga" / "src"
-    src = [ROOT / "rtl" / "v3" / "tb_stream.v", V3 / "fpga_top_v3.v", V3 / "packet_parser_v3.v", V3 / "result_frame_v3.v",
-           V3 / "spi_result_tx_v3.v", V3 / "crc16_ccitt.v", ROOT / "rtl" / "tb" / "pll_50m_sim.v",
+    src = [ROOT / "fpga" / "sim" / "tb_stream.v", V3 / "fpga_top_v3.v", V3 / "packet_parser_v3.v", V3 / "result_frame_v3.v",
+           V3 / "spi_result_tx_v3.v", V3 / "crc16_ccitt.v", ROOT / "fpga" / "sim" / "pll_50m_sim.v",
            V3 / "spi_slave.v", V3 / "input_buffer.v", V3 / "cnn_e2.v"]
     subprocess.run(["iverilog", "-g2001", "-I", "src", f"-DTB_NF={len(frames)}", "-s", "tb_stream", "-o", "s.vvp"]
                    + [str(s) for s in src], cwd=W, env=env, check=True)

@@ -1,5 +1,5 @@
 #!/usr/bin/env python
-# tools/gyro_residual.py — kiểm Pass của FW-05 trên file LOG của tools/logger.py (bước B5 trong docs/huong_dan_dot_B.md):
+# tools/gyro_residual.py — kiểm Pass của FW-05 trên file LOG của tools/logger.py (ghi qua ESP32: logger.py --gui LOG, docs/huong_dan_nap_chay.md):
 # ở chế độ LOG gyro đã trừ offset hiệu chuẩn lúc khởi động, nên khi board/mũ đặt yên, trung bình 500 mẫu của mỗi trục
 # gyro phải trong ±2 LSB. In trung bình của 500 mẫu đầu (Pass) và trung bình 500 mẫu lệch nhất trên cả file (theo dõi trôi).
 #

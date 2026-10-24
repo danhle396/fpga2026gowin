@@ -1,5 +1,5 @@
 /*
- * imu.h — MPU6050 theo SPEC v3, A.1 (việc FW-04): 100 Hz, DLPF 44 Hz, ±16 g, ±2000 °/s, ngắt data-ready trên P2.2.
+ * imu.h — MPU6050 theo SPEC v3, A.1 (việc FW-04): 100 Hz, DLPF 44 Hz, ±16 g, ±2000 °/s, data-ready báo qua INT_STATUS (không có dây INT).
  */
 #ifndef IMU_H
 #define IMU_H

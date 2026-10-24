@@ -7,7 +7,7 @@
 1. `git pull`. Nếu có thay đổi chưa commit của người khác thì dừng và hỏi.
 2. Đọc **`PROMPT_KHOI_CONG.md`**: vai trò, bất biến, luật làm việc, các lệnh ngắn (`Tiếp`, `Sửa`, `Cập nhật`, `Kẹt`, `Phản biện`, `XUẤT FULL`). File đó là luật của phiên.
 3. Đọc khung **TRẠNG THÁI** ở đầu `PROJECT_MASTER.md` và **10 dòng cuối của Phụ lục D** (nhật ký), để biết phiên trước đã làm gì.
-4. Đọc `docs/huong_dan_dot_B.md` nếu phiên này làm việc trên board.
+4. Đọc `docs/huong_dan_nap_chay.md` nếu phiên này làm việc trên board.
 
 Khi file và trí nhớ khác nhau, **file thắng**. Mọi con số phải lấy từ file hoặc từ phép đo; không bịa. Chưa chắc thì ghi `[CẦN XÁC MINH – nguồn: …]`.
 
@@ -24,7 +24,7 @@ Khi file và trí nhớ khác nhau, **file thắng**. Mọi con số phải lấ
 
 - Ba file `PROJECT_MASTER.md`, `DE_CUONG_v2.md`, `THAY_DOI_SO_VOI_v1.md` phải khớp nhau từng con số. Mỗi lần sửa thì thêm **một dòng Phụ lục D** (ngày, việc, lý do).
 - Chỉ đánh `[x]` khi đạt *Pass criterion* và có bằng chứng ở `docs/bao_cao/<YYYY-MM-DD>_<chủ đề>/`.
-- Tầng 3 chỉ làm khi đã qua G6. Không ghi đè `Document Board Kiwi Primer 20K/Kiwi20K_FallDetection_FPGA/impl/` của đồng đội.
+- Tầng 3 chỉ làm khi đã qua G6. RTL sản phẩm chỉ sửa trong `fpga/src/`; build bằng `fpga/scripts/build.sh` (chạy trên bản sao, không ghi `fpga/impl/`).
 - Golden model `ml/src/golden_model.py` là đáp án; RTL, firmware và Python phải khớp nó từng bit.
 - Thanh ghi nào phát xung (start, done, valid, we, irq) trong RTL **phải có giá trị khởi tạo**. Xem lỗi `conv_start` ở `docs/bao_cao/2026-10-15_loi_init_conv_start/`.
 - **Cuối mỗi câu trả lời** có bảng **1 hàng × 5 cột**:
@@ -56,16 +56,16 @@ Khi file và trí nhớ khác nhau, **file thắng**. Mọi con số phải lấ
 | `unicorn` (pip, nên cài vào venv riêng) | `tools/m0_test.py`, `tools/cosim.py`: chạy mã máy Cortex-M0 trên PC | |
 | Icarus Verilog (máy gốc: 0.9.7; máy thứ hai: 12.0 cài bằng `winget install Icarus.Verilog`; cả hai ở `C:\iverilog\bin`) | mọi testbench | Chỉ dùng cú pháp `-g2001`. Script tự thêm `/c/iverilog/bin` vào PATH nếu không thấy `iverilog` |
 | (máy chưa có Python) | | `winget install Python.Python.3.12 --scope user`, tạo venv rồi `pip install numpy matplotlib pyserial pymupdf pypdf unicorn`. Git Bash có thể bắt trúng alias Microsoft Store khi gọi `python3`: chép `python.exe` của venv thành `python3.exe` rồi đưa thư mục `Scripts` của venv lên đầu PATH |
-| Gowin EDA V1.9.11.03 Education | `rtl/v3/pnr_v3.sh`, `rtl/gl/run_gl.sh` | Mặc định `/c/Gowin/Gowin_V1.9.11.03_Education_x64/IDE/bin/gw_sh.exe`; đổi bằng biến `GW_SH`, `GW_SIMLIB` |
+| Gowin EDA V1.9.11.03 Education | `fpga/scripts/build.sh`, `fpga/scripts/gl.sh`, Gowin IDE mở `fpga/fpga_project.gprj` | Mặc định `/c/Gowin/Gowin_V1.9.11.03_Education_x64/IDE/bin/gw_sh.exe`; đổi bằng biến `GW_SH`, `GW_SIMLIB` |
 | Keil MDK-ARM 5.43 (Arm Compiler 6.24) + pack SONiX SN32F4_DFP + **driver SN-Link cho Keil Cortex-M (SONiX)** | `firmware/keil/fw.uvprojx`, `firmware/build.sh` | Máy gốc cài ở `%LOCALAPPDATA%\Keil_v5`. Build không mở giao diện: `UV4.exe -r <project> -j0 -o log.txt`. Nạp (F8) cần driver SN-Link (`Keil_v5\ARM\SNLINK\`, bộ cài SONiX V2.00.324 chọn thư mục Keil theo registry). Máy gốc đã cài 24/10; nạp không giao diện: `UV4.exe -f fw.uvprojx -j0 -o log.txt` |
 
 Lệnh kiểm nhanh sau khi `git pull` (không cần board):
 
 ```bash
-python -I tools/verify_spec_v3.py ml/src "FPGA_Fall_Detection_AI-20261012T141515Z-1-001/FPGA_Fall_Detection_AI/fpga_export"
+bash fpga/scripts/test.sh                    # RTL: mô hình trong fpga/src, tb_e2, tb_proto, lõi ESP32; khoảng 2 phút
 python -I tools/sync_spec.py --check         # docs/spec.md trùng Phụ lục A (sửa Phụ lục A thì chạy lại không có --check)
-bash rtl/tb/run_all.sh                       # 7 testbench, khoảng 5 phút
 bash firmware/build.sh test && python -I tools/m0_test.py
+python -I tools/cosim.py --e2 ml/out/e2_matrix/n2_11_p1   # firmware ↔ RTL
 ```
 
 **Chỉ có trên máy gốc, không có trong repo:**
@@ -78,5 +78,6 @@ bash firmware/build.sh test && python -I tools/m0_test.py
 - Mô hình phần cứng đã chốt (16/10): **N2, chỉ kênh đầu, 2 lớp NORMAL / FALL (SPEC v3.2)** trên **E2, 1 làn, giao thức v3** (bitstream 3). Dữ liệu ngực/thắt lưng đã bỏ. Bitstream 3 mang N2 11 người (`ml/out/n2_11_d1`, 16/10): LOSO Macro-F1 0,983; FSM T_SCORE 8 ngã nằm 96,2 %, báo giả 1,11/giờ (từ "nằm xuống giường").
 - **Phần cứng nối cố định (24/10, v2.2):** MCU → UART → **ESP32** → SPI → FPGA; ESP32 chạy lõi C (`hub.c` + `app_core`), MCU `FW_NODE 1` chỉ đọc cảm biến. Làm theo [docs/huong_dan_nap_chay.md](docs/huong_dan_nap_chay.md); các bước B6–B10 của `huong_dan_dot_B.md` (nối dây MCU ↔ FPGA, pin_probe) không áp dụng.
 - **Chân FPGA nằm trên header J2 từ 24/10** (theo sơ đồ nối thực tế của nhóm; Phụ lục E.1, `docs/bao_cao/2026-10-24_so_do_noi_nhom/`). ESP32 của nhóm phải tháo khỏi J2 khi chạy hệ thống.
-- **Một project FPGA, một project MCU (24/10):** `fpga/fpga_project.gprj` (nguồn RTL sản phẩm duy nhất ở `fpga/src/`; bản dựng = `bitstreams/3_v3_e2_n2`) và `firmware/keil/fw.uvprojx` (mặc định `FW_BITSTREAM 3` trong `fw_config.h`). Sửa RTL thì sửa trong `fpga/src/`.
-- Việc tiếp theo: đợt B theo `docs/huong_dan_dot_B.md`: B7 nạp `bitstreams/3_v3_e2_n2` bản ngày 24/10 (kiểm `SHA256.txt` trước khi nạp); bitstream 1 chỉ là đường lùi (B10).
+- **Một project FPGA, một project MCU (24/10):** `fpga/fpga_project.gprj` (nguồn RTL sản phẩm duy nhất ở `fpga/src/`; bản dựng = `fpga/bitstream/fpga_project.fs`) và `firmware/keil/fw.uvprojx` (mặc định `FW_BITSTREAM 3` trong `fw_config.h`). Sửa RTL thì sửa trong `fpga/src/`.
+- Việc tiếp theo: làm theo `docs/huong_dan_nap_chay.md`: nạp MCU (FW_NODE) và ESP32, đọc log, gửi kết quả. FPGA đã nạp flash 24/10. **Không nạp bitstream nào khác** khi ESP32 còn nối J2.
+- **Dọn thư mục 24/10:** đã bỏ engine E1 (project Gowin cũ của nhóm, weight E1, bitstream 1/2), `rtl/`, `test_sensor/`, `pin_probe`, chế độ MCU nối thẳng FPGA, các mô hình thử nghiệm trong `ml/out/`. Cần lại thì lấy từ lịch sử git trước commit "dọn thư mục".

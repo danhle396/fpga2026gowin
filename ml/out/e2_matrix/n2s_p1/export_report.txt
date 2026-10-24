@@ -1,6 +1,0 @@
-E2 P = 1: 3184 từ ROM weight, BASE [0, 240, 880, 2160], 44 bias, shift [7, 7, 8], đầu ra flatten, score_shift 9
-50 vector: D1 FALL, D1 NORMAL, LFSR A.10, bậc thang, gyro bão hòa, ngẫu nhiên, toàn +127, toàn -128, toàn 0, xen kẽ ±127; lớp golden {0: 14, 3: 36}
-PASS  đọc ngược .mem → golden trùng lớp, SCORE, 4 logit: 50/50
-PASS  biên |acc| xấu nhất theo lớp [75399, 120158, 276571, 1073741824] < 2^31 = 2147483648
-PASS  mô hình địa chỉ E2 trên ROM đã xuất == golden (3 vector)
-selftest_expect.h: lớp 3, SCORE 127, logit [41744, -219211, -1073741824, 113185]

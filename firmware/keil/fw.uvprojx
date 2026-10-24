@@ -390,24 +390,9 @@
               <FilePath>..\src\app_main.c</FilePath>
             </File>
             <File>
-              <FileName>diag.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\src\diag.c</FilePath>
-            </File>
-            <File>
               <FileName>board.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\src\board.c</FilePath>
-            </File>
-            <File>
-              <FileName>spi_fpga.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\src\spi_fpga.c</FilePath>
-            </File>
-            <File>
-              <FileName>spi_frame.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\src\spi_frame.c</FilePath>
             </File>
             <File>
               <FileName>crc.c</FileName>
@@ -415,34 +400,9 @@
               <FilePath>..\src\crc.c</FilePath>
             </File>
             <File>
-              <FileName>preprocess.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\src\preprocess.c</FilePath>
-            </File>
-            <File>
-              <FileName>blocks.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\src\blocks.c</FilePath>
-            </File>
-            <File>
-              <FileName>safety.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\src\safety.c</FilePath>
-            </File>
-            <File>
               <FileName>gyro_cal.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\src\gyro_cal.c</FilePath>
-            </File>
-            <File>
-              <FileName>app_core.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\src\app_core.c</FilePath>
-            </File>
-            <File>
-              <FileName>pwr_btn.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\src\pwr_btn.c</FilePath>
             </File>
             <File>
               <FileName>i2c0.c</FileName>

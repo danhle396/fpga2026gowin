@@ -1,10 +1,9 @@
 /*
- * board.c — xem board.h. Clock, SysTick và UART0 lấy từ test_sensor/firmware/board_sn32f407.c (đã build, chưa chạy
+ * board.c — xem board.h. Clock, SysTick và UART0 theo datasheet SN32F407 V2.2 (đã nạp 24/10
  * trên board); tên thanh ghi theo SN32F400.h của pack SONiX.SN32F4_DFP 1.1.1, giá trị theo datasheet V2.2.
  */
 #include "SN32F400.h"
 #include "board.h"
-#include "fw_config.h"
 
 /* ---------------- SysTick 1 ms ---------------- */
 static volatile uint32_t s_ms;
@@ -91,9 +90,8 @@ void board_led(int on)
 }
 
 /* ---------------- UART0 8N1, buffer vòng + ngắt (FW-06) ----------------
- * Baud = PCLK / (OVER × DL); 48 MHz, OVER8 = 1: DL = 13 → 461.538 baud (lệch +0,16 %) khi nối PC;
- * DL = 52 → 115.385 baud (+0,16 %) khi FW_NODE (nối ESP32 GPIO16 như phần cứng của nhóm). */
-#define UART_DL (FW_NODE ? 52u : 13u)
+ * Baud = PCLK / (OVER × DL); 48 MHz, OVER8 = 1, DL = 52 → 115.385 baud (lệch +0,16 %): nối ESP32 GPIO16 (v2.2). */
+#define UART_DL 52u
 #define TXN 512u
 #define RXN 1024u
 static volatile uint8_t  s_tx[TXN], s_rx[RXN];
@@ -206,29 +204,6 @@ uint8_t keys_scan(uint32_t now)
         stable = cand;
     }
     return stable;
-}
-
-/* ---------------- ngắt cổng P2 (IRQ của FPGA, INT của MPU6050) ---------------- */
-volatile uint8_t g_fpga_irq;
-volatile uint8_t g_imu_int;
-
-void P2_IRQHandler(void)
-{
-    uint32_t ris = SN_GPIO2->RIS;
-    if (ris & (1UL << 9)) g_fpga_irq = 1;
-    if (ris & (1UL << 2)) g_imu_int = 1;
-    SN_GPIO2->IC = ris;
-}
-
-void board_p2_irq_enable(uint32_t mask)
-{
-    SN_GPIO2->IS  &= ~mask;                     /* cạnh */
-    SN_GPIO2->IBS &= ~mask;                     /* một cạnh */
-    SN_GPIO2->IEV &= ~mask;                     /* cạnh lên */
-    SN_GPIO2->IC   = mask;
-    SN_GPIO2->IE  |= mask;
-    NVIC_ClearPendingIRQ(P2_IRQn);
-    NVIC_EnableIRQ(P2_IRQn);
 }
 
 /* ---------------- khởi tạo ---------------- */

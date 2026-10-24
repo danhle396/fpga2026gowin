@@ -270,16 +270,7 @@ def test_fsm_equiv():
 def cnn_models():
     """(tên, tham số golden) cho các mô hình có sẵn trên máy."""
     ms = []
-    ex = ROOT / "FPGA_Fall_Detection_AI-20261012T141515Z-1-001" / "FPGA_Fall_Detection_AI" / "fpga_export"
-    if ex.exists():
-        q = __import__("json").loads((ex / "quant_params.json").read_text(encoding="utf8"))
-        W = np.array([int(v, 16) for v in (ex / "weights.mem").read_text().split()], np.int64)
-        B = np.array([int(v, 16) for v in (ex / "bias.mem").read_text().split()], np.int64)
-        W, B = np.where(W > 127, W - 256, W), np.where(B >= 2**31, B - 2**32, B)
-        ms.append(("N1 SisFall (nhóm AI)", dict(w1=W[:480].reshape(16, 6, 5), b1=B[:16], w2=W[480:3040].reshape(32, 16, 5),
-                   b2=B[16:48], wd=W[3040:].reshape(4, 32), bd=B[48:], n=[q["conv1_shift"], q["conv2_shift"]],
-                   head="gap", score_shift=0)))
-    for arch in ("n1", "n2s", "n2", "n2l"):
+    for arch in ("n2_11",):                                 # mô hình của bitstream đang nạp (ml/out/n2_11_d1)
         f = ROOT / "ml" / "out" / f"{arch}_d1" / "params_int8.npz"
         if f.exists():
             z = np.load(f)

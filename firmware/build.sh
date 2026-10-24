@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 # firmware/build.sh — biên dịch firmware chính cho SN32F407 bằng Arm Compiler 6 của Keil MDK, không cần mở uVision.
-#   bash firmware/build.sh        → build/fw.hex   (FW-03: firmware gốc; kèm preprocess, spi_frame, spi_fpga, blocks, safety)
-#   bash firmware/build.sh test   → build/test.axf (cùng các module C thuần, chạy trong trình giả lập: tools/m0_test.py)
+#   bash firmware/build.sh        → build/fw.hex   (MCU nút cảm biến: MPU6050 → khung node_link → UART → ESP32)
+#   bash firmware/build.sh test   → build/test.axf (lõi C dùng chung với ESP32 + bộ test, chạy trong trình giả lập: tools/m0_test.py)
 # Project Keil tương đương: firmware/keil/fw.uvprojx (UV4 -b).
 set -e
 cd "$(dirname "$0")"
@@ -13,10 +13,11 @@ DFP="$(ls -d "$PACKS"/SONiX/SN32F4_DFP/*/ | sort -V | tail -1)Device"
 CMSIS="$(ls -d "$PACKS"/ARM/CMSIS/*/ | sort -V | tail -1)CMSIS/Core/Include"
 [ -x "$BIN/armclang.exe" ] || { echo "Không thấy armclang ở $BIN — đặt biến KEIL"; exit 1; }
 
-PURE="src/node_link.c src/hub.c src/crc.c src/preprocess.c src/spi_frame.c src/blocks.c src/safety.c src/cnn_mcu.c src/gyro_cal.c src/app_core.c src/pwr_btn.c"
+CORE="src/node_link.c src/hub.c src/crc.c src/preprocess.c src/spi_frame.c src/blocks.c src/safety.c src/app_core.c src/pwr_btn.c"   # C thuần, chạy trên ESP32
+MCU="src/app_main.c src/board.c src/i2c0.c src/imu.c src/gyro_cal.c src/node_link.c src/crc.c"
 OPT="${OPT:--Oz}"        # bản đo tốc độ FW-15: OPT=-O3
 CFLAGS="--target=arm-arm-none-eabi -mcpu=cortex-m0 -mthumb $OPT -std=c99 -Wall -Wextra -Wno-unused-parameter
-        -D__MICROLIB -ffunction-sections -fdata-sections -I src"
+        -D__MICROLIB -ffunction-sections -fdata-sections -I src -I test"
 mkdir -p build
 
 compile() {     # compile <thư mục obj> <file .c>...
@@ -32,7 +33,7 @@ compile() {     # compile <thư mục obj> <file .c>...
 
 if [ "${1:-fw}" = "test" ]; then
     mkdir -p build/test
-    compile build/test $PURE test/host_main.c test/host_startup.c
+    compile build/test $CORE src/gyro_cal.c test/cnn_mcu.c test/host_main.c test/host_startup.c
     cat > build/test/host.sct <<'EOF'
 LR 0x00000000 0x00100000 {
   ER_RO 0x00000000 0x00100000 { *(RESET, +First) *(InRoot$$Sections) .ANY (+RO) }
@@ -65,7 +66,7 @@ LR_FLAG 0x00007FFC 0x00000004 {           ; từ cờ ở cuối Flash do startu
   }
 }
 EOF
-compile build/fw $PURE src/board.c src/spi_fpga.c src/i2c0.c src/imu.c src/diag.c src/app_main.c "$DFP/Source/system_SN32F400.c"
+compile build/fw $MCU "$DFP/Source/system_SN32F400.c"
 "$BIN/armasm.exe" --cpu Cortex-M0 --pd "__MICROLIB SETA 1" "$(cygpath -w "$DFP/Source/ARM/startup_SN32F400.s")" \
     -o build/fw/startup.o 2>/dev/null
 "$BIN/armlink.exe" --cpu Cortex-M0 --scatter build/fw/sn32f407.sct --entry Reset_Handler --remove \

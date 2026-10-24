@@ -49,11 +49,6 @@ void     board_wdt_feed(void);
 uint8_t  keys_raw(void);
 uint8_t  keys_scan(uint32_t now);      /* trả về mặt nạ phím đã chống dội */
 
-/* Cờ ngắt cổng P2, đặt trong P2_IRQHandler */
-extern volatile uint8_t g_fpga_irq;    /* cạnh lên ở P2.9 */
-extern volatile uint8_t g_imu_int;     /* cạnh lên ở P2.2 */
-void     board_p2_irq_enable(uint32_t pin_mask);
-
 /* GPIO dùng chung */
 #define PIN_CFG_PULLUP    0u
 #define PIN_CFG_PULLDOWN  1u

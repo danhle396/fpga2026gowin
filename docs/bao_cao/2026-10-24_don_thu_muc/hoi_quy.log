@@ -1,0 +1,47 @@
+== fpga/scripts/test.sh
+  tb_proto (top v3 qua SPI: 10 khung + 7 kịch bản lỗi): PASS (39 s)
+  esp32/mu_nga_hub trùng firmware/src: PASS (0 s)
+
+| Kiểm | Kết quả | Thời gian |
+|---|---|---|
+| fpga/src = mô hình n2_11_p1 | PASS | 0 s |
+| tb_e2 (P = 1, 10 vector, mọi tầng) | PASS | 20 s |
+| tb_e2 (P = 4, 10 vector, mọi tầng) | PASS | 12 s |
+| tb_proto (top v3 qua SPI: 10 khung + 7 kịch bản lỗi) | PASS | 39 s |
+| esp32/mu_nga_hub trùng firmware/src | PASS | 0 s |
+Icarus: Icarus Verilog version 0.9.7  (v0_9_7)
+TẤT CẢ PASS
+== m0_test
+PASS  A.10 khung tự kiểm LFSR 768 byte == selftest_payload()
+PASS  A.7 CRC-16 "123456789" = 0x29B1  C cho 0x29B1
+PASS  CRC-8 (PROTO 1) "123456789" == crc8.v của RTL  0xF4
+PASS  A.2 q8 trên 2627 giá trị (gồm bảng tự kiểm A.2) == golden
+PASS  FW-07 10000 mẫu tv/pre_in.csv → 5000 mẫu, khớp tv/pre_out.csv từng byte
+PASS  FW-07 số cửa sổ: 305 (mong đợi 305, bước 16 mẫu)
+PASS  FW-08 305 khung v3 (772 B) khớp write_frame() từng byte và tv/pre_frames.csv  sai 0
+PASS  FW-08 305 khung PROTO 1 (771 B, CRC-8 của RTL) khớp từng byte  sai 0
+PASS  FW-08 kiểm khung đọc: 92 ca (v3 RUN/HIL, PROTO 1, SEQ lệch, CRC sai, STATUS, đuôi)
+PASS  FW-11 khối + Safety FSM (A.8)
+PASS  AI-10 safety_model.py == safety.c trên 240000 tick ngẫu nhiên (4 cấu hình, có tràn ms)  sai 0, trạng th
+PASS  AI-10 safety_model.Blocks == blocks.c trên 6400 mẫu (200 khối, 78 bất động, still_run lớn nhất 58)
+PASS  FW-15 cnn_mcu.c (N2_11 D1) == golden: lớp, SCORE, 4 logit trên 50/50 cửa sổ
+PASS  FW lõi (app_core.c, N2_11 D1) == golden + safety_model: 402 kết quả, 11 lần đổi trạng thái trên 131 
+PASS  FW-05 hiệu chuẩn gyro: xong sau 271 mẫu, làm lại 2 lần, offset [40, -17, 3] (thật 41/−17/3)
+PASS  node_link.c: 50 khung MCU → ESP32 khớp Python từng byte (21 B/mẫu, CRC-16)
+PASS  node_link.c tách luồng: 46 mẫu, dòng chữ, 1 khung hỏng, mất 4 mẫu  mất 4 (mong đợi 4 = 1 hỏng
+PASS  ESP32 hub.c (N2_11 D1) == golden + safety_model: 402 khung qua FPGA giả lập (hỏi vòng sau 5 ms), 11 lần �
+PASS  ESP32 hub.c: FPGA không trả lời trong 50 ms → 402 timeout / 402 khung gửi, 0 OK, 0 cửa sổ bỏ qua l�
+TẤT CẢ PASS
+== cosim
+   khung ghi của firmware == golden và khung đọc của RTL == golden: 423/423; CYCLES [258080]; lớp golden {0: 411, 3: 12}
+lượt 3 (firmware app_core đọc khung RTL): 423/423 khung đọc qua spi_parse_v3; kết quả == golden: True; 4 lần đổi trạng thái == golden: True (MONITOR → SUSPECT → PRE_ALARM → ALARM)
+KẾT LUẬN mô phỏng ghép: PASS
+== tự kiểm
+RTL trả về 7 byte đầu 5a ee 01 03 00 06 43; firmware mong đợi 5a ee 01 03 00 06 43 → PASS
+khung 20 byte của RTL: 5a ee 01 03 00 06 43 7f ff 80 00 80 00 7f ff 03 f0 20 c0 ce
+== build bitstream
+  BSRAM                       | 8/46                                | 18%
+  DSP                         | 2.25/24                             | 10%
+Max Frequency Summary: NO. Clock Name Constraint Actual Fmax Logic Level Entity 1 u_pll/rpll_inst/CLKOUT.default_gen_clk 50.143(MHz) 111.010(MHz) 5 TOP No timing paths to get freque
+-r--r--r-- 1 ADMIN 197121 7264154 Oct 24 22:11 /tmp/don24/b/impl/pnr/fpga_project.fs
+khác bản phát hành: 0 dòng

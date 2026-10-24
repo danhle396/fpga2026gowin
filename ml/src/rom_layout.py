@@ -1,5 +1,5 @@
 # ml/src/rom_layout.py — bố trí ROM của E1 và E2 (A.6) và mô hình địa chỉ của engine E2. Một nguồn duy nhất cho
-# tools/export_mem.py (sinh .mem) và tools/verify_spec_v3.py (kiểm mô hình địa chỉ == golden).
+# tools/export_mem.py (sinh .mem cho engine E2).
 import numpy as np
 
 

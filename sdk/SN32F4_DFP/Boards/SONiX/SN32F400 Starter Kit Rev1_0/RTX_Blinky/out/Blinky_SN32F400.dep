@@ -1,40 +1,0 @@
-Dependencies for Project 'Blinky', Target 'SN32F400': (DO NOT MODIFY !)
-CompilerVersion: 5060750::V5.06 update 6 (build 750)::ARMCC
-F (.\Blinky.c)(0x678F15BD)(-c --cpu Cortex-M0 -D__RTX -g -O0 --apcs=interwork -I.\RTE\_SN32F400-IC:\Keil_v5\ARM\PACK\ARM\CMSIS\5.9.0\CMSIS\Core\Include-IC:\Keil_v5\ARM\PACK\ARM\CMSIS\5.9.0\CMSIS\RTOS\RTX\INC-IC:\Keil_v5\ARM\PACK\SONiX\SN32F4_DFP\1.1.2\Device\Include-D__UVISION_VERSION="529" -D_RTE_ -DSN32F400-o .\out\blinky.o --omf_browse .\out\blinky.crf --depend .\out\blinky.d)
-I (C:\Keil_v5\ARM\PACK\ARM\CMSIS\5.9.0\CMSIS\RTOS\RTX\INC\cmsis_os.h)(0x626F4ADE)
-I (C:\Keil_v5\ARM\ARMCC\include\stdint.h)(0x5D9AD218)
-I (C:\Keil_v5\ARM\ARMCC\include\stddef.h)(0x5D9AD218)
-I (LED.h)(0x678F15BD)
-F (.\LED.c)(0x6A0D57F4)(-c --cpu Cortex-M0 -D__RTX -g -O0 --apcs=interwork -I.\RTE\_SN32F400-IC:\Keil_v5\ARM\PACK\ARM\CMSIS\5.9.0\CMSIS\Core\Include-IC:\Keil_v5\ARM\PACK\ARM\CMSIS\5.9.0\CMSIS\RTOS\RTX\INC-IC:\Keil_v5\ARM\PACK\SONiX\SN32F4_DFP\1.1.2\Device\Include-D__UVISION_VERSION="529" -D_RTE_ -DSN32F400-o .\out\led.o --omf_browse .\out\led.crf --depend .\out\led.d)
-I (C:\Keil_v5\ARM\PACK\SONiX\SN32F4_DFP\1.1.2\Device\Include\SN32F400.h)(0x684AAA56)
-I (C:\Keil_v5\ARM\PACK\ARM\CMSIS\5.9.0\CMSIS\Core\Include\core_cm0.h)(0x626F4ADE)
-I (C:\Keil_v5\ARM\ARMCC\include\stdint.h)(0x5D9AD218)
-I (C:\Keil_v5\ARM\PACK\ARM\CMSIS\5.9.0\CMSIS\Core\Include\cmsis_version.h)(0x626F4ADE)
-I (C:\Keil_v5\ARM\PACK\ARM\CMSIS\5.9.0\CMSIS\Core\Include\cmsis_compiler.h)(0x626F4ADE)
-I (C:\Keil_v5\ARM\PACK\ARM\CMSIS\5.9.0\CMSIS\Core\Include\cmsis_armcc.h)(0x626F4ADE)
-I (C:\Keil_v5\ARM\PACK\SONiX\SN32F4_DFP\1.1.2\Device\Include\system_SN32F400.h)(0x678F15BE)
-I (led.h)(0x678F15BD)
-F (.\PFPA.c)(0x684A6C73)(-c --cpu Cortex-M0 -D__RTX -g -O0 --apcs=interwork -I.\RTE\_SN32F400-IC:\Keil_v5\ARM\PACK\ARM\CMSIS\5.9.0\CMSIS\Core\Include-IC:\Keil_v5\ARM\PACK\ARM\CMSIS\5.9.0\CMSIS\RTOS\RTX\INC-IC:\Keil_v5\ARM\PACK\SONiX\SN32F4_DFP\1.1.2\Device\Include-D__UVISION_VERSION="529" -D_RTE_ -DSN32F400-o .\out\pfpa.o --omf_browse .\out\pfpa.crf --depend .\out\pfpa.d)
-I (C:\Keil_v5\ARM\PACK\SONiX\SN32F4_DFP\1.1.2\Device\Include\SN32F400.h)(0x684AAA56)
-I (C:\Keil_v5\ARM\PACK\ARM\CMSIS\5.9.0\CMSIS\Core\Include\core_cm0.h)(0x626F4ADE)
-I (C:\Keil_v5\ARM\ARMCC\include\stdint.h)(0x5D9AD218)
-I (C:\Keil_v5\ARM\PACK\ARM\CMSIS\5.9.0\CMSIS\Core\Include\cmsis_version.h)(0x626F4ADE)
-I (C:\Keil_v5\ARM\PACK\ARM\CMSIS\5.9.0\CMSIS\Core\Include\cmsis_compiler.h)(0x626F4ADE)
-I (C:\Keil_v5\ARM\PACK\ARM\CMSIS\5.9.0\CMSIS\Core\Include\cmsis_armcc.h)(0x626F4ADE)
-I (C:\Keil_v5\ARM\PACK\SONiX\SN32F4_DFP\1.1.2\Device\Include\system_SN32F400.h)(0x678F15BE)
-F (.\Abstract.txt)(0x678F15BD)()
-F (C:\Keil_v5\ARM\PACK\ARM\CMSIS\5.9.0\CMSIS\RTOS\RTX\LIB\ARM\RTX_CM0.lib)(0x626F4ADE)()
-F (RTE\CMSIS\RTX_Conf_CM.c)(0x678F15BD)(-c --cpu Cortex-M0 -D__RTX -g -O0 --apcs=interwork -I.\RTE\_SN32F400-IC:\Keil_v5\ARM\PACK\ARM\CMSIS\5.9.0\CMSIS\Core\Include-IC:\Keil_v5\ARM\PACK\ARM\CMSIS\5.9.0\CMSIS\RTOS\RTX\INC-IC:\Keil_v5\ARM\PACK\SONiX\SN32F4_DFP\1.1.2\Device\Include-D__UVISION_VERSION="529" -D_RTE_ -DSN32F400-o .\out\rtx_conf_cm.o --omf_browse .\out\rtx_conf_cm.crf --depend .\out\rtx_conf_cm.d)
-I (C:\Keil_v5\ARM\PACK\ARM\CMSIS\5.9.0\CMSIS\RTOS\RTX\INC\cmsis_os.h)(0x626F4ADE)
-I (C:\Keil_v5\ARM\ARMCC\include\stdint.h)(0x5D9AD218)
-I (C:\Keil_v5\ARM\ARMCC\include\stddef.h)(0x5D9AD218)
-I (C:\Keil_v5\ARM\PACK\ARM\CMSIS\5.9.0\CMSIS\RTOS\RTX\INC\RTX_CM_lib.h)(0x626F4ADE)
-F (RTE\Device\SN32F407F\startup_SN32F400.s)(0x678F15BE)(--cpu Cortex-M0 --pd "__RTX SETA 1" -g --apcs=interwork -I.\RTE\_SN32F400-IC:\Keil_v5\ARM\PACK\ARM\CMSIS\5.9.0\CMSIS\Core\Include-IC:\Keil_v5\ARM\PACK\ARM\CMSIS\5.9.0\CMSIS\RTOS\RTX\INC-IC:\Keil_v5\ARM\PACK\SONiX\SN32F4_DFP\1.1.2\Device\Include--pd "__UVISION_VERSION SETA 529" --pd "_RTE_ SETA 1" --pd "SN32F400 SETA 1"--list .\out\startup_sn32f400.lst --xref -o .\out\startup_sn32f400.o --depend .\out\startup_sn32f400.d)
-F (RTE\Device\SN32F407F\system_SN32F400.c)(0x678F15BE)(-c --cpu Cortex-M0 -D__RTX -g -O0 --apcs=interwork -I.\RTE\_SN32F400-IC:\Keil_v5\ARM\PACK\ARM\CMSIS\5.9.0\CMSIS\Core\Include-IC:\Keil_v5\ARM\PACK\ARM\CMSIS\5.9.0\CMSIS\RTOS\RTX\INC-IC:\Keil_v5\ARM\PACK\SONiX\SN32F4_DFP\1.1.2\Device\Include-D__UVISION_VERSION="529" -D_RTE_ -DSN32F400-o .\out\system_sn32f400.o --omf_browse .\out\system_sn32f400.crf --depend .\out\system_sn32f400.d)
-I (C:\Keil_v5\ARM\ARMCC\include\stdint.h)(0x5D9AD218)
-I (C:\Keil_v5\ARM\PACK\SONiX\SN32F4_DFP\1.1.2\Device\Include\SN32F400.h)(0x684AAA56)
-I (C:\Keil_v5\ARM\PACK\ARM\CMSIS\5.9.0\CMSIS\Core\Include\core_cm0.h)(0x626F4ADE)
-I (C:\Keil_v5\ARM\PACK\ARM\CMSIS\5.9.0\CMSIS\Core\Include\cmsis_version.h)(0x626F4ADE)
-I (C:\Keil_v5\ARM\PACK\ARM\CMSIS\5.9.0\CMSIS\Core\Include\cmsis_compiler.h)(0x626F4ADE)
-I (C:\Keil_v5\ARM\PACK\ARM\CMSIS\5.9.0\CMSIS\Core\Include\cmsis_armcc.h)(0x626F4ADE)
-I (C:\Keil_v5\ARM\PACK\SONiX\SN32F4_DFP\1.1.2\Device\Include\system_SN32F400.h)(0x678F15BE)

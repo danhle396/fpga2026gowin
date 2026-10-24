@@ -2,7 +2,7 @@
 # esp32/dong_bo_core.sh — chép các file C thuần của firmware/src sang sketch ESP32 (Arduino chỉ biên dịch file nằm cạnh
 # .ino). Nguồn duy nhất vẫn là firmware/src; chạy lại script này sau mỗi lần sửa ở đó.
 #   bash esp32/dong_bo_core.sh            # chép
-#   bash esp32/dong_bo_core.sh --check    # chỉ kiểm, khác thì thoát mã 1 (rtl/tb/run_all.sh gọi)
+#   bash esp32/dong_bo_core.sh --check    # chỉ kiểm, khác thì thoát mã 1 (fpga/scripts/test.sh gọi)
 set -e
 ROOT="$(cd "$(dirname "$0")/.." && pwd)"
 S="$ROOT/firmware/src"

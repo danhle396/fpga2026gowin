@@ -1,6 +1,6 @@
 /*
  * spi_frame.h — dựng khung GHI và kiểm khung ĐỌC của A.7 (việc FW-08). C thuần: byte đi ra qua hàm tx do
- * người gọi cấp (SPI0 thật trong spi_fpga.c, bộ đệm trong bộ test), CRC-16 qua crc16_engine_t (phần cứng hoặc mềm).
+ * người gọi cấp (bộ đệm trong hub.c trên ESP32, hoặc trong bộ test), CRC-16 qua crc16_engine_t (phần cứng hoặc mềm).
  *
  *   PROTO 3 (giao thức v3): ghi [A5][SEQ][768][CRC-16 hi][lo] = 772 byte;
  *                           đọc [5A][SEQ][STATUS][CLASS][SCORE][CRC-16 của 0..4] (+ 13 byte đuôi khi HIL).

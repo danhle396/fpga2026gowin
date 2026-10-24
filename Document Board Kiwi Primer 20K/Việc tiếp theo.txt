@@ -1,7 +1,0 @@
-1. MPU6050 sampling 100 Hz
-2. Gom 128 mẫu × 6 trục
-3. Chuyển về INT8 đúng scale
-4. Gửi packet 768 byte qua SPI
-5. Đọc Class + Score từ FPGA
-6. Kiểm tra CRC
-7. Debug qua UART nếu cần

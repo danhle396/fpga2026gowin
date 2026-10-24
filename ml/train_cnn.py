@@ -10,7 +10,7 @@
 #
 # Ra (mặc định ml/out/<arch>_d1/): params_int8.npz (golden_model), quant_params.json, golden_vectors.npz, fp32.npz,
 # loso.npz (dự đoán INT8 của từng cửa sổ khi nó nằm ở người để riêng — dùng cho AI-10), report.txt.
-# Với N1 còn ghi fpga_export/ đúng định dạng E1 (weights.mem, bias.mem) để chạy rtl/tb/run_all.sh --export.
+# Với N1 còn ghi fpga_export/ định dạng engine E1 cũ (weights.mem, bias.mem); engine E1 đã bỏ 24/10.
 import argparse
 import json
 import pathlib

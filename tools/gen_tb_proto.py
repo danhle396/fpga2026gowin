@@ -1,5 +1,5 @@
 #!/usr/bin/env python
-# tools/gen_tb_proto.py — vector cho rtl/v3/tb_proto.v (RA-03), sinh từ golden model và thư mục xuất INT8 (E1).
+# tools/gen_tb_proto.py — vector cho fpga/sim/tb_proto.v (RA-03), sinh từ golden model và thư mục xuất INT8 (export_mem.py --engine e2).
 #   python -I tools/gen_tb_proto.py --export <fpga_export> --out <thư mục>/tb [--ng 50]
 # Khung đúng gồm: 20 cửa sổ của golden_vectors.npz, khung tự kiểm LFSR (A.10), các mẫu cực trị (toàn +127, toàn −128,
 # toàn 0, xen kẽ ±127, bậc thang) và cửa sổ ngẫu nhiên — phủ cả bão hòa (R9). SEQ chạy 0x40, 0x41, ...

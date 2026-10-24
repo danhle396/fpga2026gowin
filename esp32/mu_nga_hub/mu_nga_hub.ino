@@ -2,7 +2,7 @@
 //
 //   MPU6050 → I2C → SN32F407 (FW_NODE: chỉ đọc cảm biến) → UART 115200 → ESP32 GPIO16
 //   ESP32 GPIO27 CS / 18 SCK / 23 MOSI / 19 MISO → Kiwi J2-16 / J2-10 / J2-11 / J2-13 (R11 / T14 / R13 / R12)
-//   FPGA: fpga/fpga_project.gprj = bitstreams/3_v3_e2_n2 (giao thức v3, engine E2, mô hình N2). Không có dây IRQ, RST_N.
+//   FPGA: fpga/fpga_project.gprj = fpga/bitstream/fpga_project.fs (giao thức v3, engine E2, mô hình N2). Không có dây IRQ, RST_N.
 //
 // ESP32 chạy nguyên lõi đã kiểm khớp golden (firmware/src: app_core, preprocess, blocks, safety, pwr_btn, spi_frame)
 // qua hub.c; FPGA chạy CNN; kết quả lấy bằng hỏi vòng. Các file .c/.h cạnh sketch là BẢN CHÉP từ firmware/src
