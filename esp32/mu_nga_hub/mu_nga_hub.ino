@@ -58,6 +58,8 @@ static bool s_log = false;
 static WiFiServer s_server(WIFI_TCP_PORT);
 static WiFiClient s_client;
 static uint32_t s_tcp_drop = 0;
+static uint32_t s_rx_bytes = 0;                // mọi byte nhận ở GPIO16, kể cả rác (chẩn đoán dây, baud)
+static uint8_t  s_raw_left = 0;                 // lệnh RAW: in hex các byte kế tiếp
 static bool s_wifi_shown = false;
 
 // ---------------- in ra USB + TCP ----------------
@@ -65,13 +67,10 @@ static void out(const char *s)
 {
     Serial.println(s);
     if (s_client && s_client.connected()) {
+        // availableForWrite() của NetworkClient (core 3.x) luôn trả 0, nên ghi thẳng; lwIP đệm vài KB, đủ cho log
         size_t n = strlen(s);
-        if ((size_t)s_client.availableForWrite() > n + 2) {
-            s_client.write((const uint8_t *)s, n);
-            s_client.write((const uint8_t *)"\r\n", 2);
-        } else {
+        if (s_client.write((const uint8_t *)s, n) != n || s_client.write((const uint8_t *)"\r\n", 2) != 2)
             s_tcp_drop++;
-        }
     }
 }
 
@@ -127,6 +126,7 @@ static void command(const char *c)
     if (!strcmp(c, "LOG"))       { s_log = true;  out("# LOG"); }
     else if (!strcmp(c, "RUN"))  { s_log = false; out("# RUN"); }
     else if (!strcmp(c, "ST"))   { selftest(); }
+    else if (!strcmp(c, "RAW"))  { s_raw_left = 64; out("# RAW: 64 byte ke tiep tu MCU (hex)"); }
     else if (!strncmp(c, "SPI ", 4)) {
         long k = atol(c + 4);
         if (k >= 10 && k <= 4000) { s_spi_hz = (uint32_t)k * 1000UL; snprintf(s, sizeof s, "# SPI %ld kHz", k); out(s); }
@@ -186,7 +186,17 @@ void loop()
 
     // 1. mẫu từ MCU
     while (Serial2.available()) {
-        int e = node_rx_byte(&NR, (uint8_t)Serial2.read());
+        uint8_t b = (uint8_t)Serial2.read();
+        s_rx_bytes++;
+        if (s_raw_left) {                       // lệnh RAW: 16 byte mỗi dòng
+            static char hx[16 * 3 + 1];
+            static uint8_t nh = 0;
+            snprintf(hx + 3 * nh, 4, "%02X ", b);
+            nh++;
+            s_raw_left--;
+            if (nh == 16 || s_raw_left == 0) { out(hx); nh = 0; }
+        }
+        int e = node_rx_byte(&NR, b);
         if (e == NODE_SAMPLE) {
             t_last_sample = now;
             hub_sample(&H, &IO, NR.r, NR.keys, now);
@@ -226,9 +236,9 @@ void loop()
     if (now - t_stat >= 5000u) {
         t_stat = now;
         snprintf(s, sizeof s, "STAT,mau=%lu,mat=%lu,khung_hong=%lu,gui=%lu,ok=%lu,timeout=%lu,loi=%lu,bo_qua=%lu,spi_khz=%lu,"
-                 "tcp_bo=%lu", (unsigned long)H.n_samples, (unsigned long)NR.n_lost, (unsigned long)NR.n_bad,
+                 "tcp_bo=%lu,byte_rx=%lu", (unsigned long)H.n_samples, (unsigned long)NR.n_lost, (unsigned long)NR.n_bad,
                  (unsigned long)H.n_sent, (unsigned long)H.n_ok, (unsigned long)H.n_timeout, (unsigned long)H.n_err,
-                 (unsigned long)H.n_skip, (unsigned long)(s_spi_hz / 1000), (unsigned long)s_tcp_drop);
+                 (unsigned long)H.n_skip, (unsigned long)(s_spi_hz / 1000), (unsigned long)s_tcp_drop, (unsigned long)s_rx_bytes);
         out(s);
     }
     if (now - t_last_sample > 2000u && now - t_warn > 2000u) {
@@ -251,6 +261,7 @@ void loop()
 #endif
         if (s_client) s_client.stop();
         s_client = c;
+        s_client.setNoDelay(true);
         out("# TCP: may xem log da ket noi");
     }
 

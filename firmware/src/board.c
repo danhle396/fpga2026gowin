@@ -142,7 +142,15 @@ void uart_putc(char c)
     while (n == s_tx_t) { }                     /* đầy: chờ ngắt xả bớt */
     s_tx[s_tx_h] = (uint8_t)c;
     s_tx_h = n;
-    SN_UART0->IE |= (1UL << 1);                 /* THREIE */
+    /* Bộ phát đang rỗng thì tự ghi byte đầu: ngắt THRE chỉ đến SAU một lần ghi TH, bật THREIE khi THR vốn đã rỗng
+     * có thể không bao giờ có ngắt (24/10: ESP32 không nhận byte nào). Cách này giống uart.c của nhóm đã chạy được. */
+    __disable_irq();
+    if ((SN_UART0->LS & (1UL << 5)) && s_tx_t != s_tx_h) {         /* THRE */
+        SN_UART0->TH = s_tx[s_tx_t];
+        s_tx_t = (uint16_t)((s_tx_t + 1u) % TXN);
+    }
+    SN_UART0->IE |= (1UL << 1);                 /* THREIE: các byte sau do ngắt đẩy */
+    __enable_irq();
 }
 
 void uart_flush(void)
