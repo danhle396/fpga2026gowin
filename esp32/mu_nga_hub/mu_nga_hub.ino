@@ -134,13 +134,24 @@ static bool selftest()
     return ok != 0;
 }
 
+// 1 MHz trước, không được thì 100 kHz (tốc độ nhóm đã chạy thông trên bộ dây này)
+static bool thu_tu_kiem()
+{
+    s_spi_hz = SPI_HZ_FAST;
+    if (selftest()) return true;
+    s_spi_hz = SPI_HZ_SLOW;
+    if (selftest()) return true;
+    s_spi_hz = SPI_HZ_FAST;
+    return false;
+}
+
 // ---------------- lệnh ----------------
 static void command(const char *c)
 {
     char s[64];
     if (!strcmp(c, "LOG"))       { s_log = true;  out("# LOG"); }
     else if (!strcmp(c, "RUN"))  { s_log = false; out("# RUN"); }
-    else if (!strcmp(c, "ST"))   { selftest(); }
+    else if (!strcmp(c, "ST"))   { if (thu_tu_kiem()) H.app.err_flag = 0; }
     else if (!strcmp(c, "RAW"))  { s_raw_left = 64; out("# RAW: 64 byte ke tiep tu MCU (hex)"); }
     else if (!strncmp(c, "SPI ", 4)) {
         long k = atol(c + 4);
@@ -231,10 +242,12 @@ void setup()
     out("# mu bao ho - ESP32 hub (MCU -> UART -> ESP32 -> SPI -> FPGA), firmware/src + hub.c");
     hub_init(&H, millis());
     node_rx_init(&NR);
-    bool ok = selftest();
-    if (!ok && s_spi_hz != SPI_HZ_SLOW) {       // dây dài: thử lại ở tốc độ nhóm đã chạy thông
-        s_spi_hz = SPI_HZ_SLOW;
-        ok = selftest();
+    // Chạy pin (24/10): cấp nguồn cùng lúc thì FPGA còn đang đọc bitstream từ flash khi ESP32 đã sẵn sàng → tự kiểm
+    // FAIL. Thử mỗi 1 s tối đa 20 lần; còn FAIL thì vòng lặp thử lại mỗi 5 s (thu_kiem_lai).
+    bool ok = false;
+    for (int lan = 0; lan < 20 && !ok; lan++) {
+        ok = thu_tu_kiem();
+        if (!ok) delay(1000);
     }
     if (!ok) H.app.err_flag = 1;
     out("# start");
@@ -304,6 +317,13 @@ void loop()
             out(s);
         }
         digitalWrite(LED_PIN, (app_buzzer(&H.app, now) || app_led(&H.app, now)) ? HIGH : LOW);
+    }
+
+    // 3b. tự kiểm còn FAIL (FPGA chưa sẵn sàng lúc khởi động): thử lại mỗi 5 s khi không có khung đang chờ
+    static uint32_t t_tk = millis();
+    if (!s_tk_ok && !H.wait && now - t_tk >= 5000u) {
+        t_tk = now;
+        if (thu_tu_kiem()) { H.app.err_flag = 0; out("# tu kiem FPGA dat sau khi thu lai"); }
     }
 
     // 4. thống kê, cảnh báo mất nguồn mẫu

@@ -14,5 +14,6 @@ void i2c0_init(uint32_t bus_hz);                     /* 400000 hoặc 100000; PC
 int  i2c0_write_reg(uint8_t addr7, uint8_t reg, uint8_t val);
 int  i2c0_read(uint8_t addr7, uint8_t reg, uint8_t *buf, uint8_t n);
 int  i2c0_last_error(void);
+int  i2c0_bus_recover(void);                        /* gỡ bus treo; trả về bit0 = SDA, bit1 = SCL trước khi gỡ */
 
 #endif

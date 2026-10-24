@@ -31,6 +31,21 @@ static int sample_ready(void)
     return imu_data_ready() == 1;
 }
 
+/* Mất MPU6050 (chạy board 24/10: sau khi cắm/rút nguồn, MPU6050 có lúc ngủ lại, có lúc không trả lời I2C):
+ * gỡ bus I2C (9 xung SCL + STOP), khởi động lại I2C0, ghi lại cấu hình A.1. In mức SDA/SCL đo trước khi gỡ:
+ * SDA hoặc SCL = 0 → bus bị giữ thấp (đã gỡ); cả hai = 1 mà vẫn -1 → MPU6050 không có điện hoặc lỏng dây. */
+static int imu_lam_lai(const char *luc, uint8_t *who)
+{
+    int lv = i2c0_bus_recover();
+    i2c0_init(I2C_HZ);
+    int bad = imu_init(who);
+    uart_puts("# MPU6050 "); uart_puts(luc); put_kv(": cau hinh lai, ket qua=", bad);
+    put_kv(", SDA=", lv & 1); put_kv(" SCL=", (lv >> 1) & 1);
+    uart_puts(bad == 0 ? " OK\n" : (lv & 3) != 3 ? " (bus I2C bi giu thap, da go)\n"
+                                                   : " (khong tra loi: kiem day/nguon MPU6050)\n");
+    return bad;
+}
+
 int main(void)
 {
     int16_t r[6];
@@ -47,6 +62,7 @@ int main(void)
     while ((bad = imu_init(&who)) != 0) {
         put_kv("# MPU6050 loi: WHO_AM_I=0x", 0); uart_put_hex(who, 2); put_kv(" thanh ghi sai=", bad);
         put_kv(" i2c=", i2c0_last_error()); uart_puts("\n");
+        (void)imu_lam_lai("khoi dong", &who);
         board_led(1); board_delay_ms(250); board_wdt_feed();      /* feed mỗi 250 ms; WDT ≈ 1 s nếu ILRC 32 kHz */
         board_led(0); board_delay_ms(250); board_wdt_feed();
     }
@@ -63,7 +79,7 @@ int main(void)
             if (imu_read(r) == 0) gyro_cal_push(&gc, r);
         } else if (board_millis() - t_hint >= 2000u) {
             t_hint = board_millis();
-            uart_puts("# MPU6050: 2 s khong co mau moi (INT_STATUS) - kiem I2C\n");
+            (void)imu_lam_lai("2 s khong co mau khi hieu chuan gyro", &who);
         }
     }
     put_kv("# gyro_off,", gc.off[0]); put_kv(",", gc.off[1]); put_kv(",", gc.off[2]);
@@ -92,13 +108,7 @@ int main(void)
             }
         }
         if (n && now - t_last > 200u && (int32_t)(now - t_retry) >= 0) {
-            /* 24/10 trên board: MPU6050 ngừng ra mẫu (lần 1: reset về chế độ ngủ, I2C vẫn trả lời; lần 2: không trả lời,
-             * "thanh ghi sai=-1" — nghi lỏng dây hoặc bus I2C bị treo). Quá 200 ms không có mẫu mới: khởi động lại I2C0 rồi
-             * ghi lại cấu hình A.1, thử lại mỗi 1 s; offset gyro giữ nguyên. -1 = không trả lời WHO_AM_I: kiểm dây. */
-            i2c0_init(I2C_HZ);
-            int bad2 = imu_init(&who);
-            put_kv("# MPU6050 khong co mau moi: cau hinh lai, ket qua=", bad2);
-            uart_puts(bad2 < 0 ? " (khong tra loi I2C: kiem day SDA/SCL/VCC/GND)\n" : "\n");
+            (void)imu_lam_lai("khong co mau moi > 200 ms", &who);
             n_reinit++;
             t_retry = now + 1000u;                                 /* thử lại sau 1 s */
         }
