@@ -33,3 +33,13 @@ Kết quả sau bước 4 (`chay_thong_log.txt`, log qua WiFi TCP 3333; MCU, ESP
 - `STAT,mau=391,mat=0,khung_hong=0,gui=5,ok=5,timeout=0,loi=0,bo_qua=0`; MCU `STAT,mau=502,i2c_loi=0,mat=0` (≈ 100 Hz).
 
 **Luồng MPU6050 → MCU → UART → ESP32 → SPI → FPGA (CNN) → ESP32 (Safety FSM) → WiFi chạy thông trên phần cứng thật lần đầu.** Chưa thử ngã, chưa đo lâu.
+
+## Chạy bằng pin, xem trên trang web (23:54)
+
+`web_chay_pin_nghi_nga.png`: cả 3 board cấp bằng pin dự phòng, xem `http://<IP ESP32>/` trên laptop qua WiFi.
+- Tự kiểm FPGA **PASS** ở 1 MHz, nhờ ESP32 thử lại khi FPGA còn đang nạp cấu hình.
+- 2.600 mẫu, mất 0, khung hỏng 0; 74 cửa sổ gửi FPGA, 74 OK, timeout 0.
+- Lắc board: FPGA báo các cửa sổ FALL (dải đỏ trên biểu đồ |a|). Safety FSM vào **SUSPECT** (`S,25481,SUSPECT,3`), rồi về MONITOR vì board không nằm yên với trục Z nằm ngang; đúng A.8.
+- `gyro_off,50,24,-17 lam_lai=95`: hiệu chuẩn gyro làm lại 95 lần vì board bị động lúc bật.
+
+Chưa thử đủ chuỗi PRE_ALARM → ALARM: cần đặt module với trục Z nằm ngang và để yên ≥ 2,56 s sau khi lắc.
