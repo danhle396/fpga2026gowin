@@ -1,4 +1,4 @@
-// rtl/pin_probe/pin_probe_top.v — dò vị trí 6 chân J1-3 .. J1-8 của Kiwi Primer 20K trước khi nối dây
+// rtl/pin_probe/pin_probe_top.v — dò vị trí 6 chân trên header J2 của Kiwi Primer 20K trước khi nối dây (thứ tự ở pin_probe_top.cst)
 // (PROJECT_MASTER.md, Phụ lục E.4). Chân probe[k] phát k+1 xung 1 kHz trong mỗi khung 8 ms:
 // đo bằng logic analyzer thì đếm xung, đo bằng đồng hồ DC thì thấy khoảng (k+1) x 0,21 V.
 // LED1 trên board nháy khoảng 0,8 Hz để biết bitstream đang chạy.

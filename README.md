@@ -21,7 +21,7 @@ MPU6050 trên mũ → SONiX SN32F407 (EVK V1.0) → SPI → Kiwi Primer 20K (Gow
 | `rtl/e2/` | Engine E2 (1 chu kỳ/MAC, P làn), `tb_e2` |
 | `rtl/tb/` | `run_all.sh`, `tb_top_spi`, `tb_e1_layers` |
 | `rtl/gl/` | Mô phỏng netlist sau P&R (`run_gl.sh`, stub rPLL cho Icarus) |
-| `rtl/pin_probe/` | Bitstream dò chân J1 |
+| `rtl/pin_probe/` | Bitstream dò 6 chân J2 của Kiwi |
 | `bitstreams/` | **3 bitstream dựng sẵn** để nạp thẳng: PROTO 1 + E1 (đợt B), v3 + E1, v3 + E2 + N2 ([README](bitstreams/README.md)) |
 | `ml/src/` | `golden_model.py` (đáp án số nguyên), `cnn_numpy.py`, `rom_layout.py`, `safety_model.py` |
 | `ml/train_cnn.py` | Huấn luyện N1 / N2 / N2-S / N2-L bằng numpy, LOSO, xuất INT8 |

@@ -1,0 +1,13 @@
+// fpga_top (PROTO 1, bitstream 1): như fpga_top_v3.cst nhưng không có rst_n. pnr_v3.sh p1 chép đè lên src/fpga_top.cst của bản sao.
+IO_LOC "clk" H11;
+IO_PORT "clk" IO_TYPE=LVCMOS33 PULL_MODE=NONE;
+IO_LOC "spi_cs_n" R11;
+IO_PORT "spi_cs_n" IO_TYPE=LVCMOS33 PULL_MODE=UP;
+IO_LOC "spi_sclk" T14;
+IO_PORT "spi_sclk" IO_TYPE=LVCMOS33 PULL_MODE=DOWN;
+IO_LOC "spi_mosi" R13;
+IO_PORT "spi_mosi" IO_TYPE=LVCMOS33 PULL_MODE=DOWN;
+IO_LOC "spi_miso" R12;
+IO_PORT "spi_miso" IO_TYPE=LVCMOS33 PULL_MODE=NONE DRIVE=8;
+IO_LOC "irq" R8;
+IO_PORT "irq" IO_TYPE=LVCMOS33 PULL_MODE=NONE DRIVE=8;

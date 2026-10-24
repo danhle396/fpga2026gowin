@@ -92,26 +92,26 @@ Nếu `MPU6050 loi ... i2c=2` (timeout): hạ `I2C_HZ` trong `app_main.c` xuốn
 
 Nếu dòng `# cho ngat INT cua MPU6050 (P2.2, J7)` lặp lại mỗi 2 s và không có dòng `# gyro_off`, nghĩa là I²C chạy được nhưng chân INT không có xung. Kiểm dây `P22` của J7 với INT của module.
 
-## B6. Dò 6 chân J1 của Kiwi (TH-02, RA-02, E.4 bước 3)
+## B6. Dò 6 chân J2 của Kiwi (TH-02, RA-02, E.4 bước 3)
 
-**Chưa nối dây với MCU.** Nạp `rtl/pin_probe/pin_probe.fs` vào Kiwi (Gowin Programmer, SRAM mode). LED1 nháy chậm. Đo DC từng chân J1-3 … J1-8 so với GND (J1-1).
+**Chưa nối dây với MCU.** Nạp `rtl/pin_probe/pin_probe.fs` vào Kiwi (Gowin Programmer, SRAM mode). LED1 nháy chậm. Đo DC từng chân so với GND của Kiwi (J1-1). Từ 24/10 cả 6 chân nằm trên **header J2**, đúng chỗ nhóm đã cắm SPI với ESP32 (Phụ lục E.1). **Rút hết dây ESP32 khỏi J2 trước khi đo.**
 
 | Pass | Gửi lại |
 |---|---|
-| J1-3..J1-8 lần lượt ≈ 0,21 / 0,41 / 0,62 / 0,83 / 1,03 / 1,24 V; hoặc logic analyzer đếm 1..6 xung mỗi 8 ms | 6 số đo |
+| J2-16 (CS) ≈ 0,21 · J2-10 (SCK) ≈ 0,41 · J2-11 (MOSI) ≈ 0,62 · J2-13 (MISO) ≈ 0,83 · J2-24 (IRQ) ≈ 1,03 · J2-23 (RST_N) ≈ 1,24 V; hoặc logic analyzer đếm 1..6 xung mỗi 8 ms | 6 số đo |
 
 ## B7. Bitstream chính và thông mạch SPI lần đầu (RA-04, FW-09 a)
 
-1. Nạp `bitstreams/1_e1_proto1_sisfall/fpga_project.fs` vào Kiwi bằng Gowin Programmer; kiểm `SHA256.txt` trước. Đây là bitstream dựng sẵn với shift 8, giao thức PROTO 1 (RA-01). Không cần mở project hay chạy lại Run All. Đo J1-6 (MISO) và J1-7 (IRQ) ≤ 3,3 V (E.4 bước 4).
-2. Rút nguồn cả hai board. Nối **GND trước**, rồi theo E.1:
+1. Nạp `bitstreams/1_e1_proto1_sisfall/fpga_project.fs` vào Kiwi bằng Gowin Programmer; kiểm `SHA256.txt` trước. Đây là bitstream dựng sẵn với shift 8, giao thức PROTO 1 (RA-01). Không cần mở project hay chạy lại Run All. Đo J2-13 (MISO) và J2-24 (IRQ) ≤ 3,3 V (E.4 bước 4).
+2. Rút nguồn cả hai board. **Tháo 4 dây SPI của ESP32 khỏi J2** (hai master trên một bus sẽ đánh nhau). Nối **GND trước**, rồi theo E.1:
 
-   | MCU | FPGA |
+   | MCU (header EVK) | FPGA (header J2 · ball) |
    |---|---|
-   | P1.0 `SCK_P10` | J1-4 |
-   | P1.2 `MOSI_P12` | J1-5 |
-   | P1.1 `MISO_P11` | J1-6 |
-   | P2.8 `P28` | J1-3 (CS) |
-   | P2.9 `P29` | J1-7 (IRQ) |
+   | P1.0 `SCK_P10` (J12) | J2-10 · T14 |
+   | P1.2 `MOSI_P12` (J12) | J2-11 · R13 |
+   | P1.1 `MISO_P11` (J12) | J2-13 · R12 |
+   | P2.8 `P28` (J7) | J2-16 · R11 (CS) |
+   | P2.9 `P29` (J7) | J2-24 · R8 (IRQ) |
 
 3. Cấp nguồn, giữ SW3 + reset để vào menu. Gõ lần lượt `p` (cho tới khi in `PROTO=1`), `1` (1 MHz), `s`.
 
@@ -153,7 +153,7 @@ Rồi gõ `4` (4 MHz) và `s`: vẫn phải 100/100.
 
 Chỉ làm khi B7–B8 đạt (PROTO 1 chạy 100/100). Bitstream 3 là giao thức v3 + engine E2 + **N2 chỉ kênh đầu, D1 11 người**, cũng là mô hình dùng để demo.
 
-1. Rút nguồn. Nối thêm **P2.1 (`P21`, J7) → J1-8 (RST_N)**. Năm dây của B7 giữ nguyên.
+1. Rút nguồn. Nối thêm **P2.1 (`P21`, J7) → J2-23 · T8 (RST_N)**. Năm dây của B7 giữ nguyên.
 2. Kiểm `bitstreams/3_v3_e2_n2/SHA256.txt` (`sha256sum -c SHA256.txt`), rồi nạp `bitstreams/3_v3_e2_n2/fpga_project.fs` bằng Gowin Programmer.
 3. Trong `firmware/src/app_main.c` đổi `#define FW_BITSTREAM 1` thành `3`. Build (F7) rồi nạp (F8).
 4. Reset, không giữ phím. Mong đợi dòng `tu kiem FPGA (A.10): rc=0 class=3  PASS`. Đáp án nằm trong `firmware/src/selftest_expect_v3_e2_n2.h`; firmware so trọn 7 byte đầu của khung đọc.

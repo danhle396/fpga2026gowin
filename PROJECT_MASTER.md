@@ -5,13 +5,13 @@
 **Platform:** Kiwi Primer 20K (GW2A-LV18PG256C8/I7) + SN32F407 (Cortex-M0, Flash 32 KB, RAM 8 KB) + MPU6050 | **Tool:** Gowin EDA V1.9.11.03 Education · Keil MDK-ARM Lite 5.43 (Arm Compiler 6.24) · Icarus Verilog · Python 3
 **Goal (tầng 2, cam kết):** Recall FALL mức sự kiện ≥ 95 %, Macro-F1 ≥ 0,90, ≤ 1 báo giả/giờ, va chạm → SUSPECT ≤ 1,5 s, suy luận FPGA ≤ 6 ms, RTL khớp golden model 100 % trên ≥ 2.000 cửa sổ.
 
-> **TRẠNG THÁI (2026-10-15): Tầng 1 · chưa qua cổng G0 → 0 % theo cổng.** Mọi việc không cần board của tầng 1 và phần lớn tầng 2 đã xong ở mức mô phỏng; **chưa dòng nào chạy trên board**
-> - **RTL:** E1 (P = 1, N1) khớp golden 50/50 có bão hòa, 13,96 ms, Fmax 105,20 MHz (15/10, sau khi sửa lỗi `conv_start` khởi tạo bằng 1 mà mô phỏng netlist tìm ra; bitstream 1, 2 đã dựng lại). **Giao thức v3** (`rtl/v3/`, RA-03 [x]) qua chân SPI 50/50 + 7 kịch bản lỗi. **Engine E2** (`rtl/e2/`, RB-03/RB-04/RA-07/RA-08 [x] mô phỏng): 12 cấu hình 50/50 ở mọi tầng; N2-S 2,65 ms (P = 1) / 0,80 ms (P = 4); top v3 + E2 105,58 MHz, Logic 8 %. Bitstream dựng sẵn để nạp thẳng: [bitstreams/](bitstreams/README.md) (PROTO 1 + E1 cho đợt B; v3 + E1; v3 + E2 + N2 11 người 98,12 MHz, 16/10). Mô phỏng ghép firmware ↔ RTL: 423/423 khung khớp golden. **Netlist sau P&R của cả 3 bitstream (mô phỏng gate-level, `rtl/gl/run_gl.sh`): PASS** sau khi sửa lỗi `conv_start` lên nguồn bằng 1, lỗi mà chỉ mô phỏng netlist mới thấy; phép âm lật 1 bit weight → FAIL. Verify toàn dự án sau khi dọn 15/10: mọi bộ kiểm PASS ([docs/bao_cao/2026-10-15_verify_sau_don/](docs/bao_cao/2026-10-15_verify_sau_don/README.md))
+> **TRẠNG THÁI (2026-10-24): Tầng 1 · chưa qua cổng G0 → 0 % theo cổng.** Mọi việc không cần board của tầng 1 và phần lớn tầng 2 đã xong ở mức mô phỏng; **chưa dòng nào chạy trên board**
+> - **RTL:** E1 (P = 1, N1) khớp golden 50/50 có bão hòa, 13,96 ms, Fmax 105,20 MHz (15/10, sau khi sửa lỗi `conv_start` khởi tạo bằng 1 mà mô phỏng netlist tìm ra; bitstream 1, 2 đã dựng lại). **Giao thức v3** (`rtl/v3/`, RA-03 [x]) qua chân SPI 50/50 + 7 kịch bản lỗi. **Engine E2** (`rtl/e2/`, RB-03/RB-04/RA-07/RA-08 [x] mô phỏng): 12 cấu hình 50/50 ở mọi tầng; N2-S 2,65 ms (P = 1) / 0,80 ms (P = 4); top v3 + E2 105,58 MHz, Logic 8 %. Bitstream dựng sẵn để nạp thẳng: [bitstreams/](bitstreams/README.md) (PROTO 1 + E1 cho đợt B; v3 + E1; v3 + E2 + N2 11 người; **cả 3 dựng lại 24/10 với chân trên header J2**: 103,33 / 104,92 / 111,01 MHz). Mô phỏng ghép firmware ↔ RTL: 423/423 khung khớp golden. **Netlist sau P&R của cả 3 bitstream (mô phỏng gate-level, `rtl/gl/run_gl.sh`): PASS** sau khi sửa lỗi `conv_start` lên nguồn bằng 1, lỗi mà chỉ mô phỏng netlist mới thấy; phép âm lật 1 bit weight → FAIL. Verify toàn dự án sau khi dọn 15/10: mọi bộ kiểm PASS ([docs/bao_cao/2026-10-15_verify_sau_don/](docs/bao_cao/2026-10-15_verify_sau_don/README.md))
 > - **SPEC v3.1 (15/10):** điều kiện nghiêng hai phía `|az_tb| < T_TILT` → báo giả khi phát lại D1 giảm từ 5,9 xuống 1,3/giờ (gộp 3 mô hình: 0,75/giờ), recall ngã nằm giữ 95,5 %
 > - **Đề cương v2.1 (16/10): gọn đề tài** theo hướng tham khảo: mạng **2 lớp NORMAL / FALL**; va đập mũ loại bằng trình tự ba pha của FSM (bất động + đầu nằm ngang + 10 s hủy); **một nút bấm** (giữ 2 s = bật, nhấn nhanh 2 lần = tắt, CANCEL, SOS; `firmware/src/pwr_btn.c`) thay cảm biến đội mũ; huấn luyện chỉ bằng D1, D2 + D3 gộp thành một buổi thử nhỏ (≥ 20 cú ngã, ≥ 2 giờ đội mũ từ ≥ 2 người, 20 va mũ, 20 rơi mũ); LED 7 đoạn thay OLED. Không đổi phần cứng, RTL, khung, FSM. [THAY_DOI mục Điều chỉnh v2.1](THAY_DOI_SO_VOI_v1.md)
-> - **AI:** D1 **11/17 người** từ 16/10 (101–110, 203; 1.180 cú ngã, 109.970 cửa sổ; [d1_11_nguoi](docs/bao_cao/2026-10-16_d1_11_nguoi/README.md)). **Nhóm quyết: chỉ kênh đầu, mạng 2 lớp NORMAL / FALL (SPEC v3.2), mô hình phần cứng N2 trên E2 (bitstream 3)**; N1/E1 chỉ để thông mạch SPI ở B7. **Số mới nhất, D1 11 người (16/10 tối), N2 chỉ đầu, LOSO, TB 3 seed: Macro-F1 0,983, recall sự kiện 99,6 %; FSM v3.1 T_SCORE 8: ngã nằm → PRE_ALARM 96,2 %, PRE_ALARM giả 1,11/giờ** (toàn bộ từ 815 "nằm xuống giường"; gộp 3 seed 95,6 % / 0,74; T_SCORE 16 thì ≤ 0,92/giờ nhưng ngã nằm 92–94 %); trễ PRE_ALARM khi nằm yên trong 2 s: p90 4,32 s, 0 cú > 5 s ([n2_11_nguoi](docs/bao_cao/2026-10-16_n2_11_nguoi/README.md)). 8 người: 0,977 / 99,6 %; 96,3 % / 0,68/giờ ([ai09_8_nguoi](docs/bao_cao/2026-10-16_ai09_8_nguoi/README.md)). N1 trên 8 người: 0,842 / 87,0 % → không đạt. Dữ liệu ngực + thắt lưng: có lợi trên 6 người (15/10) nhưng hết lợi trên 8 người (Macro-F1 0,970 so với 0,977, phiếu nhầm gấp đôi) → **bỏ**. Lịch sử 6 người (13–15/10): N2 0,968 / 98,7 %, PRE_ALARM giả 1,26/giờ. X15 đã đo: nhánh "bất động dù đầu thẳng" báo nhầm cả ngã đã đứng dậy → không thêm. **Bitstream 3 dựng lại 16/10 với N2 11 người** (`ml/out/n2_11_d1`, seed 20261014): `tb_e2` 50/50, netlist sau P&R PASS, Fmax 98,12 MHz. Chưa có buổi thử trên mũ (D2 + D3 gộp theo đề cương v2.1); chỉ tiêu ≤ 1 báo giả/giờ cần xác nhận trên mũ
+> - **AI:** D1 **11/17 người** từ 16/10 (101–110, 203; 1.180 cú ngã, 109.970 cửa sổ; [d1_11_nguoi](docs/bao_cao/2026-10-16_d1_11_nguoi/README.md)). **Nhóm quyết: chỉ kênh đầu, mạng 2 lớp NORMAL / FALL (SPEC v3.2), mô hình phần cứng N2 trên E2 (bitstream 3)**; N1/E1 chỉ để thông mạch SPI ở B7. **Số mới nhất, D1 11 người (16/10 tối), N2 chỉ đầu, LOSO, TB 3 seed: Macro-F1 0,983, recall sự kiện 99,6 %; FSM v3.1 T_SCORE 8: ngã nằm → PRE_ALARM 96,2 %, PRE_ALARM giả 1,11/giờ** (toàn bộ từ 815 "nằm xuống giường"; gộp 3 seed 95,6 % / 0,74; T_SCORE 16 thì ≤ 0,92/giờ nhưng ngã nằm 92–94 %); trễ PRE_ALARM khi nằm yên trong 2 s: p90 4,32 s, 0 cú > 5 s ([n2_11_nguoi](docs/bao_cao/2026-10-16_n2_11_nguoi/README.md)). 8 người: 0,977 / 99,6 %; 96,3 % / 0,68/giờ ([ai09_8_nguoi](docs/bao_cao/2026-10-16_ai09_8_nguoi/README.md)). N1 trên 8 người: 0,842 / 87,0 % → không đạt. Dữ liệu ngực + thắt lưng: có lợi trên 6 người (15/10) nhưng hết lợi trên 8 người (Macro-F1 0,970 so với 0,977, phiếu nhầm gấp đôi) → **bỏ**. Lịch sử 6 người (13–15/10): N2 0,968 / 98,7 %, PRE_ALARM giả 1,26/giờ. X15 đã đo: nhánh "bất động dù đầu thẳng" báo nhầm cả ngã đã đứng dậy → không thêm. **Bitstream 3 dựng lại 16/10 với N2 11 người** (`ml/out/n2_11_d1`, seed 20261014): `tb_e2` 50/50, netlist sau P&R PASS, Fmax 98,12 MHz (111,01 MHz khi dựng lại với chân J2 ngày 24/10). Chưa có buổi thử trên mũ (D2 + D3 gộp theo đề cương v2.1); chỉ tiêu ≤ 1 báo giả/giờ cần xác nhận trên mũ
 > - **FW:** [firmware/](firmware/README.md) đủ chức năng tầng 1 (RUN/LOG/TRC/HIL/DIAG, tự kiểm A.10, watchdog), Keil 0 lỗi, 16 KB / 32 KB Flash, 5,4 KB / 8 KB RAM. Phần C thuần (tiền xử lý, khung, FSM, lõi vòng lặp, CNN MCU-only) chạy mã máy Cortex-M0 trong Unicorn và **trùng golden từng byte / từng lần đổi trạng thái**; phần chạm ngoại vi mới chỉ biên dịch. Công cụ đợt B sẵn: `check_frames.py`, `hil_test.py`, `logger.py`, `sensor_check.py`
-> - Chân: SPI trên J12 (P1.0/P1.1/P1.2), CS P2.8, IRQ P2.9 (J7), I²C J13; FPGA J1-3..8 (+ RST_N J1-8 ở top v3). **Chưa đo trên board**; đo VDD = 3,3 V trước khi nối
+> - Chân (sửa 24/10 theo sơ đồ nối thực tế của nhóm): MCU SPI trên J12 (P1.0/P1.1/P1.2), CS P2.8, IRQ P2.9, RST_N P2.1, INT P2.2 (J7), I²C J13; **FPGA trên header J2**: SCK J2-10 T14, MOSI J2-11 R13, MISO J2-13 R12, CS J2-16 R11 (4 chân nhóm đã chạy thông SPI với ESP32), IRQ J2-24 R8, RST_N J2-23 T8. Bitstream 1/2/3 dựng lại 24/10 với chân này. **Chưa đo trên board**; đo VDD = 3,3 V trước khi nối
 > - **G0 còn thiếu:** FW-02, FW-03 (cần board), TH-01..03. RB-01 xong 15/10: `run_all` 7/7 PASS trên cả Icarus 0.9.7 và 12.0 (máy thứ hai; bitstream 1 dựng lại ở đó trùng từng dòng, [may2_icarus12](docs/bao_cao/2026-10-15_may2_icarus12/README.md))
 > - **Bước tiếp theo NGAY (đợt B):** (1) jumper EVK, đo VDD, nạp `firmware/keil/fw.uvprojx` (giữ SW3 để vào menu), gõ `c` rồi `f` — FW-03, X2, X5; (2) nạp bộ test cảm biến, `sensor_check.py` — FW-02; (3) nạp `rtl/pin_probe`, dò J1 — TH-02. Song song: thu D2 đợt 1 (AI-05) để chốt AI-09/AI-10
 
@@ -60,7 +60,7 @@ Tôi đã chạy lại các phép kiểm dưới đây trên máy này; số li�
 |---|---|---|---|
 | H1 | RTL `Kiwi20K_FallDetection_FPGA` (cnn_core, P = 1) | Icarus, 20 vector của `golden_vectors.npz` | **20/20 khớp khi shift = (8, 8)**; 0/20 khi shift = (7, 8). Ngày 14/10: `fpga_top.v` và testbench lấy shift từ `src/cnn_params.vh` sinh từ `quant_params.json`; testbench 20 vector của project in 20/20 ([docs/bao_cao/2026-10-14_ra01_conv1_shift/](docs/bao_cao/2026-10-14_ra01_conv1_shift/README.md)) |
 | H2 | Thời gian suy luận E1 | Đếm chu kỳ trong mô phỏng | 699.800 chu kỳ = 13,96 ms ở 50,143 MHz (≈ 3 chu kỳ mỗi MAC). Trước ngày 13/10 là 699.798; `argmax` 2 tầng thêm 2 chu kỳ |
-| H3 | Tài nguyên, timing | Chạy P&R với chân cố định trên J1 và shift (8, 8); báo cáo ở `docs/bao_cao/2026-10-14_ra01_conv1_shift/` (14/10) và `bitstreams/1_e1_proto1_sisfall/fpga_project.rpt.txt` (15/10; máy thứ hai dựng lại 16/10 ra cùng số) | Hiện tại (bitstream 1): **Logic 907/20.736 (5 %), Register 589, BSRAM 6/46 (14 %), DSP 1,25/24, Fmax 105,20 MHz** (3 tầng logic). Diễn biến: 57,35 MHz khi công cụ tự đặt chân (05/10) → 53,60 MHz khi cố định chân → 101,86 MHz sau khi tách `argmax4` thành 2 tầng (13/10; Logic 923, FF 590) → 108,49 MHz khi chỉ đổi hằng shift 7 → 8 (14/10; phần chênh chủ yếu do đặt và đi dây khác nhau giữa hai lần chạy) → **Logic 907, 105,20 MHz** sau khi thêm giá trị khởi tạo cho các thanh ghi điều khiển (15/10, [loi_init_conv_start](docs/bao_cao/2026-10-15_loi_init_conv_start/README.md)) |
+| H3 | Tài nguyên, timing | Chạy P&R với chân cố định trên J1 (từ 24/10 trên J2) và shift (8, 8); báo cáo ở `docs/bao_cao/2026-10-14_ra01_conv1_shift/` (14/10) và `bitstreams/1_e1_proto1_sisfall/fpga_project.rpt.txt` (15/10; máy thứ hai dựng lại 16/10 ra cùng số) | Hiện tại (bitstream 1, chân J2, 24/10): **Logic 907/20.736 (5 %), Register 589, BSRAM 6/46 (14 %), DSP 1,25/24, Fmax 103,33 MHz** (3 tầng logic). Diễn biến: 57,35 MHz khi công cụ tự đặt chân (05/10) → 53,60 MHz khi cố định chân → 101,86 MHz sau khi tách `argmax4` thành 2 tầng (13/10; Logic 923, FF 590) → 108,49 MHz khi chỉ đổi hằng shift 7 → 8 (14/10; phần chênh chủ yếu do đặt và đi dây khác nhau giữa hai lần chạy) → **Logic 907, 105,20 MHz** sau khi thêm giá trị khởi tạo cho các thanh ghi điều khiển (15/10, [loi_init_conv_start](docs/bao_cao/2026-10-15_loi_init_conv_start/README.md)) → **103,33 MHz** khi chuyển chân sang header J2 theo sơ đồ nối của nhóm (24/10, Logic không đổi) |
 | H4 | Công suất | Báo cáo Gowin, toggle mặc định | 156,5 mW (tĩnh 122,8 + động 33,7). Là ước lượng của công cụ, chưa đo |
 | H5 | Mô hình SisFall của nhóm | Golden model số nguyên trên tập test (3.549 cửa sổ, 6 người lạ) | INT8 shift (8, 8): accuracy 94,39 %, Macro-F1 0,845, recall FALL 96,71 %. FP32 nhóm báo: 94,73 % / 0,801 / 98,76 %. Với shift (7, 8): recall FALL 97,78 % |
 | H6 | Golden model SPEC v3 + mô hình địa chỉ engine E2 | `verify_spec_v3.py` | Tất cả PASS: N1 khớp 20/20; E2 (P = 1, 2, 4) khớp golden cho N1 và N2; tiền xử lý; CRC; khung |
@@ -481,7 +481,7 @@ Quy tắc testbench: đọc file bằng `$readmemh`, tự so, in `PASS` hoặc `
 | MCU nhận toàn 0x00 | Đọc khi chưa có kết quả, hoặc sai chân MISO | Xem IRQ trước khi đọc; logic analyzer |
 | SPI lệch 1 bit | Sai mode, hoặc SCK quá nhanh so với trễ MISO ≈ 68 ns | Hạ SCK xuống 1 MHz |
 | SPI lúc được lúc không | Thiếu GND chung, dây dài, I/O 1,8 V | Thêm GND cạnh SCK; kiểm `IO_TYPE` |
-| SPI không có tín hiệu nào dù firmware đúng | Cắm lệch hàng chân chẵn/lẻ của J1 | Nạp `rtl/pin_probe`, đo lại 6 chân (E.4) |
+| SPI không có tín hiệu nào dù firmware đúng | Cắm lệch hàng chân chẵn/lẻ của J2 | Nạp `rtl/pin_probe`, đo lại 6 chân (E.4) |
 | CRC luôn sai | Khác phạm vi tính hoặc thứ tự byte | `"123456789"` phải ra 0x29B1 ở C, Python, Verilog |
 | Mọi khung sau một khung lỗi đều sai | Parser không đồng bộ lại theo CS (R3) | Gửi một khung thiếu byte rồi một khung đúng |
 | Đọc MPU6050 toàn 0 | Chưa thoát sleep | `PWR_MGMT_1 = 0x01` |
@@ -550,7 +550,7 @@ Mọi tính năng tầng 2–3 tắt được mà không hỏng tầng 1.
 | RTL = golden qua HIL | ≥ 500 cửa sổ | **≥ 2.000 cửa sổ, 0 sai lệch** | — | Mô phỏng (chưa HIL): E1 50/50 có bão hòa; E2 50/50 ở mọi tầng trên 12 cấu hình; qua chân SPI giao thức v3 50/50 (E1, E2 P = 1 và 4) |
 | FP32 → INT8 | — | **giảm ≤ 2 điểm %** | ≤ 1 | −2,05 recall FALL trên SisFall với shift 8 đã chốt (shift 7: −0,98); N1 trên D1 (14/10): Macro-F1 FP32 0,860 → INT8 0,861, trùng nhãn 99,77 %; N2-S: 0,975 → 0,975, trùng 99,98 % |
 | Logic / BSRAM / DSP | — | **≤ 20 % / ≤ 25 % / ≤ 25 %** | — | E1: 5 % / 14 % / 5 % · top v3 + E2 N2-S P = 1: 8 % / 14 % / 10 % |
-| Timing | Đạt ở 50,143 MHz | **Fmax ≥ 55 MHz** | ≥ 100 MHz | E1 105,20 MHz (15/10) · top v3 + E1 103,01 MHz · top v3 + E2 + N2 11 người 98,12 MHz (16/10; N2 6 người: 107,25) · top v3 + E2 N2-S 105,58 MHz (P = 1), 91,25 MHz (P = 4) (14/10) |
+| Timing | Đạt ở 50,143 MHz | **Fmax ≥ 55 MHz** | ≥ 100 MHz | **Chân J2 (24/10): E1 103,33 MHz · top v3 + E1 104,92 MHz · top v3 + E2 + N2 11 người 111,01 MHz.** Chân J1 trước đó: E1 105,20 MHz (15/10) · top v3 + E1 103,01 MHz · top v3 + E2 + N2 11 người 98,12 MHz (16/10; N2 6 người: 107,25) · top v3 + E2 N2-S 105,58 MHz (P = 1), 91,25 MHz (P = 4) (14/10) |
 | Công suất | — | **Báo cáo Gowin + đo dòng hai board** | năng lượng mỗi lần suy luận | 156,5 mW (ước lượng công cụ) |
 
 ---
@@ -1024,6 +1024,7 @@ uint16_t crc16_ccitt(const uint8_t *p, uint32_t n)
 | 2026-10-16 | Kiểm đáp án tự kiểm của firmware cho **bitstream 1** (PROTO 1, E1) với RTL qua chân SPI (`kiem_tu_kiem_b1.sh`) | 4/4 khung tự kiểm trả về đúng lớp 3, logit 17811 như `selftest_expect.h`; khung sai CRC không IRQ. B8 bước 1 (`rc=0 class=3 PASS`) có căn cứ |
 | 2026-10-16 | Kiểm đáp án tự kiểm cho **bitstream 2** (v3 + E1) với RTL (`kiem_tu_kiem_rtl.py e1`) | 7 byte trùng `selftest_frame7` → PASS. Cả 3 bitstream nay đều có đáp án tự kiểm của firmware đã đối chiếu với RTL |
 | 2026-10-16 | Quét VOTE_K 3 (T_SCORE 0/4/8) trên N2 11 người; `playback_log.py --vote-k` | Không cấu hình nào thắng rõ: VOTE_K 3/T4 96,4 % / 1,04 giả/giờ so với VOTE_K 2/T8 96,2 % / 1,11, nhưng trễ SUSPECT p90 1,33 s. Giữ SPEC, chốt AI-10 trên buổi thử |
+| 2026-10-24 | **Chuyển chân FPGA sang header J2 theo sơ đồ nối thực tế của nhóm** (`codecanthiet/` của nhóm: ESP32 làm SPI master đã chạy thông trên R11/T14/R13/R12): CS J2-16 R11, SCK J2-10 T14, MOSI J2-11 R13, MISO J2-13 R12, IRQ J2-24 R8, RST_N J2-23 T8; thêm `rtl/v3/fpga_top_p1.cst` (pnr_v3.sh p1 chép đè, không sửa project nhóm); dựng lại bitstream 1/2/3 + `pin_probe.fs`, SHA256 mới; Fmax 103,33 / 104,92 / 111,01 MHz, tài nguyên không đổi, mọi chân LVCMOS33 bank 3,3 V. Firmware không đổi (CS P2.8, IRQ P2.9, RST_N P2.1, INT P2.2); ESP32 phải tháo khỏi J2. Sửa E.1/E.3/E.4, TRẠNG THÁI, H3, timing, DE_CUONG (Fmax), THAY_DOI (Fmax), huong_dan_dot_B B6/B7/B10, bitstreams/README | Nhóm đã cắm dây và thử thực tế trên J2; J1 chỉ đọc từ hình. MCU chưa nối SPI vào FPGA nên chọn chân J2 không tốn công đi lại dây phía FPGA. Bằng chứng: [so_do_noi_nhom](docs/bao_cao/2026-10-24_so_do_noi_nhom/README.md) |
 
 ---
 
@@ -1044,13 +1045,13 @@ Vỏ LQFP48 của SN32F407F chỉ đưa ra các chân: P0.0–P0.7, P0.10, P0.11
 
 | Tín hiệu | Chân MCU (chân vỏ) | Nối tới | Chân FPGA: ball · header | Trạng thái |
 |---|---|---|---|---|
-| GND | VSS (47) | GND của Kiwi | J1-1, J1-2 | nối trước tiên |
-| SPI SCK | P1.0 (39), SCK0 lựa chọn 2 · header J12 `SCK_P10` | `spi_sclk` | K14 · J1-4 | MCU: datasheet + header · FPGA: P&R |
-| SPI MISO | P1.1 (40), MISO0 lựa chọn 2 · J12 `MISO_P11` | `spi_miso` | J13 · J1-6 | như trên |
-| SPI MOSI | P1.2 (41), MOSI0 lựa chọn 2 · J12 `MOSI_P12` | `spi_mosi` | J12 · J1-5 | như trên |
-| SPI CS | **P2.8 (19)** · header J7 `P28`, GPIO ra, mặc định mức cao | `spi_cs_n` | K12 · J1-3 | như trên |
-| IRQ | **P2.9 (20)** · J7 `P29`, vào, kéo xuống, ngắt cạnh lên | `irq` | H12 · J1-7 | như trên |
-| RST_N | P2.1 (12) · J7 `P21`, ra, mặc định mức cao | `rst_n` (chỉ top v3: bitstream 2, 3; `fpga_top` PROTO 1 không có) | J11 · J1-8 | pin report 15/10: J11, LVCMOS33, kéo lên |
+| GND | VSS (47) | GND của Kiwi | J1-1, J1-2 (hoặc GND bất kỳ của Kiwi) | nối trước tiên |
+| SPI SCK | P1.0 (39), SCK0 lựa chọn 2 · header J12 `SCK_P10` | `spi_sclk` | T14 · J2-10 | MCU: datasheet + header · FPGA: P&R 24/10; nhóm đã chạy SPI qua chân này với ESP32 |
+| SPI MISO | P1.1 (40), MISO0 lựa chọn 2 · J12 `MISO_P11` | `spi_miso` | R12 · J2-13 | như trên |
+| SPI MOSI | P1.2 (41), MOSI0 lựa chọn 2 · J12 `MOSI_P12` | `spi_mosi` | R13 · J2-11 | như trên |
+| SPI CS | **P2.8 (19)** · header J7 `P28`, GPIO ra, mặc định mức cao | `spi_cs_n` | R11 · J2-16 | như trên |
+| IRQ | **P2.9 (20)** · J7 `P29`, vào, kéo xuống, ngắt cạnh lên | `irq` | R8 · J2-24 | P&R 24/10; nhóm ghi chân này là GPIO của J2 (`debug_status[0]`), chưa đo |
+| RST_N | P2.1 (12) · J7 `P21`, ra, mặc định mức cao | `rst_n` (chỉ top v3: bitstream 2, 3; `fpga_top` PROTO 1 không có) | T8 · J2-23 | P&R 24/10: LVCMOS33, kéo lên; nhóm ghi chân này là `reset` của J2, chưa đo |
 | Giữ flash SPI của EVK im lặng | P1.8 (34) · J12 `SEL_P18`, GPIO ra, **luôn mức cao**; không cắm dây | — | — | datasheet + header; lý do ở dưới bảng |
 | Clock FPGA | — | Dao động 27 MHz trên board | H11 | P&R |
 | I²C SCL | P0.10 (42), SCL0 lựa chọn 2 · header J13 `SCL_P010` | MPU6050 SCL, OLED SCL | — | datasheet + EVK + header |
@@ -1065,7 +1066,9 @@ Vỏ LQFP48 của SN32F407F chỉ đưa ra các chân: P0.0–P0.7, P0.10, P0.11
 | Dự trữ | P2.0 (11), P3.9 (2): không thấy trên header nào trong ảnh, phải hàn dây nếu cần | — | — | datasheet |
 | Không dùng làm I/O | P3.5 / P3.6 (SWDIO / SWCLK, nối mạch nạp SN-Link trên EVK qua jumper J5 / J4), P3.7 (RESET), P1.3 (BOOT: mức thấp lúc khởi động thì vào bootloader), P3.10–P3.13 (thạch anh) | — | — | datasheet |
 
-J1 là header 2 × 20 của Kiwi. Số thứ tự chân trên header được đọc từ hình sơ đồ, nên phải dò lại bằng `rtl/pin_probe` (E.4) trước khi nối dây.
+J1, J2 là hai header 2 × 20 của Kiwi. **Từ 24/10 mọi dây FPGA nằm trên J2** theo sơ đồ nối thực tế của nhóm (`docs/bao_cao/2026-10-24_so_do_noi_nhom/`): bốn chân SPI đã được nhóm chạy thông với ESP32 làm master; IRQ và RST_N lấy hai chân J2 nhóm đã khai báo là GPIO. Vẫn dò lại cả 6 chân bằng `rtl/pin_probe` (E.4) trước khi nối dây. Bản trước 24/10 dùng J1-3..J1-8 (K12, K14, J12, J13, H12, J11).
+
+**ESP32 của nhóm** (`cnn_live_mpu6050_bridge.ino`): làm SPI master tới đúng 4 chân J2 này và nhận khung từ MCU qua UART 115200 (GPIO16), gửi log qua WiFi. Hệ thống của đề tài dùng MCU làm master trực tiếp, nên **khi chạy firmware này phải tháo 4 dây SPI của ESP32 khỏi J2**. ESP32 không có vai trò trong luồng chính; dùng lại làm đồ gá TH-13 thì phải viết lại theo giao thức A.7 (v3).
 
 **Chân EVK đã có linh kiện (theo ghi chú vòng 1):**
 
@@ -1137,7 +1140,7 @@ Nguồn: sơ đồ nguyên lý Kiwi Primer 20K rev v1.0, trang 4, 5, 6, 10 và 1
 
 **Điện áp bank.** Bank 0, 1, 2, 3, 6, 7 cấp 3,3 V; bank 4 và 5 cấp 1,5 V cho DDR3. Mọi chân tín hiệu trên các header J1, J2, J5 đều thuộc bank 3,3 V.
 
-**Lý do chọn J1-3 .. J1-8.** Sáu chân liền nhau, sát hai chân GND (J1-1, J1-2), thuộc bank 0 và 1, chỉ đi ra header và không mang chức năng cấu hình.
+**Lý do chọn chân trên J2 (24/10).** Nhóm đã nối và chạy thông SPI trên R11/T14/R13/R12 (J2-16/10/11/13) bằng ESP32 3,3 V, tức vị trí trên header và mức điện áp đã được thử thực tế, không như J1 chỉ đọc từ hình. R8 (J2-24) và T8 (J2-23) nằm bank 3 (3,3 V), không thuộc danh sách chân cấu hình phải tránh ở dưới. Bản trước (13/10): J1-3..J1-8, sáu chân liền nhau sát GND, bank 0 và 1.
 
 **Các chân phải tránh**
 
@@ -1147,7 +1150,7 @@ Nguồn: sơ đồ nguyên lý Kiwi Primer 20K rev v1.0, trang 4, 5, 6, 10 và 1
 | J1-37, J1-38 và J2-37, J2-38 | Chân nguồn `P3V3_EXT` và `P5V0`, không phải I/O |
 | Ball R9, T10, T9, P9, N9, M8 (trên J2) và C10 (J1-18) | Chân bank 3 có chức năng thứ hai dùng lúc cấu hình: D0–D3, DIN, DOUT, SCLK |
 
-**File ràng buộc.** Năm cổng đang có trong `fpga_top.v` đã được ghi vào `src/fpga_top.cst` của project Gowin:
+**File ràng buộc** (đây là bản 13/10, chân J1, giữ để tra lịch sử; **bản đang dùng từ 24/10** là `rtl/v3/fpga_top_v3.cst` và `rtl/v3/fpga_top_p1.cst`, chân J2; `pnr_v3.sh p1` chép `fpga_top_p1.cst` đè lên `src/fpga_top.cst` của bản sao, không sửa project của nhóm):
 
 ```
 IO_LOC "clk" H11;
@@ -1188,7 +1191,7 @@ Lý do chọn điện trở kéo: CS kéo lên để FPGA không bị chọn khi
 
 1. Thiết lập EVK theo mục 4.2.1 của hướng dẫn: J5 `T_DATA`–`SWDIO_P35`, J4 `T_CLK`–`SWCLK_P36`, J3 `T_VDD`–`32F407_VDD`, J1 `SW_ON_3.3V`–`32F407_VDD`, SW1 ở ON. Cắm USB: LED D4 xanh (PC thấy SN-Link), D5 xanh (SN-Link thấy MCU). Đo VDD của MCU = 3,3 V.
 2. Chưa nối FPGA: nạp `firmware/keil/fw.uvprojx`, gõ lệnh `f` trên UART (460800 8N1). Mã đó kéo P1.8 xuống thấp và gửi lệnh đọc mã JEDEC 0x9F qua SPI0 (1 MHz). Nhận được 3 byte khác 0x00 và 0xFF thì flash của EVK đúng là dùng P1.8 làm chân chọn, giữ quyết định ở E.1. Nhận toàn 0xFF thì kéo lần lượt P2.8 và P2.9 xuống và thử lại: nếu flash trả lời ở một trong hai chân đó thì phải đổi CS và IRQ sang chân khác trước khi nối FPGA.
-3. Chưa nối dây: nạp `rtl/pin_probe/pin_probe.fs` vào Kiwi. LED1 nháy chậm là bitstream đang chạy. Chân thứ k (k = 1..6, từ J1-3 đến J1-8) phát k xung 1 kHz mỗi 8 ms: đếm bằng logic analyzer, hoặc đo điện áp DC sẽ thấy khoảng 0,21 / 0,41 / 0,62 / 0,83 / 1,03 / 1,24 V. Sai vị trí nào thì sửa E.1 trước khi nối dây.
-4. Nạp bitstream chính, vẫn chưa nối dây: đo `spi_miso` (J1-6) và `irq` (J1-7), phải ≤ 3,3 V.
+3. Chưa nối dây: nạp `rtl/pin_probe/pin_probe.fs` vào Kiwi. LED1 nháy chậm là bitstream đang chạy. Chân thứ k (k = 1..6: J2-16 CS, J2-10 SCK, J2-11 MOSI, J2-13 MISO, J2-24 IRQ, J2-23 RST_N) phát k xung 1 kHz mỗi 8 ms: đếm bằng logic analyzer, hoặc đo điện áp DC sẽ thấy khoảng 0,21 / 0,41 / 0,62 / 0,83 / 1,03 / 1,24 V. Sai vị trí nào thì sửa E.1 trước khi nối dây.
+4. Nạp bitstream chính, vẫn chưa nối dây: đo `spi_miso` (J2-13) và `irq` (J2-24), phải ≤ 3,3 V.
 5. Nối GND trước, rồi mới nối dây tín hiệu; dây ≤ 15 cm.
 6. Bắt đầu ở SCK 1 MHz (việc RA-04, FW-09).

@@ -92,7 +92,7 @@ Nhóm đã viết, mô phỏng và tổng hợp phiên bản RTL đầu tiên (m
 | BSRAM | 6 khối (14 %) | ≤ 25 % | 46 khối |
 | DSP | 1,25 khối (5 %) | ≤ 25 % | 24 khối |
 | Clock hệ thống | 50,143 MHz từ rPLL (dao động 27 MHz) | giữ nguyên | 4 PLL |
-| Fmax | 105,20 MHz | ≥ 55 MHz với bộ tính mới; mục tiêu mở rộng ≥ 100 MHz | — |
+| Fmax | 103,33 MHz (chân trên header J2, 24/10) | ≥ 55 MHz với bộ tính mới; mục tiêu mở rộng ≥ 100 MHz | — |
 | I/O | 6 chân | 7 chân: SCK, MOSI, MISO, CS, IRQ, RST_N, clk | 207 |
 | Công suất (ước lượng của công cụ) | 156,5 mW, trong đó động 33,7 mW | báo cáo kèm đo dòng thực | — |
 

@@ -1,0 +1,36 @@
+// Kiwi Primer 20K Rev v1.0 schematic pp. 4-6, 12; user guide V1.1 pp. 15, 23-24.
+// Physical PCB revision, connector orientation and I/O rails still require inspection.
+// MSPI_* configuration flash balls are deliberately not used for application SPI.
+
+// 27 MHz onboard oscillator X1 -> R11 -> SYS_CLK (H11), VCCIO0=P3V3.
+IO_LOC "clk" H11;
+IO_PORT "clk" IO_TYPE=LVCMOS33 PULL_MODE=NONE;
+
+// MCU SPI0 master on EVK J12/J7 -> Kiwi user GPIO J2, VCCIO2=P3V3.
+IO_LOC "spi_sck" T14;   // J2-10, B2_R20_N
+IO_PORT "spi_sck" IO_TYPE=LVCMOS33 PULL_MODE=DOWN;
+IO_LOC "spi_mosi" R13;  // J2-11, B2_R20_P
+IO_PORT "spi_mosi" IO_TYPE=LVCMOS33 PULL_MODE=DOWN;
+IO_LOC "spi_miso" R12;  // J2-13, B2_R11_P
+IO_PORT "spi_miso" IO_TYPE=LVCMOS33 PULL_MODE=NONE DRIVE=8;
+IO_LOC "spi_cs_n" R11;  // J2-16, B2_R17_P
+IO_PORT "spi_cs_n" IO_TYPE=LVCMOS33 PULL_MODE=UP;
+
+// Active-high external application reset on a separate documented J2 GPIO.
+// Drive J2-23 high to reset; the internal pull-down is not a substitute for
+// checking the physical board and reset behavior before programming.
+IO_LOC "reset" T8;     // J2-23, B3_R42_N, bank 3
+IO_PORT "reset" IO_TYPE=LVCMOS33 PULL_MODE=DOWN;
+
+// Diagnostic outputs on documented J2 GPIO, not onboard LEDs. No jumper
+// or external load for these five outputs is asserted by this constraint file.
+IO_LOC "debug_status[0]" R8; // J2-24, B3_R29_N, bank 3
+IO_PORT "debug_status[0]" IO_TYPE=LVCMOS33 PULL_MODE=NONE DRIVE=8;
+IO_LOC "debug_status[1]" R7; // J2-26, B3_R49_P, bank 3
+IO_PORT "debug_status[1]" IO_TYPE=LVCMOS33 PULL_MODE=NONE DRIVE=8;
+IO_LOC "debug_status[2]" R6; // J2-27, B3_B54_P, bank 4
+IO_PORT "debug_status[2]" IO_TYPE=LVCMOS33 PULL_MODE=NONE DRIVE=8;
+IO_LOC "debug_class[0]" T7;  // J2-28, B3_R29_P, bank 3
+IO_PORT "debug_class[0]" IO_TYPE=LVCMOS33 PULL_MODE=NONE DRIVE=8;
+IO_LOC "debug_class[1]" T6;  // J2-29, B3_R53_N, bank 3
+IO_PORT "debug_class[1]" IO_TYPE=LVCMOS33 PULL_MODE=NONE DRIVE=8;

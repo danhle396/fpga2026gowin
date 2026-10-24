@@ -22,7 +22,7 @@ Kết quả hiện có (mô phỏng và dữ liệu công khai, chưa đo trên 
 | Sau Safety FSM (phát lại 1.180 cú ngã và 5,43 giờ sinh hoạt) | **96,2 %** cú ngã kết thúc nằm dẫn tới PRE-ALARM; **1,11** lần cảnh báo giả mỗi giờ; 0/234 cú ngã có tự đứng dậy bị báo |
 | Thời gian suy luận trên FPGA | **5,15 ms** (258.080 chu kỳ ở 50,143 MHz); bản chạy trên MCU ước tính 74–232 ms |
 | Khớp phần cứng – phần mềm | RTL và netlist sau Place & Route khớp mô hình tham chiếu **từng bit**; chuỗi firmware → FPGA → firmware khớp 423/423 khung |
-| Tài nguyên | Logic 8 %, BSRAM 18 %, DSP 10 %, Fmax 98,12 MHz |
+| Tài nguyên | Logic 8 %, BSRAM 18 %, DSP 10 %, Fmax 111,01 MHz |
 
 ---
 
@@ -145,7 +145,7 @@ Hai kết quả phụ:
 | Độ trễ: → PRE-ALARM khi nằm yên trong 2 s | ≤ 5 s | 514 cú ngã thỏa điều kiện: trung vị 3,80 s, p90 4,32 s, lớn nhất 4,56 s, 0 cú > 5 s | **[CHỜ ĐO]** | như trên |
 | Thời gian suy luận trên FPGA | ≤ 6 ms; nhanh hơn MCU ≥ 5 lần | **5,15 ms** (258.080 chu kỳ, bộ đếm trong RTL); MCU ước tính 74–232 ms (đếm lệnh trên trình giả lập) | **[CHỜ ĐO]**: bộ đếm chu kỳ qua HIL; MCU đo bằng GPIO | `2026-10-14_rb03_rb04_e2`, `2026-10-14_fw15_mcu_only` |
 | Khớp phần cứng – phần mềm | 0 sai lệch trên ≥ 2.000 cửa sổ; FP32 → INT8 giảm ≤ 2 điểm | RTL và netlist khớp từng bit; FP32 → INT8 giảm ≤ 0,0001 Macro-F1 | **[CHỜ ĐO]**, HIL ≥ 2.000 cửa sổ | `2026-10-16_n2_11_nguoi` mục 5 |
-| Tài nguyên và timing | Logic ≤ 20 %, BSRAM ≤ 25 %, DSP ≤ 25 %; Fmax ≥ 55 MHz | Logic 1.473/20.736 (8 %), thanh ghi 1.084/16.173 (7 %), BSRAM 8/46 (18 %), DSP 2,25/24 (10 %), **Fmax 98,12 MHz** | không áp dụng | `bitstreams/3_v3_e2_n2` |
+| Tài nguyên và timing | Logic ≤ 20 %, BSRAM ≤ 25 %, DSP ≤ 25 %; Fmax ≥ 55 MHz | Logic 1.473/20.736 (8 %), thanh ghi 1.084/16.173 (7 %), BSRAM 8/46 (18 %), DSP 2,25/24 (10 %), **Fmax 111,01 MHz** (chân J2, 24/10) | không áp dụng | `bitstreams/3_v3_e2_n2` |
 | Công suất | Ước lượng + dòng đo | Ước lượng của Gowin EDA: 157,6 mW (động 34,8 mW) | **[CHỜ ĐO]**, dòng ở nguồn 5 V của từng board | như trên |
 
 **Nhận xét trung thực:**

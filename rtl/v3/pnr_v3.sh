@@ -38,6 +38,7 @@ CORE="argmax4 bias_rom cnn_controller cnn_core conv1d_engine dense_engine featur
         echo "set_option -top_module fpga_top_v3"
     else
         cp "$ROOT/rtl/v3/top.sdc" "$W/src/"
+        cp "$ROOT/rtl/v3/fpga_top_p1.cst" "$W/src/fpga_top.cst"     # chân J2 (24/10), không sửa src/ của nhóm
         for m in fpga_top packet_parser crc8 result_register spi_result_tx; do echo "add_file src/$m.v"; done
         echo "add_file src/fpga_top.cst"
         echo "add_file src/top.sdc"

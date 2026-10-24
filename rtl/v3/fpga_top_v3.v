@@ -1,6 +1,6 @@
 // rtl/v3/fpga_top_v3.v — top giao thức v3 (A.7, việc RA-03): CRC-16, SEQ, STATUS, đuôi 13 byte, RST_N, CYCLES.
 // Dùng lại nguyên spi_slave, input_buffer, cnn_core của project Gowin. fpga_top (PROTO 1) giữ nguyên để thông mạch
-// lần đầu (RA-04). Chân: như fpga_top.cst cộng rst_n ở J11 (J1-8), xem rtl/v3/fpga_top_v3.cst.
+// lần đầu (RA-04). Chân: header J2 (24/10), xem rtl/v3/fpga_top_v3.cst.
 `include "cnn_params.vh"
 `ifndef CNN_SCORE_SHIFT
 `define CNN_SCORE_SHIFT 0

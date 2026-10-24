@@ -1,0 +1,56 @@
+== b1 (0)
+      1 WARN  (NL0002) : The module "crc8" instantiated to "u_crc8" is swept in optimizing("C:\Users\ADMIN\AppData\Local\Temp\pnr24\b1\src\packet_parser.v":37)
+  Logic                       | 907/20736                           |  5%
+  Register                    | 589/16173                           |  4%
+  I/O Port                    | 6/207                               |  3%
+  BSRAM                       | 6/46                                | 14%
+  DSP                         | 1.25/24                             | 6%
+Max Frequency Summary: NO. Clock Name Constraint Actual Fmax Logic Level Entity 1 u_pll/rpll_inst/CLKOUT.default_gen_clk 50.143(MHz) 103.332(MHz) 3 TOP No timing paths to get frequency of clk27! No timing paths to get frequency of u_pll/rpll_inst/CLKOUTP.default_gen_clk! No timing paths to get frequency of u_pll/rpll_inst/CLKOUTD.default_gen_clk! No
+Total Negative Slack Summary: Clock Name Analysis Type Endpoints TNS Number of Endpoints clk27 Setup 0.000 0 clk27 Hold 0.000 0 u_pll/rpll_inst/CLKOUT.default_gen_clk Setup 0.000 0 u_pll/rpll_inst/CLKOUT.default_gen_clk Hold 0.000 0 u_pll/rpll_inst/CLKOUTP.default_gen_clk Setup 0.000 0 u_pll/rpll_inst/CLKOUTP.default_gen_clk Hold 0.000 0 u_pll/rpll_inst/CL
+-r--r--r-- 1 ADMIN 197121 7264154 Oct 24 16:03 impl/pnr/fpga_project.fs
+clk        | -         | H11/0         | Y          | in    | IOT27[A] | GCLKT_0         | LVCMOS33   | NA    | NONE      | ON        | NONE       | NA         | NA         | NA              | NA            | 3.3       
+spi_sclk   | -         | T14/2         | Y          | in    | IOR20[B] | -               | LVCMOS33   | NA    | DOWN      | ON        | NONE       | NA         | NA         | OFF             | NA            | 3.3       
+spi_cs_n   | -         | R11/2         | Y          | in    | IOR17[A] | -               | LVCMOS33   | NA    | UP        | ON        | NONE       | NA         | NA         | OFF             | NA            | 3.3       
+spi_mosi   | -         | R13/2         | Y          | in    | IOR20[A] | -               | LVCMOS33   | NA    | DOWN      | ON        | NONE       | NA         | NA         | OFF             | NA            | 3.3       
+spi_miso   | -         | R12/2         | Y          | out   | IOR11[A] | -               | LVCMOS33   | 8     | NONE      | NA        | NA         | OFF        | NA         | OFF             | NA            | 3.3       
+irq        | -         | R8/3          | Y          | out   | IOR29[B] | GCLKC_3         | LVCMOS33   | 8     | NONE      | NA        | NA         | OFF        | NA         | OFF             | NA            | 3.3       
+== b2 (0)
+  Logic                       | 1521/20736                          |  8%
+  Register                    | 952/16173                           |  6%
+  I/O Port                    | 7/207                               |  4%
+  BSRAM                       | 6/46                                | 14%
+  DSP                         | 1.25/24                             | 6%
+Max Frequency Summary: NO. Clock Name Constraint Actual Fmax Logic Level Entity 1 u_pll/rpll_inst/CLKOUT.default_gen_clk 50.143(MHz) 104.918(MHz) 3 TOP No timing paths to get frequency of clk27! No timing paths to get frequency of u_pll/rpll_inst/CLKOUTP.default_gen_clk! No timing paths to get frequency of u_pll/rpll_inst/CLKOUTD.default_gen_clk! No
+Total Negative Slack Summary: Clock Name Analysis Type Endpoints TNS Number of Endpoints clk27 Setup 0.000 0 clk27 Hold 0.000 0 u_pll/rpll_inst/CLKOUT.default_gen_clk Setup 0.000 0 u_pll/rpll_inst/CLKOUT.default_gen_clk Hold 0.000 0 u_pll/rpll_inst/CLKOUTP.default_gen_clk Setup 0.000 0 u_pll/rpll_inst/CLKOUTP.default_gen_clk Hold 0.000 0 u_pll/rpll_inst/CL
+-r--r--r-- 1 ADMIN 197121 7264154 Oct 24 16:03 impl/pnr/fpga_project.fs
+clk        | -         | H11/0         | Y          | in    | IOT27[A] | GCLKT_0         | LVCMOS33   | NA    | NONE      | ON        | NONE       | NA         | NA         | NA              | NA            | 3.3       
+rst_n      | -         | T8/3          | Y          | in    | IOR42[B] | -               | LVCMOS33   | NA    | UP        | ON        | NONE       | NA         | NA         | OFF             | NA            | 3.3       
+spi_sclk   | -         | T14/2         | Y          | in    | IOR20[B] | -               | LVCMOS33   | NA    | DOWN      | ON        | NONE       | NA         | NA         | OFF             | NA            | 3.3       
+spi_cs_n   | -         | R11/2         | Y          | in    | IOR17[A] | -               | LVCMOS33   | NA    | UP        | ON        | NONE       | NA         | NA         | OFF             | NA            | 3.3       
+spi_mosi   | -         | R13/2         | Y          | in    | IOR20[A] | -               | LVCMOS33   | NA    | DOWN      | ON        | NONE       | NA         | NA         | OFF             | NA            | 3.3       
+spi_miso   | -         | R12/2         | Y          | out   | IOR11[A] | -               | LVCMOS33   | 8     | NONE      | NA        | NA         | OFF        | NA         | OFF             | NA            | 3.3       
+irq        | -         | R8/3          | Y          | out   | IOR29[B] | GCLKC_3         | LVCMOS33   | 8     | NONE      | NA        | NA         | OFF        | NA         | OFF             | NA            | 3.3       
+== b3 (0)
+  Logic                       | 1473/20736                          |  8%
+  Register                    | 1084/16173                          |  7%
+  I/O Port                    | 7/207                               |  4%
+  BSRAM                       | 8/46                                | 18%
+  DSP                         | 2.25/24                             | 10%
+Max Frequency Summary: NO. Clock Name Constraint Actual Fmax Logic Level Entity 1 u_pll/rpll_inst/CLKOUT.default_gen_clk 50.143(MHz) 111.010(MHz) 5 TOP No timing paths to get frequency of clk27! No timing paths to get frequency of u_pll/rpll_inst/CLKOUTP.default_gen_clk! No timing paths to get frequency of u_pll/rpll_inst/CLKOUTD.default_gen_clk! No
+Total Negative Slack Summary: Clock Name Analysis Type Endpoints TNS Number of Endpoints clk27 Setup 0.000 0 clk27 Hold 0.000 0 u_pll/rpll_inst/CLKOUT.default_gen_clk Setup 0.000 0 u_pll/rpll_inst/CLKOUT.default_gen_clk Hold 0.000 0 u_pll/rpll_inst/CLKOUTP.default_gen_clk Setup 0.000 0 u_pll/rpll_inst/CLKOUTP.default_gen_clk Hold 0.000 0 u_pll/rpll_inst/CL
+-r--r--r-- 1 ADMIN 197121 7264154 Oct 24 16:03 impl/pnr/fpga_project.fs
+clk        | -         | H11/0         | Y          | in    | IOT27[A] | GCLKT_0         | LVCMOS33   | NA    | NONE      | ON        | NONE       | NA         | NA         | NA              | NA            | 3.3       
+rst_n      | -         | T8/3          | Y          | in    | IOR42[B] | -               | LVCMOS33   | NA    | UP        | ON        | NONE       | NA         | NA         | OFF             | NA            | 3.3       
+spi_sclk   | -         | T14/2         | Y          | in    | IOR20[B] | -               | LVCMOS33   | NA    | DOWN      | ON        | NONE       | NA         | NA         | OFF             | NA            | 3.3       
+spi_cs_n   | -         | R11/2         | Y          | in    | IOR17[A] | -               | LVCMOS33   | NA    | UP        | ON        | NONE       | NA         | NA         | OFF             | NA            | 3.3       
+spi_mosi   | -         | R13/2         | Y          | in    | IOR20[A] | -               | LVCMOS33   | NA    | DOWN      | ON        | NONE       | NA         | NA         | OFF             | NA            | 3.3       
+spi_miso   | -         | R12/2         | Y          | out   | IOR11[A] | -               | LVCMOS33   | 8     | NONE      | NA        | NA         | OFF        | NA         | OFF             | NA            | 3.3       
+irq        | -         | R8/3          | Y          | out   | IOR29[B] | GCLKC_3         | LVCMOS33   | 8     | NONE      | NA        | NA         | OFF        | NA         | OFF             | NA            | 3.3       
+== pin_probe
+probe[0]   | -         | R11/2         | Y          | out   | IOR17[A] | -               | LVCMOS33   | 8     | UP        | NA        | NA         | OFF        | NA         | OFF             | NA            | 3.3       
+probe[1]   | -         | T14/2         | Y          | out   | IOR20[B] | -               | LVCMOS33   | 8     | UP        | NA        | NA         | OFF        | NA         | OFF             | NA            | 3.3       
+probe[2]   | -         | R13/2         | Y          | out   | IOR20[A] | -               | LVCMOS33   | 8     | UP        | NA        | NA         | OFF        | NA         | OFF             | NA            | 3.3       
+probe[3]   | -         | R12/2         | Y          | out   | IOR11[A] | -               | LVCMOS33   | 8     | UP        | NA        | NA         | OFF        | NA         | OFF             | NA            | 3.3       
+probe[4]   | -         | R8/3          | Y          | out   | IOR29[B] | GCLKC_3         | LVCMOS33   | 8     | UP        | NA        | NA         | OFF        | NA         | OFF             | NA            | 3.3       
+probe[5]   | -         | T8/3          | Y          | out   | IOR42[B] | -               | LVCMOS33   | 8     | UP        | NA        | NA         | OFF        | NA         | OFF             | NA            | 3.3       
+led_n      | -         | D15/0         | Y          | out   | IOT5[B]  | -               | LVCMOS33   | 8     | UP        | NA        | NA         | OFF        | NA         | NA              | NA            | 3.3       
