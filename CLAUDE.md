@@ -74,7 +74,7 @@ python -I tools/cosim.py --e2 ml/out/e2_matrix/n2_11_p1   # firmware ↔ RTL
 
 ## 5. Đang ở đâu (cập nhật mỗi khi đổi mốc lớn)
 
-- Tầng 1, **chưa qua G0**. Mọi thứ đã kiểm trong mô phỏng, chưa chạy trên chip.
+- Tầng 1, **chưa qua G0** theo giấy tờ. **Từ 24–25/10 hệ thống đã chạy thông trên phần cứng bằng pin** (MCU → ESP32 → FPGA → Safety FSM → trang web `http://<IP ESP32>/`): tự kiểm FPGA PASS, 74/74 cửa sổ OK, mất 0 mẫu; nhóm thử ngã trên bàn báo đạt. Chưa có buổi thử có số đo (TH-10, AI-10).
 - Mô hình phần cứng đã chốt (16/10): **N2, chỉ kênh đầu, 2 lớp NORMAL / FALL (SPEC v3.2)** trên **E2, 1 làn, giao thức v3** (bitstream 3). Dữ liệu ngực/thắt lưng đã bỏ. Bitstream 3 mang N2 11 người (`ml/out/n2_11_d1`, 16/10): LOSO Macro-F1 0,983; FSM T_SCORE 8 ngã nằm 96,2 %, báo giả 1,11/giờ (từ "nằm xuống giường").
 - **Phần cứng nối cố định (24/10, v2.2):** MCU → UART → **ESP32** → SPI → FPGA; ESP32 chạy lõi C (`hub.c` + `app_core`), MCU `FW_NODE 1` chỉ đọc cảm biến. Làm theo [docs/huong_dan_nap_chay.md](docs/huong_dan_nap_chay.md); các bước B6–B10 của `huong_dan_dot_B.md` (nối dây MCU ↔ FPGA, pin_probe) không áp dụng.
 - **Chân FPGA nằm trên header J2 từ 24/10** (theo sơ đồ nối thực tế của nhóm; Phụ lục E.1, `docs/bao_cao/2026-10-24_so_do_noi_nhom/`). ESP32 của nhóm phải tháo khỏi J2 khi chạy hệ thống.
