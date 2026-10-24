@@ -79,10 +79,10 @@ def main():
     (W / "tb" / "stream_frames.mem").write_text("".join(f"{b:02X}\n" for f in frames for b in f), newline="\n")
     env = dict(os.environ)
     env["PATH"] = r"C:\iverilog\bin;" + env.get("PATH", "")
-    V3 = ROOT / "rtl" / "v3"
-    src = [V3 / "tb_stream.v", V3 / "fpga_top_v3.v", V3 / "packet_parser_v3.v", V3 / "result_frame_v3.v",
+    V3 = ROOT / "fpga" / "src"
+    src = [ROOT / "rtl" / "v3" / "tb_stream.v", V3 / "fpga_top_v3.v", V3 / "packet_parser_v3.v", V3 / "result_frame_v3.v",
            V3 / "spi_result_tx_v3.v", V3 / "crc16_ccitt.v", ROOT / "rtl" / "tb" / "pll_50m_sim.v",
-           W / "src" / "spi_slave.v", W / "src" / "input_buffer.v", ROOT / "rtl" / "e2" / "cnn_e2.v"]
+           V3 / "spi_slave.v", V3 / "input_buffer.v", V3 / "cnn_e2.v"]
     subprocess.run(["iverilog", "-g2001", "-I", "src", f"-DTB_NF={len(frames)}", "-s", "tb_stream", "-o", "s.vvp"]
                    + [str(s) for s in src], cwd=W, env=env, check=True)
     subprocess.run(["vvp", "s.vvp"], cwd=W, env=env, check=True, capture_output=True)

@@ -7,11 +7,13 @@
 #   ONLY_PROJECT=1 bash rtl/v3/pnr_v3.sh ...     # chỉ tạo project Gowin (.gprj) mở được bằng IDE, không P&R (rtl/gowin/)
 set -e
 ROOT="$(cd "$(dirname "$0")/../.." && pwd)"
-PROJ="$ROOT/Document Board Kiwi Primer 20K/Kiwi20K_FallDetection_FPGA"
+PROJ="$ROOT/Document Board Kiwi Primer 20K/Kiwi20K_FallDetection_FPGA"   # nguồn E1 + fpga_top PROTO 1 của nhóm
+FS="$ROOT/fpga/src"                                                        # nguồn của project chính fpga/
 W="$1"; TOP="${2:-v3}"; E2DIR="${3:-}"
 GW="${GW_SH:-/c/Gowin/Gowin_V1.9.11.03_Education_x64/IDE/bin/gw_sh.exe}"
 rm -rf "$W"; mkdir -p "$W"
 cp -r "$PROJ/src" "$W/"
+cp "$FS/spi_slave.v" "$FS/input_buffer.v" "$W/src/"          # một bản nguồn duy nhất: fpga/src
 python -I "$ROOT/tools/gen_cnn_params.py" --project "$W" >/dev/null
 CORE="argmax4 bias_rom cnn_controller cnn_core conv1d_engine dense_engine feature_ram gap_buffer gap_engine
       input_buffer mac_unit maxpool1d_engine requantize_relu spi_slave weight_rom"
@@ -25,14 +27,13 @@ CORE="argmax4 bias_rom cnn_controller cnn_core conv1d_engine dense_engine featur
         cp "$E2DIR/cnn_params.vh" "$W/src/cnn_params.vh"
         cp "$E2DIR/weights.mem" "$W/src/weights_e2.mem"
         cp "$E2DIR/bias.mem" "$W/src/bias_e2.mem"
-        cp "$ROOT/rtl/e2/cnn_e2.v" "$ROOT/rtl/v3/"{fpga_top_v3,packet_parser_v3,result_frame_v3,spi_result_tx_v3,crc16_ccitt}.v            "$ROOT/rtl/v3/fpga_top_v3.cst" "$ROOT/rtl/v3/fpga_top_v3.sdc" "$W/src/"
+        cp "$FS/"{cnn_e2,fpga_top_v3,packet_parser_v3,result_frame_v3,spi_result_tx_v3,crc16_ccitt}.v "$FS/fpga_top_v3.cst" "$FS/fpga_top_v3.sdc" "$W/src/"
         for m in cnn_e2 fpga_top_v3 packet_parser_v3 result_frame_v3 spi_result_tx_v3 crc16_ccitt; do echo "add_file src/$m.v"; done
         echo "add_file src/fpga_top_v3.cst"
         echo "add_file src/fpga_top_v3.sdc"
         echo "set_option -top_module fpga_top_v3"
     elif [ "$TOP" = "v3" ]; then
-        cp "$ROOT/rtl/v3/"{fpga_top_v3,packet_parser_v3,result_frame_v3,spi_result_tx_v3,crc16_ccitt}.v \
-           "$ROOT/rtl/v3/fpga_top_v3.cst" "$ROOT/rtl/v3/fpga_top_v3.sdc" "$W/src/"
+        cp "$FS/"{fpga_top_v3,packet_parser_v3,result_frame_v3,spi_result_tx_v3,crc16_ccitt}.v "$FS/fpga_top_v3.cst" "$FS/fpga_top_v3.sdc" "$W/src/"
         for m in fpga_top_v3 packet_parser_v3 result_frame_v3 spi_result_tx_v3 crc16_ccitt; do echo "add_file src/$m.v"; done
         echo "add_file src/fpga_top_v3.cst"
         echo "add_file src/fpga_top_v3.sdc"

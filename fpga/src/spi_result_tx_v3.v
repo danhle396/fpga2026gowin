@@ -1,4 +1,4 @@
-// rtl/v3/spi_result_tx_v3.v — phát khung ĐỌC 20 byte (A.7) trên MISO, SPI mode 0, MSB trước.
+// fpga/src/spi_result_tx_v3.v — phát khung ĐỌC 20 byte (A.7) trên MISO, SPI mode 0, MSB trước.
 // Bắt đầu khi CS xuống và có kết quả (valid); không có kết quả thì MISO = 0 suốt giao dịch.
 // read_done phát khi byte thứ 7 (chỉ số 6) đã đẩy xong: IRQ về thấp (A.7); byte 7..19 vẫn tiếp tục nếu MCU còn clock (HIL).
 // rd_index trỏ trước tới byte KẾ TIẾP, nên ở cạnh xuống SCK cuối của một byte, byte mới nạp ngay trong cùng chu kỳ:

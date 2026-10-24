@@ -1,6 +1,6 @@
-// rtl/v3/fpga_top_v3.v — top giao thức v3 (A.7, việc RA-03): CRC-16, SEQ, STATUS, đuôi 13 byte, RST_N, CYCLES.
+// fpga/src/fpga_top_v3.v — top giao thức v3 (A.7, việc RA-03): CRC-16, SEQ, STATUS, đuôi 13 byte, RST_N, CYCLES.
 // Dùng lại nguyên spi_slave, input_buffer, cnn_core của project Gowin. fpga_top (PROTO 1) giữ nguyên để thông mạch
-// lần đầu (RA-04). Chân: header J2 (24/10), xem rtl/v3/fpga_top_v3.cst.
+// lần đầu (RA-04). Chân: header J2 (24/10), xem fpga/src/fpga_top_v3.cst.
 `include "cnn_params.vh"
 `ifndef CNN_SCORE_SHIFT
 `define CNN_SCORE_SHIFT 0
@@ -46,7 +46,7 @@ module fpga_top_v3 (
     wire [1:0]         cnn_class;
     wire signed [31:0] cnn_top, lg0, lg1, lg2, lg3;
 `ifdef CNN_ENGINE_E2
-    // Engine E2 (rtl/e2/cnn_e2.v, RB-04): bảng lớp và ROM do tools/export_mem.py --engine e2 sinh
+    // Engine E2 (fpga/src/cnn_e2.v, RB-04): bảng lớp và ROM do tools/export_mem.py --engine e2 sinh
 `ifndef CNN_L3_OC
 `define CNN_L3_OC 1
 `define CNN_L3_IC 1

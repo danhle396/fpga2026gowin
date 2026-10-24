@@ -1,4 +1,4 @@
-// rtl/e2/cnn_e2.v — engine E2 (PROJECT_MASTER.md mục 4.1, A.6; việc RB-03, RB-04): 1 chu kỳ mỗi MAC, LANES làn.
+// fpga/src/cnn_e2.v — engine E2 (PROJECT_MASTER.md mục 4.1, A.6; việc RB-03, RB-04): 1 chu kỳ mỗi MAC, LANES làn.
 // Chạy N1 (2 Conv + GAP) và N2 / N2-S / N2-L (3 Conv + Flatten) theo bảng lớp trong tham số (lấy từ cnn_params.vh
 // do tools/export_mem.py sinh). Mô hình địa chỉ: ml/src/rom_layout.py, engine() — đã kiểm == golden.
 //

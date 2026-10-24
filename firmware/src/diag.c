@@ -20,7 +20,7 @@
 #include "spi_frame.h"
 
 static uint8_t s_div = SPI_DIV_TEST;
-static uint8_t s_proto = 1;                     /* thông mạch lần đầu bằng RTL hiện có (A.7, PROTO = 1) */
+static uint8_t s_proto = FW_PROTO;              /* theo bitstream đang nạp (fw_config.h); đổi bằng lệnh p */
 static int8_t  s_payload[PRE_BYTES];
 
 static void help(void)

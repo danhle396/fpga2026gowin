@@ -17,7 +17,7 @@ Chân, thanh ghi và giao thức theo `PROJECT_MASTER.md`, Phụ lục A (SPEC v
 | giữ **SW3** lúc khởi động, hoặc `DIAG` | menu chẩn đoán | `c` CRC phần cứng, `f` thử flash E.4 bước 2, `s` 100 vòng SPI, `1`/`4` SCK, `p` PROTO, `w` đo chu kỳ WDT (ngừng feed tới khi reset), `q` thoát |
 | `STAT` | — | đếm mẫu, khung, lỗi, mất mẫu, tràn UART |
 
-Trong `app_main.c`: `FW_PROTO` (1 = RTL hiện có, 3 = `rtl/v3/fpga_top_v3`) và `I2C_HZ`. Trong `board.h`: `WEAR_PRESENT` (0 khi chưa có cảm biến đội mũ) và `BUZZER_ACTIVE_HIGH`. Đổi weight trong bitstream thì chép lại `selftest_expect.h` do `tools/export_mem.py` sinh.
+Trong `fw_config.h`: `FW_BITSTREAM` (mặc định 3 = project chính `fpga/`; 1 = bitstream gỡ lỗi PROTO 1), quyết định `FW_PROTO` và đáp án tự kiểm. Trong `app_main.c`: `I2C_HZ`. Trong `board.h`: `WEAR_PRESENT` (0 khi chưa có cảm biến đội mũ) và `BUZZER_ACTIVE_HIGH`. Đổi weight trong bitstream thì chép lại `selftest_expect.h` do `tools/export_mem.py` sinh.
 
 ## Các file
 

@@ -19,3 +19,7 @@ Document Board Kiwi Primer 20K/Kiwi20K_FallDetection_FPGA/impl/
 codecanthiet/
 # project Gowin sinh bằng rtl/gowin/tao_project.sh
 gowin_proj/
+# project Gowin chính fpga/: chỉ giữ cấu hình, bỏ kết quả build của IDE
+fpga/impl/*
+!fpga/impl/fpga_project_process_config.json
+fpga/*.gprj.user

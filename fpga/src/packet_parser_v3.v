@@ -1,4 +1,4 @@
-// rtl/v3/packet_parser_v3.v — nhận khung GHI của giao thức v3 (A.7): [A5][SEQ][768 byte][CRC-16 hi][lo] trong MỘT
+// fpga/src/packet_parser_v3.v — nhận khung GHI của giao thức v3 (A.7): [A5][SEQ][768 byte][CRC-16 hi][lo] trong MỘT
 // lần CS thấp. Sửa R3, R4, R5 của bản PROTO 1:
 //   R3: 0xA5 phải là byte đầu sau khi CS xuống; CS lên giữa khung = khung thiếu byte, quay về chờ đầu khung.
 //   R4: khung đến khi CNN đang bận không được ghi vào bộ đệm (đang bị đọc); báo BUSY + ERR.

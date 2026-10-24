@@ -1,6 +1,7 @@
 #!/usr/bin/env bash
-# rtl/gowin/tao_project.sh — tạo 4 project Gowin mở được bằng Gowin IDE (File → Open Project → *.gprj), đúng nguồn,
-# đúng tham số và đúng chân (header J2) của các file trong bitstreams/ và rtl/pin_probe/:
+# rtl/gowin/tao_project.sh — KHÔNG cần cho việc nạp chạy: project chính là fpga/fpga_project.gprj (bitstream 3).
+# Script này chỉ tạo 3 project PHỤ để gỡ lỗi, mở được bằng Gowin IDE, đúng nguồn, tham số và chân (header J2) của
+# bitstreams/1_e1_proto1_sisfall, bitstreams/2_v3_e1_sisfall và rtl/pin_probe/:
 #   bash rtl/gowin/tao_project.sh [thư mục đích, mặc định gowin_proj]
 # Thư mục đích không đưa lên git (.gitignore). Mỗi project là bản sao nguồn: sửa RTL thì sửa trong rtl/ rồi chạy lại
 # script này, đừng sửa trong gowin_proj/ (sẽ bị xóa ở lần tạo sau). Bấm Run All trong IDE ra .fs trùng bitstreams/ từng bit
@@ -11,7 +12,6 @@ D="${1:-$ROOT/gowin_proj}"
 mkdir -p "$D"
 ONLY_PROJECT=1 bash "$ROOT/rtl/v3/pnr_v3.sh" "$D/1_e1_proto1_sisfall" p1
 ONLY_PROJECT=1 bash "$ROOT/rtl/v3/pnr_v3.sh" "$D/2_v3_e1_sisfall" v3
-ONLY_PROJECT=1 bash "$ROOT/rtl/v3/pnr_v3.sh" "$D/3_v3_e2_n2" e2 "$ROOT/ml/out/e2_matrix/n2_11_p1"
 P="$D/pin_probe"
 rm -rf "$P"; mkdir -p "$P/src"
 cp "$ROOT/rtl/pin_probe/pin_probe_top.v" "$ROOT/rtl/pin_probe/pin_probe_top.cst" "$P/src/"

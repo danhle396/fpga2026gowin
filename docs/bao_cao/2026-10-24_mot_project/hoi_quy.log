@@ -1,0 +1,30 @@
+== run_all
+  tb_e2 P=1: PASS  (17 s) — log /tmp/reg24/ra/tb_e2_p1.log
+  tb_e2 P=4: PASS  (9 s) — log /tmp/reg24/ra/tb_e2_p4.log
+  fpga/: PASS  (18 s) — log /tmp/reg24/ra/fpga_main.log
+
+| Testbench | Kết quả | Thời gian |
+|---|---|---|
+| tb_pin_probe | PASS | 0 s |
+| tb_top_spi | PASS | 32 s |
+| tb_cnn_core_golden | PASS | 118 s |
+| tb_e1_layers | PASS | 45 s |
+| tb_proto_v3_e1 | PASS | 56 s |
+| tb_e2 (P = 1) | PASS | 17 s |
+| tb_e2 (P = 4) | PASS | 9 s |
+| fpga/ (project chính): mô hình = n2_11_p1, tb_proto 3 khung + 7 kịch bản | PASS | 18 s |
+Icarus: Icarus Verilog version 0.9.7  (v0_9_7)
+TẤT CẢ PASS
+== cosim
+lượt 2 (RTL top v3 + E2, Icarus, thư mục C:\Users\ADMIN\AppData\Local\Temp\reg24\cs): 423 khung đọc
+   khung ghi của firmware == golden và khung đọc của RTL == golden: 423/423; CYCLES [258080]; lớp golden {0: 411, 3: 12}
+lượt 3 (firmware app_core đọc khung RTL): 423/423 khung đọc qua spi_parse_v3; kết quả == golden: True; 4 lần đổi trạng thái == golden: True (MONITOR → SUSPECT → PRE_ALARM → ALARM)
+KẾT LUẬN mô phỏng ghép: PASS
+== tự kiểm b3
+RTL trả về 7 byte đầu 5a ee 01 03 00 06 43; firmware mong đợi 5a ee 01 03 00 06 43 → PASS
+khung 20 byte của RTL: 5a ee 01 03 00 06 43 7f ff 80 00 80 00 7f ff 03 f0 20 c0 ce
+pnr 1_e1_proto1_sisfall: khác 0 dòng
+pnr 2_v3_e1_sisfall: khác 0 dòng
+pnr 3_v3_e2_n2: khác 0 dòng
+fpga/ (IDE): khác 0 dòng
+/tmp/reg24/fp/impl/pnr/fpga_project_tr_cata.html:Max Frequency

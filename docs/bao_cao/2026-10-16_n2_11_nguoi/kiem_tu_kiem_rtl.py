@@ -35,14 +35,14 @@ def main():
         shutil.copy(e2 / "cnn_params.vh", W / "src" / "cnn_params.vh")
         shutil.copy(e2 / "weights.mem", W / "src" / "weights_e2.mem")
         shutil.copy(e2 / "bias.mem", W / "src" / "bias_e2.mem")
-        core = [ROOT / "rtl" / "e2" / "cnn_e2.v"]
+        core = [ROOT / "fpga" / "src" / "cnn_e2.v"]
     (W / "tb" / "stream_frames.mem").write_text("".join(f"{b:02X}\n" for b in frame), newline="\n")
     env = dict(os.environ)
     env["PATH"] = r"C:\iverilog\bin;" + env.get("PATH", "")
-    V3 = ROOT / "rtl" / "v3"
-    src = [V3 / "tb_stream.v", V3 / "fpga_top_v3.v", V3 / "packet_parser_v3.v", V3 / "result_frame_v3.v",
+    V3 = ROOT / "fpga" / "src"
+    src = [ROOT / "rtl" / "v3" / "tb_stream.v", V3 / "fpga_top_v3.v", V3 / "packet_parser_v3.v", V3 / "result_frame_v3.v",
            V3 / "spi_result_tx_v3.v", V3 / "crc16_ccitt.v", ROOT / "rtl" / "tb" / "pll_50m_sim.v",
-           W / "src" / "spi_slave.v", W / "src" / "input_buffer.v"] + core
+           V3 / "spi_slave.v", V3 / "input_buffer.v"] + core
     subprocess.run(["iverilog", "-g2001", "-I", "src", "-DTB_NF=1", "-s", "tb_stream", "-o", "s.vvp"] + [str(s) for s in src],
                    cwd=W, env=env, check=True)
     subprocess.run(["vvp", "s.vvp"], cwd=W, env=env, check=True, capture_output=True)

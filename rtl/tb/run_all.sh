@@ -24,6 +24,7 @@ PY="$(command -v python3 || command -v python)"
 
 rm -rf "$WORK"; mkdir -p "$WORK"
 cp -r "$PROJ/src" "$PROJ/tb_cnn_core_golden.v" "$WORK/"
+cp "$ROOT/fpga/src/spi_slave.v" "$ROOT/fpga/src/input_buffer.v" "$WORK/src/"   # một bản nguồn: fpga/src
 mkdir -p "$WORK/tb"
 echo "thư mục làm việc: $WORK"
 echo "weight: $EXPORT"
@@ -68,8 +69,8 @@ run_tb tb_e1_layers       tb_e1_layers -DTB_NV=10 "$ROOT/rtl/tb/tb_e1_layers.v" 
 
 # giao thức v3 (RA-03) với E1: 5 khung đúng + 7 kịch bản lỗi
 "$PY" -I "$ROOT/tools/gen_tb_proto.py" --export "$EXPORT" --out "$WORK/tb" --ng 5 >/dev/null || { echo "FAIL gen_tb_proto"; exit 1; }
-V3="$ROOT/rtl/v3"
-run_tb tb_proto_v3_e1     tb_proto -DTB_NG=5 "$V3/tb_proto.v" "$V3/fpga_top_v3.v" "$V3/packet_parser_v3.v" \
+V3="$ROOT/fpga/src"
+run_tb tb_proto_v3_e1     tb_proto -DTB_NG=5 "$ROOT/rtl/v3/tb_proto.v" "$V3/fpga_top_v3.v" "$V3/packet_parser_v3.v" \
     "$V3/result_frame_v3.v" "$V3/spi_result_tx_v3.v" "$V3/crc16_ccitt.v" "$ROOT/rtl/tb/pll_50m_sim.v" \
     src/spi_slave.v src/input_buffer.v $CORE
 
@@ -82,7 +83,7 @@ for P in 1 4; do
         "$PY" -I "$ROOT/tools/export_mem.py" --params "$EXPORT/../params_int8.npz" --engine e2 --lanes $P --out "$D" >/dev/null
     fi || { echo "FAIL export_mem"; exit 1; }
     t0=$SECONDS
-    if (cd "$D" && iverilog -g2001 -I . -DTB_NV=10 -s tb_e2 -o tb_e2.vvp "$ROOT/rtl/e2/tb_e2.v" "$ROOT/rtl/e2/cnn_e2.v" \
+    if (cd "$D" && iverilog -g2001 -I . -DTB_NV=10 -s tb_e2 -o tb_e2.vvp "$ROOT/rtl/e2/tb_e2.v" "$ROOT/fpga/src/cnn_e2.v" \
           && vvp tb_e2.vvp) > "$WORK/tb_e2_p$P.log" 2>&1 && [ "$(grep -E '^(PASS|FAIL)' "$WORK/tb_e2_p$P.log" | tail -1)" = "PASS" ]; then
         RESULTS+=("PASS")
     else
@@ -91,6 +92,23 @@ for P in 1 4; do
     NAMES+=("tb_e2 (P = $P)"); TIMES+=("$((SECONDS - t0)) s")
     echo "  tb_e2 P=$P: ${RESULTS[-1]}  ($((SECONDS - t0)) s) — log $WORK/tb_e2_p$P.log"
 done
+
+# project chính fpga/: nguồn và mô hình đúng như bitstream 3 (mô hình n2_11_p1), tb_proto chạy thẳng trên fpga/src
+M="$ROOT/ml/out/e2_matrix/n2_11_p1"; D="$WORK/fpga_main"; t0=$SECONDS
+rm -rf "$D"; mkdir -p "$D/tb"; cp -r "$ROOT/fpga/src" "$D/src"
+if cmp -s "$M/cnn_params.vh" "$D/src/cnn_params.vh" && cmp -s "$M/weights.mem" "$D/src/weights_e2.mem" \
+     && cmp -s "$M/bias.mem" "$D/src/bias_e2.mem" \
+     && "$PY" -I "$ROOT/tools/gen_tb_proto.py" --export "$M" --params "$ROOT/$(cat "$M/params_src.txt")" --out "$D/tb" --ng 3 >/dev/null \
+     && (cd "$D" && iverilog -g2001 -I src -DTB_NG=3 -s tb_proto -o tb.vvp "$ROOT/rtl/v3/tb_proto.v" src/fpga_top_v3.v \
+           src/packet_parser_v3.v src/result_frame_v3.v src/spi_result_tx_v3.v src/crc16_ccitt.v src/spi_slave.v \
+           src/input_buffer.v src/cnn_e2.v "$ROOT/rtl/tb/pll_50m_sim.v" && vvp tb.vvp) > "$WORK/fpga_main.log" 2>&1 \
+     && [ "$(grep -E '^(PASS|FAIL)' "$WORK/fpga_main.log" | tail -1)" = "PASS" ]; then
+    RESULTS+=("PASS")
+else
+    RESULTS+=("FAIL")
+fi
+NAMES+=("fpga/ (project chính): mô hình = n2_11_p1, tb_proto 3 khung + 7 kịch bản"); TIMES+=("$((SECONDS - t0)) s")
+echo "  fpga/: ${RESULTS[-1]}  ($((SECONDS - t0)) s) — log $WORK/fpga_main.log"
 
 echo
 echo "| Testbench | Kết quả | Thời gian |"

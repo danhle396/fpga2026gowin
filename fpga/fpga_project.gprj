@@ -1,0 +1,20 @@
+<?xml version="1" encoding="UTF-8"?>
+<!DOCTYPE gowin-fpga-project>
+<Project>
+    <Template>FPGA</Template>
+    <Version>5</Version>
+    <Device name="GW2A-18C" pn="GW2A-LV18PG256C8/I7">gw2a18c-011</Device>
+    <FileList>
+        <File path="src/input_buffer.v" type="file.verilog" enable="1"/>
+        <File path="src/spi_slave.v" type="file.verilog" enable="1"/>
+        <File path="src/gowin_rpll/pll_50m.v" type="file.verilog" enable="1"/>
+        <File path="src/cnn_e2.v" type="file.verilog" enable="1"/>
+        <File path="src/fpga_top_v3.v" type="file.verilog" enable="1"/>
+        <File path="src/packet_parser_v3.v" type="file.verilog" enable="1"/>
+        <File path="src/result_frame_v3.v" type="file.verilog" enable="1"/>
+        <File path="src/spi_result_tx_v3.v" type="file.verilog" enable="1"/>
+        <File path="src/crc16_ccitt.v" type="file.verilog" enable="1"/>
+        <File path="src/fpga_top_v3.cst" type="file.cst" enable="1"/>
+        <File path="src/fpga_top_v3.sdc" type="file.sdc" enable="1"/>
+    </FileList>
+</Project>

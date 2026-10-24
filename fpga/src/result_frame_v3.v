@@ -1,4 +1,4 @@
-// rtl/v3/result_frame_v3.v — dựng khung ĐỌC 20 byte của A.7 rồi bật IRQ:
+// fpga/src/result_frame_v3.v — dựng khung ĐỌC 20 byte của A.7 rồi bật IRQ:
 //   0 0x5A | 1 SEQ | 2 STATUS | 3 CLASS | 4 SCORE | 5,6 CRC-16(0..4) | 7..14 4 logit INT16 BE | 15..17 CYCLES | 18,19 CRC-16(7..17)
 // SCORE = clamp((top1 − top2) >> SCORE_SHIFT, 0, 127), top1 = logit của lớp argmax (bằng nhau → chỉ số nhỏ, đã có ở
 // argmax4). Logit gỡ lỗi = clamp(logit >> LOGIT_SHIFT, −32768, 32767) (A.5). Khung lỗi: CLASS 0xFF, SCORE 0, đuôi 0.

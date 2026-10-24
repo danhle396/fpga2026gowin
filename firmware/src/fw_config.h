@@ -35,6 +35,14 @@
 #define SPI_DIV_RUN     5       /* SCK = 48 MHz / (2·5 + 2)  = 4 MHz */
 #define SEQ_SELFTEST    0xEE    /* A.10 */
 
+/* Bitstream đang nạp trong Kiwi: quyết định giao thức và đáp án tự kiểm A.10. Phải khớp file .fs đã nạp.
+ *   3 = project chính fpga/ = bitstreams/3_v3_e2_n2 (giao thức v3, engine E2, mô hình N2)  ← mặc định
+ *   1 = bitstreams/1_e1_proto1_sisfall (PROTO 1, E1; chỉ để gỡ lỗi)   2 = bitstreams/2_v3_e1_sisfall (v3, E1) */
+#ifndef FW_BITSTREAM
+#define FW_BITSTREAM    3
+#endif
+#define FW_PROTO        (FW_BITSTREAM == 1 ? 1 : 3)
+
 /* ---- A.8 khối và Safety FSM (giá trị đầu; chốt ở AI-10) ---- */
 #define BLK_SAMPLES     32      /* 32 mẫu thô 100 Hz = 0,32 s */
 #define T_STILL_A       300     /* LSB ở ±16 g, ≈ 0,15 g */

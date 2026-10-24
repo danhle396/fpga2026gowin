@@ -21,10 +21,7 @@
 #include "spi_fpga.h"
 #include "spi_frame.h"
 #include "crc.h"
-/* Bitstream đang nạp trong Kiwi (thư mục bitstreams/): quyết định giao thức và đáp án tự kiểm A.10.
- *   1 = 1_e1_proto1_sisfall (fpga_top, PROTO 1)   2 = 2_v3_e1_sisfall (giao thức v3, E1)   3 = 3_v3_e2_n2 (v3, E2, N2) */
-#define FW_BITSTREAM 1
-#define FW_PROTO     (FW_BITSTREAM == 1 ? 1 : 3)
+/* FW_BITSTREAM, FW_PROTO: fw_config.h (mặc định 3 = project chính fpga/). */
 #if FW_BITSTREAM == 3
 #include "selftest_expect_v3_e2_n2.h"
 #else

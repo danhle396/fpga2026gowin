@@ -2,12 +2,21 @@
 
 MPU6050 trên mũ → SONiX SN32F407 (EVK V1.0) → SPI → Kiwi Primer 20K (Gowin GW2A-18C) chạy 1D-CNN INT8 bằng RTL tự viết → Safety FSM trên MCU → còi tại chỗ.
 
+## Nạp và chạy: một project FPGA, một project MCU
+
+| Board | Project (mở bằng phần mềm) | Nạp thẳng không cần build |
+|---|---|---|
+| **FPGA** Kiwi Primer 20K | **`fpga/fpga_project.gprj`** (Gowin IDE: File → Open Project → Run All). Gồm toàn bộ RTL của sản phẩm: top giao thức v3, engine E2, mô hình N2, chân header J2 | `bitstreams/3_v3_e2_n2/fpga_project.fs` (trùng từng bit với file Run All sinh ra) |
+| **MCU** SN32F407 EVK | **`firmware/keil/fw.uvprojx`** (Keil: F7 build, F8 nạp). Mặc định `FW_BITSTREAM 3` trong `firmware/src/fw_config.h`, khớp sẵn với FPGA | — |
+
+Nối dây: Phụ lục E.1 của `PROJECT_MASTER.md`. Thứ tự làm trên board: [docs/huong_dan_dot_B.md](docs/huong_dan_dot_B.md). Các bitstream khác (`bitstreams/1_*`, `2_*`, `rtl/pin_probe/`) chỉ dùng để gỡ lỗi.
+
 | Tài liệu | Nội dung |
 |---|---|
 | [CLAUDE.md](CLAUDE.md) | **Đọc đầu tiên mỗi phiên AI**: cách bắt đầu phiên, luật, cách thay phiên giữa nhiều máy và nhiều tài khoản Claude, công cụ cần cài |
 | [PROJECT_MASTER.md](PROJECT_MASTER.md) | Kế hoạch, cổng G0–G7, danh sách việc, **Phụ lục A = SPEC v3 (luật)**, chân và nối dây (Phụ lục E) |
 | [DE_CUONG_v2.md](DE_CUONG_v2.md), [THAY_DOI_SO_VOI_v1.md](THAY_DOI_SO_VOI_v1.md) | Đề cương nộp BTC và các thay đổi |
-| [docs/huong_dan_dot_B.md](docs/huong_dan_dot_B.md) | **Làm gì khi cầm board**: 10 bước có Pass (B10 = chuyển sang bitstream 3, mô hình demo) |
+| [docs/huong_dan_dot_B.md](docs/huong_dan_dot_B.md) | **Làm gì khi cầm board**: 10 bước có Pass (B7–B8 = nạp project chính và chạy mô hình demo; B10 = đường lùi khi SPI lỗi) |
 | [docs/data_protocol.md](docs/data_protocol.md) | Quy trình thu dữ liệu trên mũ (D2, D3) |
 | [docs/bao_cao/](docs/bao_cao/) | Bằng chứng theo ngày cho mọi việc đã đánh [x] |
 
@@ -17,9 +26,10 @@ MPU6050 trên mũ → SONiX SN32F407 (EVK V1.0) → SPI → Kiwi Primer 20K (Gow
 |---|---|
 | `firmware/` | Firmware chính SN32F407: Keil `keil/fw.uvprojx` hoặc `bash firmware/build.sh` ([README](firmware/README.md)) |
 | `Document Board Kiwi Primer 20K/Kiwi20K_FallDetection_FPGA/` | Nguồn E1 của nhóm (engine, `fpga_top` PROTO 1). **Đừng mở `fpga_project.gprj` trong đó rồi Run All**: file chân của nó là J1 cũ, không phải sơ đồ nối hiện tại |
-| `rtl/gowin/` | `bash rtl/gowin/tao_project.sh` tạo 4 **project Gowin mở được bằng IDE** ở `gowin_proj/` (bitstream 1, 2, 3, pin_probe; chân J2); Run All ra `.fs` trùng `bitstreams/` |
-| `rtl/v3/` | Top giao thức v3 (CRC-16, SEQ, STATUS, RST_N), `tb_proto`, script P&R |
-| `rtl/e2/` | Engine E2 (1 chu kỳ/MAC, P làn), `tb_e2` |
+| **`fpga/`** | **Project FPGA duy nhất của sản phẩm** (`fpga_project.gprj`); `fpga/src/` là nơi DUY NHẤT chứa RTL sản phẩm: top v3, parser, khung kết quả, CRC-16, SPI, engine E2, rPLL, chân `.cst`, `.sdc`, tham số + weight mô hình N2 |
+| `rtl/gowin/` | Chỉ để gỡ lỗi: `tao_project.sh` tạo project phụ cho bitstream 1, 2 và pin_probe ở `gowin_proj/` |
+| `rtl/v3/` | Testbench giao thức v3 (`tb_proto`, `tb_stream`), script P&R `pnr_v3.sh`, chân của bitstream 1 |
+| `rtl/e2/` | Testbench engine E2 (`tb_e2`); nguồn engine nằm ở `fpga/src/cnn_e2.v` |
 | `rtl/tb/` | `run_all.sh`, `tb_top_spi`, `tb_e1_layers` |
 | `rtl/gl/` | Mô phỏng netlist sau P&R (`run_gl.sh`, stub rPLL cho Icarus) |
 | `rtl/pin_probe/` | Bitstream dò 6 chân J2 của Kiwi |

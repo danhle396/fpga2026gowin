@@ -100,10 +100,13 @@ Nếu dòng `# cho ngat INT cua MPU6050 (P2.2, J7)` lặp lại mỗi 2 s và kh
 |---|---|
 | J2-16 (CS) ≈ 0,21 · J2-10 (SCK) ≈ 0,41 · J2-11 (MOSI) ≈ 0,62 · J2-13 (MISO) ≈ 0,83 · J2-24 (IRQ) ≈ 1,03 · J2-23 (RST_N) ≈ 1,24 V; hoặc logic analyzer đếm 1..6 xung mỗi 8 ms | 6 số đo |
 
-## B7. Bitstream chính và thông mạch SPI lần đầu (RA-04, FW-09 a)
+## B7. Nạp FPGA chính và thông mạch SPI (RA-04, FW-09 a)
 
-1. Nạp `bitstreams/1_e1_proto1_sisfall/fpga_project.fs` vào Kiwi bằng Gowin Programmer; kiểm `SHA256.txt` trước. Đây là bitstream dựng sẵn với shift 8, giao thức PROTO 1 (RA-01). Không cần mở project hay chạy lại Run All. Đo J2-13 (MISO) và J2-24 (IRQ) ≤ 3,3 V (E.4 bước 4).
-2. Rút nguồn cả hai board. **Tháo 4 dây SPI của ESP32 khỏi J2** (hai master trên một bus sẽ đánh nhau). Nối **GND trước**, rồi theo E.1:
+Từ 24/10 chỉ có **một project FPGA** (`fpga/fpga_project.gprj`: giao thức v3 + engine E2 + mô hình N2 11 người, chân J2) và **một project MCU** (`firmware/keil/fw.uvprojx`, mặc định `FW_BITSTREAM 3` trong `firmware/src/fw_config.h`). Hai project khớp nhau sẵn, không phải sửa số nào.
+
+1. Nạp `bitstreams/3_v3_e2_n2/fpga_project.fs` vào Kiwi bằng Gowin Programmer (SRAM Mode → SRAM Program). File này trùng từng bit với file Run All của `fpga/fpga_project.gprj` sinh ra. Kiểm `sha256sum -c SHA256.txt` trước khi nạp. Không cần mở project.
+2. Vẫn chưa nối dây: đo J2-13 (MISO) và J2-24 (IRQ), phải ≤ 3,3 V (E.4 bước 4).
+3. Rút nguồn cả hai board. **Tháo 4 dây SPI của ESP32 khỏi J2**: hai master trên một bus sẽ tranh nhau. Nối **GND trước**, rồi nối 6 dây theo E.1:
 
    | MCU (header EVK) | FPGA (header J2 · ball) |
    |---|---|
@@ -112,24 +115,30 @@ Nếu dòng `# cho ngat INT cua MPU6050 (P2.2, J7)` lặp lại mỗi 2 s và kh
    | P1.1 `MISO_P11` (J12) | J2-13 · R12 |
    | P2.8 `P28` (J7) | J2-16 · R11 (CS) |
    | P2.9 `P29` (J7) | J2-24 · R8 (IRQ) |
+   | P2.1 `P21` (J7) | J2-23 · T8 (RST_N) |
 
-3. Cấp nguồn, giữ SW3 + reset để vào menu. Gõ lần lượt `p` (cho tới khi in `PROTO=1`), `1` (1 MHz), `s`.
+4. Cấp nguồn, giữ SW3 rồi nhấn reset để vào menu. Dòng `SPI: PROTO=3` phải hiện sẵn. Gõ `1` (1 MHz), rồi `s`.
 
 | Pass | Gửi lại |
 |---|---|
 | `OK 100 / 100`, timeout 0, crc 0 | dòng thống kê; ảnh logic analyzer một vòng ghi + đọc (TH-05) nếu có |
 
-Rồi gõ `4` (4 MHz) và `s`: vẫn phải 100/100.
+Rồi gõ `4` (4 MHz) và `s`: vẫn phải 100/100. **Không đạt** thì làm bước B10 (đường lùi) để biết lỗi nằm ở dây hay ở giao thức.
 
-## B8. Chạy cả chuỗi (FW-10, TH-07, FW-13)
+## B8. Chạy cả chuỗi với mô hình demo (FW-10, TH-07, TH-09, FW-13)
 
-1. Reset không giữ phím. Lúc này dòng tự kiểm phải là `tu kiem FPGA (A.10): rc=0 class=3  PASS`, đáp án nằm trong `firmware/src/selftest_expect.h` với weight SisFall của nhóm.
-2. **FW-10:** `python tools/check_frames.py --port COMx --seconds 400 --out trc.log --proto 1` (cần ≥ 1.000 khung, khoảng 330 s).
-3. **TH-07 / FW-13:** `python tools/hil_test.py --port COMx --n 500 --proto 1`.
+1. Reset, không giữ phím. Phải thấy dòng `tu kiem FPGA (A.10): rc=0 class=3  PASS`. Đáp án nằm trong `firmware/src/selftest_expect_v3_e2_n2.h`; firmware so trọn 7 byte đầu của khung đọc.
+2. **FW-10:** `python tools/check_frames.py --port COMx --seconds 400 --out trc3.log --proto 3` (cần ≥ 1.000 khung, khoảng 330 s).
+3. **TH-07 / TH-09:** `python tools/hil_test.py --port COMx --n 2000 --proto 3 --params ml/out/n2_11_d1/params_int8.npz`. **Phải đúng `--params` này**: dùng file của mô hình khác thì mọi cửa sổ đều báo sai lệch, dù chip chạy đúng.
 
 | Pass | Gửi lại |
 |---|---|
-| check_frames: "CRC của MCU trùng Python: N/N", "mất 0 mẫu"; hil_test: "500 khớp golden, 0 sai" → **PASS** | hai dòng kết luận + file `trc.log` |
+| Tự kiểm PASS; check_frames: "CRC của MCU trùng Python: N/N", "mất 0 mẫu"; hil_test: "2000 khớp golden, 0 sai", CYCLES = 258080 (5,15 ms) | dòng tự kiểm, hai dòng kết luận, file `trc3.log` |
+
+Nếu tự kiểm FAIL mà `s` ở B7 đạt, kiểm theo thứ tự:
+- dây RST_N;
+- đã nạp đúng `.fs` (kiểm SHA256);
+- `FW_BITSTREAM` trong `fw_config.h` có còn là 3 không.
 
 ## B9. Nút bấm duy nhất: bật/tắt, CANCEL, SOS (đề cương v2.1, FW-14)
 
@@ -149,31 +158,24 @@ Rồi gõ `4` (4 MHz) và `s`: vẫn phải 100/100.
 |---|---|
 | Đúng cả 5 dòng của bảng | các dòng `S,...` trên terminal |
 
-## B10. Chuyển sang bitstream 3 — mô hình sẽ demo (RA-05/07, TH-09)
+## B10. Đường lùi: chỉ làm khi B7 không đạt
 
-Chỉ làm khi B7–B8 đạt (PROTO 1 chạy 100/100). Bitstream 3 là giao thức v3 + engine E2 + **N2 chỉ kênh đầu, D1 11 người**, cũng là mô hình dùng để demo.
+Bitstream 1 (`bitstreams/1_e1_proto1_sisfall`) dùng giao thức PROTO 1 cũ, đơn giản hơn (CRC-8, đọc 7 byte, không có RST_N). Nạp nó để tách lỗi: nếu PROTO 1 chạy được mà v3 thì không, lỗi nằm ở giao thức; nếu cả hai đều không chạy, lỗi nằm ở dây hoặc chân.
 
-1. Rút nguồn. Nối thêm **P2.1 (`P21`, J7) → J2-23 · T8 (RST_N)**. Năm dây của B7 giữ nguyên.
-2. Kiểm `bitstreams/3_v3_e2_n2/SHA256.txt` (`sha256sum -c SHA256.txt`), rồi nạp `bitstreams/3_v3_e2_n2/fpga_project.fs` bằng Gowin Programmer.
-3. Trong `firmware/src/app_main.c` đổi `#define FW_BITSTREAM 1` thành `3`. Build (F7) rồi nạp (F8).
-4. Reset, không giữ phím. Mong đợi dòng `tu kiem FPGA (A.10): rc=0 class=3  PASS`. Đáp án nằm trong `firmware/src/selftest_expect_v3_e2_n2.h`; firmware so trọn 7 byte đầu của khung đọc.
-5. **FW-10:** `python tools/check_frames.py --port COMx --seconds 400 --out trc3.log --proto 3`
-6. **TH-09:** `python tools/hil_test.py --port COMx --n 2000 --proto 3 --params ml/out/n2_11_d1/params_int8.npz`. **Phải đúng `--params` này**: dùng file của mô hình khác thì mọi cửa sổ sẽ báo sai lệch dù chip chạy đúng.
+1. Nạp `bitstreams/1_e1_proto1_sisfall/fpga_project.fs` (SRAM). Dây giữ nguyên như B7; dây RST_N không dùng nhưng để nguyên không sao.
+2. Trong menu gõ `p` cho tới khi in `PROTO=1`, rồi `1`, rồi `s`. Không cần build lại firmware.
+3. Muốn chạy cả chuỗi với bitstream này: đặt `#define FW_BITSTREAM 1` trong `firmware/src/fw_config.h`, build (F7), nạp (F8). Chạy `check_frames.py --proto 1` và `hil_test.py --n 500 --proto 1`. **Xong nhớ đổi lại 3.**
 
-| Pass | Gửi lại |
+| Kết quả | Kết luận |
 |---|---|
-| Tự kiểm PASS; check_frames "N/N", mất 0 mẫu; hil_test "2000 khớp golden, 0 sai", CYCLES = 258080 (5,15 ms) | dòng tự kiểm, hai dòng kết luận, file `trc3.log` |
-
-Nếu tự kiểm FAIL mà B8 đã đạt, kiểm theo thứ tự:
-- dây RST_N;
-- đã nạp đúng `.fs` (kiểm SHA256);
-- đã đổi `FW_BITSTREAM` thành 3 rồi build lại chưa.
+| PROTO 1 đạt 100/100, v3 (B7) không đạt | Gửi `Kẹt: B7` kèm log của cả hai lần chạy `s` |
+| Cả hai đều không đạt | Kiểm dây, GND, B6; gửi ảnh logic analyzer |
 
 ---
 
 ## Sau đợt B
 
-Khi B1–B8 đạt: cổng G0 và phần lớn G2 đóng được. Khi B10 đạt: phần chip của mô hình demo đã xong.
+Khi B1–B8 đạt: cổng G0 và phần lớn G2 đóng được, phần chip của mô hình demo đã xong.
 
 Việc tiếp theo cần người là **buổi thử trên mũ** (đề cương v2.1; AI-05 / AI-08; quy trình ở `docs/data_protocol.md`). Dữ liệu này chỉ để kiểm tra, không dùng huấn luyện:
 - đội mũ ≥ 2 giờ từ ≥ 2 người, có cúi nhặt, nằm xuống, suýt ngã;
@@ -186,5 +188,5 @@ Lý do cần buổi thử: trên D1 (11 người), báo giả là 1,11 lần/gi�
 
 Thư mục cần biết:
 - `firmware/README.md`: lệnh firmware.
-- `rtl/v3/`, `rtl/e2/`: giao thức v3 và engine nhanh, dùng sau khi PROTO 1 chạy được trên board.
+- `fpga/`: project FPGA duy nhất (mở `fpga/fpga_project.gprj` bằng Gowin IDE).
 - `docs/bao_cao/`: bằng chứng các bước đã làm trên máy.
