@@ -19,6 +19,7 @@ ROOT = pathlib.Path(__file__).resolve().parent.parent
 
 def main():
     sys.stdout.reconfigure(encoding="utf-8")
+    sys.stderr.reconfigure(encoding="utf-8")
     ap = argparse.ArgumentParser(description="ghi UART của MCU ra file (đợt B)")
     ap.add_argument("--port", help="cổng COM của mạch USB-UART, ví dụ COM5")
     ap.add_argument("--baud", type=int, default=460800)
