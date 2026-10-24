@@ -30,7 +30,7 @@ Chưa đạt: kiểm SW1 và jumper J1; **không** đi tiếp nếu VDD gần 5 
 
 1. Mở `firmware/keil/fw.uvprojx`, bấm Build (F7), rồi Download (F8). Mạch nạp SN-Link đã chọn sẵn.
    - **Keil phải có driver SN-Link của SONiX** (gói "SN-Link_Driver for Keil Cortex-M", trang SN-LINK-V3 trên sonix.com.tw). Thiếu driver thì F8 không làm gì cả.
-   - Kiểm nhanh: có thư mục `Keil_v5\ARM\SNLINK\`. Máy gốc chưa có thư mục này (24/10), thiết bị cắm vào hiện tên **SN-Link-Lite**, USB `0C45:5702`.
+   - Kiểm nhanh: có thư mục `Keil_v5\ARM\SNLINK\`, và `TOOLS.INI` có dòng `SNLINK\SNLINK.dll ("SN-Link Debugger")`. Thiết bị cắm vào hiện tên **SN-Link-Lite**, USB `0C45:5702`. SN-Link-Lite **không tạo cổng COM**: đọc UART phải dùng mạch USB-UART riêng.
    - Cài driver vào **đúng thư mục Keil đang dùng** (máy gốc: `%LOCALAPPDATA%\Keil_v5`). Mở lại Keil, vào Options for Target → Debug và Utilities, chọn SN-Link.
 2. Nối terminal 460800 8N1 vào UART0. Cổng là header J10 `UTX_P31` / `URX_P32` / GND, qua mạch USB-UART 3,3 V: RX của mạch nối `UTX_P31`, TX của mạch nối `URX_P32`.
 3. **Giữ phím SW3** rồi nhấn reset (hoặc cắm lại USB). Giữ đến khi thấy chữ.
