@@ -38,7 +38,19 @@ MCU in chữ ra chân TX, tức là sang ESP32. ESP32 chuyển các dòng đó l
 
 Các file `.c`/`.h` trong thư mục sketch là **bản chép** từ `firmware/src`. Sửa ở `firmware/src` rồi chạy `bash esp32/dong_bo_core.sh`; `rtl/tb/run_all.sh` sẽ báo FAIL nếu hai nơi lệch nhau.
 
-## 3. Xem log
+## 3. Xem dữ liệu
+
+**Cách dễ nhất: trang web của ESP32.** Điện thoại hoặc laptop vào cùng WiFi với ESP32, mở trình duyệt, gõ `http://<IP ESP32>`; IP in ở dòng `# WiFi ... IP ...`. Trang hiện:
+- trạng thái Safety FSM bằng màu: xanh = theo dõi, cam = nghi ngã, đỏ nhấp nháy = cảnh báo;
+- kết quả CNN mới nhất;
+- biểu đồ |a| 30 s, có tô đỏ các cửa sổ FALL;
+- thống kê, 20 sự kiện gần nhất;
+- nút **Hủy cảnh báo**.
+
+Trang tự cập nhật 3 lần/giây và không cần Internet.
+
+**Ghi log ra file để gửi lại:**
+
 
 - **Qua USB của ESP32:** `python -I tools/ghi_uart.py --port COMx --buoc chay --giay 60`. `COMx` là cổng của ESP32; baud mặc định 460800 đã khớp.
 - **Qua WiFi:** laptop vào cùng hotspot. IP của ESP32 in ở dòng `# WiFi ... IP ...` trên USB. Chạy `python -I tools/ghi_uart.py --tcp <IP> --buoc chay --giay 60`, hoặc công cụ của nhóm `wifi_live_log.py --host <IP>`.

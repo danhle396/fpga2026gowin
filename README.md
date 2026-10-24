@@ -10,7 +10,7 @@ MPU6050 trên mũ → SONiX SN32F407 → UART → ESP32 → SPI → Kiwi Primer 
 | **ESP32** | `esp32/mu_nga_hub/mu_nga_hub.ino` (Arduino IDE, ESP32 Dev Module) | Tiền xử lý, cửa sổ, khung SPI v3, hỏi vòng FPGA, bỏ phiếu + Safety FSM, nút, log USB + WiFi |
 | **MCU** SN32F407 EVK | `firmware/keil/fw.uvprojx` (Keil: F7, F8) | Đọc MPU6050 100 Hz, hiệu chuẩn gyro, gửi từng mẫu + nút sang ESP32 |
 
-Từng bước, cách xem log và lỗi hay gặp: **[docs/huong_dan_nap_chay.md](docs/huong_dan_nap_chay.md)**.
+Xem dữ liệu: mở `http://<IP ESP32>` trên điện thoại hoặc laptop cùng WiFi (trang web do ESP32 phục vụ: trạng thái, biểu đồ gia tốc, sự kiện, nút hủy). Từng bước, cách ghi log và lỗi hay gặp: **[docs/huong_dan_nap_chay.md](docs/huong_dan_nap_chay.md)**.
 
 ## Cấu trúc
 

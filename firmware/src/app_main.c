@@ -72,7 +72,7 @@ int main(void)
 
     /* ---- gửi mẫu cho ESP32 ---- */
     uint8_t f[NODE_SAMPLE_FRAME], seq = 0, keys = 0;
-    uint32_t t_tick = board_millis(), t_stat = t_tick, t_last = t_tick, n = 0, n_err = 0, n_lost = 0;
+    uint32_t t_tick = board_millis(), t_stat = t_tick, t_last = t_tick, n = 0, n_err = 0, n_lost = 0, n_reinit = 0;
     for (;;) {
         uint32_t now = board_millis();
         board_wdt_feed();
@@ -91,6 +91,14 @@ int main(void)
                 n_err++;
             }
         }
+        if (n && now - t_last > 200u) {
+            /* 24/10 trên board: MPU6050 ngừng ra mẫu sau khi nguồn chập chờn (reset về chế độ ngủ, I2C vẫn trả lời).
+             * Quá 200 ms không có mẫu mới thì ghi lại cấu hình A.1; offset gyro giữ nguyên. */
+            int bad2 = imu_init(&who);
+            put_kv("# MPU6050 khong co mau moi > 200 ms: cau hinh lai, thanh ghi sai=", bad2); uart_puts("\n");
+            n_reinit++;
+            t_last = now;
+        }
         if (now - t_tick >= 10u) {                                  /* khe 10 ms: phím, LED */
             t_tick += 10u;
             uint8_t k = keys_scan(now);
@@ -99,7 +107,7 @@ int main(void)
         }
         if (now - t_stat >= 5000u) {
             t_stat = now;
-            put_kv("STAT,mau=", (int32_t)n); put_kv(",i2c_loi=", (int32_t)n_err); put_kv(",mat=", (int32_t)n_lost);
+            put_kv("STAT,mau=", (int32_t)n); put_kv(",i2c_loi=", (int32_t)n_err); put_kv(",mat=", (int32_t)n_lost); put_kv(",cau_hinh_lai=", (int32_t)n_reinit);
             uart_puts("\n");
         }
     }

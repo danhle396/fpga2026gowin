@@ -19,6 +19,8 @@
 #include <Arduino.h>
 #include <SPI.h>
 #include <WiFi.h>
+#include <WebServer.h>
+#include <math.h>
 
 extern "C" {
 #include "hub.h"
@@ -26,6 +28,7 @@ extern "C" {
 #include "safety.h"
 }
 #include "selftest_expect_v3_e2_n2.h"
+#include "trang_web_html.h"
 
 // ---- chân và tốc độ (theo codecanthiet/esp32/README_wiring.md của nhóm) ----
 #define MCU_RX_PIN      16
@@ -62,10 +65,27 @@ static uint32_t s_rx_bytes = 0;                // mọi byte nhận ở GPIO16, 
 static uint8_t  s_raw_left = 0;                 // lệnh RAW: in hex các byte kế tiếp
 static bool s_wifi_shown = false;
 
+// ---------------- trang web http://<IP>/ : lịch sử cho biểu đồ và danh sách sự kiện ----------------
+static WebServer s_web(80);
+#define ACC_N 300                               // |a| mỗi 100 ms, 30 s
+#define RES_N 120                               // kết quả FPGA gần nhất (≈ 38 s)
+#define EV_N  20
+static uint32_t s_acc_t[ACC_N]; static uint16_t s_acc_v[ACC_N]; static uint16_t s_acc_i = 0, s_acc_n = 0;
+static uint32_t s_res_t[RES_N]; static uint8_t s_res_c[RES_N]; static uint16_t s_res_i = 0, s_res_n = 0;
+static String   s_ev[EV_N]; static uint8_t s_ev_i = 0, s_ev_n = 0;
+static bool     s_tk_ok = false;
+static int      s_last_rc = -1;
+static uint32_t s_web_cancel_until = 0;
+
 // ---------------- in ra USB + TCP ----------------
 static void out(const char *s)
 {
     Serial.println(s);
+    if (!(s[0] >= '0' && s[0] <= '9') && strncmp(s, "STAT", 4) != 0) {     // sự kiện cho trang web
+        s_ev[s_ev_i] = String((unsigned long)(millis() / 1000)) + " s  " + s;
+        s_ev_i = (uint8_t)((s_ev_i + 1) % EV_N);
+        if (s_ev_n < EV_N) s_ev_n++;
+    }
     if (s_client && s_client.connected()) {
         // availableForWrite() của NetworkClient (core 3.x) luôn trả 0, nên ghi thẳng; lwIP đệm vài KB, đủ cho log
         size_t n = strlen(s);
@@ -116,6 +136,7 @@ static bool selftest()
              got[5], got[6], selftest_frame7[0], selftest_frame7[1], selftest_frame7[2], selftest_frame7[3],
              selftest_frame7[4], selftest_frame7[5], selftest_frame7[6], got[3], ok ? "PASS" : "FAIL");
     out(s);
+    s_tk_ok = ok != 0;
     return ok != 0;
 }
 
@@ -147,6 +168,41 @@ static void read_commands(Stream &st, char *buf, uint8_t &n)
     }
 }
 
+// ---------------- /data: JSON cho trang web ----------------
+static void web_data()
+{
+    String j;
+    j.reserve(6000);
+    j += "{\"t\":"; j += millis();
+    j += ",\"st\":\""; j += safety_state_name(H.app.fsm.st);
+    j += "\",\"rc\":"; j += s_last_rc;
+    j += ",\"cls\":"; j += H.last.cls; j += ",\"score\":"; j += H.last.score; j += ",\"seq\":"; j += H.last.seq;
+    j += ",\"tk\":"; j += s_tk_ok ? 1 : 0;
+    j += ",\"s\":{\"mau\":"; j += H.n_samples; j += ",\"mat\":"; j += NR.n_lost; j += ",\"hong\":"; j += NR.n_bad;
+    j += ",\"gui\":"; j += H.n_sent; j += ",\"ok\":"; j += H.n_ok; j += ",\"to\":"; j += H.n_timeout;
+    j += ",\"loi\":"; j += H.n_err; j += ",\"spi_khz\":"; j += s_spi_hz / 1000; j += "}";
+    j += ",\"acc\":[";
+    for (uint16_t k = 0; k < s_acc_n; k++) {
+        uint16_t i = (uint16_t)((s_acc_i + ACC_N - s_acc_n + k) % ACC_N);
+        if (k) j += ','; j += '['; j += s_acc_t[i]; j += ','; j += s_acc_v[i]; j += ']';
+    }
+    j += "],\"res\":[";
+    for (uint16_t k = 0; k < s_res_n; k++) {
+        uint16_t i = (uint16_t)((s_res_i + RES_N - s_res_n + k) % RES_N);
+        if (k) j += ','; j += '['; j += s_res_t[i]; j += ','; j += s_res_c[i]; j += ']';
+    }
+    j += "],\"ev\":[";
+    for (uint8_t k = 0; k < s_ev_n; k++) {
+        const String &e = s_ev[(s_ev_i + EV_N - s_ev_n + k) % EV_N];
+        if (k) j += ',';
+        j += '"';
+        for (size_t c = 0; c < e.length(); c++) { char ch = e[c]; if (ch == '"' || ch == '\\') j += '\\'; j += ch; }
+        j += '"';
+    }
+    j += "]}";
+    s_web.send(200, "application/json", j);
+}
+
 // ---------------- setup / loop ----------------
 void setup()
 {
@@ -162,6 +218,10 @@ void setup()
     WiFi.setAutoReconnect(true);
     WiFi.begin(WIFI_STA_SSID, WIFI_STA_PASSWORD);
     s_server.begin();
+    s_web.on("/", HTTP_GET, []() { s_web.send_P(200, "text/html; charset=utf-8", TRANG_WEB); });
+    s_web.on("/data", HTTP_GET, web_data);
+    s_web.on("/huy", HTTP_POST, []() { s_web_cancel_until = millis() + 300; s_web.send(200, "text/plain", "ok"); });
+    s_web.begin();
     delay(500);                                 // FPGA nạp cấu hình từ flash sau khi cấp nguồn
 
     out("# mu bao ho - ESP32 hub (MCU -> UART -> ESP32 -> SPI -> FPGA), firmware/src + hub.c");
@@ -200,6 +260,11 @@ void loop()
         if (e == NODE_SAMPLE) {
             t_last_sample = now;
             hub_sample(&H, &IO, NR.r, NR.keys, now);
+            if (NR.n_ok % 10u == 0) {           // |a| cho biểu đồ web, 10 điểm/s; ±16 g: 2048 LSB/g
+                float a = sqrtf((float)NR.r[0] * NR.r[0] + (float)NR.r[1] * NR.r[1] + (float)NR.r[2] * NR.r[2]) / 2048.0f;
+                s_acc_t[s_acc_i] = now; s_acc_v[s_acc_i] = (uint16_t)(a * 100.0f + 0.5f);
+                s_acc_i = (uint16_t)((s_acc_i + 1) % ACC_N); if (s_acc_n < ACC_N) s_acc_n++;
+            }
             if (s_log) {
                 // t theo số mẫu MCU đã gửi (100 Hz, tính cả mẫu mất), không theo lúc ESP32 nhận: UART có thể dồn cục
                 unsigned long t_log = 10UL * (unsigned long)(NR.n_ok + NR.n_lost - 1u);
@@ -215,6 +280,11 @@ void loop()
 
     // 2. kết quả FPGA (hỏi vòng)
     int rc = hub_poll(&H, &IO, now);
+    if (rc != SPI_PENDING) {
+        s_last_rc = rc;
+        s_res_t[s_res_i] = now; s_res_c[s_res_i] = rc == SPI_OK ? H.last.cls : 255;
+        s_res_i = (uint16_t)((s_res_i + 1) % RES_N); if (s_res_n < RES_N) s_res_n++;
+    }
     if (rc != SPI_PENDING && !s_log) {
         snprintf(s, sizeof s, "%lu,%u,%d,%u,%s,%d", (unsigned long)now, H.last.seq, rc == SPI_OK ? H.last.cls : -1,
                  H.last.score, safety_state_name(H.app.fsm.st), rc);
@@ -224,7 +294,7 @@ void loop()
     // 3. khe 10 ms: Safety FSM, nút, LED
     if (now - t_tick >= 10u) {
         t_tick += 10u;
-        hub_tick(&H, now, digitalRead(BTN_PIN) == LOW);
+        hub_tick(&H, now, digitalRead(BTN_PIN) == LOW || (int32_t)(s_web_cancel_until - now) > 0);
         if (H.app.fsm.events & SAFETY_EV_STATE) {
             snprintf(s, sizeof s, "S,%lu,%s,%u", (unsigned long)now, safety_state_name(H.app.fsm.st), H.app.fsm.why);
             out(s);
@@ -265,7 +335,8 @@ void loop()
         out("# TCP: may xem log da ket noi");
     }
 
-    // 6. lệnh
+    // 6. trang web, lệnh
+    s_web.handleClient();
     read_commands(Serial, cmd_usb, n_usb);
     if (s_client && s_client.connected()) read_commands(s_client, cmd_tcp, n_tcp);
 }
