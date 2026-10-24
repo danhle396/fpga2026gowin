@@ -23,3 +23,5 @@ gowin_proj/
 fpga/impl/*
 !fpga/impl/fpga_project_process_config.json
 fpga/*.gprj.user
+# log UART ghi bằng tools/ghi_uart.py (dán nội dung vào chat, hoặc chép vào docs/bao_cao/ làm bằng chứng)
+ket_qua_board/

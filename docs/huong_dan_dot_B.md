@@ -8,6 +8,8 @@ Chuẩn bị:
 - Dây dupont cái–cái ≤ 15 cm.
 - Terminal nối tiếp: PuTTY, Tera Term, hoặc `python -m serial.tools.miniterm COMx 460800`.
 
+**Ghi và gửi kết quả mỗi bước:** đóng terminal rồi chạy `python -I tools/ghi_uart.py --port COMx --buoc B5 --reset`, nhấn reset khi được nhắc. Chữ MCU in ra hiện trên màn hình và được lưu vào `ket_qua_board/B5_<giờ>.txt`. Gửi lệnh menu bằng `--lenh`, ví dụ `--buoc B7 --lenh 1 s --giay 30`. Dán nội dung file vào chat kèm `Cập nhật: B5`, hoặc `Kẹt: B5` nếu không đạt.
+
 **An toàn điện:** chưa nối board với nhau khi chưa qua B1 và B6. Mọi lần nối dây đều rút nguồn trước và **nối GND trước tiên**.
 
 ---
