@@ -1,0 +1,31 @@
+xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx# mu bao ho - ESP32 hub (MCU -> UART -> ESP32 -> SPI -> FPGA), firmware/src + hub.c
+tu kiem FPGA (A.10) SPI 1000 kHz: doc 5A EE 01 03 00 06 43, mong doi 5A EE 01 03 00 06 43 class=3  PASS
+# start
+S,693,MONITOR,1
+# WiFi <an> IP <an>, log TCP cong 3333
+# chua nhan mau tu MCU (GPIO16, 115200): kiem MCU da nap firmware FW_NODE, day TX P3.1 -> GPIO16, GND chung
+# chua nhan mau tu MCU (GPIO16, 115200): kiem MCU da nap firmware FW_NODE, day TX P3.1 -> GPIO16, GND chung
+STAT,mau=0,mat=0,khung_hong=0,gui=0,ok=0,timeout=0,loi=0,bo_qua=0,spi_khz=1000,tcp_bo=0
+# chua nhan mau tu MCU (GPIO16, 115200): kiem MCU da nap firmware FW_NODE, day TX P3.1 -> GPIO16, GND chung
+# chua nhan mau tu MCU (GPIO16, 115200): kiem MCU da nap firmware FW_NODE, day TX P3.1 -> GPIO16, GND chung
+STAT,mau=0,mat=0,khung_hong=0,gui=0,ok=0,timeout=0,loi=0,bo_qua=0,spi_khz=1000,tcp_bo=0
+# chua nhan mau tu MCU (GPIO16, 115200): kiem MCU da nap firmware FW_NODE, day TX P3.1 -> GPIO16, GND chung
+# chua nhan mau tu MCU (GPIO16, 115200): kiem MCU da nap firmware FW_NODE, day TX P3.1 -> GPIO16, GND chung
+# chua nhan mau tu MCU (GPIO16, 115200): kiem MCU da nap firmware FW_NODE, day TX P3.1 -> GPIO16, GND chung
+STAT,mau=0,mat=0,khung_hong=0,gui=0,ok=0,timeout=0,loi=0,bo_qua=0,spi_khz=1000,tcp_bo=0
+# chua nhan mau tu MCU (GPIO16, 115200): kiem MCU da nap firmware FW_NODE, day TX P3.1 -> GPIO16, GND chung
+# chua nhan mau tu MCU (GPIO16, 115200): kiem MCU da nap firmware FW_NODE, day TX P3.1 -> GPIO16, GND chung
+STAT,mau=0,mat=0,khung_hong=0,gui=0,ok=0,timeout=0,loi=0,bo_qua=0,spi_khz=1000,tcp_bo=0
+# chua nhan mau tu MCU (GPIO16, 115200): kiem MCU da nap firmware FW_NODE, day TX P3.1 -> GPIO16, GND chung
+# chua nhan mau tu MCU (GPIO16, 115200): kiem MCU da nap firmware FW_NODE, day TX P3.1 -> GPIO16, GND chung
+# chua nhan mau tu MCU (GPIO16, 115200): kiem MCU da nap firmware FW_NODE, day TX P3.1 -> GPIO16, GND chung
+STAT,mau=0,mat=0,khung_hong=0,gui=0,ok=0,timeout=0,loi=0,bo_qua=0,spi_khz=1000,tcp_bo=0
+# chua nhan mau tu MCU (GPIO16, 115200): kiem MCU da nap firmware FW_NODE, day TX P3.1 -> GPIO16, GND chung
+# chua nhan mau tu MCU (GPIO16, 115200): kiem MCU da nap firmware FW_NODE, day TX P3.1 -> GPIO16, GND chung
+STAT,mau=0,mat=0,khung_hong=0,gui=0,ok=0,timeout=0,loi=0,bo_qua=0,spi_khz=1000,tcp_bo=0
+# chua nhan mau tu MCU (GPIO16, 115200): kiem MCU da nap firmware FW_NODE, day TX P3.1 -> GPIO16, GND chung
+# chua nhan mau tu MCU (GPIO16, 115200): kiem MCU da nap firmware FW_NODE, day TX P3.1 -> GPIO16, GND chung
+# chua nhan mau tu MCU (GPIO16, 115200): kiem MCU da nap firmware FW_NODE, day TX P3.1 -> GPIO16, GND chung
+STAT,mau=0,mat=0,khung_hong=0,gui=0,ok=0,timeout=0,loi=0,bo_qua=0,spi_khz=1000,tcp_bo=0
+# chua nhan mau tu MCU (GPIO16, 115200): kiem MCU da nap firmware FW_NODE, day TX P3.1 -> GPIO16, GND chung
+# chua nhan mau tu MCU (GPIO16, 115200): kiem MCU da nap firmware FW_NODE, day TX P3.1 -> GPIO16, GND chung
