@@ -91,3 +91,12 @@ Chạy `rtl/gl/run_gl.sh`. Lệnh này dựng lại bằng P&R kèm netlist mô 
 - **B6:** dò 6 chân J2 bằng `rtl/pin_probe/pin_probe.fs`. Bốn chân SPI nhóm đã dùng; R8 / J2-24 và T8 / J2-23 thì số thứ tự trên header mới lấy theo ghi chú của nhóm, chưa ai đo.
 - Chân GND nào trên J2 thì chưa rõ. Dùng J1-1 / J1-2 như cũ.
 - **Phải tháo ESP32 khỏi J2 trước khi cấp nguồn cho MCU với bitstream này.**
+
+## Project Gowin mở được bằng IDE (thêm cùng ngày)
+
+Trước đây repo chỉ có `fpga_project.gprj` của nhóm. File chân trong đó là J1 cũ và không có top v3 / engine E2, nên mở nó rồi Run All sẽ ra bitstream **sai chân**.
+
+- **Mới:** `bash rtl/gowin/tao_project.sh` tạo 4 project ở `gowin_proj/` (không lên git): `1_e1_proto1_sisfall`, `2_v3_e1_sisfall`, `3_v3_e2_n2`, `pin_probe`.
+  - Mỗi project có `.gprj` và `impl/*_process_config.json` (đặt top module và include path), sinh bằng `rtl/gowin/tao_gprj.py` từ chính `build.tcl` của `pnr_v3.sh`.
+- **Kiểm:** mở từng `.gprj` bằng `gw_sh open_project` rồi `run all`. Cả 4 file `.fs` **trùng từng dòng bit** với `bitstreams/*` và `rtl/pin_probe/pin_probe.fs`; chỉ khác các dòng chú thích `//`.
+  - `pnr_v3.sh` sau khi sửa vẫn dựng ra bitstream 3 trùng bit.

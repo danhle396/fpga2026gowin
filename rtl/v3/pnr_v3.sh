@@ -4,6 +4,7 @@
 #   bash rtl/v3/pnr_v3.sh <thư mục làm việc> [v3|p1]
 #   bash rtl/v3/pnr_v3.sh <thư mục làm việc> e2 <thư mục export_mem.py --engine e2>     # fpga_top_v3 + engine E2
 #   SIM_NETLIST=1 bash rtl/v3/pnr_v3.sh ...      # thêm netlist mô phỏng sau P&R (.vo), dùng cho rtl/gl/run_gl.sh
+#   ONLY_PROJECT=1 bash rtl/v3/pnr_v3.sh ...     # chỉ tạo project Gowin (.gprj) mở được bằng IDE, không P&R (rtl/gowin/)
 set -e
 ROOT="$(cd "$(dirname "$0")/../.." && pwd)"
 PROJ="$ROOT/Document Board Kiwi Primer 20K/Kiwi20K_FallDetection_FPGA"
@@ -50,6 +51,8 @@ CORE="argmax4 bias_rom cnn_controller cnn_core conv1d_engine dense_engine featur
     [ "${SIM_NETLIST:-0}" = "1" ] && echo "set_option -gen_verilog_sim_netlist 1"
     echo "run all"
 } > "$W/build.tcl"
+python -I "$ROOT/rtl/gowin/tao_gprj.py" "$W"              # thư mục dựng cũng là project mở được bằng Gowin IDE
+[ "${ONLY_PROJECT:-0}" = "1" ] && exit 0                    # ONLY_PROJECT=1: chỉ tạo project, không chạy P&R
 cd "$W"
 "$GW" build.tcl > pnr.log 2>&1
 grep -E "ERROR|WARN" pnr.log | sort | uniq -c | head -20 || true

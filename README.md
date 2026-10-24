@@ -16,7 +16,8 @@ MPU6050 trên mũ → SONiX SN32F407 (EVK V1.0) → SPI → Kiwi Primer 20K (Gow
 | Thư mục | Nội dung |
 |---|---|
 | `firmware/` | Firmware chính SN32F407: Keil `keil/fw.uvprojx` hoặc `bash firmware/build.sh` ([README](firmware/README.md)) |
-| `Document Board Kiwi Primer 20K/Kiwi20K_FallDetection_FPGA/` | Project Gowin của nhóm: engine E1, `fpga_top` (giao thức PROTO 1) |
+| `Document Board Kiwi Primer 20K/Kiwi20K_FallDetection_FPGA/` | Nguồn E1 của nhóm (engine, `fpga_top` PROTO 1). **Đừng mở `fpga_project.gprj` trong đó rồi Run All**: file chân của nó là J1 cũ, không phải sơ đồ nối hiện tại |
+| `rtl/gowin/` | `bash rtl/gowin/tao_project.sh` tạo 4 **project Gowin mở được bằng IDE** ở `gowin_proj/` (bitstream 1, 2, 3, pin_probe; chân J2); Run All ra `.fs` trùng `bitstreams/` |
 | `rtl/v3/` | Top giao thức v3 (CRC-16, SEQ, STATUS, RST_N), `tb_proto`, script P&R |
 | `rtl/e2/` | Engine E2 (1 chu kỳ/MAC, P làn), `tb_e2` |
 | `rtl/tb/` | `run_all.sh`, `tb_top_spi`, `tb_e1_layers` |

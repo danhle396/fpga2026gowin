@@ -17,3 +17,5 @@ Document Board Kiwi Primer 20K/Kiwi20K_FallDetection_FPGA/impl/
 .claude/settings.local.json
 # Thư mục tạm: phân tích code từ các project khác
 codecanthiet/
+# project Gowin sinh bằng rtl/gowin/tao_project.sh
+gowin_proj/
