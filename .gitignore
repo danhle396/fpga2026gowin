@@ -15,3 +15,5 @@ test_sensor/firmware/keil/build_log.txt
 Document Board Kiwi Primer 20K/Kiwi20K_FallDetection_FPGA/impl/
 # cấu hình Claude Code riêng từng máy
 .claude/settings.local.json
+# Thư mục tạm: phân tích code từ các project khác
+codecanthiet/
