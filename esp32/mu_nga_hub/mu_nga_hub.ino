@@ -32,7 +32,7 @@ extern "C" {
 
 // ---- chân và tốc độ (theo codecanthiet/esp32/README_wiring.md của nhóm) ----
 #define MCU_RX_PIN      16
-#define MCU_TX_PIN      17          // không nối; UART2 cần một chân TX
+#define MCU_TX_PIN      17          // → MCU P3.2 (J10 URX_P32), dây thêm 25/10: lệnh còi PZ1 của EVK
 #define MCU_BAUD        115200
 #define FPGA_CS_PIN     27
 #define FPGA_SCK_PIN    18
@@ -316,7 +316,16 @@ void loop()
             snprintf(s, sizeof s, "S,%lu,%s,%u", (unsigned long)now, safety_state_name(H.app.fsm.st), H.app.fsm.why);
             out(s);
         }
-        digitalWrite(LED_PIN, (app_buzzer(&H.app, now) || app_led(&H.app, now)) ? HIGH : LOW);
+        uint8_t bz = app_buzzer(&H.app, now);
+        digitalWrite(LED_PIN, (bz || app_led(&H.app, now)) ? HIGH : LOW);
+        // còi PZ1 trên EVK do MCU kêu theo lệnh 1 byte (node_link.h): gửi khi đổi, nhắc lại mỗi 100 ms
+        static uint8_t bz_gui = 0;
+        static uint32_t t_bz = 0;
+        if (bz != bz_gui || now - t_bz >= NODE_BUZZ_REFRESH_MS) {
+            Serial2.write(bz ? NODE_CMD_BUZZ_ON : NODE_CMD_BUZZ_OFF);
+            bz_gui = bz;
+            t_bz = now;
+        }
     }
 
     // 3b. tự kiểm còn FAIL (FPGA chưa sẵn sàng lúc khởi động): thử lại mỗi 5 s khi không có khung đang chờ

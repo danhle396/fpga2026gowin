@@ -22,6 +22,14 @@
 #define NODE_SAMPLE_FRAME (5u + NODE_SAMPLE_LEN + 2u)      /* 21 byte */
 #define NODE_LINE_MAX    96u
 
+/* Chiều ngược ESP32 → MCU (dây thêm 25/10: ESP32 GPIO17 → MCU P3.2, J10 URX_P32), mỗi lệnh 1 byte:
+ * còi PZ1 của EVK bật / tắt theo app_buzzer() của Safety FSM chạy trên ESP32. ESP32 gửi khi đổi và nhắc lại mỗi
+ * NODE_BUZZ_REFRESH_MS; MCU tắt còi nếu quá NODE_BUZZ_TIMEOUT_MS không nhận lệnh (ESP32 reset hay rút dây). */
+#define NODE_CMD_BUZZ_OFF     0xB0
+#define NODE_CMD_BUZZ_ON      0xB1
+#define NODE_BUZZ_REFRESH_MS  100u
+#define NODE_BUZZ_TIMEOUT_MS  500u
+
 /* Đóng gói một mẫu vào out (≥ NODE_SAMPLE_FRAME byte); trả về số byte. */
 uint16_t node_pack_sample(uint8_t *out, uint8_t seq, const int16_t r[6], uint8_t keys);
 

@@ -8,6 +8,7 @@
  * + Safety FSM chạy trên ESP32 bằng cùng mã C (hub.c, esp32/mu_nga_hub).
  * Chữ in ra (dòng "# ...", STAT mỗi 5 s) đi cùng đường UART; ESP32 chuyển lên log với tiền tố "MCU ".
  * LED D6 nháy 1 Hz khi đang gửi mẫu; nháy nhanh 2 Hz khi MPU6050 lỗi.
+ * Còi PZ1 (P3.0): theo lệnh 1 byte ESP32 gửi về qua dây thêm 25/10 (ESP32 GPIO17 → P3.2), xem node_link.h.
  */
 #include "SN32F400.h"
 #include "board.h"
@@ -89,6 +90,8 @@ int main(void)
     /* ---- gửi mẫu cho ESP32 ---- */
     uint8_t f[NODE_SAMPLE_FRAME], seq = 0, keys = 0;
     uint32_t t_tick = board_millis(), t_stat = t_tick, t_last = t_tick, n = 0, n_err = 0, n_lost = 0, n_reinit = 0, t_retry = t_tick;
+    uint32_t t_buzz = t_tick, n_buzz_cmd = 0;
+    int buzz = 0;
     for (;;) {
         uint32_t now = board_millis();
         board_wdt_feed();
@@ -112,6 +115,16 @@ int main(void)
             n_reinit++;
             t_retry = now + 1000u;                                 /* thử lại sau 1 s */
         }
+        int cmd;                                                    /* lệnh còi từ ESP32 (node_link.h) */
+        while ((cmd = uart_getc()) >= 0) {
+            if (cmd == NODE_CMD_BUZZ_ON || cmd == NODE_CMD_BUZZ_OFF) {
+                buzz = (cmd == NODE_CMD_BUZZ_ON);
+                t_buzz = now;
+                n_buzz_cmd++;
+            }
+        }
+        if (buzz && now - t_buzz > NODE_BUZZ_TIMEOUT_MS) buzz = 0;  /* mất lệnh từ ESP32: không kêu mãi */
+        board_buzzer(buzz);
         if (now - t_tick >= 10u) {                                  /* khe 10 ms: phím, LED */
             t_tick += 10u;
             uint8_t k = keys_scan(now);
@@ -120,7 +133,7 @@ int main(void)
         }
         if (now - t_stat >= 5000u) {
             t_stat = now;
-            put_kv("STAT,mau=", (int32_t)n); put_kv(",i2c_loi=", (int32_t)n_err); put_kv(",mat=", (int32_t)n_lost); put_kv(",cau_hinh_lai=", (int32_t)n_reinit);
+            put_kv("STAT,mau=", (int32_t)n); put_kv(",i2c_loi=", (int32_t)n_err); put_kv(",mat=", (int32_t)n_lost); put_kv(",cau_hinh_lai=", (int32_t)n_reinit); put_kv(",lenh_coi=", (int32_t)n_buzz_cmd);
             uart_puts("\n");
         }
     }

@@ -1,6 +1,6 @@
 # Nạp và chạy trên phần cứng nối cố định (từ 24/10)
 
-Dây đã cố định theo `codecanthiet/` của nhóm; **không tháo, không thêm dây**. Luồng dữ liệu:
+Dây đã cố định theo `codecanthiet/` của nhóm, không tháo dây nào; **thêm một dây cho còi (25/10): ESP32 GPIO17 → EVK J10 `URX_P32` (P3.2)**. Luồng dữ liệu:
 
 ```
 MPU6050 ──I²C──► SN32F407 (MCU) ──UART 115200──► ESP32 ──SPI──► Kiwi Primer 20K (FPGA, CNN)
@@ -8,6 +8,7 @@ MPU6050 ──I²C──► SN32F407 (MCU) ──UART 115200──► ESP32 ─�
                   gửi từng mẫu + nút                         │
                                                              ├─ tiền xử lý, cửa sổ, Safety FSM (lõi C đã kiểm khớp golden)
                                                              ├─ LED GPIO2 (báo động), nút BOOT (CANCEL phụ)
+                                                             ├─ GPIO17 → MCU P3.2: lệnh còi → còi PZ1 trên EVK kêu
                                                              └─ log: USB 460800 + WiFi TCP cổng 3333
 ```
 
@@ -28,6 +29,13 @@ MPU6050 ──I²C──► SN32F407 (MCU) ──UART 115200──► ESP32 ─�
 3. Đặt board **đứng yên 3 s** sau khi reset (hiệu chuẩn gyro). Sau đó LED D6 nháy 1 Hz, nghĩa là MCU đang gửi mẫu sang ESP32.
 
 MCU in chữ ra chân TX, tức là sang ESP32. ESP32 chuyển các dòng đó lên log với tiền tố `MCU `.
+
+**Còi:** ESP32 gửi lệnh bật/tắt còi (1 byte) qua dây GPIO17 → P3.2; MCU kêu còi PZ1 trên EVK ở 500 Hz theo nhịp của Safety FSM:
+- CẢNH BÁO: bíp ngắn mỗi giây trong 10 s đếm ngược;
+- BÁO ĐỘNG: hú liên tục;
+- bật/tắt hệ thống: bíp xác nhận.
+
+Mất lệnh quá 0,5 s (ESP32 reset, đứt dây) thì MCU tự tắt còi. Trong `STAT` của MCU, `lenh_coi` tăng đều khoảng 10 mỗi giây là dây còi đã thông.
 
 ## 2. ESP32
 
