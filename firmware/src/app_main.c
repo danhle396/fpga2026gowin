@@ -8,7 +8,8 @@
  * + Safety FSM chạy trên ESP32 bằng cùng mã C (hub.c, esp32/mu_nga_hub).
  * Chữ in ra (dòng "# ...", STAT mỗi 5 s) đi cùng đường UART; ESP32 chuyển lên log với tiền tố "MCU ".
  * LED D6 nháy 1 Hz khi đang gửi mẫu; nháy nhanh 2 Hz khi MPU6050 lỗi.
- * Còi PZ1 (P3.0): theo lệnh 1 byte ESP32 gửi về qua dây thêm 25/10 (ESP32 GPIO17 → P3.2), xem node_link.h.
+ * Còi PZ1 (P3.0): theo lệnh 1 byte ESP32 gửi về qua dây ESP32 GPIO17 → P3.2 (node_link.h); tạm tắt bằng
+ * COI_TU_ESP32 0 (fw_config.h) cho tới khi nhóm nối được dây.
  */
 #include "SN32F400.h"
 #include "board.h"
@@ -115,6 +116,7 @@ int main(void)
             n_reinit++;
             t_retry = now + 1000u;                                 /* thử lại sau 1 s */
         }
+#if COI_TU_ESP32
         int cmd;                                                    /* lệnh còi từ ESP32 (node_link.h) */
         while ((cmd = uart_getc()) >= 0) {
             if (cmd == NODE_CMD_BUZZ_ON || cmd == NODE_CMD_BUZZ_OFF) {
@@ -125,6 +127,9 @@ int main(void)
         }
         if (buzz && now - t_buzz > NODE_BUZZ_TIMEOUT_MS) buzz = 0;  /* mất lệnh từ ESP32: không kêu mãi */
         board_buzzer(buzz);
+#else
+        (void)t_buzz; (void)buzz;
+#endif
         if (now - t_tick >= 10u) {                                  /* khe 10 ms: phím, LED */
             t_tick += 10u;
             uint8_t k = keys_scan(now);

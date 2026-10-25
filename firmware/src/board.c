@@ -101,6 +101,7 @@ static void uart_init(void)
 {
     SN_SYS1->AHBCLKEN |= (1UL << 16);           /* UART0CLKEN */
     SN_PFPA->UART0 = (2UL << 2) | 2UL;          /* URXD0 = P3.2, UTXD0 = P3.1 */
+    PIN_CFG(SN_GPIO3, 2, PIN_CFG_PULLUP);       /* RX chưa nối dây: kéo lên, khỏi thả nổi */
     SN_UART0->CTRL = 0;
     SN_UART0->LC  = 0x83;                       /* DLAB = 1, 8N1 */
     SN_UART0->DLL = (SystemCoreClock + 4u * UART_BAUD) / (8u * UART_BAUD);    /* OVER8: 48 MHz → 52 */

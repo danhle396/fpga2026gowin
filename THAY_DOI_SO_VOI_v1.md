@@ -33,7 +33,7 @@ Mạch của nhóm đã nối cố định theo phiên bản thử trước đó
 | j | Nơi chạy tiền xử lý, khung v3, bỏ phiếu + Safety FSM, nút | SN32F407 | ESP32, **cùng mã C** (`firmware/src`: app_core, preprocess, blocks, safety, pwr_btn, spi_frame) qua `hub.c` | Kết quả FPGA không quay về MCU được. Mã C giữ nguyên nên các phép kiểm khớp golden vẫn áp dụng; `hub.c` thêm 2 phép kiểm khớp golden trên mã máy giả lập |
 | k | SN32F407 | Toàn bộ firmware | Nút cảm biến: đọc MPU6050 100 Hz (hỏi INT_STATUS thay cho chân INT), trừ offset gyro, gửi từng mẫu kèm trạng thái nút | Theo dây đã cố định |
 | l | IRQ, RST_N | Có | Không có dây: ESP32 hỏi vòng kết quả (FPGA chốt "có kết quả" lúc CS xuống, đọc sớm trả toàn 0); không reset FPGA từ xa | Theo dây đã cố định; RTL và bitstream không đổi |
-| m | Báo động tại chỗ | Còi + LED 7 đoạn trên EVK | Còi PZ1 trên EVK (MCU kêu theo lệnh 1 byte của ESP32 qua **dây thêm 25/10**: ESP32 GPIO17 → MCU P3.2) + LED trên ESP32 + trang web/log WiFi; LED 7 đoạn không dùng | Kết quả nằm ở ESP32; nhóm đồng ý thêm đúng một dây cho còi, không tháo dây cũ |
+| m | Báo động tại chỗ | Còi + LED 7 đoạn trên EVK | LED trên ESP32 + trang web/log WiFi. Còi PZ1 trên EVK đã có mã (MCU kêu theo lệnh 1 byte của ESP32) nhưng **cần thêm dây ESP32 GPIO17 → MCU P3.2, chưa nối được (25/10), đang tắt bằng `COI_TU_ESP32 0`**; LED 7 đoạn không dùng | Kết quả nằm ở ESP32; nhóm đồng ý thêm đúng một dây cho còi, không tháo dây cũ |
 
 Không đổi: RTL và bitstream (`fpga/`, `bitstreams/3_v3_e2_n2`), giao thức A.7, mô hình N2, SPEC A.1–A.8, Safety FSM, chỉ tiêu.
 

@@ -1,6 +1,6 @@
 # Nạp và chạy trên phần cứng nối cố định (từ 24/10)
 
-Dây đã cố định theo `codecanthiet/` của nhóm, không tháo dây nào; **thêm một dây cho còi (25/10): ESP32 GPIO17 → EVK J10 `URX_P32` (P3.2)**. Luồng dữ liệu:
+Dây đã cố định theo `codecanthiet/` của nhóm, không tháo dây nào. Còi trên EVK cần **thêm một dây ESP32 GPIO17 → EVK J10 `URX_P32` (P3.2)**; nhóm **chưa nối được** (25/10) nên còi đang tắt (`COI_TU_ESP32 0`). Luồng dữ liệu:
 
 ```
 MPU6050 ──I²C──► SN32F407 (MCU) ──UART 115200──► ESP32 ──SPI──► Kiwi Primer 20K (FPGA, CNN)
@@ -30,7 +30,7 @@ MPU6050 ──I²C──► SN32F407 (MCU) ──UART 115200──► ESP32 ─�
 
 MCU in chữ ra chân TX, tức là sang ESP32. ESP32 chuyển các dòng đó lên log với tiền tố `MCU `.
 
-**Còi:** ESP32 gửi lệnh bật/tắt còi (1 byte) qua dây GPIO17 → P3.2; MCU kêu còi PZ1 trên EVK ở 500 Hz theo nhịp của Safety FSM:
+**Còi (tạm tắt, chờ nối dây):** khi nối dây GPIO17 → P3.2 thì đặt `#define COI_TU_ESP32 1` trong `firmware/src/fw_config.h`, chạy `bash esp32/dong_bo_core.sh`, rồi nạp lại MCU. ESP32 gửi lệnh bật/tắt còi (1 byte) qua dây đó; MCU kêu còi PZ1 trên EVK ở 500 Hz theo nhịp của Safety FSM:
 - CẢNH BÁO: bíp ngắn mỗi giây trong 10 s đếm ngược;
 - BÁO ĐỘNG: hú liên tục;
 - bật/tắt hệ thống: bíp xác nhận.

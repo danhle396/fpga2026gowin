@@ -36,6 +36,13 @@
 /* Phần cứng nối cố định (đề cương v2.2): SN32F407 → UART → ESP32 → SPI → FPGA (bitstream 3, giao thức v3).
  * Khung v3 dựng và đọc trên ESP32 (hub.c), không có IRQ/RST_N: ESP32 hỏi vòng, SPI_TIMEOUT_MS là hạn chờ kết quả. */
 
+/* Còi PZ1 của EVK theo lệnh ESP32 (node_link.h) cần thêm dây ESP32 GPIO17 → MCU P3.2. Nhóm chưa thêm được dây (25/10):
+ * để 0, MCU bỏ qua mọi byte nhận ở P3.2 (chân thả nổi có thể ra byte rác, trùng lệnh bật còi là kêu bậy).
+ * Nối dây xong thì đặt 1 rồi nạp lại MCU. ESP32 luôn gửi lệnh, không có dây thì vô hại. */
+#ifndef COI_TU_ESP32
+#define COI_TU_ESP32    0
+#endif
+
 /* ---- A.8 khối và Safety FSM (giá trị đầu; chốt ở AI-10) ---- */
 #define BLK_SAMPLES     32      /* 32 mẫu thô 100 Hz = 0,32 s */
 #define T_STILL_A       300     /* LSB ở ±16 g, ≈ 0,15 g */
