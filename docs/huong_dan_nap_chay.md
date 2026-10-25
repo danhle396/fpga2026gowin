@@ -50,6 +50,7 @@ Các file `.c`/`.h` trong thư mục sketch là **bản chép** từ `firmware/s
 
 **Cách dễ nhất: trang web của ESP32.** Điện thoại hoặc laptop vào cùng WiFi với ESP32, mở trình duyệt, gõ `http://<IP ESP32>`; IP in ở dòng `# WiFi ... IP ...`. Trang hiện:
 - trạng thái Safety FSM bằng màu: xanh = theo dõi, cam = nghi ngã, đỏ nhấp nháy = cảnh báo;
+- **tư thế hiện tại** (không phải té ngã, chỉ để theo dõi): Đứng thẳng, Ngồi, Nằm ngửa (nằm thẳng), Nằm sấp, Nằm nghiêng trái / phải, Cúi người, Đang di chuyển; kèm lịch sử các lần đổi và dải màu tư thế dưới biểu đồ;
 - kết quả CNN mới nhất;
 - biểu đồ |a| 30 s, có tô đỏ các cửa sổ FALL;
 - thống kê, 20 sự kiện gần nhất;
@@ -73,12 +74,15 @@ MCU # MPU6050 OK: WHO_AM_I=0x68, 7 thanh ghi doc lai dung
 MCU # gyro_off,...
 MCU # NODE: mau 100 Hz -> ESP32 (node_link F1 7E, 115200)
 12345,7,0,0,MONITOR,0          ← mỗi 0,32 s: t_ms, seq, class (0 NORMAL / 3 FALL), score, trạng thái, rc (0 = OK)
+P,23456,NGOI                   ← khi tư thế đổi (A.11): t_ms, tư thế
 STAT,mau=...,mat=0,khung_hong=0,gui=...,ok=...,timeout=0,loi=0,bo_qua=0,spi_khz=1000,tcp_bo=0
 ```
 
 | Pass | Gửi lại |
 |---|---|
 | Tự kiểm `PASS`; trong `STAT`, `mau` tăng khoảng 500 mỗi 5 s; `mat` = 0, `khung_hong` = 0; `ok` tăng khoảng 15 mỗi 5 s; `timeout` = 0, `loi` = 0 | toàn bộ file trong `ket_qua_board/` |
+
+**Thử tư thế** (đội mũ, hoặc cầm board đúng hướng: Z hướng lên trời, X hướng ra trước mặt): đứng yên → `Đứng thẳng`; ngồi xuống ghế → `Ngồi` (sau khi ngồi yên ≈ 0,3 s); nằm ngửa / nằm nghiêng / úp → tư thế nằm tương ứng sau ≈ 1 s; ngồi dậy từ giường → `Ngồi`, đứng dậy → `Đứng thẳng`; đi lại > 4 s → `Đang di chuyển`. Đứng/ngồi dựa vào độ cao đầu thay đổi khi đứng lên ngồi xuống, nên lúc bật nguồn luôn hiện `Đứng thẳng`; bật nguồn khi đang ngồi thì phải đứng lên ngồi lại một lần. Gửi lại: file log có dòng `P,` và ghi chú tư thế thật theo thời gian.
 
 **Thử ngã nhanh:** lắc mạnh board (sau này là mũ) rồi đặt nằm nghiêng yên. Phải thấy `S,...,SUSPECT`, `S,...,PRE_ALARM`, LED GPIO2 của ESP32 nháy, rồi `ALARM` nếu không ai hủy. Nhấn SW3 trên EVK (hoặc nút BOOT của ESP32) trong lúc PRE_ALARM để hủy.
 

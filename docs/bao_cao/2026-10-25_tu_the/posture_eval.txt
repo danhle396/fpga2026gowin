@@ -1,0 +1,35 @@
+ act kỳ vọng            đúng  tư thế ra (nhiều nhất)
+ 801 DUNG           61/61    {'DUNG': 61}
+ 802 DUNG           57/60    {'DUNG': 57, 'CUI': 3}
+ 803 DUNG           60/60    {'DUNG': 60}
+ 804 DUNG           49/58    {'DUNG': 49, 'NGOI': 7, 'CUI': 2}
+ 806 DUNG           55/60    {'DUNG': 55, 'NAM_NGUA': 4, 'NGHIENG_PHAI': 1}
+ 807 DUNG           54/60    {'DUNG': 54, 'NGHIENG_TRAI': 2, 'NAM_NGUA': 2}
+ 808 DUNG           55/60    {'DUNG': 55, 'NGHIENG_TRAI': 4, 'NAM_NGUA': 1}
+ 809 DUNG           55/60    {'DUNG': 55, 'NGHIENG_TRAI': 4, 'NAM_NGUA': 1}
+ 810 DUNG           56/61    {'DUNG': 56, 'NAM_NGUA': 3, 'NGHIENG_TRAI': 2}
+ 811 NGOI           51/60    {'NGOI': 51, 'DUNG': 9}
+ 812 NGOI           49/60    {'NGOI': 49, 'DUNG': 10, 'CUI': 1}
+ 814 NGOI           56/60    {'NGOI': 56, 'DUNG': 4}
+ 815 NAM            56/60    {'NGHIENG_PHAI': 28, 'NAM_SAP': 21, 'NGHIENG_TRAI': 5}
+ 816 NGOI           52/61    {'NGOI': 52, 'DUNG': 9}
+ 901 NAM            50/58    {'NGHIENG_PHAI': 24, 'NAM_SAP': 14, 'NGHIENG_TRAI': 11}
+ 902 NAM_SAP        39/59    {'NAM_SAP': 39, 'CUI': 15, 'NGHIENG_PHAI': 3}
+ 904 NAM            50/60    {'NAM_SAP': 28, 'NGHIENG_PHAI': 19, 'CUI': 10}
+ 905 DUNG           59/59    {'DUNG': 59}
+ 906 DUNG           46/59    {'DUNG': 46, 'NGOI': 13}
+ 907 NGHIENG_PHAI   39/58    {'NGHIENG_PHAI': 39, 'NAM_SAP': 6, 'NGHIENG_TRAI': 5}
+ 908 NGHIENG_TRAI   43/59    {'NGHIENG_TRAI': 43, 'NAM_NGUA': 6, 'NGHIENG_PHAI': 5}
+ 909 NGOI           38/59    {'NGOI': 38, 'DUNG': 11, 'CUI': 5}
+ 910 NAM_NGUA       43/59    {'NAM_NGUA': 43, 'CUI': 5, 'NGHIENG_TRAI': 5}
+ 911 NGHIENG_PHAI   39/60    {'NGHIENG_PHAI': 39, 'NAM_SAP': 9, 'NGHIENG_TRAI': 5}
+ 912 NGHIENG_TRAI   46/59    {'NGHIENG_TRAI': 46, 'NAM_SAP': 7, 'NAM_NGUA': 6}
+ 913 NGHIENG_PHAI   41/59    {'NGHIENG_PHAI': 41, 'NAM_SAP': 9, 'NAM_NGUA': 5}
+ 914 DUNG           58/58    {'DUNG': 58}
+ 915 NGHIENG_TRAI   48/58    {'NGHIENG_TRAI': 48, 'NAM_SAP': 5, 'NAM_NGUA': 5}
+ 916 DUNG           56/58    {'DUNG': 56, 'NGOI': 2}
+ 917 NAM            62/62    {'NAM_NGUA': 46, 'NGHIENG_TRAI': 11, 'NGHIENG_PHAI': 5}
+ 919 NAM            59/59    {'NGHIENG_TRAI': 48, 'NAM_NGUA': 6, 'NAM_SAP': 5}
+theo nhóm tư thế cuối: {'đứng': '721/774 = 93.2 %', 'ngồi': '246/300 = 82.0 %', 'nằm': '615/770 = 79.9 %'}
+nằm (nhận ra là nằm, không xét hướng): 718/770 = 93.2 %
+tổng: 1582/1844 = 85.8 %

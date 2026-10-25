@@ -15,6 +15,7 @@
 #include "blocks.h"
 #include "safety.h"
 #include "app_core.h"
+#include "posture.h"
 
 #define MBOX_PUTC   (*(volatile uint32_t *)0x40000000u)
 #define MBOX_EXIT   (*(volatile uint32_t *)0x40000004u)
@@ -780,6 +781,30 @@ static void mode_node(uint32_t n, const uint8_t *p)
     out_bytes(&NR.n_lost, 4);
 }
 
+/* ---------------- mode 13: nhận dạng tư thế (A.11, đối chiếu ml/src/posture_model.py) ----------------
+ * IN: n bản ghi, mỗi bản ghi [len u32] rồi len mẫu × 6 INT16; posture_init ở đầu mỗi bản ghi.
+ * OUT: mỗi mẫu 1 byte tư thế; cuối mỗi bản ghi v, h, dh_cuoi (i64 LE) và ngoi. */
+static void mode_posture(uint32_t n, const uint8_t *p)
+{
+    posture_t ps;
+    for (uint32_t k = 0; k < n; k++) {
+        uint32_t len;
+        memcpy(&len, p, 4);
+        p += 4;
+        posture_init(&ps);
+        for (uint32_t i = 0; i < len; i++, p += 12) {
+            int16_t r[6];
+            memcpy(r, p, 12);
+            (void)posture_push(&ps, r);
+            OUT_BASE[s_out++] = ps.tt;
+        }
+        out_bytes(&ps.v, 8);
+        out_bytes(&ps.h, 8);
+        out_bytes(&ps.dh_cuoi, 8);
+        OUT_BASE[s_out++] = ps.ngoi;
+    }
+}
+
 int main(void)
 {
     uint32_t mode, n;
@@ -800,6 +825,7 @@ int main(void)
     case 10: mode_app_rtl((const uint8_t *)data); break;
     case 11: mode_hub((const uint8_t *)data); break;
     case 12: mode_node(n, (const uint8_t *)data); break;
+    case 13: mode_posture(n, (const uint8_t *)data); break;
     default: put("mode?\n"); break;
     }
     MBOX_EXIT = s_out;

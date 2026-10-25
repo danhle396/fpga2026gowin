@@ -8,7 +8,7 @@ ROOT="$(cd "$(dirname "$0")/.." && pwd)"
 S="$ROOT/firmware/src"
 D="$ROOT/esp32/mu_nga_hub"
 FILES="app_core.c app_core.h preprocess.c preprocess.h blocks.c blocks.h safety.c safety.h pwr_btn.c pwr_btn.h
-       spi_frame.c spi_frame.h crc.c crc.h fw_config.h node_link.c node_link.h hub.c hub.h selftest_expect_v3_e2_n2.h"
+       spi_frame.c spi_frame.h crc.c crc.h fw_config.h node_link.c node_link.h hub.c hub.h posture.c posture.h selftest_expect_v3_e2_n2.h"
 bad=0
 for f in $FILES; do
     if [ "${1:-}" = "--check" ]; then

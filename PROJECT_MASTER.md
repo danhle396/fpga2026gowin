@@ -14,6 +14,7 @@
 > - **Phần cứng nối cố định theo `codecanthiet` của nhóm (24/10, v2.2):** MCU chỉ có UART TX → ESP32 (115200); ESP32 làm master SPI tới FPGA (J2); không có IRQ, RST_N, INT. Nên: MCU `FW_NODE 1` chỉ đọc MPU6050 (hỏi INT_STATUS) và gửi mẫu (`node_link.c`); ESP32 (`esp32/mu_nga_hub/`) chạy cùng lõi C `app_core` qua `hub.c`, hỏi vòng FPGA, log USB + WiFi TCP 3333. `m0_test`: hub.c == golden + safety_model 402/402 khung, 11 lần đổi trạng thái; sketch build được (ESP32 core 3.0.7). Hướng dẫn: [docs/huong_dan_nap_chay.md](docs/huong_dan_nap_chay.md). Đã nạp lên board: FPGA (flash, verify success), MCU bản trước FW_NODE (Verify OK); **chạy thông trên phần cứng 24/10**: tự kiểm FPGA PASS (`5A EE 01 03 00 06 43`), MCU → ESP32 → FPGA mỗi 0,32 s rc 0, mat 0, timeout 0; chưa thử ngã, chưa đo lâu
 > - **Một project FPGA + một project MCU (24/10):** `fpga/fpga_project.gprj` (mọi RTL sản phẩm ở `fpga/src/`: top v3, engine E2, mô hình N2, chân J2; Run All ra `.fs` trùng bit `fpga/bitstream/fpga_project.fs`) và `firmware/keil/fw.uvprojx` (mặc định `FW_BITSTREAM 3`, `fw_config.h`). Thư mục đã dọn 24/10: bỏ E1, `rtl/`, `bitstreams/1–2`, `test_sensor/`, `pin_probe`, chế độ MCU nối thẳng FPGA; cấu trúc ở README.md
 > - Chân (dây cố định, codecanthiet): MPU6050 I²C P0.10/P0.11; MCU UART TX P3.1 → ESP32 GPIO16 (115200); dây còi ESP32 GPIO17 → MCU P3.2 **chưa nối** (còi tắt, `COI_TU_ESP32 0`); ESP32 GPIO27 CS / 18 SCK / 23 MOSI / 19 MISO → Kiwi J2-16 R11 / J2-10 T14 / J2-11 R13 / J2-13 R12; IRQ R8, RST_N T8 có trong `.cst` nhưng không nối. **Không nạp bitstream nào khác `fpga/bitstream/`** khi ESP32 còn nối J2
+> - **Tư thế (25/10, SPEC v3.3 A.11):** ESP32 nhận dạng đứng thẳng / ngồi / nằm ngửa / nằm sấp / nằm nghiêng trái, phải / cúi / đang di chuyển (`posture.c`, chỉ hiển thị, không vào Safety FSM); C trùng `posture_model.py` 137.700/137.700 mẫu; trên D1: đứng 93,2 %, ngồi 82,0 %, nhận ra nằm 93,2 % (đúng hướng 79,9 %). Trang web có thẻ "Tư thế hiện tại", lịch sử, dải màu dưới biểu đồ; log `P,<ms>,<tư thế>`. Build ESP32 đạt, **chưa nạp** ([tu_the](docs/bao_cao/2026-10-25_tu_the/README.md))
 > - **G0 còn thiếu:** FW-02, FW-03 (cần board), TH-01..03. RB-01 xong 15/10: `run_all` 7/7 PASS trên cả Icarus 0.9.7 và 12.0 (máy thứ hai; bitstream 1 dựng lại ở đó trùng từng dòng, [may2_icarus12](docs/bao_cao/2026-10-15_may2_icarus12/README.md))
 > - **Bước tiếp theo NGAY (24/10):** làm theo [docs/huong_dan_nap_chay.md](docs/huong_dan_nap_chay.md): (1) nạp MCU (`firmware/keil/fw.uvprojx`, F8) — LED D6 nháy 1 Hz; (2) nạp ESP32 (`esp32/mu_nga_hub`) — log `tu kiem FPGA ... PASS`; (3) `tools/ghi_uart.py` 60 s — `STAT` mau ≈ 500/5 s, mat 0, ok tăng, timeout 0. Song song: buổi thử trên mũ (LOG qua ESP32, AI-05)
 
@@ -785,6 +786,25 @@ Dữ liệu thô được định nghĩa bởi cảm biến và cấu hình A.1,
 
 MCU tạo payload 768 byte bằng LFSR Galois 16 bit (đa thức 0xB400, mầm 0xACE1, mỗi byte dịch một bước và lấy 8 bit thấp), gửi với `SEQ = 0xEE`. Kết quả phải trùng `selftest_expect.h` do `export_mem.py` sinh cùng bộ weight.
 
+### A.11 Nhận dạng tư thế (chỉ để hiển thị)
+
+Chạy trên ESP32 (`firmware/src/posture.c`, gọi trong `hub_sample`), trên cùng mẫu thô 100 Hz (AX AY AZ, 2048 LSB/g; trục mũ X trước, Y trái, Z lên). **Không đưa vào Safety FSM, không đổi quyết định báo ngã.** Đáp án số nguyên: `ml/src/posture_model.py`; C phải trùng từng mẫu (`tools/m0_test.py`, mode 13).
+
+| Tư thế | Mã | Điều kiện |
+|---|---|---|
+| Đứng thẳng | `DUNG` | đầu thẳng, đợt cử động gần nhất làm đầu lên ≥ 0,25 m (hoặc lúc bật) |
+| Ngồi | `NGOI` | đầu thẳng, đợt cử động gần nhất làm đầu hạ ≥ 0,25 m (≥ 0,15 m nếu trong đợt có lúc đầu chốt NẰM) |
+| Nằm ngửa (nằm thẳng) / nằm sấp | `NAM_NGUA` / `NAM_SAP` | đầu nằm, \|ax\| ≥ \|ay\|: ax > 0 ngửa, ngược lại sấp |
+| Nằm nghiêng phải / trái | `NGHIENG_PHAI` / `NGHIENG_TRAI` | đầu nằm, \|ay\| > \|ax\|: ay > 0 phải, ngược lại trái |
+| Cúi người | `CUI` | đầu không thẳng, không nằm |
+| Đang di chuyển | `DI_LAI` | đầu thẳng, đợt cử động liên tục > 4 s (hết đợt → đứng) |
+
+- **Hướng đầu:** trung bình khối 32 mẫu (mx, my, mz), gm = √(mx² + my² + mz²): mz·100 > 82·gm → THẲNG; mz·100 < 50·gm → NẰM; còn lại CÚI. Chốt khi 3 khối liên tiếp cùng kết quả.
+- **Đợt cử động:** \| \|a\| − 2048 \| > 120 LSB trong 30 mẫu gần nhất. Trong đợt: v += \|a\| − g_yên, h += v (g_yên = trung bình \|a\| của mỗi khối 32 mẫu yên). Hết đợt: Δh = h − v·(n + 1)/2 (vận tốc 0 hai đầu); 1 m = 2048·10⁴/9,80665 đơn vị (0,25 m = 522.094; 0,15 m = 313.256; 1,5 m = 3.132.568). Đợt kết thúc khi đầu chưa thẳng thì chờ đầu chốt THẲNG mới quyết.
+- **Dậy sau khi nằm ≥ 300 mẫu (3 s):** khi đầu chốt THẲNG lại (kể cả qua giai đoạn CÚI), Δh của đợt dậy < 1,5 m → NGỒI, ngược lại ĐỨNG.
+- Căn bậc hai nguyên theo bit; mọi phép chia làm tròn về 0. Lúc bật: ĐỨNG.
+- **Đo trên D1** (`tools/posture_eval.py`, mẫu 50 Hz lặp thành 100 Hz, tư thế ở cuối 1.844 bản ghi so với mô tả hoạt động): đứng 93,2 %, ngồi 82,0 %, nhận ra nằm 93,2 % (đúng cả hướng 79,9 %), tổng 85,8 %. Chưa đo trên mũ [CẦN XÁC MINH – nguồn: buổi thử trên mũ].
+
 ### Lịch sử thay đổi SPEC
 
 | Ngày | Nội dung |
@@ -794,6 +814,7 @@ MCU tạo payload 768 byte bằng LFSR Galois 16 bit (đa thức 0xB400, mầm 0
 | 2026-10-12 | v3: lấy RTL hiện có làm gốc (vị trí trước, 0..127, dịch sàn); cảm biến 100 Hz ±16 g ±2000 °/s, MCU giảm còn 50 Hz; bước 0,32 s + bỏ phiếu; N1/N2; E1/E2; lớp 0 NORMAL, 1 IMPACT, 3 FALL; giao thức v3; bỏ CONFIRM, thêm SOS và tự kiểm |
 | 2026-10-16 | **v3.2** (đi cùng đề cương v2.1): A.4 chỉ huấn luyện 2 lớp 0 NORMAL và 3 FALL, lớp 1 IMPACT để dành; A.8 đầu vào WEAR là trạng thái bật/tắt do một nút bấm tạo (`pwr_btn.c`), thêm quy ước nút. Không đổi khung, số học, FSM hay vector; mô hình đã có vốn là 2 lớp vì D1 không có IMPACT |
 | 2026-10-15 | **v3.1**: A.8 điều kiện nghiêng thành hai phía `\|az_tb\| < T_TILT` (trước: `az_tb < T_TILT`). Lý do: phát lại D1 cho thấy 15/22 PRE_ALARM giả có `az_tb` ≈ −2040 (đầu lộn ngược khi cúi gập sau khi vấp, nhặt đồ), còn 375/375 cú ngã nằm tới PRE_ALARM có `az_tb` ≥ −1074. Không đổi khung, số học hay vector |
+| 2026-10-25 | **v3.3**: thêm A.11 nhận dạng tư thế trên ESP32, chỉ để hiển thị. Không đổi A.1–A.10, khung, FSM hay vector |
 | 2026-10-14 | v3 (làm rõ, không đổi số học hay khung): A.7 thêm quy ước một bộ đệm kết quả và giá trị `STATUS` cho từng lỗi; `cnn_params.vh` thêm `CNN_SCORE_SHIFT` (lấy từ `score_shift` trong json) |
 
 ---
@@ -1045,6 +1066,7 @@ uint16_t crc16_ccitt(const uint8_t *p, uint32_t n)
 | 2026-10-25 | Nhóm thử ngã trên bàn (chạy pin, xem web): báo "cảnh báo té ngã khá ổn", tức lắc → SUSPECT → PRE_ALARM → ALARM, hủy được. Nhóm báo bằng lời, chưa có log/ảnh → chưa đánh [x] TH-10, AI-10 | Ghi nhận; cần buổi thử có số đo (≥ 20 cú ngã, ≥ 2 giờ đội mũ) để chấm bằng `playback_log.py` |
 | 2026-10-25 | **Còi báo ngã:** nhóm chọn còi PZ1 có sẵn trên EVK, thêm một dây ESP32 GPIO17 → MCU P3.2 (J10 URX_P32). ESP32 gửi lệnh 1 byte (0xB1 bật / 0xB0 tắt, `node_link.h`) theo `app_buzzer()` của Safety FSM khi đổi và nhắc lại mỗi 100 ms; MCU kêu 500 Hz, tự tắt nếu quá 500 ms không có lệnh; STAT MCU thêm `lenh_coi`. Build MCU (Keil 0/0) + ESP32 đạt, m0_test TẤT CẢ PASS; **chưa nạp, chưa thử trên board**. THAY_DOI dòng m cập nhật | Nhóm yêu cầu còi kêu khi phát hiện ngã |
 | 2026-10-25 | Phần cứng chưa thêm được dây còi → **tạm bỏ qua thử còi**. Mã còi giữ nguyên nhưng tắt bằng `COI_TU_ESP32 0` (fw_config.h): MCU bỏ qua byte ở P3.2 (chân thả nổi có thể ra rác trùng lệnh bật còi), P3.2 bật kéo lên. Build 0/0 (cả khi đặt 1), m0_test TẤT CẢ PASS | Nhóm: phần cứng đang cố định, chưa thêm dây |
+| 2026-10-25 | **Nhận dạng tư thế (SPEC v3.3, A.11):** `ml/src/posture_model.py` (đáp án số nguyên) + `firmware/src/posture.c` chạy trong `hub.c` trên ESP32: đứng thẳng, ngồi, nằm ngửa, nằm sấp, nằm nghiêng trái/phải, cúi, đang di chuyển; đứng/ngồi theo độ cao đầu tích phân qua mỗi đợt cử động. `tools/posture_eval.py` trên D1 (1.844 bản ghi): đứng 93,2 %, ngồi 82,0 %, nhận ra nằm 93,2 % (đúng hướng 79,9 %). m0_test mode 13: C == Python 73 bản ghi / 137.700 mẫu; m0_test toàn bộ 20/20 PASS, test.sh TẤT CẢ PASS. Trang web: thẻ tư thế, lịch sử 24 lần đổi, dải màu tư thế dưới biểu đồ; JSON `/data` thêm `tt`, `pt`; log `P,<ms>,<tư thế>`. ESP32 build 966.801 B, 0 cảnh báo; **chưa nạp**. THAY_DOI dòng n, DE_CUONG ghi chú v2.2 | Nhóm yêu cầu xác định các tư thế không phải ngã theo đề tài và hiển thị trên web. Bằng chứng: [tu_the](docs/bao_cao/2026-10-25_tu_the/README.md) |
 
 ---
 

@@ -3,7 +3,7 @@
 
 *Bản cập nhật (v2), ngày 12/10/2026 — thay cho bản đã nộp. Các điểm thay đổi được liệt kê trong tài liệu kèm theo "Thay đổi so với bản v1".*
 *Bản v2.1, ngày 16/10/2026. Gọn lại sau khi nộp v2: mạng còn 2 lớp (NORMAL, FALL); va đập mũ được loại bằng trình tự ba pha của Safety FSM; một nút bấm duy nhất (bật/tắt, CANCEL, SOS) thay cho cảm biến đội mũ; không tự thu dữ liệu huấn luyện, chỉ có một buổi thử trên mũ. Chi tiết ở mục "Điều chỉnh v2.1" của tài liệu kèm theo.*
-*Bản v2.2, ngày 24/10/2026. Mạch của nhóm đã nối cố định: SN32F407 đọc cảm biến và gửi từng mẫu qua UART sang ESP32; ESP32 làm master SPI tới FPGA và chạy cùng mã tiền xử lý + Safety FSM của firmware; không có dây IRQ, RST_N. RTL, bitstream, mô hình và chỉ tiêu không đổi. Chi tiết ở mục "Điều chỉnh v2.2" của tài liệu kèm theo.*
+*Bản v2.2, ngày 24/10/2026. Mạch của nhóm đã nối cố định: SN32F407 đọc cảm biến và gửi từng mẫu qua UART sang ESP32; ESP32 làm master SPI tới FPGA và chạy cùng mã tiền xử lý + Safety FSM của firmware; không có dây IRQ, RST_N. RTL, bitstream, mô hình và chỉ tiêu không đổi. Bổ sung 25/10: ESP32 nhận dạng và hiển thị tư thế không phải ngã (đứng thẳng, ngồi, nằm ngửa, nằm sấp, nằm nghiêng trái/phải, cúi, đang di chuyển; trên D1: đứng 93,2 %, ngồi 82,0 %, nhận ra nằm 93,2 %), chỉ để theo dõi, không đổi quyết định báo ngã. Chi tiết ở mục "Điều chỉnh v2.2" của tài liệu kèm theo.*
 
 ---
 

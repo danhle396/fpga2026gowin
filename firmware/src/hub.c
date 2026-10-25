@@ -20,6 +20,7 @@ void hub_init(hub_t *h, uint32_t now)
     safety_default_cfg(&sc);
     app_init(&h->app, &sc, &bc, now);
     h->last_rc = SPI_PENDING;
+    posture_init(&h->pos);
 }
 
 static void send_frame(hub_t *h, const hub_io_t *io, uint8_t seq,
@@ -45,6 +46,7 @@ unsigned hub_sample(hub_t *h, const hub_io_t *io, const int16_t r[6], uint8_t ke
     h->keys = keys;
     h->n_samples++;
     unsigned f = app_on_raw(&h->app, r);
+    if (posture_push(&h->pos, r)) f |= HUB_POSTURE;
     if (f & APP_FRAME) {                        /* SEQ tăng theo cửa sổ, kể cả khi bỏ qua (như app_main.c) */
         const int8_t *s1, *s2;
         uint16_t n1, n2;

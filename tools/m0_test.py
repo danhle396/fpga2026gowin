@@ -507,6 +507,35 @@ def test_hub():
     return ok
 
 
+def test_posture():
+    """posture.c (A.11, chạy trên ESP32) == ml/src/posture_model.py từng mẫu: 2 bản ghi D1 mỗi mã hoạt động (lặp mẫu
+    thành 100 Hz như posture_eval) + 1 đoạn ngẫu nhiên toàn dải INT16 (tràn số); so tư thế mỗi mẫu và v, h, Δh cuối."""
+    import posture_model as pm
+    z = np.load(ROOT / "ml" / "data" / "public" / "d1_trials_50hz.npz")
+    D, S, L, A = z["data"], z["start"], z["length"], z["act"]
+    recs = []
+    for act in sorted(set(int(a) for a in A)):
+        for i in np.where(A == act)[0][:2]:
+            recs.append(np.repeat(D[S[i]:S[i] + L[i]], 2, axis=0).astype(np.int16))
+    g = np.random.default_rng(13)
+    recs.append(g.integers(-32768, 32768, (3000, 6)).astype(np.int16))
+    blob = b"".join(struct.pack("<I", len(r)) + r.astype("<i2").tobytes() for r in recs)
+    _, out = run(13, len(recs), blob, max_insn=2_000_000_000)
+    exp, seen = bytearray(), set()
+    for r in recs:
+        q = pm.Posture()
+        for x in r:
+            q.push(x)
+            exp.append(q.tt)
+            seen.add(pm.TEN[q.tt])
+        exp += struct.pack("<3qB", q.v, q.h, q.dh_cuoi, q.ngoi)
+    n = sum(len(r) for r in recs)
+    return report(f"posture.c == posture_model.py: {len(recs)} bản ghi, {n:,} mẫu, tư thế từng mẫu + v/h/Δh cuối",
+                  bytes(out) == bytes(exp), f"tư thế đã đi qua {sorted(seen)}" if bytes(out) == bytes(exp) else
+                  f"lệch ở byte {next((i for i in range(min(len(out), len(exp))) if out[i] != exp[i]), -1)}; "
+                  f"dài C {len(out)} / Py {len(exp)}")
+
+
 SPI_TIMEOUT_MS = 50
 
 
@@ -537,7 +566,7 @@ def main():
         return
     if not BIN.exists():
         raise SystemExit("chưa có firmware/build/test.bin — chạy: bash firmware/build.sh test")
-    ok = test_consts() & test_pre() & test_parse() & test_safety() & test_fsm_equiv() & test_cnn_mcu() & test_app() & test_node() & test_hub()
+    ok = test_consts() & test_pre() & test_parse() & test_safety() & test_fsm_equiv() & test_cnn_mcu() & test_app() & test_node() & test_hub() & test_posture()
     print("TẤT CẢ PASS" if ok else "CÓ FAIL")
     sys.exit(0 if ok else 1)
 

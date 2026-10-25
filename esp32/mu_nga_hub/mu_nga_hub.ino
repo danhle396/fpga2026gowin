@@ -67,6 +67,8 @@ static WebServer s_web(80);
 static uint32_t s_acc_t[ACC_N]; static uint16_t s_acc_v[ACC_N]; static uint16_t s_acc_i = 0, s_acc_n = 0;
 static uint32_t s_res_t[RES_N]; static uint8_t s_res_c[RES_N]; static uint16_t s_res_i = 0, s_res_n = 0;
 static String   s_ev[EV_N]; static uint8_t s_ev_i = 0, s_ev_n = 0;
+#define PT_N  24                                // các lần đổi tư thế gần nhất (posture.c, A.11)
+static uint32_t s_pt_t[PT_N]; static uint8_t s_pt_v[PT_N]; static uint8_t s_pt_i = 0, s_pt_n = 0;
 static bool     s_tk_ok = false;
 static int      s_last_rc = -1;
 static uint32_t s_web_cancel_until = 0;
@@ -75,7 +77,8 @@ static uint32_t s_web_cancel_until = 0;
 static void out(const char *s)
 {
     Serial.println(s);
-    if (!(s[0] >= '0' && s[0] <= '9') && strncmp(s, "STAT", 4) != 0) {     // sự kiện cho trang web
+    // sự kiện cho trang web (tư thế "P,..." có khung lịch sử riêng, không lấn sự kiện báo ngã)
+    if (!(s[0] >= '0' && s[0] <= '9') && strncmp(s, "STAT", 4) != 0 && strncmp(s, "P,", 2) != 0) {
         s_ev[s_ev_i] = String((unsigned long)(millis() / 1000)) + " s  " + s;
         s_ev_i = (uint8_t)((s_ev_i + 1) % EV_N);
         if (s_ev_n < EV_N) s_ev_n++;
@@ -183,6 +186,13 @@ static void web_data()
     j += "\",\"rc\":"; j += s_last_rc;
     j += ",\"cls\":"; j += H.last.cls; j += ",\"score\":"; j += H.last.score; j += ",\"seq\":"; j += H.last.seq;
     j += ",\"tk\":"; j += s_tk_ok ? 1 : 0;
+    j += ",\"tt\":\""; j += posture_name(H.pos.tt); j += '"';
+    j += ",\"pt\":[";
+    for (uint8_t k = 0; k < s_pt_n; k++) {
+        uint8_t i = (uint8_t)((s_pt_i + PT_N - s_pt_n + k) % PT_N);
+        if (k) j += ','; j += "["; j += s_pt_t[i]; j += ",\""; j += posture_name(s_pt_v[i]); j += "\"]";
+    }
+    j += ']';
     j += ",\"s\":{\"mau\":"; j += H.n_samples; j += ",\"mat\":"; j += NR.n_lost; j += ",\"hong\":"; j += NR.n_bad;
     j += ",\"gui\":"; j += H.n_sent; j += ",\"ok\":"; j += H.n_ok; j += ",\"to\":"; j += H.n_timeout;
     j += ",\"loi\":"; j += H.n_err; j += ",\"spi_khz\":"; j += s_spi_hz / 1000; j += "}";
@@ -276,7 +286,12 @@ void loop()
         int e = node_rx_byte(&NR, b);
         if (e == NODE_SAMPLE) {
             t_last_sample = now;
-            hub_sample(&H, &IO, NR.r, NR.keys, now);
+            if (hub_sample(&H, &IO, NR.r, NR.keys, now) & HUB_POSTURE) {
+                s_pt_t[s_pt_i] = now; s_pt_v[s_pt_i] = H.pos.tt;
+                s_pt_i = (uint8_t)((s_pt_i + 1) % PT_N); if (s_pt_n < PT_N) s_pt_n++;
+                snprintf(s, sizeof s, "P,%lu,%s", (unsigned long)now, posture_name(H.pos.tt));
+                out(s);
+            }
             if (NR.n_ok % 10u == 0) {           // |a| cho biểu đồ web, 10 điểm/s; ±16 g: 2048 LSB/g
                 float a = sqrtf((float)NR.r[0] * NR.r[0] + (float)NR.r[1] * NR.r[1] + (float)NR.r[2] * NR.r[2]) / 2048.0f;
                 s_acc_t[s_acc_i] = now; s_acc_v[s_acc_i] = (uint16_t)(a * 100.0f + 0.5f);

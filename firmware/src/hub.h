@@ -8,6 +8,7 @@
  * mà vẫn toàn 0 → SPI_E_TIMEOUT.
  *
  * Đọc/ghi SPI qua hàm do bên gọi cấp (SPI thật trên ESP32, FPGA giả lập trong bộ test).
+ * Nhận dạng tư thế (posture.c, A.11) chạy song song trên cùng mẫu thô, chỉ để hiển thị: h->pos.tt.
  */
 #ifndef HUB_H
 #define HUB_H
@@ -15,9 +16,11 @@
 #include <stdint.h>
 #include "app_core.h"
 #include "fw_config.h"
+#include "posture.h"
 
 #define HUB_FIRST_POLL_MS   6u      /* engine E2: 258.080 chu kỳ = 5,15 ms */
 #define HUB_POLL_EVERY_MS   1u
+#define HUB_POSTURE         0x100u  /* hub_sample: tư thế vừa đổi (h->pos.tt) */
 
 typedef struct {
     void (*spi_write)(const uint8_t *buf, uint16_t n, void *ctx);
@@ -34,10 +37,11 @@ typedef struct {
     uint32_t n_samples, n_sent, n_ok, n_timeout, n_err, n_skip;
     spi_result_t last;
     int      last_rc;
+    posture_t pos;
 } hub_t;
 
 void hub_init(hub_t *h, uint32_t now);
-/* Một mẫu 100 Hz từ MCU (gyro đã trừ offset). Có cửa sổ mới và FPGA rảnh thì ghi khung ngay. Trả về cờ APP_*. */
+/* Một mẫu 100 Hz từ MCU (gyro đã trừ offset). Có cửa sổ mới và FPGA rảnh thì ghi khung ngay. Trả về cờ APP_* | HUB_POSTURE. */
 unsigned hub_sample(hub_t *h, const hub_io_t *io, const int16_t r[6], uint8_t keys, uint32_t now);
 /* Gọi thường xuyên (≥ 1 lần/ms). Trả về SPI_PENDING nếu chưa có gì mới, ngược lại mã SPI_* của kết quả vừa đọc
  * (kết quả nằm ở h->last và đã đưa vào app_on_result). */
