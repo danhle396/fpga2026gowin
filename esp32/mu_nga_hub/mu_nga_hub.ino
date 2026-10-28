@@ -43,6 +43,15 @@ extern "C" {
 #define LED_PIN         2           // LED trên ESP32 DevKit: sáng/nháy theo còi + LED của Safety FSM
 #define BTN_PIN         0           // nút BOOT: CANCEL phụ (OR với nút SW3 của MCU)
 #define USB_BAUD        460800
+// Nguồn MPU6050 (28/10): VCC của module GY-521 nối GPIO25 thay cho chân 3,3 V (GND vẫn ở ESP32). MPU6050 có lúc treo
+// (đèn sáng, không trả lời I²C, chỉ cắt nguồn mới hết): MCU báo "MPU6050 ... ket qua=-1" và > MPU_TREO_MS không có mẫu
+// → ESP32 tắt GPIO25 MPU_CAT_MS rồi bật lại, MCU tự cấu hình lại trong ≤ 1 s. Chỉ dựa vào dòng báo lỗi của MCU, không
+// dựa vào "không có mẫu" đơn thuần: lúc khởi động MCU hiệu chuẩn gyro vài giây chưa gửi mẫu. Module ăn ≈ 5–7 mA.
+// VCC chưa chuyển sang GPIO25 thì việc bật/tắt chân này vô hại.
+#define MPU_NGUON_PIN   25
+#define MPU_TREO_MS     2000u
+#define MPU_CAT_MS      300u
+#define MPU_CAT_CACH_MS 10000u      // hai lần cắt cách nhau ít nhất 10 s
 // WiFi của nhóm (mạng duy nhất đang dùng). Mang đi nơi khác thì sửa 2 dòng này rồi nạp lại ESP32.
 #define WIFI_STA_SSID     "Tro Bao Tran T4"
 #define WIFI_STA_PASSWORD "thy0905542257"
@@ -74,6 +83,7 @@ static int      s_last_rc = -1;
 static uint32_t s_web_cancel_until = 0;
 // kiểu âm còi: fix cứng COI_KIEU_CHOT (node_link.h, 2 kHz; nhóm nghe thử 6 kiểu trên board 28/10 và chốt kiểu này)
 static const uint8_t s_coi_kieu = COI_KIEU_CHOT;
+static uint32_t s_n_cat_mpu = 0;               // số lần ESP32 cắt nguồn MPU6050 để gỡ treo
 static uint32_t s_n_nga = 0, s_t_nga = 0;     // số lần phát hiện ngã (vào SUSPECT) từ lúc bật, lúc lần gần nhất
 
 // ---------------- in ra USB + TCP ----------------
@@ -190,6 +200,7 @@ static void web_data()
     j += ",\"cls\":"; j += H.last.cls; j += ",\"score\":"; j += H.last.score; j += ",\"seq\":"; j += H.last.seq;
     j += ",\"tk\":"; j += s_tk_ok ? 1 : 0;
     j += ",\"coi_kieu\":"; j += s_coi_kieu;
+    j += ",\"cat_mpu\":"; j += s_n_cat_mpu;
     j += ",\"nga\":"; j += s_n_nga; j += ",\"t_nga\":"; j += s_t_nga;
     j += ",\"tt\":\""; j += posture_name(H.pos.tt); j += '"';
     j += ",\"pt\":[";
@@ -226,6 +237,8 @@ static void web_data()
 // ---------------- setup / loop ----------------
 void setup()
 {
+    pinMode(MPU_NGUON_PIN, OUTPUT);            // cấp nguồn MPU6050 càng sớm càng tốt
+    digitalWrite(MPU_NGUON_PIN, HIGH);
     Serial.begin(USB_BAUD);
     Serial2.setRxBufferSize(4096);
     Serial2.begin(MCU_BAUD, SERIAL_8N1, MCU_RX_PIN, MCU_TX_PIN);
@@ -272,7 +285,7 @@ void setup()
 
 void loop()
 {
-    static uint32_t t_tick = millis(), t_stat = millis(), t_last_sample = millis(), t_warn = 0, t_last_text = 0;
+    static uint32_t t_tick = millis(), t_stat = millis(), t_last_sample = millis(), t_warn = 0, t_last_text = 0, t_mpu_loi = 0;
     static char cmd_usb[32], cmd_tcp[32];
     static uint8_t n_usb = 0, n_tcp = 0;
     char s[160];
@@ -313,6 +326,7 @@ void loop()
             }
         } else if (e == NODE_TEXT && NR.line[0]) {
             t_last_text = now;
+            if (strstr(NR.line, "MPU6050") && strstr(NR.line, "ket qua=-1")) t_mpu_loi = now;   // MCU báo cảm biến không trả lời
             snprintf(s, sizeof s, "MCU %s", NR.line);
             out(s);
         }
@@ -372,9 +386,27 @@ void loop()
     if (now - t_stat >= 5000u) {
         t_stat = now;
         snprintf(s, sizeof s, "STAT,mau=%lu,mat=%lu,khung_hong=%lu,gui=%lu,ok=%lu,timeout=%lu,loi=%lu,bo_qua=%lu,spi_khz=%lu,"
-                 "tcp_bo=%lu,byte_rx=%lu", (unsigned long)H.n_samples, (unsigned long)NR.n_lost, (unsigned long)NR.n_bad,
+                 "tcp_bo=%lu,byte_rx=%lu,cat_mpu=%lu", (unsigned long)H.n_samples, (unsigned long)NR.n_lost, (unsigned long)NR.n_bad,
                  (unsigned long)H.n_sent, (unsigned long)H.n_ok, (unsigned long)H.n_timeout, (unsigned long)H.n_err,
-                 (unsigned long)H.n_skip, (unsigned long)(s_spi_hz / 1000), (unsigned long)s_tcp_drop, (unsigned long)s_rx_bytes);
+                 (unsigned long)H.n_skip, (unsigned long)(s_spi_hz / 1000), (unsigned long)s_tcp_drop, (unsigned long)s_rx_bytes,
+                 (unsigned long)s_n_cat_mpu);
+        out(s);
+    }
+    // MPU6050 treo: MCU còn sống (có chữ) mà không có mẫu → cắt nguồn cảm biến MPU_CAT_MS rồi cấp lại (không chặn vòng lặp)
+    static uint32_t t_cat = 0;
+    static uint8_t  dang_cat = 0;
+    if (dang_cat && now - t_cat >= MPU_CAT_MS) {
+        digitalWrite(MPU_NGUON_PIN, HIGH);
+        dang_cat = 0;
+        out("# MPU6050: da cap lai nguon, cho MCU cau hinh lai");
+    } else if (!dang_cat && now - t_last_sample > MPU_TREO_MS && t_mpu_loi && now - t_mpu_loi < 3000u &&
+               (t_cat == 0 || now - t_cat >= MPU_CAT_CACH_MS)) {
+        digitalWrite(MPU_NGUON_PIN, LOW);
+        dang_cat = 1;
+        t_cat = now;
+        s_n_cat_mpu++;
+        snprintf(s, sizeof s, "# MPU6050 treo (%lu ms khong co mau): cat nguon GPIO%d %u ms, lan %lu",
+                 (unsigned long)(now - t_last_sample), MPU_NGUON_PIN, MPU_CAT_MS, (unsigned long)s_n_cat_mpu);
         out(s);
     }
     if (now - t_last_sample > 2000u && now - t_warn > 2000u) {
