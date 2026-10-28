@@ -14,8 +14,8 @@ ROOT = pathlib.Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(ROOT / "ml" / "src"))
 import posture_model as pm  # noqa: E402
 
-KY_VONG = {"dung": "DUNG", "nam_ngua": "NAM_NGUA", "nghieng_phai": "NGHIENG_PHAI", "nghieng_trai": "NGHIENG_TRAI",
-           "cui": "CUI"}
+KY_VONG = {"dung": "DUNG", "ngoi": "NGOI", "dung_2": "DUNG", "cui": "CUI", "dung_3": "DUNG", "nam_ngua": "NAM_NGUA",
+           "nghieng_phai": "NGHIENG_PHAI", "nghieng_trai": "NGHIENG_TRAI", "nam_sap": "NAM_SAP"}
 
 
 def doc(path):
@@ -102,10 +102,20 @@ def main():
     for r in b:
         p.push(r)
         tt.append(pm.TEN[p.tt])
-    print("posture_model trên log đã đổi trục, tư thế ở cuối mỗi đoạn giữ yên:")
-    for m, (_, i1) in seg.items():
+    # góc thân so với phương thẳng đứng (posture_model: THẲNG khi cos > UP_PCT %, NẰM khi cos < LIE_PCT %)
+    print(f"posture_model trên log đã đổi trục (THẲNG khi nghiêng < {np.degrees(np.arccos(pm.UP_PCT / 100)):.0f}°, "
+          f"NẰM khi > {np.degrees(np.arccos(pm.LIE_PCT / 100)):.0f}°), tư thế ở cuối mỗi đoạn giữ yên:")
+    n_dung = 0
+    for m, (i0, i1) in seg.items():
         kv = KY_VONG.get(m, "?")
-        print(f"  {m:13s} → {tt[i1 - 1]:13s} {'✓' if tt[i1 - 1] == kv else '✗ (kỳ vọng ' + kv + ')'}")
+        v = b[i0:i1, :3].mean(0)
+        nghieng = np.degrees(np.arccos(np.clip(v[2] / np.linalg.norm(v), -1, 1)))
+        ngả = np.degrees(np.arctan2(-v[0], v[2]))       # > 0: ngả ra trước (ngực cúi xuống)
+        ra = tt[i1 - 1]
+        n_dung += ra == kv
+        print(f"  {m:13s} nghiêng {nghieng:5.1f}°  ngả trước {ngả:+6.1f}°  → {ra:13s} "
+              f"{'✓' if ra == kv else '✗ (kỳ vọng ' + kv + ')'}")
+    print(f"  đúng {n_dung}/{len(seg)}")
     print("KẾT LUẬN:", "bảng rõ ràng" if ok else "có trục không rõ (< 85 % trọng lực) hoặc kiểm chéo sai: đo lại")
     return 0 if ok else 1
 

@@ -6,8 +6,8 @@
 #   python -I tools/ghi_uart.py --port COM5 --buoc B5 --lenh STAT --reset   # nhấn reset trên board trong 3 s đầu
 #   python -I tools/ghi_uart.py --liet-ke                                    # xem có cổng COM nào
 #   python -I tools/ghi_uart.py --tcp 192.168.88.97 --lenh LOG --buoc truc_nguc --tu-the
-#       đo hướng cảm biến: nhắc lần lượt từng tư thế trên màn hình (mỗi tư thế giữ yên 10 s), ghi mốc "# >>> TU THE"
-#       vào file; mất WiFi thì tự nối lại
+#       đo hướng cảm biến khi đeo: nhắc lần lượt 9 tư thế (TU_THE, mỗi tư thế 6 s đổi + 10 s giữ yên, ≈ 2,5 phút),
+#       ghi mốc "# >>> TU THE" vào file; mất WiFi thì tự nối lại. Đọc kết quả: tools/truc_cam_bien.py
 #
 # Đóng Tera Term, PuTTY, miniterm trước khi chạy: Windows chỉ cho một chương trình mở cổng COM.
 # File nằm trong ket_qua_board/ (không lên git); gửi lại bằng cách dán nội dung vào chat kèm "Cập nhật: B<số>".
@@ -20,9 +20,18 @@ import time
 ROOT = pathlib.Path(__file__).resolve().parent.parent
 
 
-TU_THE = [("dung", "ĐỨNG THẲNG"), ("nam_ngua", "NẰM NGỬA"), ("nghieng_phai", "NẰM NGHIÊNG PHẢI (vai phải chạm đất)"),
-          ("nghieng_trai", "NẰM NGHIÊNG TRÁI (vai trái chạm đất)"), ("cui", "CÚI NGƯỜI VỀ TRƯỚC")]
-TU_THE_DOI, TU_THE_GIU = 5.0, 10.0      # giây để đổi tư thế, giây giữ yên
+# Đeo trên người (28/10: lần đo trước chỉ cầm tay). Ngồi và đứng cùng hướng ngực, phân biệt bằng độ cao thay đổi lúc
+# ngồi xuống / đứng dậy (A.11), nên có cả hai động tác; mã dung_2, dung_3 là đứng lại sau ngồi và sau cúi.
+TU_THE = [("dung", "ĐỨNG THẲNG"),
+          ("ngoi", "NGỒI XUỐNG GHẾ, lưng thẳng"),
+          ("dung_2", "ĐỨNG DẬY, đứng thẳng"),
+          ("cui", "CÚI NGƯỜI VỀ TRƯỚC (như nhặt đồ), giữ nguyên"),
+          ("dung_3", "ĐỨNG THẲNG LẠI"),
+          ("nam_ngua", "NẰM NGỬA"),
+          ("nghieng_phai", "NẰM NGHIÊNG PHẢI (vai phải chạm đất)"),
+          ("nghieng_trai", "NẰM NGHIÊNG TRÁI (vai trái chạm đất)"),
+          ("nam_sap", "NẰM SẤP (úp mặt xuống)")]
+TU_THE_DOI, TU_THE_GIU = 6.0, 10.0      # giây để đổi tư thế, giây giữ yên
 
 
 class _Tcp:
