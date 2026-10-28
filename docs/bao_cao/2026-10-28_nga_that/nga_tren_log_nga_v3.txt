@@ -1,0 +1,64 @@
+docs/bao_cao/2026-10-28_nga_that/nga_20261028_205657.txt: 26299 mẫu (263 s), mô hình N2_11 D1
+
+KHÔNG CÓ tầng xác nhận ngã: 17 lần CNN vào SUSPECT
+    23.04 s  đang làm: nga_nam_1/giu          → MONITOR (TIMEOUT) sau 8.00 s
+    33.60 s  đang làm: nga_nam_2/doi          → MONITOR (TIMEOUT) sau 8.00 s
+    42.24 s  đang làm: nga_nam_2/giu          → MONITOR (TIMEOUT) sau 8.00 s
+    53.76 s  đang làm: nga_nam_3/doi          → MONITOR (TIMEOUT) sau 8.00 s
+    73.28 s  đang làm: nga_nam_4/giu          → MONITOR (TIMEOUT) sau 8.00 s
+    83.84 s  đang làm: nga_nam_4/giu          → MONITOR (TIMEOUT) sau 8.00 s
+    94.08 s  đang làm: nga_nam_5/giu          → MONITOR (TIMEOUT) sau 8.00 s
+   110.08 s  đang làm: nga_nam_6/giu          → MONITOR (TIMEOUT) sau 8.00 s
+   120.64 s  đang làm: nga_nam_7/doi          → MONITOR (TIMEOUT) sau 8.00 s
+   138.88 s  đang làm: nga_nam_8/doi          → MONITOR (TIMEOUT) sau 8.00 s
+   157.76 s  đang làm: nga_nam_9/giu          → MONITOR (TIMEOUT) sau 8.00 s
+   170.88 s  đang làm: nga_nam_10/doi         → MONITOR (TIMEOUT) sau 8.00 s
+   196.48 s  đang làm: nga_nhe_1/giu          → MONITOR (TIMEOUT) sau 8.00 s
+   205.44 s  đang làm: nga_nhe_2/doi          → MONITOR (TIMEOUT) sau 8.00 s
+   223.04 s  đang làm: nga_nhe_3/giu          → MONITOR (TIMEOUT) sau 8.00 s
+   235.20 s  đang làm: nga_nhe_4/doi          → MONITOR (TIMEOUT) sau 8.00 s
+   245.76 s  đang làm: nga_nhe_4/giu          → MONITOR (TIMEOUT) sau 8.00 s
+
+CÓ tầng xác nhận ngã:
+    23.04 s  đang làm: nga_nam_1/giu          → MONITOR (TIMEOUT) sau 8.00 s
+    42.24 s  đang làm: nga_nam_2/giu          → MONITOR (TIMEOUT) sau 8.00 s
+    53.76 s  đang làm: nga_nam_3/doi          → MONITOR (TIMEOUT) sau 8.00 s
+    73.28 s  đang làm: nga_nam_4/giu          → MONITOR (TIMEOUT) sau 8.00 s
+    83.84 s  đang làm: nga_nam_4/giu          → MONITOR (TIMEOUT) sau 8.00 s
+   100.16 s  đang làm: nga_nam_5/giu          → MONITOR (TIMEOUT) sau 8.00 s
+   110.08 s  đang làm: nga_nam_6/giu          → MONITOR (TIMEOUT) sau 8.00 s
+   120.64 s  đang làm: nga_nam_7/doi          → MONITOR (TIMEOUT) sau 8.00 s
+   138.88 s  đang làm: nga_nam_8/doi          → MONITOR (TIMEOUT) sau 8.00 s
+   157.76 s  đang làm: nga_nam_9/giu          → MONITOR (TIMEOUT) sau 8.00 s
+   170.88 s  đang làm: nga_nam_10/doi         → MONITOR (TIMEOUT) sau 8.00 s
+   196.48 s  đang làm: nga_nhe_1/giu          → MONITOR (TIMEOUT) sau 8.00 s
+   205.44 s  đang làm: nga_nhe_2/doi          → MONITOR (TIMEOUT) sau 8.00 s
+   223.04 s  đang làm: nga_nhe_3/giu          → MONITOR (TIMEOUT) sau 8.00 s
+   235.20 s  đang làm: nga_nhe_4/doi          → MONITOR (TIMEOUT) sau 8.00 s
+    33.60 s  đang làm: nga_nam_2/doi          → loại ngay (KHONG_NGA)
+    94.08 s  đang làm: nga_nam_5/giu          → loại ngay (KHONG_NGA)
+    94.72 s  đang làm: nga_nam_5/giu          → loại ngay (KHONG_NGA)
+    96.64 s  đang làm: nga_nam_5/giu          → loại ngay (KHONG_NGA)
+   245.76 s  đang làm: nga_nhe_4/giu          → loại ngay (KHONG_NGA)
+  → CNN nghi 20 lần: loại (không phải ngã) 5, báo ngã cho người dùng 15
+  từng lần xét ngã (nga.c):
+    23.04 s  nga_nam_1/giu          XÁC NHẬN đủ 4 dấu hiệu        đỉnh 3.41 g, quay 388 °/s, nghiêng 1, trước thẳng 1
+    33.60 s  nga_nam_2/doi          loại     không va chạm        đỉnh 2.49 g, quay 285 °/s, nghiêng 1, trước thẳng 1
+    42.24 s  nga_nam_2/giu          XÁC NHẬN đủ 4 dấu hiệu        đỉnh 2.60 g, quay 287 °/s, nghiêng 1, trước thẳng 1
+    53.76 s  nga_nam_3/doi          XÁC NHẬN đủ 4 dấu hiệu        đỉnh 2.58 g, quay 281 °/s, nghiêng 1, trước thẳng 1
+    73.28 s  nga_nam_4/giu          XÁC NHẬN đủ 4 dấu hiệu        đỉnh 4.07 g, quay 467 °/s, nghiêng 1, trước thẳng 1
+    83.84 s  nga_nam_4/giu          XÁC NHẬN đủ 4 dấu hiệu        đỉnh 2.66 g, quay 387 °/s, nghiêng 1, trước thẳng 1
+    94.08 s  nga_nam_5/giu          loại     không va chạm        đỉnh 2.46 g, quay 391 °/s, nghiêng 1, trước thẳng 1
+    94.72 s  nga_nam_5/giu          loại     không va chạm        đỉnh 2.46 g, quay 391 °/s, nghiêng 1, trước thẳng 1
+    96.64 s  nga_nam_5/giu          loại     không va chạm        đỉnh 2.46 g, quay 391 °/s, nghiêng 1, trước thẳng 1
+   100.16 s  nga_nam_5/giu          XÁC NHẬN đủ 4 dấu hiệu        đỉnh 2.92 g, quay 342 °/s, nghiêng 1, trước thẳng 1
+   110.08 s  nga_nam_6/giu          XÁC NHẬN đủ 4 dấu hiệu        đỉnh 3.00 g, quay 444 °/s, nghiêng 1, trước thẳng 1
+   120.64 s  nga_nam_7/doi          XÁC NHẬN đủ 4 dấu hiệu        đỉnh 4.52 g, quay 427 °/s, nghiêng 1, trước thẳng 1
+   138.88 s  nga_nam_8/doi          XÁC NHẬN đủ 4 dấu hiệu        đỉnh 3.92 g, quay 439 °/s, nghiêng 1, trước thẳng 1
+   157.76 s  nga_nam_9/giu          XÁC NHẬN đủ 4 dấu hiệu        đỉnh 5.29 g, quay 459 °/s, nghiêng 1, trước thẳng 1
+   170.88 s  nga_nam_10/doi         XÁC NHẬN đủ 4 dấu hiệu        đỉnh 2.96 g, quay 344 °/s, nghiêng 1, trước thẳng 1
+   196.48 s  nga_nhe_1/giu          XÁC NHẬN đủ 4 dấu hiệu        đỉnh 3.63 g, quay 258 °/s, nghiêng 1, trước thẳng 1
+   205.44 s  nga_nhe_2/doi          XÁC NHẬN đủ 4 dấu hiệu        đỉnh 3.33 g, quay 339 °/s, nghiêng 1, trước thẳng 1
+   223.04 s  nga_nhe_3/giu          XÁC NHẬN đủ 4 dấu hiệu        đỉnh 3.77 g, quay 349 °/s, nghiêng 1, trước thẳng 1
+   235.20 s  nga_nhe_4/doi          XÁC NHẬN đủ 4 dấu hiệu        đỉnh 3.40 g, quay 385 °/s, nghiêng 1, trước thẳng 1
+   245.76 s  nga_nhe_4/giu          loại     không va chạm        đỉnh 2.40 g, quay 202 °/s, nghiêng 1, trước thẳng 1

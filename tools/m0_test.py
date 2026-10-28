@@ -585,7 +585,7 @@ def test_hub():
         if out[i] == ord("R"):
             got_R.append(tuple(out[i + 1:i + 4])); i += 4
         elif out[i] == ord("N"):                                      # xét ngã (nga.c): chỉ có khi nga_en = 1
-            i += 22
+            i += 18
         else:
             got_S.append((struct.unpack("<I", out[i + 1:i + 5])[0], out[i + 5], out[i + 6])); i += 7
     st = struct.unpack("<6I", out[i + 1:i + 25])

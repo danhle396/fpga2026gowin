@@ -1,0 +1,222 @@
+D1 người 102: 182 bản ghi, mô hình N2_11 D1, vị trí đeo theo fw_config.h (3, -1, -2) (204, -3, -4)
+    1/182 act 801: CNN nghi 0, xác nhận ngã 0  
+    2/182 act 801: CNN nghi 0, xác nhận ngã 0  
+    3/182 act 801: CNN nghi 0, xác nhận ngã 0  
+    4/182 act 801: CNN nghi 0, xác nhận ngã 0  
+    5/182 act 801: CNN nghi 0, xác nhận ngã 0  
+    6/182 act 802: CNN nghi 0, xác nhận ngã 0  
+    7/182 act 802: CNN nghi 0, xác nhận ngã 0  
+    8/182 act 802: CNN nghi 0, xác nhận ngã 0  
+    9/182 act 802: CNN nghi 0, xác nhận ngã 0  
+   10/182 act 802: CNN nghi 0, xác nhận ngã 0  
+   11/182 act 803: CNN nghi 0, xác nhận ngã 0  
+   12/182 act 803: CNN nghi 0, xác nhận ngã 0  
+   13/182 act 803: CNN nghi 0, xác nhận ngã 0  
+   14/182 act 803: CNN nghi 0, xác nhận ngã 0  
+   15/182 act 803: CNN nghi 0, xác nhận ngã 0  
+   16/182 act 804: CNN nghi 0, xác nhận ngã 0  
+   17/182 act 804: CNN nghi 0, xác nhận ngã 0  
+   18/182 act 804: CNN nghi 0, xác nhận ngã 0  
+   19/182 act 804: CNN nghi 0, xác nhận ngã 0  
+   20/182 act 804: CNN nghi 0, xác nhận ngã 0  
+   21/182 act 805: CNN nghi 0, xác nhận ngã 0  
+   22/182 act 805: CNN nghi 0, xác nhận ngã 0  
+   23/182 act 805: CNN nghi 0, xác nhận ngã 0  
+   24/182 act 805: CNN nghi 0, xác nhận ngã 0  
+   25/182 act 805: CNN nghi 0, xác nhận ngã 0  
+   26/182 act 806: CNN nghi 0, xác nhận ngã 0  
+   27/182 act 806: CNN nghi 0, xác nhận ngã 0  
+   28/182 act 806: CNN nghi 0, xác nhận ngã 0  
+   29/182 act 806: CNN nghi 0, xác nhận ngã 0  
+   30/182 act 806: CNN nghi 0, xác nhận ngã 0  
+   31/182 act 807: CNN nghi 0, xác nhận ngã 0  
+   32/182 act 807: CNN nghi 0, xác nhận ngã 0  
+   33/182 act 807: CNN nghi 0, xác nhận ngã 0  
+   34/182 act 807: CNN nghi 0, xác nhận ngã 0  
+   35/182 act 807: CNN nghi 0, xác nhận ngã 0  
+   36/182 act 808: CNN nghi 0, xác nhận ngã 0  
+   37/182 act 808: CNN nghi 0, xác nhận ngã 0  
+   38/182 act 808: CNN nghi 0, xác nhận ngã 0  
+   39/182 act 808: CNN nghi 0, xác nhận ngã 0  
+   40/182 act 808: CNN nghi 0, xác nhận ngã 0  
+   41/182 act 809: CNN nghi 0, xác nhận ngã 0  
+   42/182 act 809: CNN nghi 0, xác nhận ngã 0  
+   43/182 act 809: CNN nghi 0, xác nhận ngã 0  
+   44/182 act 809: CNN nghi 0, xác nhận ngã 0  
+   45/182 act 809: CNN nghi 0, xác nhận ngã 0  
+   46/182 act 810: CNN nghi 0, xác nhận ngã 0  
+   47/182 act 810: CNN nghi 0, xác nhận ngã 0  
+   48/182 act 810: CNN nghi 0, xác nhận ngã 0  
+   49/182 act 810: CNN nghi 0, xác nhận ngã 0  
+   50/182 act 810: CNN nghi 0, xác nhận ngã 0  
+   51/182 act 811: CNN nghi 0, xác nhận ngã 0  
+   52/182 act 811: CNN nghi 0, xác nhận ngã 0  
+   53/182 act 811: CNN nghi 0, xác nhận ngã 0  
+   54/182 act 811: CNN nghi 0, xác nhận ngã 0  
+   55/182 act 811: CNN nghi 0, xác nhận ngã 0  
+   56/182 act 812: CNN nghi 0, xác nhận ngã 0  
+   57/182 act 812: CNN nghi 0, xác nhận ngã 0  
+   58/182 act 812: CNN nghi 0, xác nhận ngã 0  
+   59/182 act 812: CNN nghi 0, xác nhận ngã 0  
+   60/182 act 812: CNN nghi 0, xác nhận ngã 0  
+   61/182 act 813: CNN nghi 0, xác nhận ngã 0  
+   62/182 act 813: CNN nghi 0, xác nhận ngã 0  
+   63/182 act 813: CNN nghi 0, xác nhận ngã 0  
+   64/182 act 813: CNN nghi 0, xác nhận ngã 0  
+   65/182 act 813: CNN nghi 0, xác nhận ngã 0  
+   66/182 act 814: CNN nghi 0, xác nhận ngã 0  
+   67/182 act 814: CNN nghi 0, xác nhận ngã 0  
+   68/182 act 814: CNN nghi 0, xác nhận ngã 0  
+   69/182 act 814: CNN nghi 0, xác nhận ngã 0  
+   70/182 act 814: CNN nghi 0, xác nhận ngã 0  
+   71/182 act 815: CNN nghi 0, xác nhận ngã 0  
+   72/182 act 815: CNN nghi 0, xác nhận ngã 0  
+   73/182 act 815: CNN nghi 0, xác nhận ngã 0  
+   74/182 act 815: CNN nghi 0, xác nhận ngã 0  
+   75/182 act 815: CNN nghi 0, xác nhận ngã 0  
+   76/182 act 816: CNN nghi 0, xác nhận ngã 0  
+   77/182 act 816: CNN nghi 0, xác nhận ngã 0  
+   78/182 act 816: CNN nghi 0, xác nhận ngã 0  
+   79/182 act 816: CNN nghi 0, xác nhận ngã 0  
+   80/182 act 816: CNN nghi 0, xác nhận ngã 0  
+   81/182 act 816: CNN nghi 0, xác nhận ngã 0  
+   82/182 act 901: CNN nghi 1, xác nhận ngã 1  XÁC NHẬN: đủ 4 dấu hiệu (trước thẳng 1, đỉnh 6.06 g, quay 687 °/s, nghiêng 1)
+   83/182 act 901: CNN nghi 1, xác nhận ngã 1  XÁC NHẬN: đủ 4 dấu hiệu (trước thẳng 1, đỉnh 5.46 g, quay 598 °/s, nghiêng 1)
+   84/182 act 901: CNN nghi 1, xác nhận ngã 1  XÁC NHẬN: đủ 4 dấu hiệu (trước thẳng 1, đỉnh 6.04 g, quay 661 °/s, nghiêng 1)
+   85/182 act 901: CNN nghi 1, xác nhận ngã 1  XÁC NHẬN: đủ 4 dấu hiệu (trước thẳng 1, đỉnh 7.07 g, quay 662 °/s, nghiêng 1)
+   86/182 act 901: CNN nghi 1, xác nhận ngã 1  XÁC NHẬN: đủ 4 dấu hiệu (trước thẳng 1, đỉnh 6.38 g, quay 589 °/s, nghiêng 1)
+   87/182 act 902: CNN nghi 1, xác nhận ngã 0  loại: không quay nhanh (trước thẳng 1, đỉnh 2.62 g, quay 148 °/s, nghiêng 1)
+   88/182 act 902: CNN nghi 1, xác nhận ngã 0  loại: không quay nhanh (trước thẳng 1, đỉnh 3.27 g, quay 180 °/s, nghiêng 1)
+   89/182 act 902: CNN nghi 1, xác nhận ngã 1  XÁC NHẬN: đủ 4 dấu hiệu (trước thẳng 1, đỉnh 2.95 g, quay 252 °/s, nghiêng 1)
+   90/182 act 902: CNN nghi 1, xác nhận ngã 1  XÁC NHẬN: đủ 4 dấu hiệu (trước thẳng 1, đỉnh 2.95 g, quay 259 °/s, nghiêng 1)
+   91/182 act 902: CNN nghi 1, xác nhận ngã 0  loại: không quay nhanh (trước thẳng 1, đỉnh 3.14 g, quay 217 °/s, nghiêng 1)
+   92/182 act 903: CNN nghi 1, xác nhận ngã 0  loại: không quay nhanh (trước thẳng 1, đỉnh 3.72 g, quay 147 °/s, nghiêng 0)
+   93/182 act 903: CNN nghi 1, xác nhận ngã 0  loại: không quay nhanh (trước thẳng 1, đỉnh 5.03 g, quay 149 °/s, nghiêng 0)
+   94/182 act 903: CNN nghi 1, xác nhận ngã 0  loại: không quay nhanh (trước thẳng 1, đỉnh 4.45 g, quay 169 °/s, nghiêng 0)
+   95/182 act 903: CNN nghi 1, xác nhận ngã 0  loại: không quay nhanh (trước thẳng 1, đỉnh 4.09 g, quay 164 °/s, nghiêng 0)
+   96/182 act 903: CNN nghi 1, xác nhận ngã 0  loại: không quay nhanh (trước thẳng 1, đỉnh 4.41 g, quay 185 °/s, nghiêng 0)
+   97/182 act 904: CNN nghi 1, xác nhận ngã 0  loại: không quay nhanh (trước thẳng 1, đỉnh 3.70 g, quay 212 °/s, nghiêng 1)
+   98/182 act 904: CNN nghi 1, xác nhận ngã 1  XÁC NHẬN: đủ 4 dấu hiệu (trước thẳng 1, đỉnh 3.64 g, quay 302 °/s, nghiêng 1)
+   99/182 act 904: CNN nghi 1, xác nhận ngã 1  XÁC NHẬN: đủ 4 dấu hiệu (trước thẳng 1, đỉnh 4.24 g, quay 350 °/s, nghiêng 1)
+  100/182 act 904: CNN nghi 1, xác nhận ngã 1  XÁC NHẬN: đủ 4 dấu hiệu (trước thẳng 1, đỉnh 3.84 g, quay 364 °/s, nghiêng 1)
+  101/182 act 904: CNN nghi 1, xác nhận ngã 1  XÁC NHẬN: đủ 4 dấu hiệu (trước thẳng 1, đỉnh 4.34 g, quay 257 °/s, nghiêng 1)
+  102/182 act 905: CNN nghi 1, xác nhận ngã 1  XÁC NHẬN: đủ 4 dấu hiệu (trước thẳng 1, đỉnh 2.71 g, quay 252 °/s, nghiêng 1)
+  103/182 act 905: CNN nghi 1, xác nhận ngã 1  XÁC NHẬN: đủ 4 dấu hiệu (trước thẳng 1, đỉnh 2.72 g, quay 228 °/s, nghiêng 1)
+  104/182 act 905: CNN nghi 1, xác nhận ngã 1  XÁC NHẬN: đủ 4 dấu hiệu (trước thẳng 1, đỉnh 3.20 g, quay 231 °/s, nghiêng 1)
+  105/182 act 905: CNN nghi 1, xác nhận ngã 1  XÁC NHẬN: đủ 4 dấu hiệu (trước thẳng 1, đỉnh 2.87 g, quay 266 °/s, nghiêng 1)
+  106/182 act 905: CNN nghi 1, xác nhận ngã 1  XÁC NHẬN: đủ 4 dấu hiệu (trước thẳng 1, đỉnh 3.39 g, quay 258 °/s, nghiêng 1)
+  107/182 act 906: CNN nghi 1, xác nhận ngã 1  XÁC NHẬN: đủ 4 dấu hiệu (trước thẳng 1, đỉnh 3.00 g, quay 232 °/s, nghiêng 1)
+  108/182 act 906: CNN nghi 1, xác nhận ngã 0  loại: không quay nhanh (trước thẳng 1, đỉnh 3.33 g, quay 218 °/s, nghiêng 1)
+  109/182 act 906: CNN nghi 1, xác nhận ngã 1  XÁC NHẬN: đủ 4 dấu hiệu (trước thẳng 1, đỉnh 3.12 g, quay 266 °/s, nghiêng 1)
+  110/182 act 906: CNN nghi 1, xác nhận ngã 1  XÁC NHẬN: đủ 4 dấu hiệu (trước thẳng 1, đỉnh 3.41 g, quay 274 °/s, nghiêng 1)
+  111/182 act 906: CNN nghi 1, xác nhận ngã 0  loại: không quay nhanh (trước thẳng 1, đỉnh 3.08 g, quay 207 °/s, nghiêng 1)
+  112/182 act 907: CNN nghi 1, xác nhận ngã 0  loại: không quay nhanh (trước thẳng 1, đỉnh 3.28 g, quay 192 °/s, nghiêng 1)
+  113/182 act 907: CNN nghi 1, xác nhận ngã 1  XÁC NHẬN: đủ 4 dấu hiệu (trước thẳng 1, đỉnh 4.38 g, quay 422 °/s, nghiêng 1)
+  114/182 act 907: CNN nghi 1, xác nhận ngã 1  XÁC NHẬN: đủ 4 dấu hiệu (trước thẳng 1, đỉnh 4.49 g, quay 221 °/s, nghiêng 1)
+  115/182 act 907: CNN nghi 1, xác nhận ngã 1  XÁC NHẬN: đủ 4 dấu hiệu (trước thẳng 1, đỉnh 4.49 g, quay 260 °/s, nghiêng 1)
+  116/182 act 907: CNN nghi 1, xác nhận ngã 1  XÁC NHẬN: đủ 4 dấu hiệu (trước thẳng 1, đỉnh 2.66 g, quay 233 °/s, nghiêng 1)
+  117/182 act 908: CNN nghi 1, xác nhận ngã 0  loại: không quay nhanh (trước thẳng 1, đỉnh 3.08 g, quay 199 °/s, nghiêng 1)
+  118/182 act 908: CNN nghi 1, xác nhận ngã 1  XÁC NHẬN: đủ 4 dấu hiệu (trước thẳng 1, đỉnh 3.15 g, quay 274 °/s, nghiêng 1)
+  119/182 act 908: CNN nghi 1, xác nhận ngã 0  loại: không quay nhanh (trước thẳng 1, đỉnh 3.00 g, quay 205 °/s, nghiêng 1)
+  120/182 act 908: CNN nghi 1, xác nhận ngã 1  XÁC NHẬN: đủ 4 dấu hiệu (trước thẳng 1, đỉnh 2.58 g, quay 258 °/s, nghiêng 1)
+  121/182 act 908: CNN nghi 1, xác nhận ngã 0  loại: không quay nhanh (trước thẳng 1, đỉnh 2.94 g, quay 204 °/s, nghiêng 1)
+  122/182 act 909: CNN nghi 1, xác nhận ngã 0  loại: không quay nhanh (trước thẳng 1, đỉnh 4.26 g, quay 147 °/s, nghiêng 0)
+  123/182 act 909: CNN nghi 1, xác nhận ngã 0  loại: không quay nhanh (trước thẳng 1, đỉnh 4.55 g, quay 169 °/s, nghiêng 0)
+  124/182 act 909: CNN nghi 1, xác nhận ngã 0  loại: không quay nhanh (trước thẳng 1, đỉnh 4.59 g, quay 170 °/s, nghiêng 0)
+  125/182 act 909: CNN nghi 1, xác nhận ngã 0  loại: không quay nhanh (trước thẳng 1, đỉnh 4.58 g, quay 138 °/s, nghiêng 0)
+  126/182 act 909: CNN nghi 1, xác nhận ngã 0  loại: không quay nhanh (trước thẳng 1, đỉnh 4.87 g, quay 96 °/s, nghiêng 0)
+  127/182 act 910: CNN nghi 1, xác nhận ngã 1  XÁC NHẬN: đủ 4 dấu hiệu (trước thẳng 1, đỉnh 3.45 g, quay 395 °/s, nghiêng 1)
+  128/182 act 910: CNN nghi 1, xác nhận ngã 1  XÁC NHẬN: đủ 4 dấu hiệu (trước thẳng 1, đỉnh 3.95 g, quay 631 °/s, nghiêng 1)
+  129/182 act 910: CNN nghi 1, xác nhận ngã 1  XÁC NHẬN: đủ 4 dấu hiệu (trước thẳng 1, đỉnh 5.45 g, quay 630 °/s, nghiêng 1)
+  130/182 act 910: CNN nghi 1, xác nhận ngã 1  XÁC NHẬN: đủ 4 dấu hiệu (trước thẳng 1, đỉnh 6.18 g, quay 650 °/s, nghiêng 1)
+  131/182 act 910: CNN nghi 1, xác nhận ngã 1  XÁC NHẬN: đủ 4 dấu hiệu (trước thẳng 1, đỉnh 5.73 g, quay 659 °/s, nghiêng 1)
+  132/182 act 911: CNN nghi 1, xác nhận ngã 1  XÁC NHẬN: đủ 4 dấu hiệu (trước thẳng 1, đỉnh 3.65 g, quay 494 °/s, nghiêng 1)
+  133/182 act 911: CNN nghi 1, xác nhận ngã 1  XÁC NHẬN: đủ 4 dấu hiệu (trước thẳng 1, đỉnh 3.31 g, quay 527 °/s, nghiêng 1)
+  134/182 act 911: CNN nghi 1, xác nhận ngã 1  XÁC NHẬN: đủ 4 dấu hiệu (trước thẳng 1, đỉnh 3.85 g, quay 557 °/s, nghiêng 1)
+  135/182 act 911: CNN nghi 1, xác nhận ngã 1  XÁC NHẬN: đủ 4 dấu hiệu (trước thẳng 1, đỉnh 3.75 g, quay 496 °/s, nghiêng 1)
+  136/182 act 911: CNN nghi 1, xác nhận ngã 1  XÁC NHẬN: đủ 4 dấu hiệu (trước thẳng 1, đỉnh 2.84 g, quay 440 °/s, nghiêng 1)
+  137/182 act 912: CNN nghi 1, xác nhận ngã 1  XÁC NHẬN: đủ 4 dấu hiệu (trước thẳng 1, đỉnh 3.49 g, quay 550 °/s, nghiêng 1)
+  138/182 act 912: CNN nghi 1, xác nhận ngã 1  XÁC NHẬN: đủ 4 dấu hiệu (trước thẳng 1, đỉnh 3.85 g, quay 482 °/s, nghiêng 1)
+  139/182 act 912: CNN nghi 1, xác nhận ngã 1  XÁC NHẬN: đủ 4 dấu hiệu (trước thẳng 1, đỉnh 4.97 g, quay 621 °/s, nghiêng 1)
+  140/182 act 912: CNN nghi 1, xác nhận ngã 1  XÁC NHẬN: đủ 4 dấu hiệu (trước thẳng 1, đỉnh 3.86 g, quay 611 °/s, nghiêng 1)
+  141/182 act 912: CNN nghi 1, xác nhận ngã 1  XÁC NHẬN: đủ 4 dấu hiệu (trước thẳng 1, đỉnh 3.59 g, quay 541 °/s, nghiêng 1)
+  142/182 act 913: CNN nghi 1, xác nhận ngã 1  XÁC NHẬN: đủ 4 dấu hiệu (trước thẳng 1, đỉnh 4.98 g, quay 611 °/s, nghiêng 1)
+  143/182 act 913: CNN nghi 1, xác nhận ngã 1  XÁC NHẬN: đủ 4 dấu hiệu (trước thẳng 1, đỉnh 5.31 g, quay 703 °/s, nghiêng 1)
+  144/182 act 913: CNN nghi 1, xác nhận ngã 1  XÁC NHẬN: đủ 4 dấu hiệu (trước thẳng 1, đỉnh 5.88 g, quay 754 °/s, nghiêng 1)
+  145/182 act 913: CNN nghi 1, xác nhận ngã 1  XÁC NHẬN: đủ 4 dấu hiệu (trước thẳng 1, đỉnh 5.07 g, quay 694 °/s, nghiêng 1)
+  146/182 act 913: CNN nghi 1, xác nhận ngã 1  XÁC NHẬN: đủ 4 dấu hiệu (trước thẳng 1, đỉnh 5.08 g, quay 717 °/s, nghiêng 1)
+  147/182 act 914: CNN nghi 1, xác nhận ngã 1  XÁC NHẬN: đủ 4 dấu hiệu (trước thẳng 1, đỉnh 3.64 g, quay 514 °/s, nghiêng 1)
+  148/182 act 914: CNN nghi 1, xác nhận ngã 1  XÁC NHẬN: đủ 4 dấu hiệu (trước thẳng 1, đỉnh 4.21 g, quay 564 °/s, nghiêng 1)
+  149/182 act 914: CNN nghi 1, xác nhận ngã 1  XÁC NHẬN: đủ 4 dấu hiệu (trước thẳng 1, đỉnh 4.38 g, quay 644 °/s, nghiêng 1)
+  150/182 act 914: CNN nghi 1, xác nhận ngã 1  XÁC NHẬN: đủ 4 dấu hiệu (trước thẳng 1, đỉnh 4.47 g, quay 583 °/s, nghiêng 1)
+  151/182 act 914: CNN nghi 1, xác nhận ngã 1  XÁC NHẬN: đủ 4 dấu hiệu (trước thẳng 1, đỉnh 4.45 g, quay 490 °/s, nghiêng 1)
+  152/182 act 915: CNN nghi 1, xác nhận ngã 1  XÁC NHẬN: đủ 4 dấu hiệu (trước thẳng 1, đỉnh 6.26 g, quay 563 °/s, nghiêng 1)
+  153/182 act 915: CNN nghi 1, xác nhận ngã 1  XÁC NHẬN: đủ 4 dấu hiệu (trước thẳng 1, đỉnh 3.67 g, quay 498 °/s, nghiêng 1)
+  154/182 act 915: CNN nghi 1, xác nhận ngã 1  XÁC NHẬN: đủ 4 dấu hiệu (trước thẳng 1, đỉnh 3.12 g, quay 442 °/s, nghiêng 1)
+  155/182 act 915: CNN nghi 1, xác nhận ngã 1  XÁC NHẬN: đủ 4 dấu hiệu (trước thẳng 1, đỉnh 3.81 g, quay 523 °/s, nghiêng 1)
+  156/182 act 915: CNN nghi 1, xác nhận ngã 1  XÁC NHẬN: đủ 4 dấu hiệu (trước thẳng 1, đỉnh 3.61 g, quay 520 °/s, nghiêng 1)
+  157/182 act 916: CNN nghi 1, xác nhận ngã 1  XÁC NHẬN: đủ 4 dấu hiệu (trước thẳng 1, đỉnh 3.83 g, quay 524 °/s, nghiêng 1)
+  158/182 act 916: CNN nghi 1, xác nhận ngã 1  XÁC NHẬN: đủ 4 dấu hiệu (trước thẳng 1, đỉnh 4.86 g, quay 563 °/s, nghiêng 1)
+  159/182 act 916: CNN nghi 1, xác nhận ngã 1  XÁC NHẬN: đủ 4 dấu hiệu (trước thẳng 1, đỉnh 4.21 g, quay 542 °/s, nghiêng 1)
+  160/182 act 916: CNN nghi 1, xác nhận ngã 1  XÁC NHẬN: đủ 4 dấu hiệu (trước thẳng 1, đỉnh 3.96 g, quay 523 °/s, nghiêng 1)
+  161/182 act 916: CNN nghi 1, xác nhận ngã 1  XÁC NHẬN: đủ 4 dấu hiệu (trước thẳng 1, đỉnh 3.26 g, quay 532 °/s, nghiêng 1)
+  162/182 act 917: CNN nghi 1, xác nhận ngã 0  loại: trước không thẳng (trước thẳng 0, đỉnh 2.69 g, quay 413 °/s, nghiêng 1); loại: trước không thẳng (trước thẳng 0, đỉnh 2.69 g, quay 413 °/s, nghiêng 1)
+  163/182 act 917: CNN nghi 1, xác nhận ngã 0  loại: trước không thẳng (trước thẳng 0, đỉnh 2.69 g, quay 413 °/s, nghiêng 1); loại: trước không thẳng (trước thẳng 0, đỉnh 2.69 g, quay 413 °/s, nghiêng 1)
+  164/182 act 917: CNN nghi 1, xác nhận ngã 0  loại: trước không thẳng (trước thẳng 0, đỉnh 2.36 g, quay 396 °/s, nghiêng 1); loại: trước không thẳng (trước thẳng 0, đỉnh 2.36 g, quay 396 °/s, nghiêng 1)
+  165/182 act 917: CNN nghi 1, xác nhận ngã 0  loại: trước không thẳng (trước thẳng 0, đỉnh 2.13 g, quay 502 °/s, nghiêng 1); loại: trước không thẳng (trước thẳng 0, đỉnh 2.13 g, quay 502 °/s, nghiêng 1); loại: trước không thẳng (trước thẳng 0, đỉnh 2.13 g, quay 502 °/s, nghiêng 1)
+  166/182 act 917: CNN nghi 1, xác nhận ngã 0  loại: trước không thẳng (trước thẳng 0, đỉnh 4.12 g, quay 517 °/s, nghiêng 1); loại: trước không thẳng (trước thẳng 0, đỉnh 4.12 g, quay 517 °/s, nghiêng 1)
+  167/182 act 917: CNN nghi 1, xác nhận ngã 0  loại: trước không thẳng (trước thẳng 0, đỉnh 2.16 g, quay 532 °/s, nghiêng 1); loại: trước không thẳng (trước thẳng 0, đỉnh 2.16 g, quay 532 °/s, nghiêng 1)
+  168/182 act 918: CNN nghi 1, xác nhận ngã 1  XÁC NHẬN: đủ 4 dấu hiệu (trước thẳng 1, đỉnh 2.74 g, quay 257 °/s, nghiêng 1)
+  169/182 act 918: CNN nghi 1, xác nhận ngã 1  XÁC NHẬN: đủ 4 dấu hiệu (trước thẳng 1, đỉnh 4.00 g, quay 248 °/s, nghiêng 1)
+  170/182 act 918: CNN nghi 1, xác nhận ngã 1  XÁC NHẬN: đủ 4 dấu hiệu (trước thẳng 1, đỉnh 3.45 g, quay 233 °/s, nghiêng 1)
+  171/182 act 918: CNN nghi 1, xác nhận ngã 1  XÁC NHẬN: đủ 4 dấu hiệu (trước thẳng 1, đỉnh 4.06 g, quay 306 °/s, nghiêng 1)
+  172/182 act 918: CNN nghi 1, xác nhận ngã 1  XÁC NHẬN: đủ 4 dấu hiệu (trước thẳng 1, đỉnh 4.11 g, quay 290 °/s, nghiêng 1)
+  173/182 act 919: CNN nghi 1, xác nhận ngã 1  XÁC NHẬN: đủ 4 dấu hiệu (trước thẳng 1, đỉnh 2.51 g, quay 535 °/s, nghiêng 1)
+  174/182 act 919: CNN nghi 1, xác nhận ngã 1  XÁC NHẬN: đủ 4 dấu hiệu (trước thẳng 1, đỉnh 2.57 g, quay 504 °/s, nghiêng 1)
+  175/182 act 919: CNN nghi 1, xác nhận ngã 1  XÁC NHẬN: đủ 4 dấu hiệu (trước thẳng 1, đỉnh 2.92 g, quay 350 °/s, nghiêng 1)
+  176/182 act 919: CNN nghi 1, xác nhận ngã 1  XÁC NHẬN: đủ 4 dấu hiệu (trước thẳng 1, đỉnh 2.56 g, quay 502 °/s, nghiêng 1)
+  177/182 act 919: CNN nghi 1, xác nhận ngã 1  XÁC NHẬN: đủ 4 dấu hiệu (trước thẳng 1, đỉnh 3.07 g, quay 543 °/s, nghiêng 1)
+  178/182 act 920: CNN nghi 1, xác nhận ngã 0  loại: ngực không nghiêng (trước thẳng 1, đỉnh 4.26 g, quay 289 °/s, nghiêng 0)
+  179/182 act 920: CNN nghi 1, xác nhận ngã 0  loại: ngực không nghiêng (trước thẳng 1, đỉnh 4.53 g, quay 276 °/s, nghiêng 0)
+  180/182 act 920: CNN nghi 1, xác nhận ngã 0  loại: ngực không nghiêng (trước thẳng 1, đỉnh 4.44 g, quay 267 °/s, nghiêng 0)
+  181/182 act 920: CNN nghi 1, xác nhận ngã 0  loại: ngực không nghiêng (trước thẳng 1, đỉnh 4.74 g, quay 295 °/s, nghiêng 0)
+  182/182 act 920: CNN nghi 1, xác nhận ngã 0  loại: ngực không nghiêng (trước thẳng 1, đỉnh 4.35 g, quay 278 °/s, nghiêng 0)
+
+ngã 101 bản ghi: CNN nghi 101, xác nhận 70 (69.3 %)
+sinh hoạt 81 bản ghi: CNN nghi 0, xác nhận (báo nhầm) 0
+  801: 5 bản ghi, CNN nghi 0, xác nhận 0
+  802: 5 bản ghi, CNN nghi 0, xác nhận 0
+  803: 5 bản ghi, CNN nghi 0, xác nhận 0
+  804: 5 bản ghi, CNN nghi 0, xác nhận 0
+  805: 5 bản ghi, CNN nghi 0, xác nhận 0
+  806: 5 bản ghi, CNN nghi 0, xác nhận 0
+  807: 5 bản ghi, CNN nghi 0, xác nhận 0
+  808: 5 bản ghi, CNN nghi 0, xác nhận 0
+  809: 5 bản ghi, CNN nghi 0, xác nhận 0
+  810: 5 bản ghi, CNN nghi 0, xác nhận 0
+  811: 5 bản ghi, CNN nghi 0, xác nhận 0
+  812: 5 bản ghi, CNN nghi 0, xác nhận 0
+  813: 5 bản ghi, CNN nghi 0, xác nhận 0
+  814: 5 bản ghi, CNN nghi 0, xác nhận 0
+  815: 5 bản ghi, CNN nghi 0, xác nhận 0
+  816: 6 bản ghi, CNN nghi 0, xác nhận 0
+  901: 5 bản ghi, CNN nghi 5, xác nhận 5
+  902: 5 bản ghi, CNN nghi 5, xác nhận 2
+  903: 5 bản ghi, CNN nghi 5, xác nhận 0
+  904: 5 bản ghi, CNN nghi 5, xác nhận 4
+  905: 5 bản ghi, CNN nghi 5, xác nhận 5
+  906: 5 bản ghi, CNN nghi 5, xác nhận 3
+  907: 5 bản ghi, CNN nghi 5, xác nhận 4
+  908: 5 bản ghi, CNN nghi 5, xác nhận 2
+  909: 5 bản ghi, CNN nghi 5, xác nhận 0
+  910: 5 bản ghi, CNN nghi 5, xác nhận 5
+  911: 5 bản ghi, CNN nghi 5, xác nhận 5
+  912: 5 bản ghi, CNN nghi 5, xác nhận 5
+  913: 5 bản ghi, CNN nghi 5, xác nhận 5
+  914: 5 bản ghi, CNN nghi 5, xác nhận 5
+  915: 5 bản ghi, CNN nghi 5, xác nhận 5
+  916: 5 bản ghi, CNN nghi 5, xác nhận 5
+  917: 6 bản ghi, CNN nghi 6, xác nhận 0
+  918: 5 bản ghi, CNN nghi 5, xác nhận 5
+  919: 5 bản ghi, CNN nghi 5, xác nhận 5
+  920: 5 bản ghi, CNN nghi 5, xác nhận 0

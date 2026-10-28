@@ -17,7 +17,7 @@ sys.path.insert(0, str(ROOT / "tools"))
 import m0_test as m0  # noqa: E402
 
 NGA_EV = []          # các lần xét ngã của lần chạy gần nhất
-LD = ['-', 'trước không thẳng', 'không va chạm', 'không nằm / ngực không hạ', 'nằm', 'ngực hạ', 'bất động', 'va chạm mạnh ≥ 3 g']
+LD = ['-', 'trước không thẳng', 'không va chạm', 'ngực không nghiêng', 'không quay nhanh', 'đủ 4 dấu hiệu']
 ST = ["STANDBY", "MONITOR", "SUSPECT", "PRE_ALARM", "ALARM", "COOLDOWN"]
 WHY_KHONG_NGA = 9
 
@@ -40,11 +40,11 @@ def mot_ban_ghi(x50, P, truc, off):
     while out[i] != ord("T"):
         if out[i] == ord("R"):
             i += 4
-        elif out[i] == ord("N"):                           # 'N' t hd ly_do truoc_thang co_va_cham peak2 dh_dot co_dot
+        elif out[i] == ord("N"):                           # 'N' t hd ly_do truoc_thang co_va_cham peak2 wpeak2 co_nghieng
             t, hd, ld, tr, vc = struct.unpack("<IBBBB", out[i + 1:i + 9])
-            pk2, dh, cd = struct.unpack("<IqB", out[i + 9:i + 22])
-            NGA_EV.append((t, hd, ld, tr, vc, pk2 ** 0.5 / 2048, dh * 9.80665 / 2048 / 1e4 if cd else None))
-            i += 22
+            pk2, wk2, ng = struct.unpack("<IIB", out[i + 9:i + 18])
+            NGA_EV.append((t, hd, ld, tr, vc, pk2 ** 0.5 / 2048, wk2 ** 0.5 / 16.4, ng))
+            i += 18
         else:
             ev.append((struct.unpack("<I", out[i + 1:i + 5])[0], out[i + 5], out[i + 6])); i += 7
     # CNN nghi = có SUSPECT, hoặc có lần bị loại ngay trong khe vào SUSPECT (mode 11 chỉ thấy MONITOR, KHONG_NGA)
@@ -76,7 +76,7 @@ def main():
         nghi, xn = mot_ban_ghi(D[S[i]:S[i] + L[i]].astype(np.int64), P, truc, off)
         rows.append((act, nghi, xn))
         lydo = "; ".join(f"{'XÁC NHẬN' if hd == 1 else 'loại'}: {LD[ld]} (trước thẳng {tr}, đỉnh {pk:.2f} g, "
-                         f"Δh {'-' if dh is None else f'{dh:+.2f} m'})" for _, hd, ld, tr, vc, pk, dh in NGA_EV)
+                         f"quay {w:.0f} °/s, nghiêng {ng})" for _, hd, ld, tr, vc, pk, w, ng in NGA_EV)
         print(f"  {n_i + 1:3d}/{len(idx)} act {act}: CNN nghi {int(nghi)}, xác nhận ngã {int(xn)}  {lydo}", flush=True)
     if a.out:
         with open(a.out, "w", encoding="utf-8") as f:

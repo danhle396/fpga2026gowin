@@ -31,7 +31,7 @@ MPU6050 ──I²C──► SN32F407 (MCU) ──UART 115200──► ESP32 ─�
 MCU in chữ ra chân TX, tức là sang ESP32. ESP32 chuyển các dòng đó lên log với tiền tố `MCU `.
 
 **Còi:** dây ESP32 GPIO17 (TX2) → EVK J10 `URX_P32` (P3.2), GND đã chung. `#define COI_TU_ESP32 1` trong `firmware/src/fw_config.h` (mặc định từ 28/10; không có dây thì đặt 0 để MCU bỏ qua chân thả nổi). Sửa xong nạp lại cả MCU và ESP32. ESP32 gửi lệnh bật/tắt còi (1 byte) qua dây đó; MCU kêu còi PZ1 trên EVK ở 500 Hz theo nhịp của Safety FSM:
-- **PHÁT HIỆN NGÃ: chỉ khi là ngã thật** (28/10, `firmware/src/nga.c`): CNN báo 2/3 cửa sổ FALL **và** trước đó đang thẳng (đứng / ngồi / đi) **và** có va chạm ≥ 2,5 g **và** sau đó nằm hoặc ngực hạ ≥ 0,5 m. Ngồi xuống mạnh, lăn người khi đang nằm, nằm xuống giường: không báo. Ngã thật (kể cả ngã nhẹ rồi ngồi dậy): còi bíp 0,4 s mỗi giây, web đỏ, "Số lần phát hiện ngã" +1;
+- **PHÁT HIỆN NGÃ: chỉ khi là ngã thật** (28/10, `firmware/src/nga.c`): CNN báo 2/3 cửa sổ FALL **và** trước đó đang thẳng (đứng / ngồi / đi) **và** có va chạm ≥ 2,5 g **và** ngực quay nhanh ≥ 220 °/s quanh lúc va chạm **và** ngực nghiêng ≥ 45° trong 3,84 s sau va chạm (bản 3, 28/10 tối). Ngồi phịch xuống ghế (va chạm tới 6 g nhưng thân vẫn thẳng, quay ≤ 150 °/s), cúi nhặt đồ, lăn người khi đang nằm, nằm xuống giường: không báo. Ngã ngồi / ngã quỳ mà thân vẫn thẳng cũng không báo. Ngã thật (kể cả ngã nhẹ rồi ngồi dậy): còi bíp 0,4 s mỗi giây, web đỏ, "Số lần phát hiện ngã" +1;
 - **MẤT CẢM BIẾN** (quá 3 s không có mẫu): web đỏ, còi 2 bíp ngắn mỗi 3 s, LED nháy nhanh: thiết bị đang không bảo vệ được;
 - CẢNH BÁO: bíp ngắn 2 lần mỗi giây trong 10 s đếm ngược;
 - BÁO ĐỘNG: hú liên tục;

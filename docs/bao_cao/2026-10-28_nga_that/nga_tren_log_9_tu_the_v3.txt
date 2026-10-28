@@ -1,0 +1,12 @@
+docs/bao_cao/2026-10-28_tu_the_nguc/truc_nguc_deo_20261028_170503.txt: 14715 mẫu (147 s), mô hình N2_11 D1
+
+KHÔNG CÓ tầng xác nhận ngã: 1 lần CNN vào SUSPECT
+    86.72 s  đang làm: nam_ngua/doi           → PRE_ALARM (STILL) sau 5.11 s
+
+CÓ tầng xác nhận ngã:
+    86.72 s  đang làm: nam_ngua/doi           → loại ngay (KHONG_NGA)
+   104.32 s  đang làm: nghieng_phai/giu       → loại ngay (KHONG_NGA)
+  → CNN nghi 2 lần: loại (không phải ngã) 2, báo ngã cho người dùng 0
+  từng lần xét ngã (nga.c):
+    86.72 s  nam_ngua/doi           loại     không va chạm        đỉnh 2.41 g, quay 175 °/s, nghiêng 1, trước thẳng 1
+   104.32 s  nghieng_phai/giu       loại     trước không thẳng    đỉnh 2.73 g, quay 318 °/s, nghiêng 1, trước thẳng 0

@@ -386,12 +386,14 @@ void loop()
             snprintf(s, sizeof s, "F,%lu,%s,%u", (unsigned long)now, safety_state_name(H.app.fsm.st), H.app.fsm.why);
             out(s);
         }
-        if (H.nga_hd != NGA_HD_KHONG) {                // mỗi lần xét ngã: đỉnh |a| (g·100), Δh ngực (cm), lý do
+        if (H.nga_hd != NGA_HD_KHONG) {                // mỗi lần xét ngã: đỉnh |a| (g·100), đỉnh |ω| (°/s), Δh ngực (cm), lý do
             const nga_t *n = &H.nga;
             uint32_t pk = (uint32_t)(sqrtf((float)n->peak2_sk) * 100.0f / 2048.0f + 0.5f);
+            uint32_t wk = (uint32_t)(sqrtf((float)n->wpeak2_sk) / 16.4f + 0.5f);
             long dh_cm = n->co_dot ? (long)((double)n->dh_dot * 9.80665 / 2048.0 / 100.0) : 0;
-            snprintf(s, sizeof s, "N,%lu,%s,ly_do=%u,dinh=%lu,dh_cm=%ld,truoc_thang=%u", (unsigned long)now,
-                     H.nga_hd == NGA_HD_XAC_NHAN ? "XAC_NHAN" : "BO", n->ly_do, (unsigned long)pk, dh_cm, n->truoc_thang);
+            snprintf(s, sizeof s, "N,%lu,%s,ly_do=%u,dinh=%lu,quay=%lu,nghieng=%u,dh_cm=%ld,truoc_thang=%u",
+                     (unsigned long)now, H.nga_hd == NGA_HD_XAC_NHAN ? "XAC_NHAN" : "BO", n->ly_do, (unsigned long)pk,
+                     (unsigned long)wk, n->co_nghieng, dh_cm, n->truoc_thang);
             out(s);
             if (H.nga_hd == NGA_HD_XAC_NHAN) {
                 s_n_nga++; s_t_nga = now;

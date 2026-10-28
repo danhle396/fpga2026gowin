@@ -19,7 +19,7 @@ import truc_cam_bien as tc  # noqa: E402
 
 WHY = ["NONE", "WEAR_ON", "WEAR_OFF", "VOTES", "STILL", "TIMEOUT", "CANCEL", "SOS", "ALARM_ACK", "KHONG_NGA"]
 NGA_EV = []          # các lần xét ngã của lần chạy gần nhất
-LD = ['-', 'trước không thẳng', 'không va chạm', 'không nằm / ngực không hạ', 'nằm', 'ngực hạ', 'bất động', 'va chạm mạnh ≥ 3 g']
+LD = ['-', 'trước không thẳng', 'không va chạm', 'ngực không nghiêng', 'không quay nhanh', 'đủ 4 dấu hiệu']
 ST = ["STANDBY", "MONITOR", "SUSPECT", "PRE_ALARM", "ALARM", "COOLDOWN"]
 
 
@@ -31,11 +31,11 @@ def chay(stream, P, nga_en):
     while out[i] != ord("T"):
         if out[i] == ord("R"):
             i += 4
-        elif out[i] == ord("N"):                           # 'N' t hd ly_do truoc_thang co_va_cham peak2 dh_dot co_dot
+        elif out[i] == ord("N"):                           # 'N' t hd ly_do truoc_thang co_va_cham peak2 wpeak2 co_nghieng
             t, hd, ld, tr, vc = struct.unpack("<IBBBB", out[i + 1:i + 9])
-            pk2, dh, cd = struct.unpack("<IqB", out[i + 9:i + 22])
-            NGA_EV.append((t, hd, ld, tr, vc, pk2 ** 0.5 / 2048, dh * 9.80665 / 2048 / 1e4 if cd else None))
-            i += 22
+            pk2, wk2, ng = struct.unpack("<IIB", out[i + 9:i + 18])
+            NGA_EV.append((t, hd, ld, tr, vc, pk2 ** 0.5 / 2048, wk2 ** 0.5 / 16.4, ng))
+            i += 18
         else:
             s_ev.append((struct.unpack("<I", out[i + 1:i + 5])[0], out[i + 5], out[i + 6])); i += 7
     return s_ev
@@ -84,6 +84,10 @@ def main():
                      and WHY[ev[j + 1][2]] == "KHONG_NGA") + len(bo_ngay)
             tong = len(sus) + len(bo_ngay)
             print(f"  → CNN nghi {tong} lần: loại (không phải ngã) {bo}, báo ngã cho người dùng {tong - bo}")
+            print("  từng lần xét ngã (nga.c):")
+            for t, hd, ld, tr, vc, pk, w, ng in NGA_EV:
+                print(f"  {t / 1000:7.2f} s  {lab[min(t // 10, len(lab) - 1)]:22s} {'XÁC NHẬN' if hd == 1 else 'loại':8s} "
+                      f"{LD[ld]:20s} đỉnh {pk:4.2f} g, quay {w:3.0f} °/s, nghiêng {ng}, trước thẳng {tr}")
     return 0
 
 

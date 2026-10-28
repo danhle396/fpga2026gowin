@@ -1,0 +1,62 @@
+docs/bao_cao/2026-10-28_nga_that/dong_tac_20261028_204848.txt: 43705 mẫu (437 s), mô hình N2_11 D1
+
+KHÔNG CÓ tầng xác nhận ngã: 11 lần CNN vào SUSPECT
+    23.04 s  đang làm: ngoi_manh_1/giu        → MONITOR (TIMEOUT) sau 8.00 s
+    34.56 s  đang làm: ngoi_manh_2/giu        → MONITOR (TIMEOUT) sau 8.00 s
+    49.92 s  đang làm: ngoi_manh_4/doi        → MONITOR (TIMEOUT) sau 8.00 s
+    58.56 s  đang làm: ngoi_manh_4/giu        → MONITOR (TIMEOUT) sau 8.00 s
+    68.48 s  đang làm: ngoi_manh_5/giu        → MONITOR (TIMEOUT) sau 8.00 s
+    77.12 s  đang làm: ngoi_manh_6/giu        → MONITOR (TIMEOUT) sau 8.00 s
+    85.76 s  đang làm: ngoi_manh_7/giu        → MONITOR (TIMEOUT) sau 8.00 s
+    95.36 s  đang làm: ngoi_manh_8/doi        → MONITOR (TIMEOUT) sau 8.00 s
+   117.44 s  đang làm: ngoi_manh_10/giu       → MONITOR (TIMEOUT) sau 8.00 s
+   348.16 s  đang làm: lan_3/doi              → MONITOR (TIMEOUT) sau 8.00 s
+   414.08 s  đang làm: lan_9/doi              → MONITOR (TIMEOUT) sau 8.00 s
+
+CÓ tầng xác nhận ngã:
+    23.04 s  đang làm: ngoi_manh_1/giu        → MONITOR (KHONG_NGA) sau 0.63 s
+    26.56 s  đang làm: ngoi_manh_2/doi        → MONITOR (KHONG_NGA) sau 0.63 s
+    31.04 s  đang làm: ngoi_manh_2/giu        → MONITOR (KHONG_NGA) sau 0.63 s
+    34.56 s  đang làm: ngoi_manh_2/giu        → MONITOR (KHONG_NGA) sau 0.63 s
+    38.40 s  đang làm: ngoi_manh_3/doi        → MONITOR (KHONG_NGA) sau 0.95 s
+    42.56 s  đang làm: ngoi_manh_3/giu        → MONITOR (KHONG_NGA) sau 0.31 s
+    49.92 s  đang làm: ngoi_manh_4/doi        → MONITOR (KHONG_NGA) sau 0.95 s
+    54.40 s  đang làm: ngoi_manh_4/giu        → MONITOR (KHONG_NGA) sau 0.95 s
+    58.24 s  đang làm: ngoi_manh_4/giu        → MONITOR (KHONG_NGA) sau 0.63 s
+    61.76 s  đang làm: ngoi_manh_5/doi        → MONITOR (KHONG_NGA) sau 0.63 s
+    65.28 s  đang làm: ngoi_manh_5/giu        → MONITOR (KHONG_NGA) sau 0.63 s
+    68.48 s  đang làm: ngoi_manh_5/giu        → MONITOR (KHONG_NGA) sau 0.95 s
+    72.64 s  đang làm: ngoi_manh_6/doi        → MONITOR (KHONG_NGA) sau 0.63 s
+    77.12 s  đang làm: ngoi_manh_6/giu        → MONITOR (KHONG_NGA) sau 0.63 s
+    85.76 s  đang làm: ngoi_manh_7/giu        → MONITOR (KHONG_NGA) sau 0.63 s
+    89.60 s  đang làm: ngoi_manh_7/giu        → MONITOR (KHONG_NGA) sau 0.95 s
+    95.36 s  đang làm: ngoi_manh_8/doi        → MONITOR (KHONG_NGA) sau 0.95 s
+    99.20 s  đang làm: ngoi_manh_8/giu        → MONITOR (KHONG_NGA) sau 0.95 s
+   117.44 s  đang làm: ngoi_manh_10/giu       → MONITOR (KHONG_NGA) sau 0.63 s
+   348.16 s  đang làm: lan_3/doi              → loại ngay (KHONG_NGA)
+   414.08 s  đang làm: lan_9/doi              → loại ngay (KHONG_NGA)
+   417.60 s  đang làm: lan_9/giu              → loại ngay (KHONG_NGA)
+  → CNN nghi 22 lần: loại (không phải ngã) 22, báo ngã cho người dùng 0
+  từng lần xét ngã (nga.c):
+    23.67 s  ngoi_manh_1/giu        loại     không quay nhanh     đỉnh 4.22 g, quay 123 °/s, nghiêng 0, trước thẳng 1
+    27.19 s  ngoi_manh_2/doi        loại     không quay nhanh     đỉnh 4.38 g, quay 109 °/s, nghiêng 0, trước thẳng 1
+    31.67 s  ngoi_manh_2/giu        loại     không quay nhanh     đỉnh 3.72 g, quay 114 °/s, nghiêng 0, trước thẳng 1
+    35.19 s  ngoi_manh_2/giu        loại     không quay nhanh     đỉnh 5.26 g, quay  94 °/s, nghiêng 0, trước thẳng 1
+    39.35 s  ngoi_manh_3/doi        loại     không quay nhanh     đỉnh 6.04 g, quay 131 °/s, nghiêng 0, trước thẳng 1
+    42.87 s  ngoi_manh_3/giu        loại     không quay nhanh     đỉnh 3.76 g, quay 105 °/s, nghiêng 0, trước thẳng 1
+    50.87 s  ngoi_manh_4/doi        loại     không quay nhanh     đỉnh 5.85 g, quay 133 °/s, nghiêng 0, trước thẳng 1
+    55.35 s  ngoi_manh_4/giu        loại     không quay nhanh     đỉnh 5.04 g, quay 130 °/s, nghiêng 0, trước thẳng 1
+    58.87 s  ngoi_manh_4/giu        loại     không quay nhanh     đỉnh 5.48 g, quay 116 °/s, nghiêng 0, trước thẳng 1
+    62.39 s  ngoi_manh_5/doi        loại     không quay nhanh     đỉnh 3.77 g, quay 104 °/s, nghiêng 0, trước thẳng 1
+    65.91 s  ngoi_manh_5/giu        loại     không quay nhanh     đỉnh 4.20 g, quay 120 °/s, nghiêng 0, trước thẳng 1
+    69.43 s  ngoi_manh_5/giu        loại     không quay nhanh     đỉnh 6.17 g, quay 138 °/s, nghiêng 0, trước thẳng 1
+    73.27 s  ngoi_manh_6/doi        loại     không quay nhanh     đỉnh 3.56 g, quay 138 °/s, nghiêng 0, trước thẳng 1
+    77.75 s  ngoi_manh_6/giu        loại     không quay nhanh     đỉnh 4.49 g, quay 149 °/s, nghiêng 0, trước thẳng 1
+    86.39 s  ngoi_manh_7/giu        loại     không quay nhanh     đỉnh 3.33 g, quay 102 °/s, nghiêng 0, trước thẳng 1
+    90.55 s  ngoi_manh_7/giu        loại     không quay nhanh     đỉnh 4.30 g, quay  96 °/s, nghiêng 0, trước thẳng 1
+    96.31 s  ngoi_manh_8/giu        loại     không quay nhanh     đỉnh 4.81 g, quay  85 °/s, nghiêng 0, trước thẳng 1
+   100.15 s  ngoi_manh_8/giu        loại     không quay nhanh     đỉnh 4.01 g, quay  89 °/s, nghiêng 0, trước thẳng 1
+   118.07 s  ngoi_manh_10/giu       loại     không quay nhanh     đỉnh 4.83 g, quay 113 °/s, nghiêng 0, trước thẳng 1
+   348.16 s  lan_3/doi              loại     trước không thẳng    đỉnh 1.39 g, quay 189 °/s, nghiêng 1, trước thẳng 0
+   414.08 s  lan_9/doi              loại     trước không thẳng    đỉnh 1.36 g, quay 249 °/s, nghiêng 1, trước thẳng 0
+   417.60 s  lan_9/giu              loại     trước không thẳng    đỉnh 1.67 g, quay 266 °/s, nghiêng 1, trước thẳng 0

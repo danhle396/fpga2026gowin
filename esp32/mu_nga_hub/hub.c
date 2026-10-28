@@ -67,7 +67,7 @@ unsigned hub_sample(hub_t *h, const hub_io_t *io, const int16_t raw[6], uint8_t 
     h->n_samples++;
     unsigned f = app_on_raw(&h->app, r);
     if (posture_push(&h->pos, r)) f |= HUB_POSTURE;
-    nga_mau(&h->nga, (uint32_t)(r[0] * r[0]) + (uint32_t)(r[1] * r[1]) + (uint32_t)(r[2] * r[2]));
+    nga_mau(&h->nga, r);
     if (h->pos.nb == 0) nga_khoi(&h->nga, h->pos.huong);           /* posture.c vừa đóng khối 32 mẫu */
     if (h->pos_moving && !h->pos.moving) nga_dot(&h->nga, h->pos.dh_cuoi);
     h->pos_moving = h->pos.moving;
@@ -122,7 +122,7 @@ void hub_tick(hub_t *h, uint32_t now, uint8_t cancel_extra)
     if (!h->nga_en) return;
     if (f->st == ST_MONITOR || f->st == ST_STANDBY) nga_het(&h->nga);
     else if ((f->events & SAFETY_EV_STATE) && f->st == ST_SUSPECT) nga_bat_dau(&h->nga, now);
-    h->nga_hd = (uint8_t)nga_buoc(&h->nga, now, h->pos.huong, f->st == ST_PRE_ALARM);
+    h->nga_hd = (uint8_t)nga_buoc(&h->nga, now);
     if (h->nga_hd == NGA_HD_BO) safety_bo_nghi(f, now);      /* không phải ngã: FSM về MONITOR, không ai thấy */
 }
 

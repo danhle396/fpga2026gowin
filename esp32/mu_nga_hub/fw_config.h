@@ -76,16 +76,18 @@
 #define STILL_BLOCKS    8       /* 8 khối = 2,56 s */
 #define T_TILT          1450    /* |az_tb| < 1450 ↔ đầu lệch 45°–135° khỏi phương thẳng đứng (nằm) */
 
-/* ---- xác nhận ngã thật (nga.h, 28/10; bản đầu, chốt bằng dữ liệu đeo ngực của nhóm) ---- */
-#define NGA_VA_CHAM_LSB     5120        /* đỉnh |a| ≥ 2,5 g: va chạm, cần thêm nằm / hạ ngực / bất động */
-#define NGA_VA_CHAM_MANH    6144        /* đỉnh |a| ≥ 3,0 g: va chạm mạnh, đủ để xác nhận (ngã quỳ, ngã ngồi, ngã rồi
-                                         * đứng dậy: D1 người 102 đỉnh 2,9–5,0 g, Δh đo không tin được) */
+/* ---- xác nhận ngã thật (nga.h, 28/10 bản 3; ngưỡng từ log đeo ngực dong_tac + nga của nhóm 28/10) ---- */
+#define NGA_VA_CHAM_LSB     5120        /* đỉnh |a| ≥ 2,5 g (14 cú ngã lên nệm: 2,58–5,29 g; ngồi mạnh 4,3–6,2 g) */
 #define NGA_VA_CHAM_KHOI    12u         /* tìm đỉnh trong 12 khối (3,84 s) trước SUSPECT */
+#define NGA_QUAY_LSB        3608        /* đỉnh |ω| ≥ 220 °/s (16,4 LSB mỗi °/s): ngã 258–467, ngồi mạnh ≤ 149,
+                                         * nằm xuống giường ≤ 192 */
+#define NGA_QUAY_KHOI       5u          /* quay: ±5 khối (±1,6 s) quanh khối va chạm */
+#define NGA_NGHIENG_TAN2_X100 100       /* nghiêng ≥ 45° (tan² 45° = 1): ngã 58–80°, ngồi mạnh ≤ 31° */
+#define NGA_NGHIENG_KHOI    12u         /* nghiêng: từ khối va chạm tới 12 khối (3,84 s) sau */
 #define NGA_TRUOC_DEN       10u         /* "trước đó thẳng": xét khối lùi 10..32 (3,2–10,2 s trước SUSPECT); ngất xỉu
                                          * (D1 917) gục từ từ, CNN nghi muộn, nên phải nhìn lùi xa */
 #define NGA_TRUOC_TU        32u
-#define NGA_HA_H            1044189     /* ngực hạ ≥ 0,5 m (đơn vị posture.c: 2048·10⁴/9,80665 mỗi mét) */
-#define NGA_CHO_MS          4000u       /* chờ nằm / hạ ngực tối đa 4 s sau khi vào SUSPECT */
+#define NGA_CHO_MS          4000u       /* chờ đủ dấu hiệu tối đa 4 s sau khi vào SUSPECT */
 #define TILT_EN         1
 #define VOTE_K          2
 #define VOTE_N          3

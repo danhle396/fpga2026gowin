@@ -154,97 +154,123 @@ static void pa_fall(void)                   /* 2 phiếu FALL → SUSPECT, rồi
 }
 static void pa_tap(void) { pa_run(100, 1); pa_run(10, 0); }
 
-/* ---------------- xác nhận ngã thật (nga.c, 28/10) ----------------
- * Đưa thẳng đầu vào của nga.c: mỗi khối 32 mẫu một đỉnh |a| và hướng ngực đã chốt. */
-#define G1 2048u
-static void nga_khoi_n(nga_t *n, int k, uint32_t peak_lsb, uint8_t huong)
+/* ---------------- xác nhận ngã thật (nga.c bản 3, 28/10) ----------------
+ * Đưa thẳng đầu vào của nga.c: mỗi khối một mẫu mang đỉnh |a| (thẳng: theo Z; nghiêng: theo X, lệch 90°), đỉnh |ω|
+ * và hướng ngực đã chốt. */
+#define G1 2048
+#define W_DPS(x) ((x) * 164 / 10)                   /* °/s → LSB ở ±2000 °/s */
+static void nga_khoi_n(nga_t *n, int k, int a_lsb, int w_lsb, int nghieng, uint8_t huong)
 {
-    for (int i = 0; i < k; i++) { nga_mau(n, peak_lsb * peak_lsb); nga_khoi(n, huong); }
+    for (int i = 0; i < k; i++) {
+        int16_t r[6] = { (int16_t)(nghieng ? a_lsb : 0), 0, (int16_t)(nghieng ? 0 : a_lsb), (int16_t)w_lsb, 0, 0 };
+        nga_mau(n, r);
+        nga_khoi(n, huong);
+    }
 }
-static int nga_chay(nga_t *n, uint32_t t0, uint32_t ms, uint8_t huong, uint8_t pre)
+/* đang xét: mỗi khối thêm 32 khe 10 ms; dừng khi nga_buoc ra quyết định */
+static int nga_chay(nga_t *n, uint32_t *t, int k, int a_lsb, int w_lsb, int nghieng, uint8_t huong)
 {
-    int hd = NGA_HD_KHONG;
-    for (uint32_t t = t0; t <= t0 + ms && hd == NGA_HD_KHONG; t += 10) hd = nga_buoc(n, t, huong, pre);
+    int hd = nga_buoc(n, *t);
+    for (int b = 0; b < k && hd == NGA_HD_KHONG; b++) {
+        nga_khoi_n(n, 1, a_lsb, w_lsb, nghieng, huong);
+        for (int s = 0; s < 32 && hd == NGA_HD_KHONG; s++) { *t += 10; hd = nga_buoc(n, *t); }
+    }
     return hd;
 }
 static void mode_nga(void)
 {
     nga_t n;
-    /* 1. lăn người khi đang nằm: nằm suốt, có va chạm 3 g → loại ngay (đang nằm) */
-    nga_init(&n); nga_khoi_n(&n, 36, G1, 1); nga_khoi_n(&n, 2, 3 * G1, 1);
+    uint32_t t;
+    /* 1. lăn người khi đang nằm: nằm suốt, va chạm 3 g, quay nhanh → loại ngay (trước đó không thẳng) */
+    nga_init(&n); nga_khoi_n(&n, 36, G1, 0, 1, 1); nga_khoi_n(&n, 2, 3 * G1, W_DPS(300), 1, 1);
+    t = 1000; nga_bat_dau(&n, t);
+    int a = nga_chay(&n, &t, 20, G1, 0, 1, 1) == NGA_HD_BO && n.ly_do == NGA_LD_DANG_NAM;
+    /* 2. ngồi phịch xuống ghế (log đeo ngực 28/10): va chạm 5 g, quay 120 °/s, thân vẫn thẳng → loại: không quay */
+    nga_init(&n); nga_khoi_n(&n, 36, G1, 0, 0, 0); nga_khoi_n(&n, 1, 5 * G1, W_DPS(120), 0, 0);
+    t = 1000; nga_bat_dau(&n, t);
+    int b = nga_chay(&n, &t, 20, G1, W_DPS(100), 0, 0) == NGA_HD_BO && n.ly_do == NGA_LD_KHONG_QUAY &&
+            t - 1000 < 2000;
+    /* 3. ngồi mạnh mà quay nhanh 300 °/s, thân vẫn thẳng (≤ 30°) → loại: không nghiêng */
+    nga_init(&n); nga_khoi_n(&n, 36, G1, 0, 0, 0); nga_khoi_n(&n, 1, 5 * G1, W_DPS(300), 0, 0);
+    t = 1000; nga_bat_dau(&n, t);
+    int c = nga_chay(&n, &t, 20, G1, W_DPS(100), 0, 0) == NGA_HD_BO && n.ly_do == NGA_LD_KHONG_NGHIENG;
+    /* 4. ngã rồi nằm: va chạm 3 g, quay 300 °/s, khối sau ngực nằm ngang → xác nhận (chưa có khối nghiêng thì chờ) */
+    nga_init(&n); nga_khoi_n(&n, 36, G1, 0, 0, 0); nga_khoi_n(&n, 1, 3 * G1, W_DPS(300), 0, 0);
+    t = 1000; nga_bat_dau(&n, t);
+    int d0 = nga_buoc(&n, t) == NGA_HD_KHONG && n.trang_thai == NGA_DANG_XET;
+    int d = d0 && nga_chay(&n, &t, 20, G1, W_DPS(50), 1, 1) == NGA_HD_XAC_NHAN && n.ly_do == NGA_LD_NGA;
+    check("nga: lan nguoi khi dang nam -> loai; ngoi manh 5 g (quay cham) -> loai; ngoi manh quay nhanh van thang "
+          "-> loai; nga roi nam -> xac nhan", a && b && c && d);
+    /* 5. ngã nhẹ lên nệm: va chạm 2,6 g; quay 260 °/s ở 2 khối sau; nghiêng 3 khối rồi ngồi dậy → xác nhận */
+    nga_init(&n); nga_khoi_n(&n, 36, G1, 0, 0, 0); nga_khoi_n(&n, 1, 5325, W_DPS(100), 0, 0);
+    t = 1000; nga_bat_dau(&n, t);
+    int e = nga_chay(&n, &t, 2, G1, W_DPS(260), 0, 0) == NGA_HD_KHONG &&
+            nga_chay(&n, &t, 3, G1, W_DPS(100), 1, 0) == NGA_HD_XAC_NHAN && n.ly_do == NGA_LD_NGA;
+    /* 6. cúi nhặt đồ nhanh: quay 300 °/s, nghiêng, đỉnh 2 g → loại: không va chạm */
+    nga_init(&n); nga_khoi_n(&n, 36, G1, 0, 0, 0); nga_khoi_n(&n, 1, 2 * G1, W_DPS(300), 1, 2);
+    t = 1000; nga_bat_dau(&n, t);
+    int f = nga_chay(&n, &t, 20, G1, W_DPS(100), 1, 2) == NGA_HD_BO && n.ly_do == NGA_LD_KHONG_VA_CHAM;
+    /* 7. cúi rồi ngồi phịch xuống: khối nghiêng nằm TRƯỚC khối va chạm không tính → loại: không nghiêng */
+    nga_init(&n); nga_khoi_n(&n, 30, G1, 0, 0, 0); nga_khoi_n(&n, 4, G1, W_DPS(100), 1, 2);
+    nga_khoi_n(&n, 1, 5 * G1, W_DPS(300), 0, 0);
+    t = 1000; nga_bat_dau(&n, t);
+    int g = nga_chay(&n, &t, 20, G1, W_DPS(50), 0, 0) == NGA_HD_BO && n.ly_do == NGA_LD_KHONG_NGHIENG;
+    /* 8. quay nhanh 7 khối trước va chạm (ngoài ±5 khối) không tính → loại: không quay */
+    nga_init(&n); nga_khoi_n(&n, 30, G1, 0, 0, 0); nga_khoi_n(&n, 1, G1, W_DPS(300), 0, 0);
+    nga_khoi_n(&n, 6, G1, 0, 0, 0); nga_khoi_n(&n, 1, 3 * G1, W_DPS(100), 0, 0);
+    t = 1000; nga_bat_dau(&n, t);
+    int h = nga_chay(&n, &t, 20, G1, W_DPS(50), 1, 1) == NGA_HD_BO && n.ly_do == NGA_LD_KHONG_QUAY;
+    check("nga: nga nhe len nem (2,6 g, quay sau va cham) -> xac nhan; cui nhanh 2 g -> loai; nghieng truoc va cham, "
+          "quay ngoai +-5 khoi khong tinh", e && f && g && h);
+    /* 9. va chạm nằm ngoài cửa sổ 12 khối → không tính; vừa bật (ít khối) → coi như đang thẳng */
+    nga_init(&n); nga_khoi_n(&n, 2, 5530, 0, 0, 0); nga_khoi_n(&n, 13, G1, 0, 0, 0);
     nga_bat_dau(&n, 1000);
-    int a = nga_chay(&n, 1000, 100, 1, 0) == NGA_HD_BO && n.ly_do == NGA_LD_DANG_NAM;
-    /* 2. ngồi xuống mạnh: thẳng, đỉnh 2 g → loại (không va chạm) */
-    nga_init(&n); nga_khoi_n(&n, 36, G1, 0); nga_khoi_n(&n, 2, 2 * G1, 0);
+    int i9 = !n.co_va_cham && n.truoc_thang;
+    /* 10. lăn từ ngửa sang nghiêng: nằm, giữa chừng ngực qua vùng CÚI 4 khối, đỉnh 2,7 g → loại (trước đó không thẳng) */
+    nga_init(&n); nga_khoi_n(&n, 26, G1, 0, 1, 1); nga_khoi_n(&n, 4, G1, 0, 1, 2);
+    nga_khoi_n(&n, 6, 5530, W_DPS(300), 1, 1);
+    t = 1000; nga_bat_dau(&n, t);
+    int i10 = nga_chay(&n, &t, 20, G1, 0, 1, 1) == NGA_HD_BO && n.ly_do == NGA_LD_DANG_NAM;
+    check("nga: va cham ngoai cua so 12 khoi khong tinh; vua bat coi nhu dang thang; lan qua vung CUI -> loai",
+          i9 && i10);
+    /* 11. ngất xỉu: đứng tới 9 s trước, gục cúi 6 s, CNN nghi muộn; va chạm 2,7 g quay 250 °/s rồi nằm → xác nhận */
+    nga_init(&n); nga_khoi_n(&n, 8, G1, 0, 0, 0); nga_khoi_n(&n, 20, G1, W_DPS(30), 1, 2);
+    nga_khoi_n(&n, 1, 5530, W_DPS(250), 1, 1); nga_khoi_n(&n, 7, G1, 0, 1, 1);
     nga_bat_dau(&n, 1000);
-    int b = nga_chay(&n, 1000, 100, 0, 0) == NGA_HD_BO && n.ly_do == NGA_LD_KHONG_VA_CHAM;
-    /* 3. ngã rồi nằm: thẳng, va chạm 3 g, sau 1 s hướng ngực chốt NẰM → xác nhận */
-    nga_init(&n); nga_khoi_n(&n, 36, G1, 0); nga_khoi_n(&n, 2, 5530, 0);
+    int i11 = n.truoc_thang && nga_buoc(&n, 1000) == NGA_HD_XAC_NHAN && n.ly_do == NGA_LD_NGA;
+    /* 12. đủ va chạm + quay mà không có khối mới (mất mẫu): NGA_CHO_MS sau SUSPECT thì loại */
+    nga_init(&n); nga_khoi_n(&n, 36, G1, 0, 0, 0); nga_khoi_n(&n, 1, 3 * G1, W_DPS(300), 0, 0);
     nga_bat_dau(&n, 1000);
-    int c0 = nga_chay(&n, 1000, 1000, 0, 0) == NGA_HD_KHONG && n.trang_thai == NGA_DANG_XET;
-    int c = c0 && nga_buoc(&n, 2010, 1, 0) == NGA_HD_XAC_NHAN && n.ly_do == NGA_LD_NAM;
-    /* 4. ngã nhẹ rồi ngồi dậy ngay: va chạm 3 g, đợt cử động hạ ngực 0,6 m, ngực vẫn thẳng → xác nhận */
-    nga_init(&n); nga_khoi_n(&n, 36, G1, 0); nga_khoi_n(&n, 2, 5530, 0);
-    nga_bat_dau(&n, 1000); nga_dot(&n, -(int64_t)NGA_HA_H * 6 / 5);
-    int d = nga_chay(&n, 1000, 100, 0, 0) == NGA_HD_XAC_NHAN && n.ly_do == NGA_LD_HA_NGUC;
-    /* 5. va chạm 3 g nhưng ngực chỉ hạ 0,36 m (ngồi xuống thật mạnh) và vẫn thẳng → chờ 4 s rồi loại */
-    nga_init(&n); nga_khoi_n(&n, 36, G1, 0); nga_khoi_n(&n, 2, 5530, 0);
-    nga_bat_dau(&n, 1000); nga_dot(&n, -(int64_t)NGA_HA_H * 36 / 50);
-    int e0 = nga_chay(&n, 1000, NGA_CHO_MS - 20, 0, 0) == NGA_HD_KHONG;
-    int e = e0 && nga_chay(&n, 1000 + NGA_CHO_MS - 10, 20, 0, 0) == NGA_HD_BO && n.ly_do == NGA_LD_KHONG_HA;
-    /* 6. đang xét mà FSM vào PRE_ALARM (bất động + nằm ngang theo khối A.8) → xác nhận */
-    nga_init(&n); nga_khoi_n(&n, 36, G1, 0); nga_khoi_n(&n, 2, 5530, 0);
-    nga_bat_dau(&n, 1000);
-    int f = nga_chay(&n, 1000, 100, 0, 1) == NGA_HD_XAC_NHAN && n.ly_do == NGA_LD_BAT_DONG;
-    /* 7. va chạm nằm ngoài cửa sổ 12 khối → không tính; vừa bật (ít khối) → coi như đang thẳng */
-    nga_init(&n); nga_khoi_n(&n, 2, 5530, 0); nga_khoi_n(&n, 13, G1, 0);
-    nga_bat_dau(&n, 1000);
-    int g = !n.co_va_cham && n.truoc_thang;
-    check("nga: lan nguoi khi dang nam -> loai; ngoi manh 2 g -> loai; nga roi nam -> xac nhan", a && b && c);
-    check("nga: nga nhe ha nguc 0,6 m -> xac nhan; ha 0,36 m van thang -> loai sau 4 s; PRE_ALARM -> xac nhan",
-          d && e && f);
-    /* 8. lăn từ ngửa sang nghiêng: nằm, giữa chừng ngực qua vùng CÚI 4 khối, đỉnh 2,7 g → loại (trước đó không thẳng) */
-    nga_init(&n); nga_khoi_n(&n, 26, G1, 1); nga_khoi_n(&n, 4, G1, 2); nga_khoi_n(&n, 6, 5530, 1);
-    nga_bat_dau(&n, 1000);
-    int h8 = nga_chay(&n, 1000, 100, 1, 0) == NGA_HD_BO && n.ly_do == NGA_LD_DANG_NAM;
-    check("nga: va cham ngoai cua so 12 khoi khong tinh; vua bat coi nhu dang thang", g);
-    check("nga: lan nguoi qua vung CUI (N-C-N, 2,7 g) -> loai", h8);
-    /* 9. ngã quỳ / ngã ngồi: thẳng, va chạm 4 g, vẫn thẳng sau đó, Δh nhỏ → xác nhận ngay (va chạm mạnh) */
-    nga_init(&n); nga_khoi_n(&n, 36, G1, 0); nga_khoi_n(&n, 2, 4 * G1, 0);
-    nga_bat_dau(&n, 1000); nga_dot(&n, -(int64_t)NGA_HA_H / 2);
-    int h9 = nga_buoc(&n, 1000, 0, 0) == NGA_HD_XAC_NHAN && n.ly_do == NGA_LD_VA_CHAM_MANH;
-    /* 10. ngất xỉu: đứng tới 9 s trước, rồi gục cúi 6 s, CNN nghi muộn; va chạm 2,7 g rồi nằm → xác nhận */
-    nga_init(&n); nga_khoi_n(&n, 8, G1, 0); nga_khoi_n(&n, 20, G1, 2); nga_khoi_n(&n, 8, 5530, 1);
-    nga_bat_dau(&n, 1000);
-    int h10 = n.truoc_thang && nga_buoc(&n, 1000, 1, 0) == NGA_HD_XAC_NHAN && n.ly_do == NGA_LD_NAM;
-    check("nga: va cham manh 4 g (nga quy / nga ngoi) -> xac nhan ngay; ngat xiu guc tu tu 2,7 g roi nam -> xac nhan",
-          h9 && h10);
+    int i12 = 1;
+    for (t = 1000; t < 1000 + NGA_CHO_MS; t += 10) i12 &= nga_buoc(&n, t) == NGA_HD_KHONG;
+    i12 = i12 && nga_buoc(&n, t) == NGA_HD_BO && n.ly_do == NGA_LD_KHONG_NGHIENG;
+    check("nga: ngat xiu guc tu tu roi nam -> xac nhan; het NGA_CHO_MS khong co khoi nghieng -> loai", i11 && i12);
 
     /* hub: SUSPECT chưa xác nhận → còi im, tên MONITOR; loại → FSM về MONITOR (WHY_KHONG_NGA) */
     static hub_t hb;
     hub_init(&hb, 0);
-    uint32_t t = 0;
+    t = 0;
     for (; t < 3000; t += 10) hub_tick(&hb, t, 0);                      /* BẬT → MONITOR */
-    for (int i = 0; i < 36; i++) { nga_mau(&hb.nga, G1 * G1); nga_khoi(&hb.nga, 1); }   /* đang nằm */
+    nga_khoi_n(&hb.nga, 36, G1, 0, 1, 1);                               /* đang nằm */
     safety_on_result(&hb.app.fsm, CLS_FALL, 100); safety_on_result(&hb.app.fsm, CLS_FALL, 100);
     hub_tick(&hb, t, 0);
     int h1 = hb.app.fsm.st == ST_MONITOR && hb.app.fsm.why == WHY_KHONG_NGA && hb.nga_hd == NGA_HD_BO &&
              !hub_coi(&hb, t) && hb.nga.n_bo == 1;
     t += 1000;
-    for (int i = 0; i < 36; i++) { nga_mau(&hb.nga, G1 * G1); nga_khoi(&hb.nga, 0); }   /* đứng, rồi va chạm */
-    nga_mau(&hb.nga, 5530u * 5530u);
+    nga_khoi_n(&hb.nga, 36, G1, 0, 0, 0);                               /* đứng, rồi va chạm + quay */
+    nga_khoi_n(&hb.nga, 1, 3 * G1, W_DPS(300), 0, 0);
     safety_on_result(&hb.app.fsm, CLS_FALL, 100); safety_on_result(&hb.app.fsm, CLS_FALL, 100);
     hub_tick(&hb, t, 0);
     int h2 = hb.app.fsm.st == ST_SUSPECT && hb.nga.trang_thai == NGA_DANG_XET && !hub_coi(&hb, t + 50) &&
              hub_ten_trang_thai(&hb)[0] == 'M';
-    hb.pos.huong = 1;                                                   /* ngực chốt nằm */
+    nga_khoi_n(&hb.nga, 1, G1, 0, 1, 1);                                /* ngực nằm ngang */
     t += 10; hub_tick(&hb, t, 0);
     int h3 = hb.nga_hd == NGA_HD_XAC_NHAN && hb.app.fsm.st == ST_SUSPECT && hub_ten_trang_thai(&hb)[0] == 'S';
     int h4 = hub_coi(&hb, hb.app.fsm.t_enter + 100) == app_buzzer(&hb.app, hb.app.fsm.t_enter + 100) &&
              hub_coi(&hb, hb.app.fsm.t_enter + 100);
     check("hub+nga: dang nam -> FSM ve MONITOR (WHY_KHONG_NGA), coi im; dung + va cham: SUSPECT an, coi im",
           h1 && h2);
-    check("hub+nga: nguc chot nam -> xac nhan, hien SUSPECT, coi keu nhu app_buzzer", h3 && h4);
+    check("hub+nga: nguc nghieng -> xac nhan, hien SUSPECT, coi keu nhu app_buzzer", h3 && h4);
 }
 
 static void mode_pwr_btn(void)
@@ -855,7 +881,7 @@ static void mode_hub(const uint8_t *p)
             OUT_BASE[s_out++] = (uint8_t)H.app.fsm.st;
             OUT_BASE[s_out++] = H.app.fsm.why;
         }
-        if (H.nga_hd != NGA_HD_KHONG) {             /* mỗi lần xét ngã: 'N' t hd ly_do truoc_thang co_va_cham peak2 dh_dot co_dot */
+        if (H.nga_hd != NGA_HD_KHONG) {             /* mỗi lần xét ngã: 'N' t hd ly_do truoc_thang co_va_cham peak2 wpeak2 co_nghieng */
             OUT_BASE[s_out++] = 'N';
             out_bytes(&t, 4);
             OUT_BASE[s_out++] = H.nga_hd;
@@ -863,8 +889,8 @@ static void mode_hub(const uint8_t *p)
             OUT_BASE[s_out++] = H.nga.truoc_thang;
             OUT_BASE[s_out++] = H.nga.co_va_cham;
             out_bytes(&H.nga.peak2_sk, 4);
-            out_bytes(&H.nga.dh_dot, 8);
-            OUT_BASE[s_out++] = H.nga.co_dot;
+            out_bytes(&H.nga.wpeak2_sk, 4);
+            OUT_BASE[s_out++] = H.nga.co_nghieng;
         }
         for (uint32_t ms = 1; ms < 10; ms++) {
             FS.now = t + ms;
