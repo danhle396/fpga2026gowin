@@ -272,7 +272,7 @@ void setup()
 
 void loop()
 {
-    static uint32_t t_tick = millis(), t_stat = millis(), t_last_sample = millis(), t_warn = 0;
+    static uint32_t t_tick = millis(), t_stat = millis(), t_last_sample = millis(), t_warn = 0, t_last_text = 0;
     static char cmd_usb[32], cmd_tcp[32];
     static uint8_t n_usb = 0, n_tcp = 0;
     char s[160];
@@ -312,6 +312,7 @@ void loop()
                 out(s);
             }
         } else if (e == NODE_TEXT && NR.line[0]) {
+            t_last_text = now;
             snprintf(s, sizeof s, "MCU %s", NR.line);
             out(s);
         }
@@ -378,7 +379,10 @@ void loop()
     }
     if (now - t_last_sample > 2000u && now - t_warn > 2000u) {
         t_warn = now;
-        out("# chua nhan mau tu MCU (GPIO16, 115200): kiem MCU da nap firmware FW_NODE, day TX P3.1 -> GPIO16, GND chung");
+        // MCU vẫn gửi chữ (STAT, lỗi MPU6050) mà không có mẫu: dây UART tốt, cảm biến hỏng; không có gì: dây/nguồn MCU
+        out(now - t_last_text < 3000u
+                ? "# MCU van chay (co chu qua UART) nhung khong co mau: MPU6050 khong tra loi, xem dong 'MCU # MPU6050 ...'"
+                : "# chua nhan mau tu MCU (GPIO16, 115200): kiem MCU da nap firmware FW_NODE, day TX P3.1 -> GPIO16, GND chung");
     }
 
     // 5. WiFi: một máy xem log trên TCP 3333
