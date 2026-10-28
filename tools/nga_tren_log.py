@@ -19,7 +19,7 @@ import truc_cam_bien as tc  # noqa: E402
 
 WHY = ["NONE", "WEAR_ON", "WEAR_OFF", "VOTES", "STILL", "TIMEOUT", "CANCEL", "SOS", "ALARM_ACK", "KHONG_NGA"]
 NGA_EV = []          # các lần xét ngã của lần chạy gần nhất
-LD = ['-', 'trước không thẳng', 'không va chạm', 'không nằm / ngực không hạ', 'nằm', 'ngực hạ', 'bất động']
+LD = ['-', 'trước không thẳng', 'không va chạm', 'không nằm / ngực không hạ', 'nằm', 'ngực hạ', 'bất động', 'va chạm mạnh ≥ 3 g']
 ST = ["STANDBY", "MONITOR", "SUSPECT", "PRE_ALARM", "ALARM", "COOLDOWN"]
 
 

@@ -17,7 +17,7 @@ sys.path.insert(0, str(ROOT / "tools"))
 import m0_test as m0  # noqa: E402
 
 NGA_EV = []          # các lần xét ngã của lần chạy gần nhất
-LD = ['-', 'trước không thẳng', 'không va chạm', 'không nằm / ngực không hạ', 'nằm', 'ngực hạ', 'bất động']
+LD = ['-', 'trước không thẳng', 'không va chạm', 'không nằm / ngực không hạ', 'nằm', 'ngực hạ', 'bất động', 'va chạm mạnh ≥ 3 g']
 ST = ["STANDBY", "MONITOR", "SUSPECT", "PRE_ALARM", "ALARM", "COOLDOWN"]
 WHY_KHONG_NGA = 9
 
