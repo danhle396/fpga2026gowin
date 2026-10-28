@@ -31,8 +31,8 @@ MPU6050 ──I²C──► SN32F407 (MCU) ──UART 115200──► ESP32 ─�
 MCU in chữ ra chân TX, tức là sang ESP32. ESP32 chuyển các dòng đó lên log với tiền tố `MCU `.
 
 **Còi:** dây ESP32 GPIO17 (TX2) → EVK J10 `URX_P32` (P3.2), GND đã chung. `#define COI_TU_ESP32 1` trong `firmware/src/fw_config.h` (mặc định từ 28/10; không có dây thì đặt 0 để MCU bỏ qua chân thả nổi). Sửa xong nạp lại cả MCU và ESP32. ESP32 gửi lệnh bật/tắt còi (1 byte) qua dây đó; MCU kêu còi PZ1 trên EVK ở 500 Hz theo nhịp của Safety FSM:
-- **NGHI NGÃ (vừa phát hiện ngã, đoạn đỏ trên biểu đồ): 3 bíp nhanh** (28/10);
-- CẢNH BÁO: bíp ngắn mỗi giây trong 10 s đếm ngược;
+- **PHÁT HIỆN NGÃ (đoạn đỏ trên biểu đồ, trước đây ghi "NGHI NGÃ"): bíp 0,4 s mỗi giây suốt tối đa 8 s**, kể cả ngã nhẹ rồi ngồi/đứng dậy (28/10);
+- CẢNH BÁO: bíp ngắn 2 lần mỗi giây trong 10 s đếm ngược;
 - BÁO ĐỘNG: hú liên tục;
 - bật/tắt hệ thống: bíp xác nhận.
 

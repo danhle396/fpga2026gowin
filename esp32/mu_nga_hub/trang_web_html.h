@@ -15,7 +15,7 @@ h1{font-size:18px;margin:0 0 12px}.muted{color:var(--mute)}
 .grid{display:grid;gap:12px;grid-template-columns:repeat(auto-fit,minmax(220px,1fr))}
 .card{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:14px}
 #st{font-size:30px;font-weight:700;letter-spacing:.5px;padding:18px;border-radius:12px;text-align:center;color:#fff;background:var(--ok);transition:background .2s}
-#st.SUSPECT{background:var(--warn)}#st.PRE_ALARM{background:var(--bad);animation:nhay 1s infinite}#st.ALARM{background:var(--bad)}
+#st.SUSPECT{background:var(--warn);animation:nhay 1s infinite}#st.PRE_ALARM{background:var(--bad);animation:nhay 1s infinite}#st.ALARM{background:var(--bad)}
 #st.STANDBY,#st.COOLDOWN{background:#64748b}#st.MAT{background:#475569}
 @keyframes nhay{50%{opacity:.55}}
 .big{font-size:26px;font-weight:700}.row{display:flex;justify-content:space-between;gap:8px;padding:3px 0;border-bottom:1px dashed var(--line)}
@@ -48,7 +48,7 @@ button.do{background:var(--bad);color:#fff;border:0}button:disabled{opacity:.35;
 </div>
 <p class="muted" style="font-size:12px">MPU6050 → SN32F407 → UART → ESP32 → SPI → FPGA Kiwi (1D-CNN INT8) → Safety FSM. Cập nhật 3 lần/giây.</p>
 </main><script>
-const TEN={MONITOR:'ĐANG THEO DÕI',SUSPECT:'NGHI NGÃ',PRE_ALARM:'CẢNH BÁO – nhấn hủy nếu ổn',ALARM:'BÁO ĐỘNG',COOLDOWN:'TẠM NGHỈ',STANDBY:'TẮT',MAT:'MẤT KẾT NỐI'};
+const TEN={MONITOR:'ĐANG THEO DÕI',SUSPECT:'PHÁT HIỆN NGÃ',PRE_ALARM:'CẢNH BÁO – nhấn hủy nếu ổn',ALARM:'BÁO ĐỘNG',COOLDOWN:'TẠM NGHỈ',STANDBY:'TẮT',MAT:'MẤT KẾT NỐI'};
 const LOP={0:'NORMAL – bình thường',1:'lớp 1',2:'lớp 2',3:'FALL – ngã'};
 const TT={DUNG:['Đứng thẳng','#16a34a'],DI_LAI:['Đang di chuyển','#0d9488'],NGOI:['Ngồi','#2563eb'],
  NAM_NGUA:['Nằm ngửa (nằm thẳng)','#7c3aed'],NAM_SAP:['Nằm sấp','#a21caf'],NGHIENG_TRAI:['Nằm nghiêng trái','#c026d3'],
@@ -66,7 +66,7 @@ function ve(d){
  const t=document.getElementById('tk');t.textContent=d.tk?'PASS':'FAIL';t.style.color=d.tk?'var(--ok)':'var(--bad)';
  document.getElementById('tkd').textContent='SPI '+d.s.spi_khz+' kHz';
  const s=d.s,R=(a,b)=>'<div class="row"><span>'+a+'</span><b>'+b+'</b></div>';
- document.getElementById('tke').innerHTML=R('Mẫu nhận',s.mau)+R('Mẫu mất',s.mat)+R('Khung hỏng',s.hong)+R('Cửa sổ gửi FPGA',s.gui)+R('FPGA trả OK',s.ok)+R('Timeout',s.to)+R('Lỗi khác',s.loi);
+ document.getElementById('tke').innerHTML=R('Số lần phát hiện ngã',d.nga+(d.nga?' (lần cuối '+((d.t-d.t_nga)/1000).toFixed(0)+' s trước)':''))+R('Mẫu nhận',s.mau)+R('Mẫu mất',s.mat)+R('Khung hỏng',s.hong)+R('Cửa sổ gửi FPGA',s.gui)+R('FPGA trả OK',s.ok)+R('Timeout',s.to)+R('Lỗi khác',s.loi);
  const [tn,tc]=tt(d.tt),te=document.getElementById('tt');te.children[0].style.background=tc;te.children[1].textContent=tn;
  const last=d.pt.length?d.pt[d.pt.length-1][0]:0;
  document.getElementById('ttd').textContent=(last?'từ '+((d.t-last)/1000).toFixed(0)+' s trước · ':'')+'không phải té ngã, chỉ để theo dõi';

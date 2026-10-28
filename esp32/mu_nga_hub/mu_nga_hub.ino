@@ -72,6 +72,7 @@ static uint32_t s_pt_t[PT_N]; static uint8_t s_pt_v[PT_N]; static uint8_t s_pt_i
 static bool     s_tk_ok = false;
 static int      s_last_rc = -1;
 static uint32_t s_web_cancel_until = 0;
+static uint32_t s_n_nga = 0, s_t_nga = 0;     // số lần phát hiện ngã (vào SUSPECT) từ lúc bật, lúc lần gần nhất
 
 // ---------------- in ra USB + TCP ----------------
 static void out(const char *s)
@@ -186,6 +187,7 @@ static void web_data()
     j += "\",\"rc\":"; j += s_last_rc;
     j += ",\"cls\":"; j += H.last.cls; j += ",\"score\":"; j += H.last.score; j += ",\"seq\":"; j += H.last.seq;
     j += ",\"tk\":"; j += s_tk_ok ? 1 : 0;
+    j += ",\"nga\":"; j += s_n_nga; j += ",\"t_nga\":"; j += s_t_nga;
     j += ",\"tt\":\""; j += posture_name(H.pos.tt); j += '"';
     j += ",\"pt\":[";
     for (uint8_t k = 0; k < s_pt_n; k++) {
@@ -332,6 +334,7 @@ void loop()
         if (H.app.fsm.events & SAFETY_EV_STATE) {
             snprintf(s, sizeof s, "S,%lu,%s,%u", (unsigned long)now, safety_state_name(H.app.fsm.st), H.app.fsm.why);
             out(s);
+            if (H.app.fsm.st == ST_SUSPECT) { s_n_nga++; s_t_nga = now; }
         }
         uint8_t bz = app_buzzer(&H.app, now);
         digitalWrite(LED_PIN, (bz || app_led(&H.app, now)) ? HIGH : LOW);

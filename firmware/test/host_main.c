@@ -218,23 +218,28 @@ static void mode_pwr_btn(void)
     check("nut: vua TAT, giu 3,5 s trong luc FSM con MONITOR -> BAT lai, khong SOS",
           off3 && on3 && PA.pb.on && PA.fsm.st == ST_MONITOR);
 
-    /* còi theo trạng thái ngã (28/10, nhóm chọn "kêu ngay khi phát hiện ngã") */
+    /* còi theo trạng thái ngã (28/10, nhóm: "nghi ngã cũng phải được xem là ngã") */
     pa_reset(); pa_run(2000, 0);
     int im = 1;
     for (uint32_t d = 0; d < 2000; d += 10) im &= !app_buzzer(&PA, PT + d);
     safety_on_result(&PA.fsm, CLS_FALL, 100); safety_on_result(&PA.fsm, CLS_FALL, 100); pa_run(10, 0);
     uint32_t ts = PA.fsm.t_enter;
     int sus = PA.fsm.st == ST_SUSPECT, n_on = 0, n_len = 0;
-    for (uint32_t d = 0; d < 3000; d += 10) {           /* đếm số tiếng bíp (sườn lên) trong 3 s đầu của SUSPECT */
+    for (uint32_t d = 0; d < SUSPECT_TIMEOUT_MS; d += 10) {   /* đếm tiếng bíp (sườn lên) suốt SUSPECT */
         uint8_t b = app_buzzer(&PA, ts + d);
         if (b && !n_len) n_on++;
         n_len = b;
     }
-    int b3 = n_on == 3 && app_buzzer(&PA, ts + 40) && !app_buzzer(&PA, ts + 120) && !app_buzzer(&PA, ts + 500);
+    int b_sus = n_on == SUSPECT_TIMEOUT_MS / 1000 && app_buzzer(&PA, ts + 390) && !app_buzzer(&PA, ts + 410);
+    pa_run(SUSPECT_TIMEOUT_MS, 0);                       /* ngã nhẹ rồi không nằm yên: hết SUSPECT → MONITOR, còi im */
+    int het = PA.fsm.st == ST_MONITOR && !app_buzzer(&PA, PT + 10) && !app_buzzer(&PA, PT + 400);
+    safety_on_result(&PA.fsm, CLS_FALL, 100); safety_on_result(&PA.fsm, CLS_FALL, 100); pa_run(10, 0);
     safety_on_block(&PA.fsm, STILL_BLOCKS, 500); pa_run(10, 0);
-    int pre_b = PA.fsm.st == ST_PRE_ALARM && app_buzzer(&PA, PA.fsm.t_enter + 50) && !app_buzzer(&PA, PA.fsm.t_enter + 500);
-    check("coi: MONITOR im; vao SUSPECT (phat hien nga) -> 3 bip nhanh trong 0,5 s roi im; PRE_ALARM bip moi giay",
-          im && sus && b3 && pre_b);
+    uint32_t tp = PA.fsm.t_enter;
+    int pre_b = PA.fsm.st == ST_PRE_ALARM && app_buzzer(&PA, tp + 50) && !app_buzzer(&PA, tp + 200) &&
+                app_buzzer(&PA, tp + 550);
+    check("coi: MONITOR im; SUSPECT (phat hien nga) bip 0,4 s moi giay suot 8 s; het SUSPECT im; PRE_ALARM 2 bip/giay",
+          im && sus && b_sus && het && pre_b);
 }
 
 static void mode_safety(void)

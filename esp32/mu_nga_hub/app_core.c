@@ -74,8 +74,10 @@ uint8_t app_buzzer(const app_t *a, uint32_t now)
 {
     uint32_t t = now - a->fsm.t_enter;
     switch (a->fsm.st) {
-    case ST_SUSPECT:   return t < 480u && (t % 160u) < 80u;   /* vừa phát hiện ngã (2/3 cửa sổ FALL): 3 bíp nhanh */
-    case ST_PRE_ALARM: return (t % 1000u) < 150u;   /* bíp ngắn mỗi giây trong lúc đếm ngược 10 s */
+    /* Nhóm (28/10): nghi ngã cũng là ngã → còi kêu suốt SUSPECT (≤ SUSPECT_TIMEOUT_MS, kể cả ngã nhẹ rồi ngồi/đứng dậy),
+     * dồn dập dần: SUSPECT 1 Hz bíp dài → PRE_ALARM 2 Hz → ALARM hú. Safety FSM không đổi. */
+    case ST_SUSPECT:   return (t % 1000u) < 400u;   /* phát hiện ngã (2/3 cửa sổ FALL): bíp 0,4 s mỗi giây */
+    case ST_PRE_ALARM: return (t % 500u) < 150u;    /* nằm bất động: bíp ngắn 2 lần/giây trong 10 s đếm ngược */
     case ST_ALARM:     return (t % 500u) < 350u;    /* hú liên tục */
     default:
         if (a->pwr_ev) {
