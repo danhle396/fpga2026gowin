@@ -50,14 +50,23 @@
 #ifndef FW_VI_TRI_DEO
 #define FW_VI_TRI_DEO   1
 #endif
+/* ACC_OFF_*: offset gia tốc theo trục người (LSB), trừ sau khi đổi trục. Ngực: đo 28/10 khi đeo, 9 tư thế yên
+ * (docs/bao_cao/2026-10-28_tu_the_nguc): trước khi trừ |g| = 1.840–2.254, sau khi trừ 2.034–2.054. Offset làm
+ * |a| lệch > 120 LSB lúc yên → posture.c tưởng đang cử động suốt, độ cao trôi. Đổi cảm biến thì đo lại. */
 #if FW_VI_TRI_DEO == 1
 #define TRUC_X  3
 #define TRUC_Y  (-1)
 #define TRUC_Z  (-2)
+#define ACC_OFF_X  204
+#define ACC_OFF_Y  (-3)
+#define ACC_OFF_Z  (-4)
 #else
 #define TRUC_X  1
 #define TRUC_Y  2
 #define TRUC_Z  3
+#define ACC_OFF_X  0
+#define ACC_OFF_Y  0
+#define ACC_OFF_Z  0
 #endif
 
 /* ---- A.8 khối và Safety FSM (giá trị đầu; chốt ở AI-10) ---- */

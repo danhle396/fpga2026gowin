@@ -14,6 +14,10 @@ Y trái, Z lên. Mọi phép tính là số nguyên, chia làm tròn về 0 (tdi
    - dậy sau khi NẰM ≥ 3 s: Δh < 1,5 m → NGỒI (ngồi dậy), ngược lại ĐỨNG (đứng dậy);
    - đợt có lúc nằm < 3 s (cúi rất sâu, ngã rồi bật dậy ngay): giữ nguyên. Đợt có cúi vẫn dùng Δh (ngồi xuống ghế
      thường cúi người; cúi nhặt đồ trên D1 hầu như không hạ đầu ≥ 0,25 m trong một đợt).
+4. Cúi sâu, chỉ khi đeo ngực (Posture(nguc=1), FW_VI_TRI_DEO 1; 28/10: cúi nhặt đồ ngực ngả 79°, nằm sấp 78°, trọng lực không tách được): hướng chốt NẰM, úp
+   về trước (mx < 0, |mx| ≥ |my|), đi thẳng từ THẲNG / CÚI và đợt cử động vừa xong hạ < 0,5 m → CÚI, không tính là
+   nằm (không đếm nam_n). Đo trên ngực: cúi hạ 0,20 m, đứng → nằm hạ 0,89 m. Hết cúi sâu khi: đầu rời NẰM, quay
+   sang ngửa / nghiêng, một đợt hạ thêm ≥ 0,3 m (từ cúi nằm xuống), hoặc yên úp quá 30 s (đang nằm sấp).
 """
 
 G_LSB = 2048
@@ -28,6 +32,9 @@ M_TO_H = 2048 * 10000 / 9.80665
 NGOI_H = int(0.25 * M_TO_H)          # 522.097
 DUNG_TU_NAM_H = int(1.5 * M_TO_H)    # 3.132.580
 NGOI_H_NGA = int(0.15 * M_TO_H)      # 313.258: ngồi xuống có ngả / cúi người mạnh (đầu chốt NẰM ngắn)
+CUI_SAU_H = int(0.5 * M_TO_H)        # úp về trước từ thẳng mà hạ < 0,5 m: cúi sâu, không phải nằm sấp
+CUI_XUONG_H = int(0.3 * M_TO_H)      # đang cúi sâu mà hạ thêm ≥ 0,3 m: nằm xuống
+CUI_LAU_N = 3000                     # úp yên quá 30 s: nằm sấp
 
 DUNG, NGOI, NAM_NGUA, NAM_SAP, NGHIENG_TRAI, NGHIENG_PHAI, CUI, DI_LAI = range(8)
 TEN = ["DUNG", "NGOI", "NAM_NGUA", "NAM_SAP", "NGHIENG_TRAI", "NGHIENG_PHAI", "CUI", "DI_LAI"]
@@ -56,7 +63,8 @@ def isqrt(x):
 
 
 class Posture:
-    def __init__(self):
+    def __init__(self, nguc=0):
+        self.nguc = nguc         # 1 = đeo ngực: bật mục 4 (cúi sâu); 0 = mũ, như D1
         self.tt = DUNG
         self.ngoi = 0
         self.huong = O_THANG
@@ -77,6 +85,9 @@ class Posture:
         self.cho_day = 0         # vừa chốt NẰM → THẲNG sau khi nằm lâu, chờ Δh để biết ngồi dậy hay đứng dậy
         self.cho = 0             # đợt vừa xong khi đầu chưa thẳng: quyết khi đầu chốt THẲNG
         self.ngh_cuoi = 0        # ep_nghieng của đợt vừa xong
+        self.cui_sau = 0         # hướng chốt NẰM úp về trước nhưng là cúi sâu (mục 4)
+        self.cho_cs = 0          # vừa chốt NẰM úp khi còn đang cử động: quyết cúi sâu lúc hết đợt
+        self.cs_n = 0            # số mẫu đã cúi sâu
 
     def _quyet(self, dh, ngh):
         self.cho = 0
@@ -89,10 +100,14 @@ class Posture:
         self.ngoi = 1 if dh < DUNG_TU_NAM_H else 0
         self.cho_day = 0
 
+    def _up(self):
+        """Khối vừa rồi úp về trước (nằm sấp hoặc cúi sâu)."""
+        return self.mx < 0 and abs(self.mx) >= abs(self.my)
+
     def _upd_tt(self):
         if self.huong == O_THANG:
             self.tt = DI_LAI if self.di_lai else (NGOI if self.ngoi else DUNG)
-        elif self.huong == O_CUI:
+        elif self.huong == O_CUI or self.cui_sau:
             self.tt = CUI
         elif abs(self.my) > abs(self.mx):
             self.tt = NGHIENG_PHAI if self.my > 0 else NGHIENG_TRAI
@@ -104,7 +119,11 @@ class Posture:
         ax, ay, az = int(r[0]), int(r[1]), int(r[2])
         mag = isqrt(ax * ax + ay * ay + az * az)
         old = self.tt
-        if self.huong == O_NAM and self.nam_n < 1000000:
+        if self.cui_sau:
+            self.cs_n += 1
+            if self.cs_n >= CUI_LAU_N:
+                self.cui_sau = 0
+        elif self.huong == O_NAM and self.nam_n < 1000000:
             self.nam_n += 1
             if self.nam_n >= LIE_LONG:
                 self.nam_lau = 1
@@ -116,7 +135,7 @@ class Posture:
         if self.since_move < STILL_N:
             if not self.moving:
                 self.moving, self.n_ep, self.v, self.h = 1, 0, 0, 0
-                self.ep_nghieng = int(self.huong == O_NAM)
+                self.ep_nghieng = int(self.huong == O_NAM and not self.cui_sau)
                 self.cho = 0
             self.n_ep += 1
             self.v += mag - self.g_ref
@@ -127,6 +146,11 @@ class Posture:
             self.moving = 0
             dh = self.h - tdiv(self.v * (self.n_ep + 1), 2)
             self.dh_cuoi = dh
+            if self.cho_cs:                         # NẰM úp chốt giữa đợt: đợt này hạ ít là cúi sâu
+                self.cho_cs = 0
+                self.cui_sau, self.cs_n = int(dh > -CUI_SAU_H), 0
+            elif self.cui_sau and dh <= -CUI_XUONG_H:
+                self.cui_sau = 0                    # từ cúi nằm hẳn xuống
             if self.di_lai:
                 self.di_lai = 0
             elif self.huong == O_THANG and self.cho_day:
@@ -160,6 +184,12 @@ class Posture:
             else:
                 self.cand, self.cand_n = o, 1
             if self.cand_n >= HOLD and o != self.huong:
+                self.cui_sau = self.cho_cs = 0
+                if self.nguc and o == O_NAM and self._up():   # úp về trước, đi thẳng từ THẲNG / CÚI (mục 4)
+                    if self.moving:
+                        self.cho_cs = 1
+                    elif self.dh_cuoi > -CUI_SAU_H:
+                        self.cui_sau, self.cs_n = 1, 0
                 if o == O_THANG and self.nam_lau:      # NẰM (→ CÚI) → THẲNG sau khi nằm lâu: ngồi dậy hay đứng dậy
                     self.nam_lau = 0
                     self.cho_day = 1
@@ -171,7 +201,9 @@ class Posture:
                 if o != O_NAM:
                     self.nam_n = 0
                 self.huong = o
-            if self.moving and self.huong == O_NAM:
+            if self.huong == O_NAM and not self._up():
+                self.cui_sau = self.cho_cs = 0           # quay sang ngửa / nghiêng: nằm thật
+            if self.moving and self.huong == O_NAM and not self.cui_sau:
                 self.ep_nghieng = 1
             self._upd_tt()
         return int(self.tt != old)

@@ -805,16 +805,17 @@ static void mode_node(uint32_t n, const uint8_t *p)
 }
 
 /* ---------------- mode 13: nhận dạng tư thế (A.11, đối chiếu ml/src/posture_model.py) ----------------
- * IN: n bản ghi, mỗi bản ghi [len u32] rồi len mẫu × 6 INT16; posture_init ở đầu mỗi bản ghi.
+ * IN: n bản ghi, mỗi bản ghi [len u32][nguc u32] rồi len mẫu × 6 INT16; posture_init(nguc) ở đầu mỗi bản ghi.
  * OUT: mỗi mẫu 1 byte tư thế; cuối mỗi bản ghi v, h, dh_cuoi (i64 LE) và ngoi. */
 static void mode_posture(uint32_t n, const uint8_t *p)
 {
     posture_t ps;
     for (uint32_t k = 0; k < n; k++) {
-        uint32_t len;
+        uint32_t len, nguc;
         memcpy(&len, p, 4);
-        p += 4;
-        posture_init(&ps);
+        memcpy(&nguc, p + 4, 4);
+        p += 8;
+        posture_init(&ps, (uint8_t)nguc);
         for (uint32_t i = 0; i < len; i++, p += 12) {
             int16_t r[6];
             memcpy(r, p, 12);

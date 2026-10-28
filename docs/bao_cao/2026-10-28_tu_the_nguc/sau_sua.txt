@@ -1,0 +1,19 @@
+  đợt   19.9–  23.5s  Δh -0.36 m  hướng 0→0  ra DUNG         (ngoi/doi)
+  đợt   35.9–  39.0s  Δh +0.57 m  hướng 0→0  ra NGOI         (dung_2/doi)
+  đợt   51.0–  52.7s  Δh -0.20 m  hướng 0→0  ra DUNG         (cui/doi)
+  đợt   68.0–  69.0s  Δh -0.08 m  hướng 1→0  ra DUNG         (dung_3/doi)
+  đợt   84.0–  87.1s  Δh -0.89 m  hướng 0→1  ra NAM_NGUA     (nam_ngua/doi)
+  đợt   98.3– 104.7s  Δh -0.85 m  hướng 1→1  ra NGHIENG_PHAI (nghieng_phai/doi)
+  đợt  115.1– 117.9s  Δh +0.07 m  hướng 1→1  ra NGHIENG_TRAI (nghieng_trai/doi)
+  đợt  132.6– 137.1s  Δh -0.28 m  hướng 1→1  ra NAM_SAP      (nam_sap/doi)
+  đợt  139.5– 142.7s  Δh -0.15 m  hướng 1→1  ra NAM_SAP      (nam_sap/giu)
+dung          → DUNG          ✓
+ngoi          → NGOI          ✓
+dung_2        → DUNG          ✓
+cui           → CUI           ✓
+dung_3        → DUNG          ✓
+nam_ngua      → NAM_NGUA      ✓
+nghieng_phai  → NGHIENG_PHAI  ✓
+nghieng_trai  → NGHIENG_TRAI  ✓
+nam_sap       → NAM_SAP       ✓
+đúng 9 / 9

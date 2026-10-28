@@ -193,6 +193,7 @@ Chạy trên ESP32 (`firmware/src/posture.c`, gọi trong `hub_sample`), trên c
 - **Hướng đầu:** trung bình khối 32 mẫu (mx, my, mz), gm = √(mx² + my² + mz²): mz·100 > 82·gm → THẲNG; mz·100 < 50·gm → NẰM; còn lại CÚI. Chốt khi 3 khối liên tiếp cùng kết quả.
 - **Đợt cử động:** \| \|a\| − 2048 \| > 120 LSB trong 30 mẫu gần nhất. Trong đợt: v += \|a\| − g_yên, h += v (g_yên = trung bình \|a\| của mỗi khối 32 mẫu yên). Hết đợt: Δh = h − v·(n + 1)/2 (vận tốc 0 hai đầu); 1 m = 2048·10⁴/9,80665 đơn vị (0,25 m = 522.094; 0,15 m = 313.256; 1,5 m = 3.132.568). Đợt kết thúc khi đầu chưa thẳng thì chờ đầu chốt THẲNG mới quyết.
 - **Dậy sau khi nằm ≥ 300 mẫu (3 s):** khi đầu chốt THẲNG lại (kể cả qua giai đoạn CÚI), Δh của đợt dậy < 1,5 m → NGỒI, ngược lại ĐỨNG.
+- **Cúi sâu, chỉ khi đeo ngực** (`FW_VI_TRI_DEO 1`, 28/10): hướng chốt NẰM úp về trước (mx < 0, \|mx\| ≥ \|my\|), đi thẳng từ THẲNG / CÚI, đợt cử động vừa xong hạ < 0,5 m (1.044.189) → CÚI, không đếm thời gian nằm; hết khi rời NẰM, quay ngửa/nghiêng, một đợt hạ thêm ≥ 0,3 m (626.513) hoặc úp yên ≥ 3.000 mẫu (30 s). Đầu vào gia tốc đã trừ `ACC_OFF_*` (hub.c).
 - Căn bậc hai nguyên theo bit; mọi phép chia làm tròn về 0. Lúc bật: ĐỨNG.
 - **Đo trên D1** (`tools/posture_eval.py`, mẫu 50 Hz lặp thành 100 Hz, tư thế ở cuối 1.844 bản ghi so với mô tả hoạt động): đứng 93,2 %, ngồi 82,0 %, nhận ra nằm 93,2 % (đúng cả hướng 79,9 %), tổng 85,8 %. Chưa đo trên mũ [CẦN XÁC MINH – nguồn: buổi thử trên mũ].
 
@@ -206,5 +207,6 @@ Chạy trên ESP32 (`firmware/src/posture.c`, gọi trong `hub_sample`), trên c
 | 2026-10-16 | **v3.2** (đi cùng đề cương v2.1): A.4 chỉ huấn luyện 2 lớp 0 NORMAL và 3 FALL, lớp 1 IMPACT để dành; A.8 đầu vào WEAR là trạng thái bật/tắt do một nút bấm tạo (`pwr_btn.c`), thêm quy ước nút. Không đổi khung, số học, FSM hay vector; mô hình đã có vốn là 2 lớp vì D1 không có IMPACT |
 | 2026-10-15 | **v3.1**: A.8 điều kiện nghiêng thành hai phía `\|az_tb\| < T_TILT` (trước: `az_tb < T_TILT`). Lý do: phát lại D1 cho thấy 15/22 PRE_ALARM giả có `az_tb` ≈ −2040 (đầu lộn ngược khi cúi gập sau khi vấp, nhặt đồ), còn 375/375 cú ngã nằm tới PRE_ALARM có `az_tb` ≥ −1074. Không đổi khung, số học hay vector |
 | 2026-10-25 | **v3.3**: thêm A.11 nhận dạng tư thế trên ESP32, chỉ để hiển thị. Không đổi A.1–A.10, khung, FSM hay vector |
+| 2026-10-28 | v3.3: A.11 thêm quy tắc cúi sâu khi đeo ngực; gia tốc trừ offset trước khi xử lý. Không đổi A.1–A.10, khung, FSM |
 | 2026-10-28 | v3.3 (làm rõ giao diện, không đổi FSM): A.8 ghi mẫu còi theo trạng thái; SUSPECT kêu suốt trạng thái |
 | 2026-10-14 | v3 (làm rõ, không đổi số học hay khung): A.7 thêm quy ước một bộ đệm kết quả và giá trị `STATUS` cho từng lỗi; `cnn_params.vh` thêm `CNN_SCORE_SHIFT` (lấy từ `score_shift` trong json) |

@@ -446,11 +446,11 @@ def test_node():
 
 
 def vi_tri_deo():
-    """(TRUC_X, TRUC_Y, TRUC_Z) theo FW_VI_TRI_DEO mặc định trong firmware/src/fw_config.h."""
+    """((TRUC_X, TRUC_Y, TRUC_Z), (ACC_OFF_X, _Y, _Z)) theo FW_VI_TRI_DEO mặc định trong firmware/src/fw_config.h."""
     import re
     t = (ROOT / "firmware" / "src" / "fw_config.h").read_text(encoding="utf-8")
     v = int(re.search(r"#define FW_VI_TRI_DEO\s+(\d+)", t).group(1))
-    return (3, -1, -2) if v == 1 else (1, 2, 3)
+    return ((3, -1, -2), (204, -3, -4)) if v == 1 else ((1, 2, 3), (0, 0, 0))
 
 
 def test_hub():
@@ -468,10 +468,12 @@ def test_hub():
     cancel = np.zeros(len(r), np.uint8)
     for a0, dur in ((2500, 120), (5200, 40), (7400, 350), (9800, 120), (11500, 120)):
         cancel[a0:a0 + dur] = 1
+    truc, off = vi_tri_deo()
+    r = np.clip(r, -32767 + 512, 32767 - 512)                         # chừa chỗ cho offset gia tốc
     s_cb = np.zeros_like(r)
-    for i_nguoi, c in enumerate(vi_tri_deo()):                        # trục người i = ±(trục cảm biến |c|)
-        for g in (0, 3):
-            s_cb[:, g + abs(c) - 1] = np.sign(c) * r[:, g + i_nguoi]
+    for i_nguoi, c in enumerate(truc):                                # trục người i = ±(trục cảm biến |c|) − offset
+        s_cb[:, abs(c) - 1] = np.sign(c) * (r[:, i_nguoi] + off[i_nguoi])
+        s_cb[:, 3 + abs(c) - 1] = np.sign(c) * r[:, 3 + i_nguoi]
     stream = b"# MPU6050 OK: WHO_AM_I=0x68\n# gyro_off,1,2,3\n"
     for k in range(len(r)):
         stream += node_pack(k, s_cb[k], int(cancel[k]))
@@ -522,32 +524,46 @@ def test_hub():
 
 
 def test_posture():
-    """posture.c (A.11, chạy trên ESP32) == ml/src/posture_model.py từng mẫu: 2 bản ghi D1 mỗi mã hoạt động (lặp mẫu
-    thành 100 Hz như posture_eval) + 1 đoạn ngẫu nhiên toàn dải INT16 (tràn số); so tư thế mỗi mẫu và v, h, Δh cuối."""
+    """posture.c (A.11, chạy trên ESP32) == ml/src/posture_model.py từng mẫu, cả chế độ mũ (nguc 0) lẫn ngực (nguc 1):
+    2 bản ghi D1 mỗi mã hoạt động (lặp mẫu thành 100 Hz như posture_eval) ở cả hai chế độ, log 9 tư thế đeo ngực
+    (docs/bao_cao/2026-10-28_tu_the_nguc, trừ ACC_OFF như hub.c) và 1 đoạn ngẫu nhiên toàn dải INT16 (tràn số);
+    so tư thế mỗi mẫu và v, h, Δh cuối. Thêm: trên log đeo ngực, tư thế cuối mỗi đoạn giữ yên phải đúng 9/9."""
     import posture_model as pm
+    import truc_cam_bien as tc
     z = np.load(ROOT / "ml" / "data" / "public" / "d1_trials_50hz.npz")
     D, S, L, A = z["data"], z["start"], z["length"], z["act"]
     recs = []
     for act in sorted(set(int(a) for a in A)):
-        for i in np.where(A == act)[0][:2]:
-            recs.append(np.repeat(D[S[i]:S[i] + L[i]], 2, axis=0).astype(np.int16))
+        for j, i in enumerate(np.where(A == act)[0][:2]):
+            recs.append((j, np.repeat(D[S[i]:S[i] + L[i]], 2, axis=0).astype(np.int16)))
+    log = ROOT / "docs" / "bao_cao" / "2026-10-28_tu_the_nguc" / "truc_nguc_deo_20261028_170503.txt"
+    s, marks = tc.doc(log)                              # LOG của bản trước: đã đổi trục, chưa trừ offset
+    s = np.clip(s - np.array([204, -3, -4, 0, 0, 0]), -32768, 32767).astype(np.int16)
+    recs.append((1, s))
     g = np.random.default_rng(13)
-    recs.append(g.integers(-32768, 32768, (3000, 6)).astype(np.int16))
-    blob = b"".join(struct.pack("<I", len(r)) + r.astype("<i2").tobytes() for r in recs)
-    _, out = run(13, len(recs), blob, max_insn=2_000_000_000)
-    exp, seen = bytearray(), set()
-    for r in recs:
-        q = pm.Posture()
+    for nguc in (0, 1):
+        recs.append((nguc, g.integers(-32768, 32768, (3000, 6)).astype(np.int16)))
+    blob = b"".join(struct.pack("<II", len(r), ng) + r.astype("<i2").tobytes() for ng, r in recs)
+    _, out = run(13, len(recs), blob, max_insn=4_000_000_000)
+    exp, seen, tt_log = bytearray(), set(), []
+    for k, (ng, r) in enumerate(recs):
+        q = pm.Posture(nguc=ng)
         for x in r:
             q.push(x)
             exp.append(q.tt)
             seen.add(pm.TEN[q.tt])
+            if r is s:
+                tt_log.append(pm.TEN[q.tt])
         exp += struct.pack("<3qB", q.v, q.h, q.dh_cuoi, q.ngoi)
-    n = sum(len(r) for r in recs)
-    return report(f"posture.c == posture_model.py: {len(recs)} bản ghi, {n:,} mẫu, tư thế từng mẫu + v/h/Δh cuối",
-                  bytes(out) == bytes(exp), f"tư thế đã đi qua {sorted(seen)}" if bytes(out) == bytes(exp) else
-                  f"lệch ở byte {next((i for i in range(min(len(out), len(exp))) if out[i] != exp[i]), -1)}; "
-                  f"dài C {len(out)} / Py {len(exp)}")
+    seg = tc.doan_giu(marks, len(s))
+    n_ok = sum(tt_log[i1 - 1] == tc.KY_VONG[m] for m, (_, i1) in seg.items())
+    n = sum(len(r) for _, r in recs)
+    ok = report(f"posture.c == posture_model.py (mũ + ngực): {len(recs)} bản ghi, {n:,} mẫu, tư thế từng mẫu + v/h/Δh",
+                bytes(out) == bytes(exp), f"tư thế đã đi qua {sorted(seen)}" if bytes(out) == bytes(exp) else
+                f"lệch ở byte {next((i for i in range(min(len(out), len(exp))) if out[i] != exp[i]), -1)}; "
+                f"dài C {len(out)} / Py {len(exp)}")
+    ok &= report(f"tư thế đeo ngực (log 9 tư thế khi đeo, 28/10): {n_ok}/{len(seg)} đoạn giữ yên đúng", n_ok == len(seg))
+    return ok
 
 
 SPI_TIMEOUT_MS = 50

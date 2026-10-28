@@ -10,7 +10,9 @@
  *     của ax / ay), còn lại CÚI; giữ 3 khối mới chốt;
  *   - đứng / ngồi theo độ cao đầu qua mỗi đợt cử động (tích phân |a| − g, chỉnh trôi bằng vận tốc 0 hai đầu):
  *     hạ ≥ 0,25 m (0,15 m nếu có lúc ngả / cúi mạnh) → ngồi, lên ≥ 0,25 m → đứng; dậy sau khi nằm ≥ 3 s:
- *     lên < 1,5 m → ngồi dậy, ngược lại đứng dậy; đi lại liên tục > 4 s → đứng.
+ *     lên < 1,5 m → ngồi dậy, ngược lại đứng dậy; đi lại liên tục > 4 s → đứng;
+ *   - đeo ngực (nguc = 1, 28/10): cúi nhặt đồ ngực ngả 79°, nằm sấp 78°; úp về trước đi thẳng từ đứng mà ngực hạ
+ *     < 0,5 m → cúi người (đo: cúi hạ 0,20 m, đứng → nằm hạ 0,89 m).
  * Kết quả trên D1 (tools/posture_eval.py, 1.844 bản ghi, tư thế cuối): đứng 93,2 %, ngồi 82,0 %, nhận ra nằm 93,2 %
  * (đúng cả hướng 79,9 %).
  */
@@ -24,13 +26,15 @@ enum { TT_DUNG = 0, TT_NGOI, TT_NAM_NGUA, TT_NAM_SAP, TT_NGHIENG_TRAI, TT_NGHIEN
 typedef struct {
     uint8_t  tt, ngoi, huong, cand, cand_n, nb;
     uint8_t  moving, di_lai, ep_nghieng, nam_lau, cho_day, cho, ngh_cuoi, g_n;
+    uint8_t  nguc, cui_sau, cho_cs;      /* đeo ngực: cúi sâu (úp ≥ 60° mà ngực hạ < 0,5 m) không phải nằm sấp */
+    uint32_t cs_n;
     int32_t  sx, sy, sz, mx, my;
     uint32_t since_move, n_ep, nam_n;
     int32_t  g_ref, g_acc;
     int64_t  v, h, dh_cuoi;
 } posture_t;
 
-void        posture_init(posture_t *p);
+void        posture_init(posture_t *p, uint8_t nguc);    /* nguc = 1 khi FW_VI_TRI_DEO 1 */
 /* Một mẫu 100 Hz (r[0..2] = AX AY AZ). Trả về 1 nếu tư thế vừa đổi (p->tt). */
 int         posture_push(posture_t *p, const int16_t r[6]);
 const char *posture_name(uint8_t tt);     /* "DUNG", "NGOI", "NAM_NGUA", ... */

@@ -1,0 +1,28 @@
+14715 mẫu; trọng lực trung bình lúc giữ yên (LSB, 2048 = 1 g):
+  dung          n= 700  x     321  y     100  z    2039  |g|  2067
+  ngoi          n= 701  x     348  y      37  z    2040  |g|  2070
+  dung_2        n= 742  x     403  y     107  z    2033  |g|  2075
+  cui           n= 700  x   -1809  y     213  z     346  |g|  1854
+  dung_3        n= 700  x     391  y     106  z    2034  |g|  2073
+  nam_ngua      n= 701  x    2245  y     194  z     -70  |g|  2254
+  nghieng_phai  n= 699  x     753  y    1877  z     544  |g|  2095
+  nghieng_trai  n= 700  x     798  y   -1948  z     -42  |g|  2106
+  nam_sap       n= 840  x   -1768  y     338  z     384  |g|  1840
+  X trước: +X cảm biến (trục đó mang 100 % trọng lực)
+  Y trái: +Y cảm biến (trục đó mang 90 % trọng lực)
+  Z lên: +Z cảm biến (trục đó mang 99 % trọng lực)
+bảng đổi trục: TRUC_X +1, TRUC_Y +2, TRUC_Z +3  (định thức +1, phép xoay đúng)
+  kiểm chéo: nghiêng trái ra -Y, phải là ngược dấu Y trái → đúng
+log đã đổi trục: bảng phải là (+1, +2, +3) → ĐÚNG
+posture_model trên log đã đổi trục (THẲNG khi nghiêng < 35°, NẰM khi > 60°), tư thế ở cuối mỗi đoạn giữ yên:
+  dung          nghiêng   9.4°  ngả trước   -8.9°  → DUNG          ✓
+  ngoi          nghiêng   9.7°  ngả trước   -9.7°  → NGOI          ✓
+  dung_2        nghiêng  11.6°  ngả trước  -11.2°  → DUNG          ✓
+  cui           nghiêng  79.2°  ngả trước  +79.2°  → NAM_SAP       ✗ (kỳ vọng CUI)
+  dung_3        nghiêng  11.3°  ngả trước  -10.9°  → NGOI          ✗ (kỳ vọng DUNG)
+  nam_ngua      nghiêng  91.8°  ngả trước  -91.8°  → NAM_NGUA      ✓
+  nghieng_phai  nghiêng  74.9°  ngả trước  -54.2°  → NGHIENG_PHAI  ✓
+  nghieng_trai  nghiêng  91.1°  ngả trước  -93.0°  → NGHIENG_TRAI  ✓
+  nam_sap       nghiêng  78.0°  ngả trước  +77.8°  → NAM_SAP       ✓
+  đúng 7/9
+KẾT LUẬN: bảng rõ ràng

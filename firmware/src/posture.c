@@ -14,6 +14,9 @@
 #define NGOI_H         522094LL       /* 0,25 m */
 #define NGOI_H_NGA     313256LL       /* 0,15 m */
 #define DUNG_TU_NAM_H  3132568LL      /* 1,5 m */
+#define CUI_SAU_H      1044189LL      /* 0,5 m: úp về trước từ thẳng mà hạ ít hơn là cúi sâu (chỉ khi đeo ngực) */
+#define CUI_XUONG_H    626513LL       /* 0,3 m: đang cúi sâu mà hạ thêm là nằm xuống */
+#define CUI_LAU_N      3000u          /* úp yên quá 30 s: nằm sấp */
 #define CAP            1000000u
 enum { O_THANG = 0, O_NAM, O_CUI };
 
@@ -36,9 +39,10 @@ static uint32_t isqrt32(uint32_t x)
 
 static int32_t iabs(int32_t a) { return a < 0 ? -a : a; }
 
-void posture_init(posture_t *p)
+void posture_init(posture_t *p, uint8_t nguc)
 {
     memset(p, 0, sizeof *p);
+    p->nguc = nguc;
     p->tt = TT_DUNG;
     p->huong = O_THANG;
     p->cand = O_THANG;
@@ -59,10 +63,12 @@ static void quyet_day(posture_t *p, int64_t dh)
     p->cho_day = 0;
 }
 
+static int up(const posture_t *p) { return p->mx < 0 && iabs(p->mx) >= iabs(p->my); }   /* úp về trước */
+
 static void upd_tt(posture_t *p)
 {
     if (p->huong == O_THANG)    p->tt = p->di_lai ? TT_DI_LAI : (p->ngoi ? TT_NGOI : TT_DUNG);
-    else if (p->huong == O_CUI) p->tt = TT_CUI;
+    else if (p->huong == O_CUI || p->cui_sau) p->tt = TT_CUI;
     else if (iabs(p->my) > iabs(p->mx)) p->tt = p->my > 0 ? TT_NGHIENG_PHAI : TT_NGHIENG_TRAI;
     else                        p->tt = p->mx > 0 ? TT_NAM_NGUA : TT_NAM_SAP;
 }
@@ -72,7 +78,9 @@ int posture_push(posture_t *p, const int16_t r[6])
     int32_t ax = r[0], ay = r[1], az = r[2];
     int32_t mag = (int32_t)isqrt32((uint32_t)(ax * ax) + (uint32_t)(ay * ay) + (uint32_t)(az * az));
     uint8_t old = p->tt;
-    if (p->huong == O_NAM && p->nam_n < CAP) {
+    if (p->cui_sau) {
+        if (++p->cs_n >= CUI_LAU_N) p->cui_sau = 0;
+    } else if (p->huong == O_NAM && p->nam_n < CAP) {
         p->nam_n++;
         if (p->nam_n >= LIE_LONG) p->nam_lau = 1;
     }
@@ -82,7 +90,7 @@ int posture_push(posture_t *p, const int16_t r[6])
     if (p->since_move < STILL_N) {
         if (!p->moving) {
             p->moving = 1; p->n_ep = 0; p->v = 0; p->h = 0;
-            p->ep_nghieng = (p->huong == O_NAM);
+            p->ep_nghieng = (p->huong == O_NAM && !p->cui_sau);
             p->cho = 0;
         }
         p->n_ep++;
@@ -93,6 +101,13 @@ int posture_push(posture_t *p, const int16_t r[6])
         p->moving = 0;
         int64_t dh = p->h - (p->v * (int64_t)(p->n_ep + 1u)) / 2;
         p->dh_cuoi = dh;
+        if (p->cho_cs) {                      /* NẰM úp chốt giữa đợt: đợt này hạ ít là cúi sâu */
+            p->cho_cs = 0;
+            p->cui_sau = dh > -CUI_SAU_H;
+            p->cs_n = 0;
+        } else if (p->cui_sau && dh <= -CUI_XUONG_H) {
+            p->cui_sau = 0;                   /* từ cúi nằm hẳn xuống */
+        }
         if (p->di_lai)                        p->di_lai = 0;
         else if (p->huong == O_THANG && p->cho_day) quyet_day(p, dh);
         else if (p->huong == O_THANG)         quyet(p, dh, p->ep_nghieng);
@@ -112,6 +127,11 @@ int posture_push(posture_t *p, const int16_t r[6])
         if (o == p->cand) { if (p->cand_n < 255u) p->cand_n++; }
         else              { p->cand = o; p->cand_n = 1; }
         if (p->cand_n >= HOLD && o != p->huong) {
+            p->cui_sau = p->cho_cs = 0;
+            if (p->nguc && o == O_NAM && up(p)) {   /* úp về trước, đi thẳng từ THẲNG / CÚI */
+                if (p->moving)                     p->cho_cs = 1;
+                else if (p->dh_cuoi > -CUI_SAU_H)  { p->cui_sau = 1; p->cs_n = 0; }
+            }
             if (o == O_THANG && p->nam_lau) {
                 p->nam_lau = 0;
                 p->cho_day = 1;
@@ -122,7 +142,8 @@ int posture_push(posture_t *p, const int16_t r[6])
             if (o != O_NAM) p->nam_n = 0;
             p->huong = o;
         }
-        if (p->moving && p->huong == O_NAM) p->ep_nghieng = 1;
+        if (p->huong == O_NAM && !up(p)) p->cui_sau = p->cho_cs = 0;   /* quay sang ngửa / nghiêng: nằm thật */
+        if (p->moving && p->huong == O_NAM && !p->cui_sau) p->ep_nghieng = 1;
         upd_tt(p);
     }
     return p->tt != old;

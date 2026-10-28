@@ -42,7 +42,8 @@ typedef struct {
 } hub_t;
 
 void hub_init(hub_t *h, uint32_t now);
-/* Trục cảm biến → trục người (X trước, Y trái, Z lên) theo FW_VI_TRI_DEO (fw_config.h); cả gia tốc lẫn gyro. */
+/* Trục cảm biến → trục người (X trước, Y trái, Z lên) theo FW_VI_TRI_DEO (fw_config.h); cả gia tốc lẫn gyro;
+ * gia tốc trừ thêm ACC_OFF_* (trục người). */
 void hub_doi_truc(const int16_t in[6], int16_t out[6]);
 /* Một mẫu 100 Hz từ MCU, trục cảm biến (gyro đã trừ offset). Đổi trục (h->r), rồi tiền xử lý, khối, tư thế; có cửa sổ mới
  * và FPGA rảnh thì ghi khung ngay. Trả về cờ APP_* | HUB_POSTURE. */
