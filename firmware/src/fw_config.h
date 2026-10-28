@@ -36,11 +36,11 @@
 /* Phần cứng nối cố định (đề cương v2.2): SN32F407 → UART → ESP32 → SPI → FPGA (bitstream 3, giao thức v3).
  * Khung v3 dựng và đọc trên ESP32 (hub.c), không có IRQ/RST_N: ESP32 hỏi vòng, SPI_TIMEOUT_MS là hạn chờ kết quả. */
 
-/* Còi PZ1 của EVK theo lệnh ESP32 (node_link.h) cần thêm dây ESP32 GPIO17 → MCU P3.2. Nhóm chưa thêm được dây (25/10):
- * để 0, MCU bỏ qua mọi byte nhận ở P3.2 (chân thả nổi có thể ra byte rác, trùng lệnh bật còi là kêu bậy).
- * Nối dây xong thì đặt 1 rồi nạp lại MCU. ESP32 luôn gửi lệnh, không có dây thì vô hại. */
+/* Còi PZ1 của EVK theo lệnh ESP32 (node_link.h) qua dây ESP32 GPIO17 → MCU P3.2 (nhóm thêm dây 28/10).
+ * 1: MCU nhận lệnh bật/tắt còi ở P3.2. 0: MCU bỏ qua P3.2 (dùng khi chưa có dây: chân thả nổi có thể ra byte rác trùng
+ * lệnh bật còi). ESP32 luôn gửi lệnh, không có dây thì vô hại. */
 #ifndef COI_TU_ESP32
-#define COI_TU_ESP32    0
+#define COI_TU_ESP32    1
 #endif
 
 /* Vị trí đeo (28/10). Mọi phần sau MCU (CNN, khối A.8, tư thế A.11) dùng trục người: X trước, Y trái, Z lên.

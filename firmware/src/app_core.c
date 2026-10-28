@@ -74,6 +74,7 @@ uint8_t app_buzzer(const app_t *a, uint32_t now)
 {
     uint32_t t = now - a->fsm.t_enter;
     switch (a->fsm.st) {
+    case ST_SUSPECT:   return t < 480u && (t % 160u) < 80u;   /* vừa phát hiện ngã (2/3 cửa sổ FALL): 3 bíp nhanh */
     case ST_PRE_ALARM: return (t % 1000u) < 150u;   /* bíp ngắn mỗi giây trong lúc đếm ngược 10 s */
     case ST_ALARM:     return (t % 500u) < 350u;    /* hú liên tục */
     default:

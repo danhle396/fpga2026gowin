@@ -150,7 +150,7 @@ Từ SUSPECT trở đi bỏ qua WEAR. IMPACT khi đang đội (chỉ khi bật l
 - ở MONITOR, nhấn nhanh 2 lần (mỗi lần < 0,4 s, lần 2 bắt đầu < 0,6 s sau khi nhả lần 1) = TẮT;
 - mọi cử chỉ khác đưa nguyên vào FSM như trên (giữ 3 s = SOS, nhấn ở PRE_ALARM = CANCEL, giữ 1 s ở ALARM).
 
-Còi xác nhận: BẬT = 2 bíp 100 ms, TẮT = 1 bíp 600 ms.
+Còi xác nhận: BẬT = 2 bíp 100 ms, TẮT = 1 bíp 600 ms. Còi theo trạng thái (`app_buzzer`): vào SUSPECT = 3 bíp 80 ms cách 80 ms (báo đã phát hiện ngã, thêm 28/10); PRE_ALARM = bíp 150 ms mỗi giây; ALARM = hú 350/500 ms.
 
 | Tham số | Giá trị đầu | Chốt ở |
 |---|---|---|
@@ -206,4 +206,5 @@ Chạy trên ESP32 (`firmware/src/posture.c`, gọi trong `hub_sample`), trên c
 | 2026-10-16 | **v3.2** (đi cùng đề cương v2.1): A.4 chỉ huấn luyện 2 lớp 0 NORMAL và 3 FALL, lớp 1 IMPACT để dành; A.8 đầu vào WEAR là trạng thái bật/tắt do một nút bấm tạo (`pwr_btn.c`), thêm quy ước nút. Không đổi khung, số học, FSM hay vector; mô hình đã có vốn là 2 lớp vì D1 không có IMPACT |
 | 2026-10-15 | **v3.1**: A.8 điều kiện nghiêng thành hai phía `\|az_tb\| < T_TILT` (trước: `az_tb < T_TILT`). Lý do: phát lại D1 cho thấy 15/22 PRE_ALARM giả có `az_tb` ≈ −2040 (đầu lộn ngược khi cúi gập sau khi vấp, nhặt đồ), còn 375/375 cú ngã nằm tới PRE_ALARM có `az_tb` ≥ −1074. Không đổi khung, số học hay vector |
 | 2026-10-25 | **v3.3**: thêm A.11 nhận dạng tư thế trên ESP32, chỉ để hiển thị. Không đổi A.1–A.10, khung, FSM hay vector |
+| 2026-10-28 | v3.3 (làm rõ giao diện, không đổi FSM): A.8 ghi mẫu còi theo trạng thái, thêm 3 bíp khi vào SUSPECT |
 | 2026-10-14 | v3 (làm rõ, không đổi số học hay khung): A.7 thêm quy ước một bộ đệm kết quả và giá trị `STATUS` cho từng lỗi; `cnn_params.vh` thêm `CNN_SCORE_SHIFT` (lấy từ `score_shift` trong json) |
