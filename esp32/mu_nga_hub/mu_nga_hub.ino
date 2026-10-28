@@ -22,6 +22,7 @@
 #include <WebServer.h>
 #include <math.h>
 #include <driver/gpio.h>
+#include <lwip/sockets.h>
 
 extern "C" {
 #include "hub.h"
@@ -85,23 +86,40 @@ static uint32_t s_web_cancel_until = 0;
 // kiểu âm còi: fix cứng COI_KIEU_CHOT (node_link.h, 2 kHz; nhóm nghe thử 6 kiểu trên board 28/10 và chốt kiểu này)
 static const uint8_t s_coi_kieu = COI_KIEU_CHOT;
 static uint32_t s_n_cat_mpu = 0;               // số lần ESP32 cắt nguồn MPU6050 để gỡ treo
-static uint32_t s_n_nga = 0, s_t_nga = 0;     // số lần phát hiện ngã (vào SUSPECT) từ lúc bật, lúc lần gần nhất
+static uint32_t s_n_nga = 0, s_t_nga = 0;     // số lần phát hiện ngã THẬT (nga.c xác nhận) từ lúc bật, lúc lần gần nhất
+// mất cảm biến: quá MAT_CB_MS không có mẫu (sau khi đã có mẫu, hoặc quá 15 s từ lúc bật) → web đỏ, còi + LED kiểu riêng
+#define MAT_CB_MS 3000u
+static bool     s_mat_cb = false;
+static uint32_t s_n_mat_cb = 0;
+// chèn bù mẫu mất (A4e): khoảng hở ≤ BU_MAX mẫu thì lặp lại mẫu gần nhất cho đủ 100 Hz (CNN, khối, tư thế không lệch giờ)
+#define BU_MAX 50u
+static int16_t  s_r_cu[6];
+static bool     s_co_r_cu = false;
+static uint32_t s_n_bu = 0, s_lost_cu = 0;
 
 // ---------------- in ra USB + TCP ----------------
 static void out(const char *s)
 {
     Serial.println(s);
     // sự kiện cho trang web (tư thế "P,..." có khung lịch sử riêng, không lấn sự kiện báo ngã)
-    if (!(s[0] >= '0' && s[0] <= '9') && strncmp(s, "STAT", 4) != 0 && strncmp(s, "P,", 2) != 0) {
+    // "F,": chuyển trạng thái thô của FSM; "N,": từng lần xét ngã (để chỉnh ngưỡng) — chỉ vào log, không lên web
+    if (!(s[0] >= '0' && s[0] <= '9') && strncmp(s, "STAT", 4) != 0 && strncmp(s, "P,", 2) != 0 &&
+        strncmp(s, "F,", 2) != 0 && strncmp(s, "N,", 2) != 0) {
         s_ev[s_ev_i] = String((unsigned long)(millis() / 1000)) + " s  " + s;
         s_ev_i = (uint8_t)((s_ev_i + 1) % EV_N);
         if (s_ev_n < EV_N) s_ev_n++;
     }
     if (s_client && s_client.connected()) {
-        // availableForWrite() của NetworkClient (core 3.x) luôn trả 0, nên ghi thẳng; lwIP đệm vài KB, đủ cho log
+        // Gửi không chờ (A4c): NetworkClient::write() chờ được khi bộ đệm gửi đầy (WiFi yếu), vòng lặp dừng và bộ đệm
+        // UART có thể tràn (nghi là nguyên nhân lần mất 126 mẫu một lần ngày 28/10, chưa đo). Gửi thẳng socket với
+        // MSG_DONTWAIT; không gửi được thì bỏ dòng đó (tcp_bo), không bao giờ chặn.
+        char b[224];
         size_t n = strlen(s);
-        if (s_client.write((const uint8_t *)s, n) != n || s_client.write((const uint8_t *)"\r\n", 2) != 2)
-            s_tcp_drop++;
+        if (n > sizeof b - 2) n = sizeof b - 2;
+        memcpy(b, s, n);
+        b[n++] = '\r'; b[n++] = '\n';
+        int fd = s_client.fd();
+        if (fd < 0 || send(fd, b, n, MSG_DONTWAIT) != (ssize_t)n) s_tcp_drop++;
     }
 }
 
@@ -196,7 +214,7 @@ static void web_data()
     String j;
     j.reserve(6000);
     j += "{\"t\":"; j += millis();
-    j += ",\"st\":\""; j += safety_state_name(H.app.fsm.st);
+    j += ",\"st\":\""; j += s_mat_cb ? "MAT_CB" : hub_ten_trang_thai(&H);
     j += "\",\"rc\":"; j += s_last_rc;
     j += ",\"cls\":"; j += H.last.cls; j += ",\"score\":"; j += H.last.score; j += ",\"seq\":"; j += H.last.seq;
     j += ",\"tk\":"; j += s_tk_ok ? 1 : 0;
@@ -210,7 +228,7 @@ static void web_data()
         if (k) j += ','; j += "["; j += s_pt_t[i]; j += ",\""; j += posture_name(s_pt_v[i]); j += "\"]";
     }
     j += ']';
-    j += ",\"s\":{\"mau\":"; j += H.n_samples; j += ",\"mat\":"; j += NR.n_lost; j += ",\"hong\":"; j += NR.n_bad;
+    j += ",\"s\":{\"mau\":"; j += NR.n_ok; j += ",\"bu\":"; j += s_n_bu; j += ",\"mat_cb\":"; j += s_n_mat_cb; j += ",\"mat\":"; j += NR.n_lost; j += ",\"hong\":"; j += NR.n_bad;
     j += ",\"gui\":"; j += H.n_sent; j += ",\"ok\":"; j += H.n_ok; j += ",\"to\":"; j += H.n_timeout;
     j += ",\"loi\":"; j += H.n_err; j += ",\"spi_khz\":"; j += s_spi_hz / 1000; j += "}";
     j += ",\"acc\":[";
@@ -242,8 +260,9 @@ void setup()
     gpio_set_drive_capability((gpio_num_t)MPU_NGUON_PIN, GPIO_DRIVE_CAP_3);   // ≈ 40 mA: module ăn 5–7 mA, sụt áp ít nhất
     digitalWrite(MPU_NGUON_PIN, HIGH);
     Serial.begin(USB_BAUD);
-    Serial2.setRxBufferSize(4096);
+    Serial2.setRxBufferSize(32768);             // ≈ 15 s ở 2,1 kB/s: vòng lặp có lỡ chậm (WiFi, web) cũng không tràn
     Serial2.begin(MCU_BAUD, SERIAL_8N1, MCU_RX_PIN, MCU_TX_PIN);
+    gpio_pullup_en((gpio_num_t)MCU_RX_PIN);     // dây RX hở trong tích tắc thì đứng ở mức nghỉ, không ra byte rác
     pinMode(FPGA_CS_PIN, OUTPUT);
     digitalWrite(FPGA_CS_PIN, HIGH);
     SPI.begin(FPGA_SCK_PIN, FPGA_MISO_PIN, FPGA_MOSI_PIN, FPGA_CS_PIN);
@@ -308,6 +327,14 @@ void loop()
         int e = node_rx_byte(&NR, b);
         if (e == NODE_SAMPLE) {
             t_last_sample = now;
+            uint32_t mat = NR.n_lost - s_lost_cu;     // mẫu mất ngay trước mẫu này (theo SEQ)
+            s_lost_cu = NR.n_lost;
+            if (mat && mat <= BU_MAX && s_co_r_cu) {
+                for (uint32_t k = 0; k < mat; k++) (void)hub_sample(&H, &IO, s_r_cu, NR.keys, now);
+                s_n_bu += mat;
+            }
+            memcpy(s_r_cu, NR.r, sizeof s_r_cu);
+            s_co_r_cu = true;
             if (hub_sample(&H, &IO, NR.r, NR.keys, now) & HUB_POSTURE) {
                 s_pt_t[s_pt_i] = now; s_pt_v[s_pt_i] = H.pos.tt;
                 s_pt_i = (uint8_t)((s_pt_i + 1) % PT_N); if (s_pt_n < PT_N) s_pt_n++;
@@ -343,7 +370,7 @@ void loop()
     }
     if (rc != SPI_PENDING && !s_log) {
         snprintf(s, sizeof s, "%lu,%u,%d,%u,%s,%d", (unsigned long)now, H.last.seq, rc == SPI_OK ? H.last.cls : -1,
-                 H.last.score, safety_state_name(H.app.fsm.st), rc);
+                 H.last.score, hub_ten_trang_thai(&H), rc);
         out(s);
     }
 
@@ -351,13 +378,43 @@ void loop()
     if (now - t_tick >= 10u) {
         t_tick += 10u;
         hub_tick(&H, now, digitalRead(BTN_PIN) == LOW || (int32_t)(s_web_cancel_until - now) > 0);
-        if (H.app.fsm.events & SAFETY_EV_STATE) {
-            snprintf(s, sizeof s, "S,%lu,%s,%u", (unsigned long)now, safety_state_name(H.app.fsm.st), H.app.fsm.why);
+        if (H.app.fsm.events & SAFETY_EV_STATE) {     // trạng thái thô của FSM: chỉ vào log
+            snprintf(s, sizeof s, "F,%lu,%s,%u", (unsigned long)now, safety_state_name(H.app.fsm.st), H.app.fsm.why);
             out(s);
-            if (H.app.fsm.st == ST_SUSPECT) { s_n_nga++; s_t_nga = now; }
         }
-        uint8_t bz = app_buzzer(&H.app, now);
-        digitalWrite(LED_PIN, (bz || app_led(&H.app, now)) ? HIGH : LOW);
+        if (H.nga_hd != NGA_HD_KHONG) {                // mỗi lần xét ngã: đỉnh |a| (g·100), Δh ngực (cm), lý do
+            const nga_t *n = &H.nga;
+            uint32_t pk = (uint32_t)(sqrtf((float)n->peak2_sk) * 100.0f / 2048.0f + 0.5f);
+            long dh_cm = n->co_dot ? (long)((double)n->dh_dot * 9.80665 / 2048.0 / 100.0) : 0;
+            snprintf(s, sizeof s, "N,%lu,%s,ly_do=%u,dinh=%lu,dh_cm=%ld,truoc_thang=%u", (unsigned long)now,
+                     H.nga_hd == NGA_HD_XAC_NHAN ? "XAC_NHAN" : "BO", n->ly_do, (unsigned long)pk, dh_cm, n->truoc_thang);
+            out(s);
+            if (H.nga_hd == NGA_HD_XAC_NHAN) {
+                s_n_nga++; s_t_nga = now;
+                snprintf(s, sizeof s, "# PHAT HIEN NGA (lan %lu): dinh %lu.%02lu g", (unsigned long)s_n_nga,
+                         (unsigned long)(pk / 100), (unsigned long)(pk % 100));
+                out(s);
+            }
+        }
+        // mất cảm biến: báo cho người dùng, thiết bị lúc này không bảo vệ được
+        bool mat_cb = (H.n_samples > 0 || now > 15000u) && now - t_last_sample > MAT_CB_MS;
+        if (mat_cb && !s_mat_cb) { s_n_mat_cb++; out("# MAT CAM BIEN: khong co mau tu MPU6050 qua 3 s"); }
+        if (!mat_cb && s_mat_cb) out("# cam bien chay lai");
+        s_mat_cb = mat_cb;
+        // trạng thái cho người dùng (web, dòng S): SUSPECT chưa xác nhận là MONITOR
+        const char *ten = mat_cb ? "MAT_CB" : hub_ten_trang_thai(&H);
+        static const char *ten_cu = "";
+        if (strcmp(ten, ten_cu) != 0) {
+            snprintf(s, sizeof s, "S,%lu,%s,%u", (unsigned long)now, ten, H.app.fsm.why);
+            out(s);
+            ten_cu = ten;
+        }
+        uint32_t t3 = now % 3000u;
+        uint8_t bz = mat_cb ? (uint8_t)(t3 < 100u || (t3 >= 200u && t3 < 300u))     // 2 bíp ngắn mỗi 3 s
+                            : hub_coi(&H, now);
+        bool an = !mat_cb && H.app.fsm.st != ST_MONITOR && strcmp(ten, "MONITOR") == 0;
+        bool led = mat_cb ? (now % 200u) < 100u : an ? (now % 1000u) < 50u : app_led(&H.app, now);
+        digitalWrite(LED_PIN, (bz || led) ? HIGH : LOW);
         // kiểu âm cố định, nhắc lại mỗi 1 s (MCU khởi động lại vẫn đúng kiểu); gửi trước lệnh bật
         static uint8_t kieu_gui = 255;
         static uint32_t t_kieu = 0;
@@ -388,10 +445,11 @@ void loop()
     if (now - t_stat >= 5000u) {
         t_stat = now;
         snprintf(s, sizeof s, "STAT,mau=%lu,mat=%lu,khung_hong=%lu,gui=%lu,ok=%lu,timeout=%lu,loi=%lu,bo_qua=%lu,spi_khz=%lu,"
-                 "tcp_bo=%lu,byte_rx=%lu,cat_mpu=%lu", (unsigned long)H.n_samples, (unsigned long)NR.n_lost, (unsigned long)NR.n_bad,
+                 "tcp_bo=%lu,byte_rx=%lu,cat_mpu=%lu,bu=%lu,nga=%lu,nga_bo=%lu", (unsigned long)NR.n_ok, (unsigned long)NR.n_lost, (unsigned long)NR.n_bad,
                  (unsigned long)H.n_sent, (unsigned long)H.n_ok, (unsigned long)H.n_timeout, (unsigned long)H.n_err,
                  (unsigned long)H.n_skip, (unsigned long)(s_spi_hz / 1000), (unsigned long)s_tcp_drop, (unsigned long)s_rx_bytes,
-                 (unsigned long)s_n_cat_mpu);
+                 (unsigned long)s_n_cat_mpu, (unsigned long)s_n_bu, (unsigned long)H.nga.n_xac_nhan,
+                 (unsigned long)H.nga.n_bo);
         out(s);
     }
     // MPU6050 treo: MCU còn sống (có chữ) mà không có mẫu → cắt nguồn cảm biến MPU_CAT_MS rồi cấp lại (không chặn vòng lặp)

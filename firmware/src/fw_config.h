@@ -75,6 +75,14 @@
 #define T_STILL_G       250     /* LSB ở ±2000 °/s, ≈ 15 °/s */
 #define STILL_BLOCKS    8       /* 8 khối = 2,56 s */
 #define T_TILT          1450    /* |az_tb| < 1450 ↔ đầu lệch 45°–135° khỏi phương thẳng đứng (nằm) */
+
+/* ---- xác nhận ngã thật (nga.h, 28/10; bản đầu, chốt bằng dữ liệu đeo ngực của nhóm) ---- */
+#define NGA_VA_CHAM_LSB     5120        /* đỉnh |a| ≥ 2,5 g */
+#define NGA_VA_CHAM_KHOI    12u         /* tìm đỉnh trong 12 khối (3,84 s) trước SUSPECT */
+#define NGA_TRUOC_DEN       10u         /* "trước đó không nằm": xét khối lùi 10..20 (3,2–6,4 s trước SUSPECT) */
+#define NGA_TRUOC_TU        20u
+#define NGA_HA_H            1044189     /* ngực hạ ≥ 0,5 m (đơn vị posture.c: 2048·10⁴/9,80665 mỗi mét) */
+#define NGA_CHO_MS          4000u       /* chờ nằm / hạ ngực tối đa 4 s sau khi vào SUSPECT */
 #define TILT_EN         1
 #define VOTE_K          2
 #define VOTE_N          3

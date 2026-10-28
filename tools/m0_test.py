@@ -401,6 +401,104 @@ def node_pack(seq, r, keys):
     return b"\xF1\x7E" + body + struct.pack("<H", crc16(body))
 
 
+def node_rx_py(stream):
+    """Đáp án Python cho bên nhận node_link.c (28/10): chỉ nhận LEN = 14; khung hỏng thì dò lại F1 7E trong các byte
+    sau F1 7E của khung đó (byte của khung hỏng không thành chữ). Trả về (sự kiện, n_bad, n_lost)."""
+    st = {"s": "IDLE", "raw": [], "line": "", "quet": False, "bad": 0, "lost": 0, "last": None}
+    ev = []
+
+    def step(b):
+        s = st["s"]
+        if s not in ("IDLE", "SOF1"):
+            st["raw"].append(b)
+        if s == "IDLE":
+            if b == 0xF1:
+                st["s"] = "SOF1"
+            elif not st["quet"]:
+                text(b)
+            return None
+        if s == "SOF1":
+            if b == 0x7E:
+                st["s"], st["raw"] = "BODY", []
+                return None
+            st["s"] = "IDLE"
+            if b == 0xF1:
+                st["s"] = "SOF1"
+            elif not st["quet"]:
+                text(b)
+            return None
+        raw = st["raw"]
+        if len(raw) == 3 and raw[1] | (raw[2] << 8) != 14:
+            st["s"] = "IDLE"; st["bad"] += 1
+            return "B"
+        if len(raw) == 19:
+            st["s"] = "IDLE"
+            body = bytes(raw[:17])
+            if crc16(body) != raw[17] | (raw[18] << 8) or raw[3] != ord("D"):
+                st["bad"] += 1
+                return "B"
+            seq = raw[0]
+            if st["last"] is not None:
+                st["lost"] += (seq - st["last"] - 1) & 0xFF
+            st["last"] = seq
+            ev.append(("D", seq, raw[16], struct.unpack("<6h", body[4:16])))
+            return "D"
+        return None
+
+    def text(b):
+        if b == 0x0A:
+            ev.append(("T", st["line"])); st["line"] = ""
+        elif b != 0x0D and 0x20 <= b < 0x7F and len(st["line"]) < 96:
+            st["line"] += chr(b)
+
+    for b in stream:
+        e = step(b)
+        if e == "B":
+            ev.append(("B",))
+            if not st["quet"]:
+                tmp, st["s"], st["quet"] = list(st["raw"]), "IDLE", True
+                for x in tmp:
+                    step(x)
+                st["quet"] = False
+    return ev, st["bad"], st["lost"]
+
+
+def test_node_nhieu():
+    """node_link.c chịu nhiễu == node_rx_py: rơi 1 byte giữa khung, LEN nhiễu, đổi byte giữa khung, byte rác giữa
+    hai khung; mỗi lần nhiễu phải chỉ mất đúng 1 mẫu (bộ tách trước 28/10, đo trên cùng luồng: rơi 1 byte hay LEN
+    nhiễu mất 2 mẫu mỗi lần, đổi 1 bit mất 1)."""
+    g = np.random.default_rng(28)
+    n = 200
+    raw = g.integers(-32768, 32768, (n, 6))
+    frames = [bytearray(node_pack(k, raw[k], int(k & 3))) for k in range(n)]
+    hu = {20: "roi", 50: "roi", 80: "len", 110: "doi", 140: "roi", 170: "len"}
+    for k, kieu in hu.items():
+        f = frames[k]
+        if kieu == "roi":
+            del f[9]                                   # rơi 1 byte giữa payload
+        elif kieu == "len":
+            f[3] = 0x20                                # LEN = 32
+        else:
+            f[12] ^= 0x10                              # đổi 1 bit
+    stream = b"".join(bytes(f) for f in frames[:100]) + bytes([0x13, 0x37]) + b"".join(bytes(f) for f in frames[100:])
+    exp, exp_bad, exp_lost = node_rx_py(stream)
+    _, out = run(12, 0, struct.pack("<I", len(stream)) + stream)
+    ev, i = [], 0
+    while out[i] != ord("Z"):
+        c = chr(out[i])
+        if c == "D":
+            ev.append(("D", out[i + 1], out[i + 2], struct.unpack("<6h", out[i + 3:i + 15]))); i += 15
+        elif c == "T":
+            ln = out[i + 1]; ev.append(("T", out[i + 2:i + 2 + ln].decode())); i += 2 + ln
+        else:
+            ev.append(("B",)); i += 1
+    lost = struct.unpack("<I", out[i + 1:i + 5])[0]
+    n_d = sum(e[0] == "D" for e in ev)
+    return report(f"node_link.c chịu nhiễu == node_rx_py: {len(hu)} lần nhiễu (rơi byte, LEN nhiễu, đổi bit) trong "
+                  f"{n} khung → nhận {n_d}, mất {lost}", ev == exp and lost == exp_lost and n_d == n - len(hu)
+                  and lost == len(hu), f"C khớp Python {ev == exp}; mất {lost} (Python {exp_lost}, cần {len(hu)})")
+
+
 def test_node():
     """node_link.c: đóng gói của MCU == Python từng byte; bên ESP32 tách đúng mẫu, dòng chữ, khung hỏng, mẫu mất."""
     g = np.random.default_rng(11)
@@ -596,7 +694,7 @@ def main():
         return
     if not BIN.exists():
         raise SystemExit("chưa có firmware/build/test.bin — chạy: bash firmware/build.sh test")
-    ok = test_consts() & test_pre() & test_parse() & test_safety() & test_fsm_equiv() & test_cnn_mcu() & test_app() & test_node() & test_hub() & test_posture()
+    ok = test_consts() & test_pre() & test_parse() & test_safety() & test_fsm_equiv() & test_cnn_mcu() & test_app() & test_node() & test_node_nhieu() & test_hub() & test_posture()
     print("TẤT CẢ PASS" if ok else "CÓ FAIL")
     sys.exit(0 if ok else 1)
 

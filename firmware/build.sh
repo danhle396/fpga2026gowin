@@ -13,7 +13,7 @@ DFP="$(ls -d "$PACKS"/SONiX/SN32F4_DFP/*/ | sort -V | tail -1)Device"
 CMSIS="$(ls -d "$PACKS"/ARM/CMSIS/*/ | sort -V | tail -1)CMSIS/Core/Include"
 [ -x "$BIN/armclang.exe" ] || { echo "Không thấy armclang ở $BIN — đặt biến KEIL"; exit 1; }
 
-CORE="src/node_link.c src/hub.c src/crc.c src/preprocess.c src/spi_frame.c src/blocks.c src/safety.c src/app_core.c src/pwr_btn.c src/posture.c"   # C thuần, chạy trên ESP32
+CORE="src/node_link.c src/hub.c src/crc.c src/preprocess.c src/spi_frame.c src/blocks.c src/safety.c src/app_core.c src/pwr_btn.c src/posture.c src/nga.c"   # C thuần, chạy trên ESP32
 MCU="src/app_main.c src/board.c src/i2c0.c src/imu.c src/gyro_cal.c src/node_link.c src/crc.c"
 OPT="${OPT:--Oz}"        # bản đo tốc độ FW-15: OPT=-O3
 CFLAGS="--target=arm-arm-none-eabi -mcpu=cortex-m0 -mthumb $OPT -std=c99 -Wall -Wextra -Wno-unused-parameter

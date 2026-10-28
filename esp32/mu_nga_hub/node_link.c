@@ -44,16 +44,18 @@ static int text_byte(node_rx_t *s, uint8_t b)
     return NODE_NONE;
 }
 
-int node_rx_byte(node_rx_t *s, uint8_t b)
+static int step(node_rx_t *s, uint8_t b)
 {
+    if (s->st >= S_SEQ && s->nraw < sizeof s->raw) s->raw[s->nraw++] = b;
     switch (s->st) {
     case S_IDLE:
         if (b == NODE_SOF0) { s->st = S_SOF1; return NODE_NONE; }
-        return text_byte(s, b);
+        return s->quet ? NODE_NONE : text_byte(s, b);     /* lúc dò lại: byte của khung hỏng, không phải chữ */
     case S_SOF1:
-        if (b == NODE_SOF1) { s->st = S_SEQ; return NODE_NONE; }
+        if (b == NODE_SOF1) { s->st = S_SEQ; s->nraw = 0; return NODE_NONE; }
         s->st = S_IDLE;
-        return (b == NODE_SOF0) ? (s->st = S_SOF1, NODE_NONE) : text_byte(s, b);
+        if (b == NODE_SOF0) { s->st = S_SOF1; return NODE_NONE; }
+        return s->quet ? NODE_NONE : text_byte(s, b);
     case S_SEQ:
         s->seq = b;
         s->crc = crc16_update(CRC16_INIT, b);
@@ -68,7 +70,7 @@ int node_rx_byte(node_rx_t *s, uint8_t b)
         s->len |= (uint16_t)(b << 8);
         s->crc = crc16_update(s->crc, b);
         s->n = 0;
-        if (s->len == 0 || s->len > sizeof s->buf) {
+        if (s->len != NODE_SAMPLE_LEN) {        /* chỉ có khung mẫu: LEN nhiễu thì bỏ ngay, khỏi nuốt các khung sau */
             s->st = S_IDLE;
             s->n_bad++;
             return NODE_BAD;
@@ -101,4 +103,20 @@ int node_rx_byte(node_rx_t *s, uint8_t b)
         return NODE_SAMPLE;
     }
     }
+}
+
+int node_rx_byte(node_rx_t *s, uint8_t b)
+{
+    int e = step(s, b);
+    if (e == NODE_BAD && !s->quet) {
+        /* Dò lại F1 7E trong các byte sau F1 7E của khung hỏng. LEN = 14 nên các byte đó (≤ 19) không chứa trọn một
+         * khung: dò lại chỉ có thể để máy trạng thái đứng giữa khung sau, không sinh thêm sự kiện. */
+        uint8_t tmp[sizeof s->raw], n = s->nraw;
+        memcpy(tmp, s->raw, n);
+        s->st = S_IDLE;
+        s->quet = 1;
+        for (uint8_t i = 0; i < n; i++) (void)step(s, tmp[i]);
+        s->quet = 0;
+    }
+    return e;
 }

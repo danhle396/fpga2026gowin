@@ -31,7 +31,8 @@ typedef struct {
 
 /* Lý do chuyển trạng thái, để ghi dòng sự kiện RUN (A.9) */
 enum {
-    WHY_NONE = 0, WHY_WEAR_ON, WHY_WEAR_OFF, WHY_VOTES, WHY_STILL, WHY_TIMEOUT, WHY_CANCEL, WHY_SOS, WHY_ALARM_ACK
+    WHY_NONE = 0, WHY_WEAR_ON, WHY_WEAR_OFF, WHY_VOTES, WHY_STILL, WHY_TIMEOUT, WHY_CANCEL, WHY_SOS, WHY_ALARM_ACK,
+    WHY_KHONG_NGA           /* nga.c loại: phiếu CNN không kèm dấu hiệu ngã thật (safety_bo_nghi) */
 };
 
 #define SAFETY_EV_STATE   0x01u     /* vừa đổi trạng thái */
@@ -59,6 +60,9 @@ void        safety_on_result(safety_t *s, uint8_t cls, uint8_t score);
 void        safety_on_block(safety_t *s, uint8_t still_run, int16_t az_tb);
 void        safety_tick(safety_t *s, uint32_t now, uint8_t wear, uint8_t cancel_down);
 uint8_t     safety_fall_votes(const safety_t *s);
+/* Tầng xác nhận ngã (nga.c, chạy trên ESP32) loại một lần nghi ngã: SUSPECT / PRE_ALARM → MONITOR, lý do
+ * WHY_KHONG_NGA. Ngoài bảng A.8; không gọi thì FSM y như safety_model.py. */
+void        safety_bo_nghi(safety_t *s, uint32_t now);
 const char *safety_state_name(safety_state_t st);
 
 #endif

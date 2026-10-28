@@ -1,0 +1,94 @@
+PASS  A.10 khung tự kiểm LFSR 768 byte == selftest_payload()
+PASS  A.7 CRC-16 "123456789" = 0x29B1  C cho 0x29B1
+PASS  CRC-8 (PROTO 1) "123456789" == crc8.v của RTL  0xF4
+PASS  A.2 q8 trên 2627 giá trị (gồm bảng tự kiểm A.2) == golden
+PASS  FW-07 10000 mẫu tv/pre_in.csv → 5000 mẫu, khớp tv/pre_out.csv từng byte
+PASS  FW-07 số cửa sổ: 305 (mong đợi 305, bước 16 mẫu)
+PASS  FW-08 305 khung v3 (772 B) khớp write_frame() từng byte và tv/pre_frames.csv  sai 0
+PASS  FW-08 305 khung PROTO 1 (771 B, CRC-8 của RTL) khớp từng byte  sai 0
+PASS  FW-08 kiểm khung đọc: 92 ca (v3 RUN/HIL, PROTO 1, SEQ lệch, CRC sai, STATUS, đuôi)
+    PASS  khoi: dong sau dung 32 mau; dung yen; az_tb = 2048
+    PASS  khoi: AX lech 299 < T_STILL_A van bat dong, still_run = 2
+    PASS  khoi: AX lech 300 = T_STILL_A -> khong bat dong, still_run ve 0
+    PASS  khoi: GZ lech 249 < T_STILL_G van bat dong
+    PASS  khoi: GZ lech 250 = T_STILL_G -> khong bat dong
+    PASS  khoi: az_tb = (tong AZ) >> 5 lay san: -32 -> -1, -33 -> -2
+    PASS  phieu: FALL voi SCORE < T_SCORE khong tinh (1/3)
+    PASS  phieu: chi dem VOTE_N = 3 cua so gan nhat
+    PASS  A.8 khoi dau o STANDBY
+    PASS  A.8 STANDBY -> MONITOR khi WEAR = 1
+    PASS  A.8 MONITOR giu nguyen khi WEAR = 0 moi 2,99 s
+    PASS  A.8 MONITOR -> STANDBY khi WEAR = 0 lien tuc 3 s
+    PASS  A.8 WEAR chap chon (0 2 s, 1, 0 2 s) khong ve STANDBY
+    PASS  A.8 1 phieu FALL chua du VOTE_K = 2
+    PASS  A.8 MONITOR -> SUSPECT khi 2/3 cua so FALL
+    PASS  A.8 3 cua so FALL nhung SCORE < T_SCORE: van MONITOR
+    PASS  A.8 phieu khi STANDBY bi bo qua
+    PASS  A.8 phieu cu bi xoa khi vao MONITOR, khong vao SUSPECT
+    PASS  A.8 MONITOR -> SUSPECT khi mu duoc doi trong 3 s gan nhat (WEAR = 0 moi 2,5 s)
+    PASS  A.8 still_run = 7 < STILL_BLOCKS: van SUSPECT
+    PASS  A.8 bat dong nhung dau thang (az_tb = 2048 >= T_TILT): van SUSPECT
+    PASS  A.8 v3.1: bat dong nhung dau lon nguoc (az_tb = -2040, cui gap): van SUSPECT
+    PASS  A.8 v3.1: |az_tb| = T_TILT - 1 phia am -> PRE_ALARM
+    PASS  A.8 SUSPECT -> PRE_ALARM khi still_run >= 8 va |az_tb| < T_TILT
+    PASS  A.8 TILT_EN = 0: chi can bat dong
+    PASS  A.8 SUSPECT giu nguyen toi 7,99 s
+    PASS  A.8 SUSPECT -> MONITOR khi qua SUSPECT_TIMEOUT 8 s
+    PASS  A.8 PRE_ALARM -> MONITOR khi bam CANCEL
+    PASS  lan nhan da huy PRE_ALARM, giu tiep 5 s khong thanh SOS
+    PASS  nha roi nhan lai: SOS tinh lai tu dau (2,99 s chua bao)
+    PASS  nha roi nhan lai giu 3 s -> ALARM
+    PASS  A.8 PRE_ALARM giu nguyen toi 9,99 s
+    PASS  A.8 PRE_ALARM -> ALARM khi het PRE_ALARM_TIME 10 s
+    PASS  A.8 giu CANCEL 2,99 s o MONITOR: chua SOS
+    PASS  A.8 MONITOR -> ALARM khi giu CANCEL 3 s (SOS)
+    PASS  A.8 nha CANCEL truoc 3 s: khong SOS
+    PASS  A.8 SUSPECT -> ALARM khi giu CANCEL 3 s (SOS)
+    PASS  lan nhan gay SOS, giu tiep 2 s khong huy ALARM
+    PASS  A.8 ALARM: giu CANCEL 0,99 s chua tat
+    PASS  A.8 ALARM -> COOLDOWN khi giu CANCEL 1 s
+    PASS  A.8 COOLDOWN giu nguyen toi 29,99 s
+    PASS  A.8 COOLDOWN -> MONITOR sau COOLDOWN_TIME 30 s
+    PASS  A.8 tu SUSPECT bo qua WEAR (WEAR = 0 5 s van SUSPECT)
+    PASS  A.8 WEAR = 0 van vao PRE_ALARM
+    PASS  A.8 WEAR = 0 o PRE_ALARM van toi ALARM
+    PASS  A.8 IMPACT khi dang doi: dung mot tieng bip, khong doi trang thai
+    PASS  A.8 IMPACT khi WEAR = 0: khong bip
+    PASS  uu tien: CANCEL thang timeout o cung tick (PRE_ALARM -> MONITOR)
+    PASS  uu tien: timeout WEAR thang phieu CNN o cung tick (-> STANDBY)
+    PASS  uu tien: SOS thang phieu CNN o cung tick (-> ALARM)
+    PASS  dem ms tran qua 2^32 khi dang PRE_ALARM: van dung 10 s
+    PASS  LED 7 doan: PRE_ALARM hien P 10, P 09, ..., P 01, P 00
+    PASS  LED 7 doan: loi FPGA hien Err
+    PASS  nut: cap nguon la BAT -> MONITOR
+    PASS  nut: nhan nhanh 2 lan o MONITOR -> TAT, bip dai 0,6 s, STANDBY sau 3 s
+    PASS  nut: o STANDBY giu 1 s chua du -> van TAT
+    PASS  nut: o STANDBY giu 2 s -> BAT, 2 bip ngan; giu tiep toi 6 s khong thanh SOS
+    PASS  nut: dang BAT giu 3 s -> SOS (ALARM), nhu A.8
+    PASS  nut: 2 lan nhan cach nhau 0,8 s -> van BAT
+    PASS  nut: nhan ngan roi giu 0,5 s -> van BAT
+    PASS  nut: o PRE_ALARM nhan = CANCEL; nhan them ngay sau do khong lam TAT
+    PASS  nut: vua TAT ma nga trong 3 s -> van PRE_ALARM, nut van CANCEL duoc
+    PASS  nut: vua TAT, giu 3,5 s trong luc FSM con MONITOR -> BAT lai, khong SOS
+    PASS  coi: MONITOR im; SUSPECT (phat hien nga) bip 0,4 s moi giay suot 8 s; het SUSPECT im; PRE_ALARM 2 bip/giay
+    PASS  nga: lan nguoi khi dang nam -> loai; ngoi manh 2 g -> loai; nga roi nam -> xac nhan
+    PASS  nga: nga nhe ha nguc 0,6 m -> xac nhan; ha 0,36 m van thang -> loai sau 4 s; PRE_ALARM -> xac nhan
+    PASS  nga: va cham ngoai cua so 12 khoi khong tinh; vua bat coi nhu dang thang
+    PASS  nga: lan nguoi qua vung CUI (N-C-N, 2,7 g) -> loai
+    PASS  hub+nga: dang nam -> FSM ve MONITOR (WHY_KHONG_NGA), coi im; dung + va cham: SUSPECT an, coi im
+    PASS  hub+nga: nguc chot nam -> xac nhan, hien SUSPECT, coi keu nhu app_buzzer
+    TONG: 70 PASS, 0 FAIL
+PASS  FW-11 khối + Safety FSM (A.8)
+PASS  AI-10 safety_model.py == safety.c trên 240000 tick ngẫu nhiên (4 cấu hình, có tràn ms)  sai 0, trạng thái đã đi qua [0, 1, 2, 3, 4, 5]
+PASS  AI-10 safety_model.Blocks == blocks.c trên 6400 mẫu (200 khối, 78 bất động, still_run lớn nhất 58)
+PASS  FW-15 cnn_mcu.c (N2_11 D1) == golden: lớp, SCORE, 4 logit trên 50/50 cửa sổ
+PASS  FW lõi (app_core.c, N2_11 D1) == golden + safety_model: 402 kết quả, 11 lần đổi trạng thái trên 131 s (hoạt động [901, 905, 916, 920, 801, 806, 811])  đã đi qua ['ALARM', 'COOLDOWN', 'MONITOR', 'PRE_ALARM', 'SUSPECT']
+PASS  FW-05 hiệu chuẩn gyro: xong sau 271 mẫu, làm lại 2 lần, offset [40, -17, 3] (thật 41/−17/3)
+PASS  node_link.c: 50 khung MCU → ESP32 khớp Python từng byte (21 B/mẫu, CRC-16)
+PASS  node_link.c tách luồng: 46 mẫu, dòng chữ, 1 khung hỏng, mất 4 mẫu  mất 4 (mong đợi 4 = 1 hỏng + 3 bỏ), sự kiện khớp True
+PASS  node_link.c chịu nhiễu == node_rx_py: 6 lần nhiễu (rơi byte, LEN nhiễu, đổi bit) trong 200 khung → nhận 194, mất 6  C khớp Python True; mất 6 (Python 6, cần 6)
+PASS  ESP32 hub.c (N2_11 D1) == golden + safety_model: 402 khung qua FPGA giả lập (hỏi vòng sau 5 ms), 11 lần đổi trạng thái trên 131 s (hoạt động [901, 905, 916, 920, 801, 806, 811])  đã đi qua ['ALARM', 'COOLDOWN', 'MONITOR', 'PRE_ALARM', 'SUSPECT']; thống kê mẫu/gửi/OK/timeout/lỗi/bỏ (13099, 402, 402, 0, 0, 0)
+PASS  ESP32 hub.c: FPGA không trả lời trong 50 ms → 402 timeout / 402 khung gửi, 0 OK, 0 cửa sổ bỏ qua lúc chờ  (13099, 402, 0, 402, 0, 0)
+PASS  posture.c == posture_model.py (mũ + ngực): 75 bản ghi, 155,415 mẫu, tư thế từng mẫu + v/h/Δh  tư thế đã đi qua ['CUI', 'DI_LAI', 'DUNG', 'NAM_NGUA', 'NAM_SAP', 'NGHIENG_PHAI', 'NGHIENG_TRAI', 'NGOI']
+PASS  tư thế đeo ngực (log 9 tư thế khi đeo, 28/10): 9/9 đoạn giữ yên đúng
+TẤT CẢ PASS

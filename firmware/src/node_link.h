@@ -8,6 +8,10 @@
  * Payload mẫu (LEN = 14): 'D' | AX AY AZ GX GY GZ (INT16 LE, gyro đã trừ offset hiệu chuẩn) | KEYS
  *   KEYS bit 0 = SW3 (nút duy nhất: bật/tắt, CANCEL, SOS), bit 1 = SW6 (nút đánh dấu).
  * Ngoài khung, MCU vẫn in chữ ASCII (dòng "# ...", STAT); bên nhận gom thành dòng và chuyển tiếp nguyên văn.
+ * Bên nhận chịu nhiễu (28/10, đeo ngực: 137 khung hỏng làm mất 507 mẫu, ≈ 3,7 mẫu mỗi khung hỏng): chỉ nhận LEN = 14
+ * (khung duy nhất), và khi một khung hỏng thì dò lại F1 7E ngay trong các byte của khung đó (byte rơi mất làm khung
+ * sau bắt đầu giữa khung hỏng), nên một lần nhiễu chỉ mất 1 mẫu (trước: rơi 1 byte hay LEN nhiễu mất 2;
+ * tools/m0_test.py test_node_nhieu).
  */
 #ifndef NODE_LINK_H
 #define NODE_LINK_H
@@ -47,6 +51,7 @@ enum { NODE_NONE = 0, NODE_SAMPLE, NODE_TEXT, NODE_BAD };
 
 typedef struct {
     uint8_t  st, seq, buf[32];
+    uint8_t  raw[NODE_SAMPLE_FRAME], nraw, quet;   /* byte sau F1 7E của khung đang nhận; quet = đang dò lại */
     uint16_t len, n, crc;
     char     line[NODE_LINE_MAX + 1];
     uint8_t  nline;

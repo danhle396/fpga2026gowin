@@ -17,6 +17,7 @@
 #include "app_core.h"
 #include "fw_config.h"
 #include "posture.h"
+#include "nga.h"
 
 #define HUB_FIRST_POLL_MS   6u      /* engine E2: 258.080 chu kỳ = 5,15 ms */
 #define HUB_POLL_EVERY_MS   1u
@@ -39,6 +40,8 @@ typedef struct {
     int      last_rc;
     posture_t pos;
     int16_t  r[6];              /* mẫu vừa nhận, đã đổi về trục người */
+    nga_t    nga;               /* xác nhận ngã thật (nga.h) */
+    uint8_t  nga_en, pos_moving, nga_hd;   /* nga_en = 0: bỏ tầng xác nhận (FSM y như safety_model); nga_hd: NGA_HD_* khe vừa rồi */
 } hub_t;
 
 void hub_init(hub_t *h, uint32_t now);
@@ -51,8 +54,13 @@ unsigned hub_sample(hub_t *h, const hub_io_t *io, const int16_t raw[6], uint8_t 
 /* Gọi thường xuyên (≥ 1 lần/ms). Trả về SPI_PENDING nếu chưa có gì mới, ngược lại mã SPI_* của kết quả vừa đọc
  * (kết quả nằm ở h->last và đã đưa vào app_on_result). */
 int  hub_poll(hub_t *h, const hub_io_t *io, uint32_t now);
-/* Khe 10 ms: Safety FSM, nút. cancel_extra: nút CANCEL phụ trên ESP32 (OR với SW3 của MCU). */
+/* Khe 10 ms: Safety FSM, nút, xác nhận ngã (h->nga_hd). cancel_extra: nút CANCEL phụ trên ESP32 (OR với SW3 của MCU). */
 void hub_tick(hub_t *h, uint32_t now, uint8_t cancel_extra);
+/* Còi cho người dùng: như app_buzzer, nhưng SUSPECT / PRE_ALARM / ALARM chỉ kêu khi nga.c đã xác nhận ngã thật
+ * (ALARM do SOS luôn kêu). */
+uint8_t hub_coi(const hub_t *h, uint32_t now);
+/* Tên trạng thái cho web / log người dùng: SUSPECT chưa xác nhận hiện là MONITOR. */
+const char *hub_ten_trang_thai(const hub_t *h);
 /* Tự kiểm A.10 qua SPI: ghi khung SEQ 0xEE (payload LFSR), hỏi vòng, so 7 byte với expect7. 1 = PASS. */
 int  hub_selftest(hub_t *h, const hub_io_t *io, uint32_t (*millis)(void), const uint8_t expect7[7],
                   uint8_t got7[7]);

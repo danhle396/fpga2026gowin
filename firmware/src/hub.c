@@ -21,6 +21,8 @@ void hub_init(hub_t *h, uint32_t now)
     app_init(&h->app, &sc, &bc, now);
     h->last_rc = SPI_PENDING;
     posture_init(&h->pos, FW_VI_TRI_DEO == 1);
+    nga_init(&h->nga);
+    h->nga_en = 1;
 }
 
 static void send_frame(hub_t *h, const hub_io_t *io, uint8_t seq,
@@ -65,6 +67,10 @@ unsigned hub_sample(hub_t *h, const hub_io_t *io, const int16_t raw[6], uint8_t 
     h->n_samples++;
     unsigned f = app_on_raw(&h->app, r);
     if (posture_push(&h->pos, r)) f |= HUB_POSTURE;
+    nga_mau(&h->nga, (uint32_t)(r[0] * r[0]) + (uint32_t)(r[1] * r[1]) + (uint32_t)(r[2] * r[2]));
+    if (h->pos.nb == 0) nga_khoi(&h->nga, h->pos.huong);           /* posture.c vừa đóng khối 32 mẫu */
+    if (h->pos_moving && !h->pos.moving) nga_dot(&h->nga, h->pos.dh_cuoi);
+    h->pos_moving = h->pos.moving;
     if (f & APP_FRAME) {                        /* SEQ tăng theo cửa sổ, kể cả khi bỏ qua (như app_main.c) */
         const int8_t *s1, *s2;
         uint16_t n1, n2;
@@ -110,7 +116,32 @@ int hub_poll(hub_t *h, const hub_io_t *io, uint32_t now)
 
 void hub_tick(hub_t *h, uint32_t now, uint8_t cancel_extra)
 {
+    safety_t *f = &h->app.fsm;
     app_tick(&h->app, now, 1, (uint8_t)((h->keys & 1u) | (cancel_extra ? 1u : 0u)));
+    h->nga_hd = NGA_HD_KHONG;
+    if (!h->nga_en) return;
+    if (f->st == ST_MONITOR || f->st == ST_STANDBY) nga_het(&h->nga);
+    else if ((f->events & SAFETY_EV_STATE) && f->st == ST_SUSPECT) nga_bat_dau(&h->nga, now);
+    h->nga_hd = (uint8_t)nga_buoc(&h->nga, now, h->pos.huong, f->st == ST_PRE_ALARM);
+    if (h->nga_hd == NGA_HD_BO) safety_bo_nghi(f, now);      /* không phải ngã: FSM về MONITOR, không ai thấy */
+}
+
+static int an_nga(const hub_t *h)                           /* trạng thái ngã chưa được xác nhận: giấu */
+{
+    const safety_t *f = &h->app.fsm;
+    if (!h->nga_en || h->nga.trang_thai == NGA_XAC_NHAN) return 0;
+    if (f->st == ST_ALARM) return f->why != WHY_SOS;
+    return f->st == ST_SUSPECT || f->st == ST_PRE_ALARM;
+}
+
+uint8_t hub_coi(const hub_t *h, uint32_t now)
+{
+    return an_nga(h) ? 0u : app_buzzer(&h->app, now);
+}
+
+const char *hub_ten_trang_thai(const hub_t *h)
+{
+    return an_nga(h) ? safety_state_name(ST_MONITOR) : safety_state_name(h->app.fsm.st);
 }
 
 int hub_selftest(hub_t *h, const hub_io_t *io, uint32_t (*millis)(void), const uint8_t expect7[7],

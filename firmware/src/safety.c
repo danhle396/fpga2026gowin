@@ -138,6 +138,11 @@ void safety_tick(safety_t *s, uint32_t now, uint8_t wear, uint8_t cancel_down)
         go(s, ST_PRE_ALARM, WHY_STILL, now);
 }
 
+void safety_bo_nghi(safety_t *s, uint32_t now)
+{
+    if (s->st == ST_SUSPECT || s->st == ST_PRE_ALARM) go(s, ST_MONITOR, WHY_KHONG_NGA, now);
+}
+
 const char *safety_state_name(safety_state_t st)
 {
     static const char *const k[] = { "STANDBY", "MONITOR", "SUSPECT", "PRE_ALARM", "ALARM", "COOLDOWN" };

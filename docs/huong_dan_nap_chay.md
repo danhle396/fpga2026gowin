@@ -31,7 +31,8 @@ MPU6050 ──I²C──► SN32F407 (MCU) ──UART 115200──► ESP32 ─�
 MCU in chữ ra chân TX, tức là sang ESP32. ESP32 chuyển các dòng đó lên log với tiền tố `MCU `.
 
 **Còi:** dây ESP32 GPIO17 (TX2) → EVK J10 `URX_P32` (P3.2), GND đã chung. `#define COI_TU_ESP32 1` trong `firmware/src/fw_config.h` (mặc định từ 28/10; không có dây thì đặt 0 để MCU bỏ qua chân thả nổi). Sửa xong nạp lại cả MCU và ESP32. ESP32 gửi lệnh bật/tắt còi (1 byte) qua dây đó; MCU kêu còi PZ1 trên EVK ở 500 Hz theo nhịp của Safety FSM:
-- **PHÁT HIỆN NGÃ (đoạn đỏ trên biểu đồ, trước đây ghi "NGHI NGÃ"): bíp 0,4 s mỗi giây suốt tối đa 8 s**, kể cả ngã nhẹ rồi ngồi/đứng dậy (28/10);
+- **PHÁT HIỆN NGÃ: chỉ khi là ngã thật** (28/10, `firmware/src/nga.c`): CNN báo 2/3 cửa sổ FALL **và** trước đó đang thẳng (đứng / ngồi / đi) **và** có va chạm ≥ 2,5 g **và** sau đó nằm hoặc ngực hạ ≥ 0,5 m. Ngồi xuống mạnh, lăn người khi đang nằm, nằm xuống giường: không báo. Ngã thật (kể cả ngã nhẹ rồi ngồi dậy): còi bíp 0,4 s mỗi giây, web đỏ, "Số lần phát hiện ngã" +1;
+- **MẤT CẢM BIẾN** (quá 3 s không có mẫu): web đỏ, còi 2 bíp ngắn mỗi 3 s, LED nháy nhanh: thiết bị đang không bảo vệ được;
 - CẢNH BÁO: bíp ngắn 2 lần mỗi giây trong 10 s đếm ngược;
 - BÁO ĐỘNG: hú liên tục;
 - bật/tắt hệ thống: bíp xác nhận.
@@ -89,7 +90,16 @@ STAT,mau=...,mat=0,khung_hong=0,gui=...,ok=...,timeout=0,loi=0,bo_qua=0,spi_khz=
 
 **Thử tư thế** (đội mũ, hoặc cầm board đúng hướng: Z hướng lên trời, X hướng ra trước mặt): đứng yên → `Đứng thẳng`; ngồi xuống ghế → `Ngồi` (sau khi ngồi yên ≈ 0,3 s); nằm ngửa / nằm nghiêng / úp → tư thế nằm tương ứng sau ≈ 1 s; ngồi dậy từ giường → `Ngồi`, đứng dậy → `Đứng thẳng`; đi lại > 4 s → `Đang di chuyển`. Đứng/ngồi dựa vào độ cao đầu thay đổi khi đứng lên ngồi xuống, nên lúc bật nguồn luôn hiện `Đứng thẳng`; bật nguồn khi đang ngồi thì phải đứng lên ngồi lại một lần. Gửi lại: file log có dòng `P,` và ghi chú tư thế thật theo thời gian.
 
-**Thử ngã nhanh:** lắc mạnh board (sau này là mũ) rồi đặt nằm nghiêng yên. Phải thấy `S,...,SUSPECT`, `S,...,PRE_ALARM`, LED GPIO2 của ESP32 nháy, rồi `ALARM` nếu không ai hủy. Nhấn SW3 trên EVK (hoặc nút BOOT của ESP32) trong lúc PRE_ALARM để hủy.
+**Thử ngã:** từ 28/10 lắc board không còn đủ (cần trước đó thẳng + va chạm + nằm / hạ ngực). Đeo lên ngực, ngã lên nệm dày có người đỡ. Log có dòng `N,<ms>,XAC_NHAN|BO,ly_do=..,dinh=<g·100>,dh_cm=..,truoc_thang=..` cho **mỗi lần CNN nghi** (lý do loại: 1 trước đó không thẳng, 2 không có va chạm, 3 không nằm / ngực không hạ; xác nhận: 4 nằm, 5 ngực hạ, 6 bất động) và `S,<ms>,<trạng thái hiển thị>`; `F,...` là trạng thái thô của FSM. Nhấn SW3 trên EVK (hoặc nút BOOT của ESP32) trong lúc CẢNH BÁO để hủy.
+
+**Thu dữ liệu để chốt ngưỡng (việc B2):** đeo ngực, chạy pin, laptop cùng WiFi:
+
+```
+python -I tools/ghi_uart.py --tcp <IP> --lenh LOG --buoc dong_tac --kich-ban dong_tac   # ≈ 7,5 phút: ngồi mạnh ×10, cúi ×5, đi, nằm xuống ×5, ngồi dậy ×5, lăn ×10
+python -I tools/ghi_uart.py --tcp <IP> --lenh LOG --buoc nga --kich-ban nga             # ≈ 4,5 phút: ngã nằm ×10, ngã nhẹ ×5 (NỆM DÀY, có người đỡ)
+```
+
+Màn hình nhắc từng động tác. Chấm: `python tools/nga_tren_log.py <file>` (chạy lại toàn bộ lõi ESP32 trên log, liệt kê mỗi lần CNN nghi và kết quả xác nhận).
 
 ## 4. Lệnh
 

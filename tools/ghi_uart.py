@@ -8,6 +8,9 @@
 #   python -I tools/ghi_uart.py --tcp 192.168.88.97 --lenh LOG --buoc truc_nguc --tu-the
 #       đo hướng cảm biến khi đeo: nhắc lần lượt 9 tư thế (TU_THE, mỗi tư thế 6 s đổi + 10 s giữ yên, ≈ 2,5 phút),
 #       ghi mốc "# >>> TU THE" vào file; mất WiFi thì tự nối lại. Đọc kết quả: tools/truc_cam_bien.py
+#   python -I tools/ghi_uart.py --tcp 192.168.88.97 --lenh LOG --buoc dong_tac --kich-ban dong_tac   (≈ 9 phút)
+#   python -I tools/ghi_uart.py --tcp 192.168.88.97 --lenh LOG --buoc nga --kich-ban nga             (≈ 5 phút, nệm dày)
+#       dữ liệu đeo ngực để chốt ngưỡng xác nhận ngã (KICH_BAN); chấm: tools/nga_tren_log.py <file>
 #
 # Đóng Tera Term, PuTTY, miniterm trước khi chạy: Windows chỉ cho một chương trình mở cổng COM.
 # File nằm trong ket_qua_board/ (không lên git); gửi lại bằng cách dán nội dung vào chat kèm "Cập nhật: B<số>".
@@ -32,6 +35,29 @@ TU_THE = [("dung", "ĐỨNG THẲNG"),
           ("nghieng_trai", "NẰM NGHIÊNG TRÁI (vai trái chạm đất)"),
           ("nam_sap", "NẰM SẤP (úp mặt xuống)")]
 TU_THE_DOI, TU_THE_GIU = 6.0, 10.0      # giây để đổi tư thế, giây giữ yên
+
+
+def _lap(ma, ten, lan, doi, lam):
+    return [(f"{ma}_{k}", f"{ten} (lần {k}/{lan})", doi, lam, "LÀM") for k in range(1, lan + 1)]
+
+
+# Kịch bản (28/10, việc B2): dữ liệu đeo ngực để chốt ngưỡng xác nhận ngã (nga.c). Mỗi bước: (mã, lời nhắc, giây chuẩn
+# bị, giây làm, chữ của pha làm). Mốc ghi vào file: "# >>> TU THE <mã> doi" lúc chuẩn bị, "... giu" lúc bắt đầu làm.
+KICH_BAN = {
+    "tu_the": [(m, ten, TU_THE_DOI, TU_THE_GIU, "GIỮ YÊN") for m, ten in TU_THE],
+    # không phải ngã, dễ bị CNN nghi: ≈ 9 phút; cần ghế và giường / nệm
+    "dong_tac": [("dung", "ĐỨNG YÊN", 3, 10, "GIỮ YÊN")]
+                + _lap("ngoi_manh", "NGỒI PHỊCH XUỐNG GHẾ THẬT MẠNH, rồi đứng lên", 10, 3, 8)
+                + _lap("cui", "CÚI NHẶT ĐỒ DƯỚI ĐẤT, rồi đứng thẳng", 5, 3, 8)
+                + [("di", "ĐI LẠI BÌNH THƯỜNG", 3, 30, "LÀM")]
+                + _lap("nam_xuong", "NẰM XUỐNG GIƯỜNG (như đi ngủ), nằm yên", 5, 4, 10)
+                + _lap("ngoi_day", "NGỒI DẬY trên giường", 5, 3, 6)
+                + _lap("lan", "ĐANG NẰM: LĂN NGƯỜI THẬT MẠNH qua trái / phải, nằm yên", 10, 3, 8),
+    # ngã thật LÊN NỆM DÀY, có người đỡ: ≈ 5 phút
+    "nga": [("dung", "ĐỨNG YÊN", 3, 10, "GIỮ YÊN")]
+           + _lap("nga_nam", "NGÃ XUỐNG NỆM rồi NẰM YÊN", 10, 5, 12)
+           + _lap("nga_nhe", "NGÃ NHẸ XUỐNG NỆM rồi NGỒI DẬY NGAY", 5, 5, 10),
+}
 
 
 class _Tcp:
@@ -99,11 +125,15 @@ def main():
     ap.add_argument("--reset", action="store_true", help="chờ 3 s để nhấn reset trên board trước khi gửi lệnh")
     ap.add_argument("--liet-ke", action="store_true", help="liệt kê cổng COM rồi thoát")
     ap.add_argument("--tcp", help="đọc log ESP32 qua WiFi thay cho cổng COM: IP hoặc IP:cổng (mặc định 3333)")
-    ap.add_argument("--tu-the", action="store_true",
-                    help="đo hướng cảm biến: nhắc 5 tư thế, mỗi tư thế giữ yên 10 s; tự đặt --giay; màn hình chỉ hiện lời nhắc")
+    ap.add_argument("--tu-the", action="store_true", help="= --kich-ban tu_the (đo hướng cảm biến, 9 tư thế)")
+    ap.add_argument("--kich-ban", choices=sorted(KICH_BAN),
+                    help="nhắc từng bước trên màn hình, ghi mốc vào file; tự đặt --giay; màn hình chỉ hiện lời nhắc")
     a = ap.parse_args()
     if a.tu_the:
-        a.giay = 3 + len(TU_THE) * (TU_THE_DOI + TU_THE_GIU) + 2
+        a.kich_ban = "tu_the"
+    a.tu_the = bool(a.kich_ban)
+    if a.kich_ban:
+        a.giay = 3 + sum(doi + lam for _, _, doi, lam, _ in KICH_BAN[a.kich_ban]) + 2
     try:
         import serial
         from serial.tools import list_ports
@@ -148,20 +178,22 @@ def _record(s, f, a):
     if a.reset:
         print("Nhấn reset trên board ngay bây giờ (giữ SW3 nếu cần vào menu chẩn đoán của MCU)…")
     buf = b""
-    # lịch tư thế: (lúc bắt đầu đổi, lúc bắt đầu giữ yên, mã, tên); bắt đầu sau 3 s
-    lich = [(3 + i * (TU_THE_DOI + TU_THE_GIU), 3 + i * (TU_THE_DOI + TU_THE_GIU) + TU_THE_DOI, m, ten)
-            for i, (m, ten) in enumerate(TU_THE)] if a.tu_the else []
+    # lịch: (lúc bắt đầu chuẩn bị, lúc bắt đầu làm, mã, lời nhắc, giây chuẩn bị, giây làm, chữ pha làm); bắt đầu sau 3 s
+    lich, t = [], 3.0
+    for m, ten, doi, lam, chu in (KICH_BAN[a.kich_ban] if a.kich_ban else []):
+        lich.append((t, t + doi, m, ten, doi, lam, chu))
+        t += doi + lam
     da_nhac, n_mau, t_dem = set(), 0, -1
     while time.monotonic() - t0 < a.giay:
         dt = time.monotonic() - t0
-        for k, (t_doi, t_giu, m, ten) in enumerate(lich):
+        for k, (t_doi, t_giu, m, ten, doi, lam, chu) in enumerate(lich):
             if dt >= t_doi and (k, 0) not in da_nhac:
                 da_nhac.add((k, 0))
-                print(f"\n=== {k + 1}/{len(lich)}: chuyển sang {ten} ({TU_THE_DOI:.0f} s) ===")
+                print(f"\n=== {k + 1}/{len(lich)}: chuẩn bị {ten} ({doi:.0f} s) ===")
                 f.write(f"# >>> TU THE {m} doi\n")
             if dt >= t_giu and (k, 1) not in da_nhac:
                 da_nhac.add((k, 1))
-                print(f"=== GIỮ YÊN: {ten} ({TU_THE_GIU:.0f} s) ===")
+                print(f"=== {chu}: {ten} ({lam:.0f} s) ===")
                 f.write(f"# >>> TU THE {m} giu\n")
         if lich and int(dt) != t_dem:
             t_dem = int(dt)

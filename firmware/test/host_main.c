@@ -16,6 +16,8 @@
 #include "safety.h"
 #include "app_core.h"
 #include "posture.h"
+#include "nga.h"
+#include "hub.h"
 
 #define MBOX_PUTC   (*(volatile uint32_t *)0x40000000u)
 #define MBOX_EXIT   (*(volatile uint32_t *)0x40000004u)
@@ -151,6 +153,89 @@ static void pa_fall(void)                   /* 2 phiếu FALL → SUSPECT, rồi
     safety_on_block(&PA.fsm, STILL_BLOCKS, 500); pa_run(10, 0);
 }
 static void pa_tap(void) { pa_run(100, 1); pa_run(10, 0); }
+
+/* ---------------- xác nhận ngã thật (nga.c, 28/10) ----------------
+ * Đưa thẳng đầu vào của nga.c: mỗi khối 32 mẫu một đỉnh |a| và hướng ngực đã chốt. */
+#define G1 2048u
+static void nga_khoi_n(nga_t *n, int k, uint32_t peak_lsb, uint8_t huong)
+{
+    for (int i = 0; i < k; i++) { nga_mau(n, peak_lsb * peak_lsb); nga_khoi(n, huong); }
+}
+static int nga_chay(nga_t *n, uint32_t t0, uint32_t ms, uint8_t huong, uint8_t pre)
+{
+    int hd = NGA_HD_KHONG;
+    for (uint32_t t = t0; t <= t0 + ms && hd == NGA_HD_KHONG; t += 10) hd = nga_buoc(n, t, huong, pre);
+    return hd;
+}
+static void mode_nga(void)
+{
+    nga_t n;
+    /* 1. lăn người khi đang nằm: nằm suốt, có va chạm 3 g → loại ngay (đang nằm) */
+    nga_init(&n); nga_khoi_n(&n, 24, G1, 1); nga_khoi_n(&n, 2, 3 * G1, 1);
+    nga_bat_dau(&n, 1000);
+    int a = nga_chay(&n, 1000, 100, 1, 0) == NGA_HD_BO && n.ly_do == NGA_LD_DANG_NAM;
+    /* 2. ngồi xuống mạnh: thẳng, đỉnh 2 g → loại (không va chạm) */
+    nga_init(&n); nga_khoi_n(&n, 24, G1, 0); nga_khoi_n(&n, 2, 2 * G1, 0);
+    nga_bat_dau(&n, 1000);
+    int b = nga_chay(&n, 1000, 100, 0, 0) == NGA_HD_BO && n.ly_do == NGA_LD_KHONG_VA_CHAM;
+    /* 3. ngã rồi nằm: thẳng, va chạm 3 g, sau 1 s hướng ngực chốt NẰM → xác nhận */
+    nga_init(&n); nga_khoi_n(&n, 24, G1, 0); nga_khoi_n(&n, 2, 3 * G1, 0);
+    nga_bat_dau(&n, 1000);
+    int c0 = nga_chay(&n, 1000, 1000, 0, 0) == NGA_HD_KHONG && n.trang_thai == NGA_DANG_XET;
+    int c = c0 && nga_buoc(&n, 2010, 1, 0) == NGA_HD_XAC_NHAN && n.ly_do == NGA_LD_NAM;
+    /* 4. ngã nhẹ rồi ngồi dậy ngay: va chạm 3 g, đợt cử động hạ ngực 0,6 m, ngực vẫn thẳng → xác nhận */
+    nga_init(&n); nga_khoi_n(&n, 24, G1, 0); nga_khoi_n(&n, 2, 3 * G1, 0);
+    nga_bat_dau(&n, 1000); nga_dot(&n, -(int64_t)NGA_HA_H * 6 / 5);
+    int d = nga_chay(&n, 1000, 100, 0, 0) == NGA_HD_XAC_NHAN && n.ly_do == NGA_LD_HA_NGUC;
+    /* 5. va chạm 3 g nhưng ngực chỉ hạ 0,36 m (ngồi xuống thật mạnh) và vẫn thẳng → chờ 4 s rồi loại */
+    nga_init(&n); nga_khoi_n(&n, 24, G1, 0); nga_khoi_n(&n, 2, 3 * G1, 0);
+    nga_bat_dau(&n, 1000); nga_dot(&n, -(int64_t)NGA_HA_H * 36 / 50);
+    int e0 = nga_chay(&n, 1000, NGA_CHO_MS - 20, 0, 0) == NGA_HD_KHONG;
+    int e = e0 && nga_chay(&n, 1000 + NGA_CHO_MS - 10, 20, 0, 0) == NGA_HD_BO && n.ly_do == NGA_LD_KHONG_HA;
+    /* 6. đang xét mà FSM vào PRE_ALARM (bất động + nằm ngang theo khối A.8) → xác nhận */
+    nga_init(&n); nga_khoi_n(&n, 24, G1, 0); nga_khoi_n(&n, 2, 3 * G1, 0);
+    nga_bat_dau(&n, 1000);
+    int f = nga_chay(&n, 1000, 100, 0, 1) == NGA_HD_XAC_NHAN && n.ly_do == NGA_LD_BAT_DONG;
+    /* 7. va chạm nằm ngoài cửa sổ 12 khối → không tính; vừa bật (ít khối) → coi như đang thẳng */
+    nga_init(&n); nga_khoi_n(&n, 2, 3 * G1, 0); nga_khoi_n(&n, 13, G1, 0);
+    nga_bat_dau(&n, 1000);
+    int g = !n.co_va_cham && n.truoc_thang;
+    check("nga: lan nguoi khi dang nam -> loai; ngoi manh 2 g -> loai; nga roi nam -> xac nhan", a && b && c);
+    check("nga: nga nhe ha nguc 0,6 m -> xac nhan; ha 0,36 m van thang -> loai sau 4 s; PRE_ALARM -> xac nhan",
+          d && e && f);
+    /* 8. lăn từ ngửa sang nghiêng: nằm, giữa chừng ngực qua vùng CÚI 4 khối, đỉnh 2,7 g → loại (trước đó không thẳng) */
+    nga_init(&n); nga_khoi_n(&n, 14, G1, 1); nga_khoi_n(&n, 4, G1, 2); nga_khoi_n(&n, 6, 2765, 1);
+    nga_bat_dau(&n, 1000);
+    int h8 = nga_chay(&n, 1000, 100, 1, 0) == NGA_HD_BO && n.ly_do == NGA_LD_DANG_NAM;
+    check("nga: va cham ngoai cua so 12 khoi khong tinh; vua bat coi nhu dang thang", g);
+    check("nga: lan nguoi qua vung CUI (N-C-N, 2,7 g) -> loai", h8);
+
+    /* hub: SUSPECT chưa xác nhận → còi im, tên MONITOR; loại → FSM về MONITOR (WHY_KHONG_NGA) */
+    static hub_t hb;
+    hub_init(&hb, 0);
+    uint32_t t = 0;
+    for (; t < 3000; t += 10) hub_tick(&hb, t, 0);                      /* BẬT → MONITOR */
+    for (int i = 0; i < 24; i++) { nga_mau(&hb.nga, G1 * G1); nga_khoi(&hb.nga, 1); }   /* đang nằm */
+    safety_on_result(&hb.app.fsm, CLS_FALL, 100); safety_on_result(&hb.app.fsm, CLS_FALL, 100);
+    hub_tick(&hb, t, 0);
+    int h1 = hb.app.fsm.st == ST_MONITOR && hb.app.fsm.why == WHY_KHONG_NGA && hb.nga_hd == NGA_HD_BO &&
+             !hub_coi(&hb, t) && hb.nga.n_bo == 1;
+    t += 1000;
+    for (int i = 0; i < 24; i++) { nga_mau(&hb.nga, G1 * G1); nga_khoi(&hb.nga, 0); }   /* đứng, rồi va chạm */
+    nga_mau(&hb.nga, 9u * G1 * G1);
+    safety_on_result(&hb.app.fsm, CLS_FALL, 100); safety_on_result(&hb.app.fsm, CLS_FALL, 100);
+    hub_tick(&hb, t, 0);
+    int h2 = hb.app.fsm.st == ST_SUSPECT && hb.nga.trang_thai == NGA_DANG_XET && !hub_coi(&hb, t + 50) &&
+             hub_ten_trang_thai(&hb)[0] == 'M';
+    hb.pos.huong = 1;                                                   /* ngực chốt nằm */
+    t += 10; hub_tick(&hb, t, 0);
+    int h3 = hb.nga_hd == NGA_HD_XAC_NHAN && hb.app.fsm.st == ST_SUSPECT && hub_ten_trang_thai(&hb)[0] == 'S';
+    int h4 = hub_coi(&hb, hb.app.fsm.t_enter + 100) == app_buzzer(&hb.app, hb.app.fsm.t_enter + 100) &&
+             hub_coi(&hb, hb.app.fsm.t_enter + 100);
+    check("hub+nga: dang nam -> FSM ve MONITOR (WHY_KHONG_NGA), coi im; dung + va cham: SUSPECT an, coi im",
+          h1 && h2);
+    check("hub+nga: nguc chot nam -> xac nhan, hien SUSPECT, coi keu nhu app_buzzer", h3 && h4);
+}
 
 static void mode_pwr_btn(void)
 {
@@ -432,6 +517,7 @@ static void mode_safety(void)
     }
 
     mode_pwr_btn();
+    mode_nga();
 
     put("TONG: "); put_dec(s_pass); put(" PASS, "); put_dec(s_fail); put(" FAIL\n");
 }
@@ -680,7 +766,7 @@ static void mode_gcal(uint32_t n, const int16_t *raw)
 }
 
 /* ---------------- mode 11: lõi ESP32 (hub.c) với FPGA giả lập, phần cứng nối cố định theo codecanthiet ----------------
- * IN: mô hình (như mode 8) rồi [n_bytes u32][t_score u8][tilt_en u8][engine_ms u8][0] rồi n_bytes byte luồng UART của MCU
+ * IN: mô hình (như mode 8) rồi [n_bytes u32][t_score u8][tilt_en u8][engine_ms u8][nga_en u8] rồi n_bytes byte luồng UART của MCU
  *     (khung node_link + dòng chữ xen giữa). Mỗi mẫu tách được là một khe 10 ms: hub_sample, hub_tick, rồi hỏi vòng
  *     ở các mili giây 1..9. FPGA giả lập: nhận khung ghi v3, kiểm CRC-16, chạy cnn_mcu, có kết quả sau engine_ms,
  *     trả toàn 0 khi chưa có (như spi_result_tx_v3.v).
@@ -734,11 +820,12 @@ static void mode_hub(const uint8_t *p)
     uint32_t nvec, nb;
     p = parse_model(p, &m, &nvec);
     memcpy(&nb, p, 4);
-    uint8_t t_score = p[4], tilt = p[5], eng = p[6];
+    uint8_t t_score = p[4], tilt = p[5], eng = p[6], nga_en = p[7];
     p += 8;
     FS.m = &m;
     hub_io_t io = { fs_write, fs_read, 0 };
     hub_init(&H, 0);
+    H.nga_en = nga_en;                          /* 0: so với safety_model.py (không có tầng xác nhận ngã) */
     H.app.fsm.cfg.t_score = t_score;
     H.app.fsm.cfg.tilt_en = tilt;
     node_rx_init(&NR);
