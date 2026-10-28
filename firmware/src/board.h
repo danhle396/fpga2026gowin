@@ -8,6 +8,7 @@
 #define BOARD_H
 
 #include <stdint.h>
+#include "node_link.h"         /* COI_KIEU_*, COI_SO_KIEU */
 
 void     board_init(void);
 uint32_t board_millis(void);
@@ -31,9 +32,16 @@ extern volatile uint32_t g_uart_rx_overflow;
  * Quét trong SysTick, mỗi ms một chữ số (250 Hz). pat[i] = mã gfedcba của chữ số i (trái → phải). */
 void     board_seg7(const uint8_t pat[4]);
 
-/* Còi P3.0: đảo trong SysTick → âm 500 Hz (kêu được với còi thụ động lẫn chủ động). Cực tính chưa thử (E.1). */
+/* Còi PZ1 trên P3.0 (dương PZ1 nối thẳng BUZ_P30, âm xuống GND; tài liệu EVK không ghi còi chủ động hay thụ động).
+ * Kiểu âm (28/10, nhóm: còi 500 Hz quá nhỏ): chọn kiểu to nhất bằng nút "Thử còi" trên web, ESP32 nhớ và gửi
+ * lệnh NODE_CMD_COI_KIEU (node_link.h). COI_KIEU_* và COI_SO_KIEU ở node_link.h (ESP32 dùng chung). */
 #define BUZZER_ACTIVE_HIGH  1
+#ifndef COI_KIEU_MAC_DINH
+#define COI_KIEU_MAC_DINH   COI_KIEU_500HZ      /* khi chưa nhận lệnh kiểu từ ESP32: kiểu đã kêu được 28/10 */
+#endif
 void     board_buzzer(int on);
+void     board_buzzer_kieu(uint8_t k);         /* COI_KIEU_*; đang kêu thì đổi ngay */
+uint8_t  board_buzzer_kieu_hien(void);
 
 /* WEAR P2.3 (kéo lên, công tắc đội mũ nối xuống GND). Chưa có cảm biến đội mũ thì WEAR_PRESENT = 0: luôn coi là đội. */
 #define WEAR_PRESENT  0

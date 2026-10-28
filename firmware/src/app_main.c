@@ -123,6 +123,8 @@ int main(void)
                 buzz = (cmd == NODE_CMD_BUZZ_ON);
                 t_buzz = now;
                 n_buzz_cmd++;
+            } else if (cmd >= NODE_CMD_COI_KIEU && cmd < NODE_CMD_COI_KIEU + (int)COI_SO_KIEU) {
+                board_buzzer_kieu((uint8_t)(cmd - NODE_CMD_COI_KIEU));
             }
         }
         if (buzz && now - t_buzz > NODE_BUZZ_TIMEOUT_MS) buzz = 0;  /* mất lệnh từ ESP32: không kêu mãi */
@@ -139,6 +141,7 @@ int main(void)
         if (now - t_stat >= 5000u) {
             t_stat = now;
             put_kv("STAT,mau=", (int32_t)n); put_kv(",i2c_loi=", (int32_t)n_err); put_kv(",mat=", (int32_t)n_lost); put_kv(",cau_hinh_lai=", (int32_t)n_reinit); put_kv(",lenh_coi=", (int32_t)n_buzz_cmd);
+            put_kv(",kieu_coi=", (int32_t)board_buzzer_kieu_hien());
             uart_puts("\n");
         }
     }

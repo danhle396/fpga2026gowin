@@ -29,6 +29,14 @@
 #define NODE_CMD_BUZZ_ON      0xB1
 #define NODE_BUZZ_REFRESH_MS  100u
 #define NODE_BUZZ_TIMEOUT_MS  500u
+/* Kiểu âm còi (28/10): 1 byte NODE_CMD_COI_KIEU + k, ESP32 gửi khi đổi và nhắc lại mỗi NODE_COI_KIEU_REFRESH_MS
+ * (MCU khởi động lại vẫn về đúng kiểu). 0 = mức cao liên tục (còi chủ động); 1..5 = sóng vuông 500 / 2000 / 2700 /
+ * 3500 / 4000 Hz (còi thụ động to nhất gần tần số cộng hưởng). */
+#define NODE_CMD_COI_KIEU     0xC0
+#define COI_SO_KIEU           6u
+#define COI_KIEU_LIEN_TUC     0u
+#define COI_KIEU_500HZ        1u
+#define NODE_COI_KIEU_REFRESH_MS 1000u
 
 /* Đóng gói một mẫu vào out (≥ NODE_SAMPLE_FRAME byte); trả về số byte. */
 uint16_t node_pack_sample(uint8_t *out, uint8_t seq, const int16_t r[6], uint8_t keys);

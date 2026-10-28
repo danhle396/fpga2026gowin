@@ -8,7 +8,8 @@
 /* ---------------- SysTick 1 ms ---------------- */
 static volatile uint32_t s_ms;
 
-static volatile uint8_t s_buzz;
+static volatile uint8_t s_buzz, s_kieu = COI_KIEU_MAC_DINH;
+static const uint16_t k_coi_hz[COI_SO_KIEU] = { 0, 500, 2000, 2700, 3500, 4000 };   /* board.h: COI_KIEU_* */
 
 static volatile uint8_t s_seg[4];
 static uint8_t s_seg_d;
@@ -31,20 +32,68 @@ void SysTick_Handler(void)
 {
     s_ms++;
     seg7_scan();
-    if (s_buzz) {                                   /* 1 kHz đảo → 500 Hz */
+    if (s_buzz && s_kieu == COI_KIEU_500HZ) {      /* 1 kHz đảo → 500 Hz */
         if (s_ms & 1u) PIN_SET(SN_GPIO3, 0);
         else           PIN_CLR(SN_GPIO3, 0);
     }
 }
 
+/* Âm 2–4 kHz: CT16B0 đếm PCLK (= HCLK 48 MHz, AHBCP = 0), MR0 khớp → ngắt + về 0, ngắt đảo P3.0 bằng GPIO
+ * (không cần chân PWM của timer). Còi thụ động kêu to nhất gần tần số cộng hưởng (thường 2–4 kHz). */
+void CT16B0_IRQHandler(void)
+{
+    SN_CT16B0->IC = 1u;                             /* MR0IC */
+    if (PIN_READ(SN_GPIO3, 0)) PIN_CLR(SN_GPIO3, 0);
+    else                       PIN_SET(SN_GPIO3, 0);
+}
+
+static void coi_dung(void)
+{
+    SN_CT16B0->TMRCTRL = 0u;
+    NVIC_DisableIRQ(CT16B0_IRQn);
+    if (BUZZER_ACTIVE_HIGH) PIN_CLR(SN_GPIO3, 0);
+    else                    PIN_SET(SN_GPIO3, 0);
+}
+
+static void coi_chay(void)
+{
+    uint16_t hz = k_coi_hz[s_kieu];
+    if (s_kieu == COI_KIEU_LIEN_TUC) {             /* còi chủ động: tự dao động khi có điện, mức cao liên tục là to nhất */
+        if (BUZZER_ACTIVE_HIGH) PIN_SET(SN_GPIO3, 0);
+        else                    PIN_CLR(SN_GPIO3, 0);
+    } else if (hz > 500u) {
+        SN_SYS1->AHBCLKEN_b.CT16B0CLKEN = 1u;
+        SN_SYS0->CT_CLKSEL_b.CLKSEL0 = 0u;          /* PCLK */
+        SN_CT16B0->TMRCTRL = 2u;                    /* CRST */
+        SN_CT16B0->TMRCTRL = 0u;
+        SN_CT16B0->PRE = 0u;
+        SN_CT16B0->MR0 = SystemCoreClock / (2u * hz) - 1u;   /* 2 kHz: 11.999, vừa 16 bit */
+        SN_CT16B0->MCTRL = 3u;                      /* MR0IE | MR0RST */
+        SN_CT16B0->IC = 1u;
+        NVIC_EnableIRQ(CT16B0_IRQn);
+        SN_CT16B0->TMRCTRL = 1u;                    /* CEN */
+    }                                               /* 500 Hz: SysTick_Handler */
+}
+
 void board_buzzer(int on)
 {
-    s_buzz = (uint8_t)(on != 0);
-    if (!on) {
-        if (BUZZER_ACTIVE_HIGH) PIN_CLR(SN_GPIO3, 0);
-        else                    PIN_SET(SN_GPIO3, 0);
-    }
+    uint8_t b = (uint8_t)(on != 0);
+    if (b == s_buzz) return;                        /* app_main gọi mỗi vòng lặp: chỉ làm khi đổi */
+    s_buzz = b;
+    coi_dung();
+    if (b) coi_chay();
 }
+
+void board_buzzer_kieu(uint8_t k)
+{
+    if (k >= COI_SO_KIEU || k == s_kieu) return;
+    uint8_t b = s_buzz;
+    board_buzzer(0);
+    s_kieu = k;
+    board_buzzer(b);
+}
+
+uint8_t board_buzzer_kieu_hien(void) { return s_kieu; }
 
 int board_wear(void)
 {

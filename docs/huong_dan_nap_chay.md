@@ -36,6 +36,8 @@ MCU in chữ ra chân TX, tức là sang ESP32. ESP32 chuyển các dòng đó l
 - BÁO ĐỘNG: hú liên tục;
 - bật/tắt hệ thống: bíp xác nhận.
 
+**Âm lượng:** trên trang web, thẻ "Thử còi" có 6 kiểu âm (liên tục cho còi chủ động; 500 Hz, 2 / 2,7 / 3,5 / 4 kHz cho còi thụ động). Bấm thử từng kiểu, chọn kiểu to nhất rồi bấm "Dùng kiểu này": ESP32 nhớ vào flash, không cần nạp lại. `kieu_coi` trong STAT MCU là kiểu đang dùng.
+
 Mất lệnh quá 0,5 s (ESP32 reset, đứt dây) thì MCU tự tắt còi. Trong `STAT` của MCU, `lenh_coi` tăng đều khoảng 10 mỗi giây là dây còi đã thông.
 
 ## 2. ESP32

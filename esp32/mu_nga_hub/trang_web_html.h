@@ -38,6 +38,8 @@ button.do{background:var(--bad);color:#fff;border:0}button:disabled{opacity:.35;
   <button class="do" id="bh" onclick="lenh('/huy')">Hủy cảnh báo</button><button id="bb" onclick="lenh('/bat')">Bật lại hệ thống</button></p>
   <div class="muted" style="font-size:12px" id="tb">Hủy chỉ dùng khi CẢNH BÁO / BÁO ĐỘNG. Bật lại khi hệ thống TẮT.</div></div>
 </div>
+<div class="card" style="margin-top:12px"><b>Thử còi</b> <span class="muted" style="font-size:12px">bấm từng kiểu, nghe kiểu nào to nhất rồi bấm "Dùng kiểu này"</span>
+ <p style="margin:8px 0;display:flex;gap:8px;flex-wrap:wrap" id="coi"></p><div class="muted" style="font-size:12px" id="coid"></div></div>
 <div class="card" style="margin-top:12px"><div class="row"><b>Gia tốc |a| (g), 30 s gần nhất</b>
  <span class="lg"><span><i style="background:var(--info)"></i>|a|</span><span><i style="background:var(--bad)"></i>cửa sổ FALL</span><span>dải dưới: tư thế</span></span></div>
  <canvas id="cv"></canvas></div>
@@ -54,6 +56,10 @@ const TT={DUNG:['Đứng thẳng','#16a34a'],DI_LAI:['Đang di chuyển','#0d948
  NAM_NGUA:['Nằm ngửa (nằm thẳng)','#7c3aed'],NAM_SAP:['Nằm sấp','#a21caf'],NGHIENG_TRAI:['Nằm nghiêng trái','#c026d3'],
  NGHIENG_PHAI:['Nằm nghiêng phải','#db2777'],CUI:['Cúi người','#ca8a04']};
 const tt=k=>TT[k]||[k,'#64748b'];
+const COI=['Liên tục (còi chủ động)','500 Hz','2 kHz','2,7 kHz','3,5 kHz','4 kHz'];let coiThu=-1;
+document.getElementById('coi').innerHTML=COI.map((n,k)=>'<button onclick="thuCoi('+k+')" id="c'+k+'">'+n+'</button>').join('')+'<button class="do" onclick="chonCoi()">Dùng kiểu này</button>';
+async function thuCoi(k){coiThu=k;await lenh('/thu_coi?k='+k)}
+async function chonCoi(){if(coiThu<0){document.getElementById('tb').textContent='bấm thử một kiểu trước';return}await lenh('/chon_coi?k='+coiThu)}
 let loi=0;
 async function lay(){try{const r=await fetch('/data',{cache:'no-store'});const d=await r.json();loi=0;ve(d)}catch(e){if(++loi>3)dat('MAT')}}
 function dat(s){const e=document.getElementById('st');e.className=s;e.textContent=TEN[s]||s}
@@ -72,6 +78,8 @@ function ve(d){
  document.getElementById('ttd').textContent=(last?'từ '+((d.t-last)/1000).toFixed(0)+' s trước · ':'')+'không phải té ngã, chỉ để theo dõi';
  document.getElementById('pt').innerHTML=d.pt.slice().reverse().map(p=>'<li><i style="background:'+tt(p[1])[1]+'"></i><span class="muted">'+(p[0]/1000).toFixed(0)+' s</span>'+tt(p[1])[0]+'</li>').join('')||'<li class="muted">chưa đổi tư thế (bắt đầu: đứng thẳng)</li>';
  const ev=document.getElementById('ev');ev.textContent=d.ev.slice().reverse().join('\n');
+ if(d.coi_kieu!==undefined){for(let k=0;k<COI.length;k++){const b=document.getElementById('c'+k);b.style.outline=k==d.coi_kieu?'2px solid var(--ok)':'';b.style.fontWeight=k==coiThu?'700':''}
+  document.getElementById('coid').textContent='Đang dùng: '+COI[d.coi_kieu]+(coiThu>=0?' · vừa thử: '+COI[coiThu]:'')}
  document.getElementById('bh').disabled=!(d.st=='PRE_ALARM'||d.st=='ALARM');
  document.getElementById('bb').disabled=d.st!='STANDBY';
  bieu(d);
