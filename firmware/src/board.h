@@ -33,11 +33,11 @@ extern volatile uint32_t g_uart_rx_overflow;
 void     board_seg7(const uint8_t pat[4]);
 
 /* Còi PZ1 trên P3.0 (dương PZ1 nối thẳng BUZ_P30, âm xuống GND; tài liệu EVK không ghi còi chủ động hay thụ động).
- * Kiểu âm (28/10, nhóm: còi 500 Hz quá nhỏ): chọn kiểu to nhất bằng nút "Thử còi" trên web, ESP32 nhớ và gửi
- * lệnh NODE_CMD_COI_KIEU (node_link.h). COI_KIEU_* và COI_SO_KIEU ở node_link.h (ESP32 dùng chung). */
+ * Kiểu âm (28/10, nhóm: còi 500 Hz quá nhỏ): nhóm nghe thử 6 kiểu trên board và chốt 2 kHz (COI_KIEU_CHOT,
+ * node_link.h). ESP32 nhắc lệnh NODE_CMD_COI_KIEU mỗi 1 s; MCU vẫn nhận các kiểu khác để thử lại nếu đổi còi. */
 #define BUZZER_ACTIVE_HIGH  1
 #ifndef COI_KIEU_MAC_DINH
-#define COI_KIEU_MAC_DINH   COI_KIEU_500HZ      /* khi chưa nhận lệnh kiểu từ ESP32: kiểu đã kêu được 28/10 */
+#define COI_KIEU_MAC_DINH   COI_KIEU_CHOT       /* 2 kHz, cả khi chưa nhận lệnh kiểu từ ESP32 */
 #endif
 void     board_buzzer(int on);
 void     board_buzzer_kieu(uint8_t k);         /* COI_KIEU_*; đang kêu thì đổi ngay */

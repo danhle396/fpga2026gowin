@@ -20,7 +20,6 @@
 #include <SPI.h>
 #include <WiFi.h>
 #include <WebServer.h>
-#include <Preferences.h>
 #include <math.h>
 
 extern "C" {
@@ -73,10 +72,8 @@ static uint32_t s_pt_t[PT_N]; static uint8_t s_pt_v[PT_N]; static uint8_t s_pt_i
 static bool     s_tk_ok = false;
 static int      s_last_rc = -1;
 static uint32_t s_web_cancel_until = 0;
-// kiểu âm còi (node_link.h COI_KIEU_*): chọn trên web bằng "Thử còi", lưu vào flash ESP32 (Preferences "coi"/"kieu")
-static Preferences s_pref;
-static uint8_t  s_coi_kieu = COI_KIEU_500HZ, s_thu_kieu = 0;  // nhóm nghe thử 6 kiểu 28/10: 500 Hz to nhất
-static uint32_t s_thu_until = 0;                 // đang phát thử tới lúc này
+// kiểu âm còi: fix cứng COI_KIEU_CHOT (node_link.h, 2 kHz; nhóm nghe thử 6 kiểu trên board 28/10 và chốt kiểu này)
+static const uint8_t s_coi_kieu = COI_KIEU_CHOT;
 static uint32_t s_n_nga = 0, s_t_nga = 0;     // số lần phát hiện ngã (vào SUSPECT) từ lúc bật, lúc lần gần nhất
 
 // ---------------- in ra USB + TCP ----------------
@@ -230,9 +227,6 @@ static void web_data()
 void setup()
 {
     Serial.begin(USB_BAUD);
-    s_pref.begin("coi", false);
-    s_coi_kieu = s_pref.getUChar("kieu", s_coi_kieu);
-    if (s_coi_kieu >= COI_SO_KIEU) s_coi_kieu = COI_KIEU_500HZ;
     Serial2.setRxBufferSize(4096);
     Serial2.begin(MCU_BAUD, SERIAL_8N1, MCU_RX_PIN, MCU_TX_PIN);
     pinMode(FPGA_CS_PIN, OUTPUT);
@@ -252,20 +246,6 @@ void setup()
         if (st == ST_PRE_ALARM)  { s_web_cancel_until = millis() + 300;  s_web.send(200, "text/plain", "da huy canh bao"); }
         else if (st == ST_ALARM) { s_web_cancel_until = millis() + 1300; s_web.send(200, "text/plain", "da tat bao dong"); }
         else                     { s_web.send(409, "text/plain", "chi huy duoc khi dang CANH BAO / BAO DONG"); }
-    });
-    // thử còi: /thu_coi?k=N phát kiểu N trong 1,5 s (không lưu); /chon_coi?k=N lưu kiểu N làm mặc định
-    s_web.on("/thu_coi", HTTP_POST, []() {
-        int k = s_web.arg("k").toInt();
-        if (k < 0 || k >= (int)COI_SO_KIEU) { s_web.send(400, "text/plain", "kieu sai"); return; }
-        s_thu_kieu = (uint8_t)k; s_thu_until = millis() + 1500;
-        s_web.send(200, "text/plain", "dang phat thu");
-    });
-    s_web.on("/chon_coi", HTTP_POST, []() {
-        int k = s_web.arg("k").toInt();
-        if (k < 0 || k >= (int)COI_SO_KIEU) { s_web.send(400, "text/plain", "kieu sai"); return; }
-        s_coi_kieu = (uint8_t)k; s_pref.putUChar("kieu", s_coi_kieu);
-        char m[40]; snprintf(m, sizeof m, "# coi: chon kieu %d", k); out(m);
-        s_web.send(200, "text/plain", "da luu");
     });
     s_web.on("/bat", HTTP_POST, []() {
         if (H.app.fsm.st == ST_STANDBY) { s_web_cancel_until = millis() + 2300; s_web.send(200, "text/plain", "dang bat"); }
@@ -359,13 +339,12 @@ void loop()
             out(s);
             if (H.app.fsm.st == ST_SUSPECT) { s_n_nga++; s_t_nga = now; }
         }
-        uint8_t thu = (int32_t)(s_thu_until - now) > 0;
-        uint8_t bz = app_buzzer(&H.app, now) || thu;
+        uint8_t bz = app_buzzer(&H.app, now);
         digitalWrite(LED_PIN, (bz || app_led(&H.app, now)) ? HIGH : LOW);
-        // kiểu âm (đang thử thì kiểu thử), gửi khi đổi và nhắc lại mỗi 1 s; gửi trước lệnh bật
+        // kiểu âm cố định, nhắc lại mỗi 1 s (MCU khởi động lại vẫn đúng kiểu); gửi trước lệnh bật
         static uint8_t kieu_gui = 255;
         static uint32_t t_kieu = 0;
-        uint8_t kieu = thu ? s_thu_kieu : s_coi_kieu;
+        uint8_t kieu = s_coi_kieu;
         if (kieu != kieu_gui || now - t_kieu >= NODE_COI_KIEU_REFRESH_MS) {
             Serial2.write((uint8_t)(NODE_CMD_COI_KIEU + kieu));
             kieu_gui = kieu;

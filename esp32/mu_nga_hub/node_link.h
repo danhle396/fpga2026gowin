@@ -36,6 +36,8 @@
 #define COI_SO_KIEU           6u
 #define COI_KIEU_LIEN_TUC     0u
 #define COI_KIEU_500HZ        1u
+#define COI_KIEU_2KHZ         2u
+#define COI_KIEU_CHOT         COI_KIEU_2KHZ   /* nhóm nghe thử 6 kiểu trên board 28/10, chốt 2 kHz */
 #define NODE_COI_KIEU_REFRESH_MS 1000u
 
 /* Đóng gói một mẫu vào out (≥ NODE_SAMPLE_FRAME byte); trả về số byte. */
