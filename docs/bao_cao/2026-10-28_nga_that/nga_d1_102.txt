@@ -51,3 +51,25 @@ D1 người 102: 182 bản ghi, mô hình N2_11 D1, vị trí đeo theo fw_confi
    50/182 act 810: CNN nghi 0, xác nhận ngã 0
    51/182 act 811: CNN nghi 0, xác nhận ngã 0
    52/182 act 811: CNN nghi 0, xác nhận ngã 0
+   53/182 act 811: CNN nghi 0, xác nhận ngã 0
+   54/182 act 811: CNN nghi 0, xác nhận ngã 0
+   55/182 act 811: CNN nghi 0, xác nhận ngã 0
+   56/182 act 812: CNN nghi 0, xác nhận ngã 0
+   57/182 act 812: CNN nghi 0, xác nhận ngã 0
+   58/182 act 812: CNN nghi 0, xác nhận ngã 0
+   59/182 act 812: CNN nghi 0, xác nhận ngã 0
+   60/182 act 812: CNN nghi 0, xác nhận ngã 0
+   61/182 act 813: CNN nghi 0, xác nhận ngã 0
+   62/182 act 813: CNN nghi 0, xác nhận ngã 0
+   63/182 act 813: CNN nghi 0, xác nhận ngã 0
+   64/182 act 813: CNN nghi 0, xác nhận ngã 0
+   65/182 act 813: CNN nghi 0, xác nhận ngã 0
+   66/182 act 814: CNN nghi 0, xác nhận ngã 0
+   67/182 act 814: CNN nghi 0, xác nhận ngã 0
+   68/182 act 814: CNN nghi 0, xác nhận ngã 0
+   69/182 act 814: CNN nghi 0, xác nhận ngã 0
+   70/182 act 814: CNN nghi 0, xác nhận ngã 0
+   71/182 act 815: CNN nghi 0, xác nhận ngã 0
+   72/182 act 815: CNN nghi 0, xác nhận ngã 0
+   73/182 act 815: CNN nghi 0, xác nhận ngã 0
+   74/182 act 815: CNN nghi 0, xác nhận ngã 0
