@@ -82,6 +82,8 @@ STAT,mau=...,mat=0,khung_hong=0,gui=...,ok=...,timeout=0,loi=0,bo_qua=0,spi_khz=
 |---|---|
 | Tự kiểm `PASS`; trong `STAT`, `mau` tăng khoảng 500 mỗi 5 s; `mat` = 0, `khung_hong` = 0; `ok` tăng khoảng 15 mỗi 5 s; `timeout` = 0, `loi` = 0 | toàn bộ file trong `ket_qua_board/` |
 
+**Đo hướng cảm biến** (khi đổi chỗ đeo, ví dụ sang ngực): chạy bằng pin, laptop cùng WiFi, `python -I tools/ghi_uart.py --tcp <IP> --lenh LOG --buoc truc_nguc --tu-the`. Màn hình nhắc lần lượt 5 tư thế (đứng thẳng, nằm ngửa, nghiêng phải, nghiêng trái, cúi về trước), mỗi tư thế 5 s để đổi + 10 s giữ yên, tổng khoảng 80 s; không bấm Ctrl+C. Mất WiFi thì tự nối lại. Gửi lại file `ket_qua_board/truc_nguc_*.txt`.
+
 **Thử tư thế** (đội mũ, hoặc cầm board đúng hướng: Z hướng lên trời, X hướng ra trước mặt): đứng yên → `Đứng thẳng`; ngồi xuống ghế → `Ngồi` (sau khi ngồi yên ≈ 0,3 s); nằm ngửa / nằm nghiêng / úp → tư thế nằm tương ứng sau ≈ 1 s; ngồi dậy từ giường → `Ngồi`, đứng dậy → `Đứng thẳng`; đi lại > 4 s → `Đang di chuyển`. Đứng/ngồi dựa vào độ cao đầu thay đổi khi đứng lên ngồi xuống, nên lúc bật nguồn luôn hiện `Đứng thẳng`; bật nguồn khi đang ngồi thì phải đứng lên ngồi lại một lần. Gửi lại: file log có dòng `P,` và ghi chú tư thế thật theo thời gian.
 
 **Thử ngã nhanh:** lắc mạnh board (sau này là mũ) rồi đặt nằm nghiêng yên. Phải thấy `S,...,SUSPECT`, `S,...,PRE_ALARM`, LED GPIO2 của ESP32 nháy, rồi `ALARM` nếu không ai hủy. Nhấn SW3 trên EVK (hoặc nút BOOT của ESP32) trong lúc PRE_ALARM để hủy.

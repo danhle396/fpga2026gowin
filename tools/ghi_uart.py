@@ -5,6 +5,9 @@
 #   python -I tools/ghi_uart.py --port COM5 --buoc B7 --lenh 1 s --giay 30  # gửi lệnh menu "1" rồi "s", ghi 30 s
 #   python -I tools/ghi_uart.py --port COM5 --buoc B5 --lenh STAT --reset   # nhấn reset trên board trong 3 s đầu
 #   python -I tools/ghi_uart.py --liet-ke                                    # xem có cổng COM nào
+#   python -I tools/ghi_uart.py --tcp 192.168.88.97 --lenh LOG --buoc truc_nguc --tu-the
+#       đo hướng cảm biến: nhắc lần lượt từng tư thế trên màn hình (mỗi tư thế giữ yên 10 s), ghi mốc "# >>> TU THE"
+#       vào file; mất WiFi thì tự nối lại
 #
 # Đóng Tera Term, PuTTY, miniterm trước khi chạy: Windows chỉ cho một chương trình mở cổng COM.
 # File nằm trong ket_qua_board/ (không lên git); gửi lại bằng cách dán nội dung vào chat kèm "Cập nhật: B<số>".
@@ -17,28 +20,62 @@ import time
 ROOT = pathlib.Path(__file__).resolve().parent.parent
 
 
+TU_THE = [("dung", "ĐỨNG THẲNG"), ("nam_ngua", "NẰM NGỬA"), ("nghieng_phai", "NẰM NGHIÊNG PHẢI (vai phải chạm đất)"),
+          ("nghieng_trai", "NẰM NGHIÊNG TRÁI (vai trái chạm đất)"), ("cui", "CÚI NGƯỜI VỀ TRƯỚC")]
+TU_THE_DOI, TU_THE_GIU = 5.0, 10.0      # giây để đổi tư thế, giây giữ yên
+
+
 class _Tcp:
-    """Log TCP của ESP32 hub (esp32/mu_nga_hub, cổng 3333), cùng giao diện read/write như cổng COM."""
+    """Log TCP của ESP32 hub (esp32/mu_nga_hub, cổng 3333), cùng giao diện read/write như cổng COM.
+    Mất kết nối (WiFi chập chờn khi nằm xuống) thì thử nối lại mỗi 1 s; ghi chú vào self.note để _record ghi ra file."""
     def __init__(self, host, port):
         import socket
-        self.s = socket.create_connection((host, port), timeout=5)
+        self.addr, self.note, self.t_retry = (host, port), [], 0.0
+        self.s = socket.create_connection(self.addr, timeout=5)
         self.s.settimeout(0.1)
+
+    def _lost(self, why):
+        if self.s is not None:
+            self.s.close()
+            self.s = None
+            self.note.append(f"# TCP mất kết nối ({why}), đang nối lại")
 
     def read(self, n):
         import socket
+        if self.s is None:
+            if time.monotonic() < self.t_retry:
+                time.sleep(0.05)
+                return b""
+            self.t_retry = time.monotonic() + 1.0
+            try:
+                self.s = socket.create_connection(self.addr, timeout=2)
+                self.s.settimeout(0.1)
+                self.note.append("# TCP đã nối lại")
+            except OSError:
+                return b""
         try:
-            return self.s.recv(n)
+            b = self.s.recv(n)
         except socket.timeout:
             return b""
+        except OSError as e:
+            self._lost(e)
+            return b""
+        if not b:
+            self._lost("ESP32 đóng")
+        return b
 
     def write(self, b):
-        self.s.sendall(b)
+        try:
+            self.s.sendall(b)
+        except (OSError, AttributeError) as e:
+            self._lost(e)
 
     def __enter__(self):
         return self
 
     def __exit__(self, *exc):
-        self.s.close()
+        if self.s is not None:
+            self.s.close()
 
 
 def main():
@@ -53,7 +90,11 @@ def main():
     ap.add_argument("--reset", action="store_true", help="chờ 3 s để nhấn reset trên board trước khi gửi lệnh")
     ap.add_argument("--liet-ke", action="store_true", help="liệt kê cổng COM rồi thoát")
     ap.add_argument("--tcp", help="đọc log ESP32 qua WiFi thay cho cổng COM: IP hoặc IP:cổng (mặc định 3333)")
+    ap.add_argument("--tu-the", action="store_true",
+                    help="đo hướng cảm biến: nhắc 5 tư thế, mỗi tư thế giữ yên 10 s; tự đặt --giay; màn hình chỉ hiện lời nhắc")
     a = ap.parse_args()
+    if a.tu_the:
+        a.giay = 3 + len(TU_THE) * (TU_THE_DOI + TU_THE_GIU) + 2
     try:
         import serial
         from serial.tools import list_ports
@@ -98,7 +139,31 @@ def _record(s, f, a):
     if a.reset:
         print("Nhấn reset trên board ngay bây giờ (giữ SW3 nếu cần vào menu chẩn đoán của MCU)…")
     buf = b""
+    # lịch tư thế: (lúc bắt đầu đổi, lúc bắt đầu giữ yên, mã, tên); bắt đầu sau 3 s
+    lich = [(3 + i * (TU_THE_DOI + TU_THE_GIU), 3 + i * (TU_THE_DOI + TU_THE_GIU) + TU_THE_DOI, m, ten)
+            for i, (m, ten) in enumerate(TU_THE)] if a.tu_the else []
+    da_nhac, n_mau, t_dem = set(), 0, -1
     while time.monotonic() - t0 < a.giay:
+        dt = time.monotonic() - t0
+        for k, (t_doi, t_giu, m, ten) in enumerate(lich):
+            if dt >= t_doi and (k, 0) not in da_nhac:
+                da_nhac.add((k, 0))
+                print(f"\n=== {k + 1}/{len(lich)}: chuyển sang {ten} ({TU_THE_DOI:.0f} s) ===")
+                f.write(f"# >>> TU THE {m} doi\n")
+            if dt >= t_giu and (k, 1) not in da_nhac:
+                da_nhac.add((k, 1))
+                print(f"=== GIỮ YÊN: {ten} ({TU_THE_GIU:.0f} s) ===")
+                f.write(f"# >>> TU THE {m} giu\n")
+        if lich and int(dt) != t_dem:
+            t_dem = int(dt)
+            print(f"  {t_dem:3d} s, đã nhận {n_mau} mẫu", end="\r")
+        for nt in getattr(s, "note", []):
+            print("\n" + nt)
+            f.write(nt + "\n")
+            if "nối lại" in nt and "đã" in nt:      # ESP32 có thể vừa khởi động lại: gửi lại lệnh (LOG)
+                pending, t_next = list(a.lenh), time.monotonic()
+        if hasattr(s, "note"):
+            s.note.clear()
         if pending and time.monotonic() >= t_next:
             cmd = pending.pop(0)
             s.write((cmd + ("\r\n" if len(cmd) > 1 else "")).encode())
@@ -109,10 +174,15 @@ def _record(s, f, a):
         while b"\n" in buf:
             line, buf = buf.split(b"\n", 1)
             txt = line.decode("utf-8", "replace").rstrip("\r")
-            print(txt)
+            if not (a.tu_the and txt[:1].isdigit()):
+                print(txt)
+            elif txt.count(",") == 8:
+                n_mau += 1
             f.write(txt + "\n")
     if buf:
         f.write(buf.decode("utf-8", "replace") + "\n")
+    if lich:
+        print(f"\n=== XONG: {n_mau} mẫu ({n_mau / 100:.0f} s ở 100 Hz). Đủ khi gần {a.giay - 3:.0f} s ===")
 
 
 if __name__ == "__main__":
