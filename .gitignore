@@ -14,3 +14,4 @@ fpga/*.gprj.user
 ket_qua_board/
 # cấu hình Claude Code riêng từng máy
 .claude/settings.local.json
+esp32/mu_nga_hub/build/
