@@ -75,7 +75,7 @@ static int      s_last_rc = -1;
 static uint32_t s_web_cancel_until = 0;
 // kiểu âm còi (node_link.h COI_KIEU_*): chọn trên web bằng "Thử còi", lưu vào flash ESP32 (Preferences "coi"/"kieu")
 static Preferences s_pref;
-static uint8_t  s_coi_kieu = 3, s_thu_kieu = 0;  // mặc định 2,7 kHz tới khi nhóm chọn
+static uint8_t  s_coi_kieu = COI_KIEU_500HZ, s_thu_kieu = 0;  // nhóm nghe thử 6 kiểu 28/10: 500 Hz to nhất
 static uint32_t s_thu_until = 0;                 // đang phát thử tới lúc này
 static uint32_t s_n_nga = 0, s_t_nga = 0;     // số lần phát hiện ngã (vào SUSPECT) từ lúc bật, lúc lần gần nhất
 
@@ -232,7 +232,7 @@ void setup()
     Serial.begin(USB_BAUD);
     s_pref.begin("coi", false);
     s_coi_kieu = s_pref.getUChar("kieu", s_coi_kieu);
-    if (s_coi_kieu >= COI_SO_KIEU) s_coi_kieu = 3;
+    if (s_coi_kieu >= COI_SO_KIEU) s_coi_kieu = COI_KIEU_500HZ;
     Serial2.setRxBufferSize(4096);
     Serial2.begin(MCU_BAUD, SERIAL_8N1, MCU_RX_PIN, MCU_TX_PIN);
     pinMode(FPGA_CS_PIN, OUTPUT);
