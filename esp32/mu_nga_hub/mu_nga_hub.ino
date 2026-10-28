@@ -21,6 +21,7 @@
 #include <WiFi.h>
 #include <WebServer.h>
 #include <math.h>
+#include <driver/gpio.h>
 
 extern "C" {
 #include "hub.h"
@@ -238,6 +239,7 @@ static void web_data()
 void setup()
 {
     pinMode(MPU_NGUON_PIN, OUTPUT);            // cấp nguồn MPU6050 càng sớm càng tốt
+    gpio_set_drive_capability((gpio_num_t)MPU_NGUON_PIN, GPIO_DRIVE_CAP_3);   // ≈ 40 mA: module ăn 5–7 mA, sụt áp ít nhất
     digitalWrite(MPU_NGUON_PIN, HIGH);
     Serial.begin(USB_BAUD);
     Serial2.setRxBufferSize(4096);
