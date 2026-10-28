@@ -1,49 +1,46 @@
-# MŨ BẢO HỘ PHÁT HIỆN TÉ NGÃ – Project Master
-## Mạng 1D-CNN INT8 bằng RTL tự viết trên FPGA Gowin, MCU SONiX thu IMU và ra quyết định
-### Target: một chiếc mũ bảo hộ chạy độc lập — người đội ngã và nằm bất động thì đếm ngược 10 s rồi hú còi; rơi mũ, va mũ, tháo mũ, sinh hoạt bình thường không báo động
+# THIẾT BỊ ĐEO NGỰC PHÁT HIỆN TÉ NGÃ – Project Master
+## Mạng 1D-CNN INT8 bằng RTL tự viết trên FPGA Gowin; MCU SONiX đọc IMU, ESP32 điều phối và ra quyết định
+### Target: thiết bị đeo ở ngực, chạy pin — người đeo ngã thật thì báo ngay (còi + web), nằm bất động thì đếm ngược 10 s rồi báo động; ngồi mạnh, cúi, nằm xuống, lăn người và sinh hoạt bình thường không báo
 
-**Platform:** Kiwi Primer 20K (GW2A-LV18PG256C8/I7) + SN32F407 (Cortex-M0, Flash 32 KB, RAM 8 KB) + MPU6050 | **Tool:** Gowin EDA V1.9.11.03 Education · Keil MDK-ARM Lite 5.43 (Arm Compiler 6.24) · Icarus Verilog · Python 3
+**Platform:** Kiwi Primer 20K (GW2A-LV18PG256C8/I7) + SN32F407 (Cortex-M0, Flash 32 KB, RAM 8 KB) + ESP32 Dev Module + MPU6050 (module GY-521) | **Tool:** Gowin EDA V1.9.11.03 Education · Keil MDK-ARM Lite 5.43 (Arm Compiler 6.24) · Arduino IDE (ESP32 core 3.0.7) · Icarus Verilog · Python 3
 **Goal (tầng 2, cam kết):** Recall FALL mức sự kiện ≥ 95 %, Macro-F1 ≥ 0,90, ≤ 1 báo giả/giờ, va chạm → SUSPECT ≤ 1,5 s, suy luận FPGA ≤ 6 ms, RTL khớp golden model 100 % trên ≥ 2.000 cửa sổ.
 
-> **CHỐT KẾT QUẢ (2026-10-28): nhóm kết thúc đề tài với bản cuối đang chạy trên board** (đeo ngực, chạy pin): MCU `FW_NODE` → ESP32 (`hub.c`, đổi trục ngực, tư thế, `nga.c` bản 3, MẤT CẢM BIẾN) → FPGA bitstream 3 (N2) → còi 2 kHz + web. Bản 3 đã nạp ESP32 28/10: web chạy, mẫu đều, mất 0. Kiểm cuối: `fpga/scripts/test.sh` TẤT CẢ PASS, `m0_test` 70/70, `sync_spec` PASS ([chot_ket_qua](docs/bao_cao/2026-10-28_chot_ket_qua/README.md)). Theo giấy tờ các cổng G0 trở đi chưa đánh [x] (thiếu bằng chứng FW-02/03, TH-01..03, buổi thử có số đo).
->
-> **TRẠNG THÁI (2026-10-24): Tầng 1 · chưa qua cổng G0 → 0 % theo cổng.** Mọi việc không cần board của tầng 1 và phần lớn tầng 2 đã xong ở mức mô phỏng; **chưa dòng nào chạy trên board**
-> - **RTL:** E1 (P = 1, N1) khớp golden 50/50 có bão hòa, 13,96 ms, Fmax 105,20 MHz (15/10, sau khi sửa lỗi `conv_start` khởi tạo bằng 1 mà mô phỏng netlist tìm ra; bitstream 1, 2 đã dựng lại). **Giao thức v3** (`rtl/v3/`, RA-03 [x]) qua chân SPI 50/50 + 7 kịch bản lỗi. **Engine E2** (`rtl/e2/`, RB-03/RB-04/RA-07/RA-08 [x] mô phỏng): 12 cấu hình 50/50 ở mọi tầng; N2-S 2,65 ms (P = 1) / 0,80 ms (P = 4); top v3 + E2 105,58 MHz, Logic 8 %. Bitstream dựng sẵn để nạp thẳng: [bitstreams/](bitstreams/README.md) (PROTO 1 + E1 cho đợt B; v3 + E1; v3 + E2 + N2 11 người; **cả 3 dựng lại 24/10 với chân trên header J2**: 103,33 / 104,92 / 111,01 MHz). Mô phỏng ghép firmware ↔ RTL: 423/423 khung khớp golden. **Netlist sau P&R của cả 3 bitstream (mô phỏng gate-level, `rtl/gl/run_gl.sh`): PASS** sau khi sửa lỗi `conv_start` lên nguồn bằng 1, lỗi mà chỉ mô phỏng netlist mới thấy; phép âm lật 1 bit weight → FAIL. Verify toàn dự án sau khi dọn 15/10: mọi bộ kiểm PASS ([docs/bao_cao/2026-10-15_verify_sau_don/](docs/bao_cao/2026-10-15_verify_sau_don/README.md))
-> - **SPEC v3.1 (15/10):** điều kiện nghiêng hai phía `|az_tb| < T_TILT` → báo giả khi phát lại D1 giảm từ 5,9 xuống 1,3/giờ (gộp 3 mô hình: 0,75/giờ), recall ngã nằm giữ 95,5 %
-> - **Đề cương v2.1 (16/10): gọn đề tài** theo hướng tham khảo: mạng **2 lớp NORMAL / FALL**; va đập mũ loại bằng trình tự ba pha của FSM (bất động + đầu nằm ngang + 10 s hủy); **một nút bấm** (giữ 2 s = bật, nhấn nhanh 2 lần = tắt, CANCEL, SOS; `firmware/src/pwr_btn.c`) thay cảm biến đội mũ; huấn luyện chỉ bằng D1, D2 + D3 gộp thành một buổi thử nhỏ (≥ 20 cú ngã, ≥ 2 giờ đội mũ từ ≥ 2 người, 20 va mũ, 20 rơi mũ); LED 7 đoạn thay OLED. Không đổi phần cứng, RTL, khung, FSM. [THAY_DOI mục Điều chỉnh v2.1](THAY_DOI_SO_VOI_v1.md)
-> - **AI:** D1 **11/17 người** từ 16/10 (101–110, 203; 1.180 cú ngã, 109.970 cửa sổ; [d1_11_nguoi](docs/bao_cao/2026-10-16_d1_11_nguoi/README.md)). **Nhóm quyết: chỉ kênh đầu, mạng 2 lớp NORMAL / FALL (SPEC v3.2), mô hình phần cứng N2 trên E2 (bitstream 3)**; N1/E1 chỉ để thông mạch SPI ở B7. **Số mới nhất, D1 11 người (16/10 tối), N2 chỉ đầu, LOSO, TB 3 seed: Macro-F1 0,983, recall sự kiện 99,6 %; FSM v3.1 T_SCORE 8: ngã nằm → PRE_ALARM 96,2 %, PRE_ALARM giả 1,11/giờ** (toàn bộ từ 815 "nằm xuống giường"; gộp 3 seed 95,6 % / 0,74; T_SCORE 16 thì ≤ 0,92/giờ nhưng ngã nằm 92–94 %); trễ PRE_ALARM khi nằm yên trong 2 s: p90 4,32 s, 0 cú > 5 s ([n2_11_nguoi](docs/bao_cao/2026-10-16_n2_11_nguoi/README.md)). 8 người: 0,977 / 99,6 %; 96,3 % / 0,68/giờ ([ai09_8_nguoi](docs/bao_cao/2026-10-16_ai09_8_nguoi/README.md)). N1 trên 8 người: 0,842 / 87,0 % → không đạt. Dữ liệu ngực + thắt lưng: có lợi trên 6 người (15/10) nhưng hết lợi trên 8 người (Macro-F1 0,970 so với 0,977, phiếu nhầm gấp đôi) → **bỏ**. Lịch sử 6 người (13–15/10): N2 0,968 / 98,7 %, PRE_ALARM giả 1,26/giờ. X15 đã đo: nhánh "bất động dù đầu thẳng" báo nhầm cả ngã đã đứng dậy → không thêm. **Bitstream 3 dựng lại 16/10 với N2 11 người** (`ml/out/n2_11_d1`, seed 20261014): `tb_e2` 50/50, netlist sau P&R PASS, Fmax 98,12 MHz (111,01 MHz khi dựng lại với chân J2 ngày 24/10). Chưa có buổi thử trên mũ (D2 + D3 gộp theo đề cương v2.1); chỉ tiêu ≤ 1 báo giả/giờ cần xác nhận trên mũ
-> - **FW:** [firmware/](firmware/README.md) đủ chức năng tầng 1 (RUN/LOG/TRC/HIL/DIAG, tự kiểm A.10, watchdog), Keil 0 lỗi, 16 KB / 32 KB Flash, 5,4 KB / 8 KB RAM. Phần C thuần (tiền xử lý, khung, FSM, lõi vòng lặp, CNN MCU-only) chạy mã máy Cortex-M0 trong Unicorn và **trùng golden từng byte / từng lần đổi trạng thái**; phần chạm ngoại vi mới chỉ biên dịch. Công cụ đợt B sẵn: `check_frames.py`, `hil_test.py`, `logger.py`, `sensor_check.py`
-> - **Phần cứng nối cố định theo `codecanthiet` của nhóm (24/10, v2.2):** MCU chỉ có UART TX → ESP32 (115200); ESP32 làm master SPI tới FPGA (J2); không có IRQ, RST_N, INT. Nên: MCU `FW_NODE 1` chỉ đọc MPU6050 (hỏi INT_STATUS) và gửi mẫu (`node_link.c`); ESP32 (`esp32/mu_nga_hub/`) chạy cùng lõi C `app_core` qua `hub.c`, hỏi vòng FPGA, log USB + WiFi TCP 3333. `m0_test`: hub.c == golden + safety_model 402/402 khung, 11 lần đổi trạng thái; sketch build được (ESP32 core 3.0.7). Hướng dẫn: [docs/huong_dan_nap_chay.md](docs/huong_dan_nap_chay.md). Đã nạp lên board: FPGA (flash, verify success), MCU bản trước FW_NODE (Verify OK); **chạy thông trên phần cứng 24/10**: tự kiểm FPGA PASS (`5A EE 01 03 00 06 43`), MCU → ESP32 → FPGA mỗi 0,32 s rc 0, mat 0, timeout 0; chưa thử ngã, chưa đo lâu
-> - **Một project FPGA + một project MCU (24/10):** `fpga/fpga_project.gprj` (mọi RTL sản phẩm ở `fpga/src/`: top v3, engine E2, mô hình N2, chân J2; Run All ra `.fs` trùng bit `fpga/bitstream/fpga_project.fs`) và `firmware/keil/fw.uvprojx` (mặc định `FW_BITSTREAM 3`, `fw_config.h`). Thư mục đã dọn 24/10: bỏ E1, `rtl/`, `bitstreams/1–2`, `test_sensor/`, `pin_probe`, chế độ MCU nối thẳng FPGA; cấu trúc ở README.md
-> - Chân (dây cố định, codecanthiet): MPU6050 I²C P0.10/P0.11; MCU UART TX P3.1 → ESP32 GPIO16 (115200); dây còi ESP32 GPIO17 → MCU P3.2 **đã có trên board** (nhóm xác nhận 28/10; `COI_TU_ESP32 1` từ 28/10); ESP32 GPIO27 CS / 18 SCK / 23 MOSI / 19 MISO → Kiwi J2-16 R11 / J2-10 T14 / J2-11 R13 / J2-13 R12; IRQ R8, RST_N T8 có trong `.cst` nhưng không nối. **Không nạp bitstream nào khác `fpga/bitstream/`** khi ESP32 còn nối J2
-> - **Tư thế (25/10, SPEC v3.3 A.11):** ESP32 nhận dạng đứng thẳng / ngồi / nằm ngửa / nằm sấp / nằm nghiêng trái, phải / cúi / đang di chuyển (`posture.c`, chỉ hiển thị, không vào Safety FSM); C trùng `posture_model.py` 137.700/137.700 mẫu; trên D1: đứng 93,2 %, ngồi 82,0 %, nhận ra nằm 93,2 % (đúng hướng 79,9 %). Trang web có thẻ "Tư thế hiện tại", lịch sử, dải màu dưới biểu đồ; log `P,<ms>,<tư thế>`. Build ESP32 đạt, **chưa nạp** ([tu_the](docs/bao_cao/2026-10-25_tu_the/README.md))
-> - **Chỉ báo ngã thật (28/10, `nga.c` bản 3):** CNN 2/3 FALL chỉ là bước nghi; báo ngã khi đủ 4 dấu hiệu: trước đó thẳng + va chạm ≥ 2,5 g + ngực quay ≥ 220 °/s quanh va chạm + ngực nghiêng ≥ 45° trong 3,84 s sau. Log đeo ngực của nhóm (B2, 28/10 tối): ngồi phịch xuống ghế báo nhầm 0/10 (bản 2: 9/10), cả log động tác báo nhầm 0; ngã lên nệm 14/15 (sót 1 cú ngã nhẹ 1,74 g mà CNN không nghi). Ngưỡng chọn trên chính log này. D1 người 102 (kênh đầu): 70/101 (bản 2: 94), mất 903/909/920 kết thúc quỳ / ngồi, thân thẳng (X15), sinh hoạt báo nhầm 0/81. **Nhóm chốt bản 3 (28/10), không thu buổi thứ hai; chấp nhận không báo ngã quỳ / ngồi thân thẳng. Đã nạp ESP32 28/10**. Thêm MẤT CẢM BIẾN, UART chịu nhiễu (1 mẫu mỗi lần nhiễu). ESP32 đang chạy bản 2 (nạp 28/10); VCC MPU6050 giữ ở 3,3 V của ESP32 (bỏ cấp nguồn qua GPIO25) ([nga_that](docs/bao_cao/2026-10-28_nga_that/README.md))
-> - **Tư thế khi đeo ngực (28/10):** trừ offset gia tốc (+204 LSB trục X) và quy tắc cúi sâu (ngực hạ < 0,5 m) → log đeo 9 tư thế đúng 9/9; đã nạp ESP32 ([tu_the_nguc](docs/bao_cao/2026-10-28_tu_the_nguc/README.md))
-> - **Còi (28/10):** dây GPIO17 → P3.2 có sẵn, MPU6050 đã thay toàn bộ dây; còi kêu khi ngã. Bản cuối: còi 2 kHz chỉ kêu khi `nga.c` xác nhận ngã thật (SUSPECT chưa xác nhận thì im), hoặc ALARM do SOS; MẤT CẢM BIẾN kêu 2 bíp mỗi 3 s
-> - **Đeo ở ngực (28/10):** nhóm chuyển thiết bị sang dây đeo ngực. Đã đo hướng cảm biến (5 tư thế) và thêm đổi trục trên ESP32 (`FW_VI_TRI_DEO 1`: X = +Z, Y = −X, Z = −Y), kiểm 4/4 tư thế nằm/đứng trên log thật. **Đã nạp 28/10: ESP32 (đổi trục + tư thế) và MCU bản gỡ bus I²C** (build 28/10 15:26), chạy: mẫu đều, FPGA 344/344 OK, timeout 0. Mô hình N2 trên FPGA vẫn học từ kênh đầu, chưa kiểm trên kênh ngực; đề cương vẫn ghi mũ ([deo_nguc](docs/bao_cao/2026-10-28_deo_nguc/README.md))
-> - **G0 còn thiếu:** FW-02, FW-03 (cần board), TH-01..03. RB-01 xong 15/10: `run_all` 7/7 PASS trên cả Icarus 0.9.7 và 12.0 (máy thứ hai; bitstream 1 dựng lại ở đó trùng từng dòng, [may2_icarus12](docs/bao_cao/2026-10-15_may2_icarus12/README.md))
-> - **Đề tài đã chốt 28/10.** Việc mở nếu làm tiếp: B3 (quy tắc ngã thật vào SPEC A.8 + golden Python), C2 (đề cương v2.3 "đeo ngực", sửa 3 file), D1/D2 (đeo ≥ 2 giờ, ≥ 20 cú ngã có số đo), tần suất MPU6050 treo theo giờ
+**Vị trí đeo.** Đề cương nộp BTC ghi mũ bảo hộ. Từ 28/10 nhóm chuyển thiết bị sang **dây đeo ngực** và chốt đề tài trên vị trí này. Các số đo và quyết định trước 28/10 (mũ, kênh đầu của D1) vẫn giữ nguyên trong Phụ lục D và các mục lịch sử, ghi rõ nguồn.
 
-**Tài liệu và thứ tự ưu tiên khi mâu thuẫn:** [DE_CUONG_v2.md](DE_CUONG_v2.md) (cam kết với BTC) → **file này** (Phụ lục A là SPEC v3, là luật). Khác biệt so với đề cương đã nộp nằm ở [THAY_DOI_SO_VOI_v1.md](THAY_DOI_SO_VOI_v1.md). Hai tài liệu cũ chứa SPEC v1 và v2 (`cac_buoc_xay_dung_de_tai.md`, `yeu_cau_cong_viec.md`) đã được bỏ ngày 2026-10-12 vì mâu thuẫn với RTL đang chạy; mục 3.1 giữ lại phần đánh giá chúng.
+> **TRẠNG THÁI (2026-10-28, đề tài đã chốt): đeo ngực, chạy thông trên board bằng pin.** Theo giấy tờ: tầng 1, các cổng G0 trở đi chưa đánh [x] (thiếu bằng chứng FW-02/03, TH-01..03, buổi thử có số đo).
+> - **Hệ thống bản cuối:** MPU6050 → MCU SN32F407 (`FW_NODE 1`, chỉ đọc cảm biến) → UART 115200 → ESP32 (`esp32/mu_nga_hub`: `hub.c` đổi trục ngực, tư thế, Safety FSM, `nga.c` bản 3, MẤT CẢM BIẾN) → SPI → Kiwi Primer 20K (bitstream 3: giao thức v3 + engine E2 + mô hình N2) → còi PZ1 2 kHz (lệnh từ ESP32 qua MCU), trang web `http://<IP ESP32>/`, log TCP 3333. FPGA nạp flash 24/10, MCU và ESP32 nạp bản cuối 28/10; web: mẫu đều, mất 0, FPGA trả OK mọi khung ([chot_ket_qua](docs/bao_cao/2026-10-28_chot_ket_qua/README.md))
+> - **Đeo ngực:** ESP32 đổi trục cảm biến → trục người (`FW_VI_TRI_DEO 1`: X = +Z, Y = −X, Z = −Y của MPU6050) và trừ offset `ACC_OFF` (204, −3, −4) LSB. Tư thế khi đeo: 9/9 đoạn giữ yên đúng ([deo_nguc](docs/bao_cao/2026-10-28_deo_nguc/README.md), [tu_the_nguc](docs/bao_cao/2026-10-28_tu_the_nguc/README.md))
+> - **Chỉ báo ngã thật (A.12, `nga.c` bản 3):** CNN 2/3 FALL chỉ là bước nghi; xác nhận khi đủ 4 dấu hiệu: trước đó thẳng + va chạm ≥ 2,5 g + ngực quay ≥ 220 °/s quanh va chạm + ngực nghiêng ≥ 45° trong 3,84 s sau. Log đeo ngực của nhóm (28/10): ngồi phịch xuống ghế báo nhầm 0/10 (bản 2: 9/10), cả log động tác báo nhầm 0, ngã lên nệm 14/15, log 9 tư thế báo nhầm 0. D1 người 102 (kênh đầu): 70/101 ngã, sinh hoạt báo nhầm 0/81. Ngưỡng chọn trên chính log chấm; **nhóm chấp nhận không báo ngã kết thúc quỳ / ngồi mà thân thẳng** ([nga_that](docs/bao_cao/2026-10-28_nga_that/README.md))
+> - **Còi và web:** còi chỉ kêu khi ngã đã được xác nhận (PHÁT HIỆN NGÃ bíp 0,4 s mỗi giây; CẢNH BÁO 2 bíp mỗi giây; BÁO ĐỘNG hú), khi SOS, hoặc khi MẤT CẢM BIẾN (2 bíp mỗi 3 s). Nút "Hủy cảnh báo" chỉ dùng ở CẢNH BÁO / BÁO ĐỘNG (nhóm giữ thiết kế này)
+> - **Nguồn MPU6050:** 3,3 V của ESP32. MPU6050 có lúc treo (không trả lời I²C, SDA = SCL = 1, chỉ cắt nguồn mới hết; nghi sụt áp khi WiFi phát [CẦN XÁC MINH – nguồn: dao động ký]); khi đó web báo MẤT CẢM BIẾN, người dùng rút pin ≈ 5 s. Đã thử cấp nguồn qua GPIO25 để tự gỡ: cảm biến không chạy, bỏ (`MPU_NGUON_GPIO 0`)
+> - **RTL:** giao thức v3 + engine E2 + N2, chân trên header J2 (`fpga/src/`, `fpga/fpga_project.gprj`); bitstream 3 dựng lại 24/10, Fmax 111,01 MHz; netlist sau P&R PASS; E2 + N2 trong mô phỏng: 5,15 ms (P = 1), 1,50 ms (P = 4). `fpga/scripts/test.sh` TẤT CẢ PASS (28/10)
+> - **AI:** N2 trên FPGA học từ D1 **kênh đầu**, 11 người (1.180 cú ngã): LOSO Macro-F1 0,983, recall sự kiện 99,6 % ([n2_11_nguoi](docs/bao_cao/2026-10-16_n2_11_nguoi/README.md)). **Chưa huấn luyện lại cho kênh ngực**; bước nghi của CNN trên ngực được bù bằng tầng xác nhận `nga.c`
+> - **Firmware:** lõi C chung `firmware/src/` (ESP32 dùng bản sao trùng từng byte, `esp32/dong_bo_core.sh`); `m0_test` 70/70 PASS (mã máy Cortex-M0 trong Unicorn, khớp golden / safety_model / posture_model); Keil 0 lỗi
+> - **Việc mở nếu làm tiếp:** B3 (quy tắc ngã thật vào golden Python), B4 (huấn luyện CNN trên dữ liệu ngực), đeo ≥ 2 giờ và ≥ 20 cú ngã có số đo, tần suất MPU6050 treo theo giờ
+> - Trạng thái chi tiết theo từng ngày trước 28/10 (mũ, kênh đầu, E1, đợt B): Phụ lục D
+
+**Tài liệu:** **file này** là tài liệu chính của đề tài; Phụ lục A là SPEC v3.4, là luật cho RTL, firmware và Python. `README.md` tóm tắt cách nạp, kiểm và kết quả chốt; `docs/bao_cao_cuoi/BAO_CAO_KY_THUAT_nhap.md` là bản nháp báo cáo. Đề cương nộp BTC (`DE_CUONG_v2.md`) và bảng thay đổi so với đề cương v1 (`THAY_DOI_SO_VOI_v1.md`) đã bỏ khỏi repo ngày 28/10; các dòng nhật ký nhắc tới chúng là lịch sử. Hai tài liệu cũ chứa SPEC v1 và v2 (`cac_buoc_xay_dung_de_tai.md`, `yeu_cau_cong_viec.md`) đã bỏ ngày 2026-10-12; mục 3.1 giữ lại phần đánh giá chúng.
 
 ---
 
 ## 1. Tóm tắt một trang
 
-**Hệ thống làm gì.** MPU6050 gắn trên mũ đo 6 trục ở 100 Hz. MCU lọc và giảm còn 50 Hz, đổi về INT8, giữ cửa sổ 2,56 s. Cứ 0,32 s MCU gửi một cửa sổ sang FPGA. FPGA chạy mạng 1D-CNN và trả lớp NORMAL / IMPACT / FALL kèm độ tin cậy. MCU cần 2 trong 3 cửa sổ liên tiếp báo FALL mới nghi ngã, rồi chờ người nằm bất động 2,56 s với đầu nằm ngang (lệch 45°–135° khỏi phương thẳng đứng) mới đếm ngược 10 s và hú còi.
+**Hệ thống làm gì.** MPU6050 trên dây đeo ngực đo 6 trục ở 100 Hz. MCU SN32F407 chỉ đọc cảm biến và gửi từng mẫu qua UART cho ESP32. ESP32 đổi trục cảm biến về trục người (X trước, Y trái, Z lên), lọc và giảm còn 50 Hz, đổi về INT8, giữ cửa sổ 2,56 s. Cứ 0,32 s ESP32 gửi một cửa sổ sang FPGA qua SPI. FPGA chạy mạng 1D-CNN và trả lớp NORMAL / FALL kèm độ tin cậy. ESP32 cần 2 trong 3 cửa sổ liên tiếp báo FALL mới **nghi** ngã; sau đó tầng xác nhận `nga.c` (A.12) kiểm bốn dấu hiệu vật lý (trước đó thẳng, va chạm, ngực quay nhanh, ngực nghiêng). Đủ thì báo **PHÁT HIỆN NGÃ** (còi + web); thiếu thì bỏ, người dùng không thấy gì. Nếu sau đó người nằm bất động 2,56 s với ngực nằm ngang, hệ thống đếm ngược 10 s (CẢNH BÁO, bấm hủy được) rồi BÁO ĐỘNG.
 
 ```
-MPU6050 ─I²C 100 Hz─► MCU: lọc [1,3,3,1]/8 ↓2 ─► INT8 ─► ring 128×6 ─SPI 772 B / 0,32 s─► FPGA: 1D-CNN INT8
-                       │  (Type 2, mỗi 0,32 s)                                              │ IRQ + SPI 7 B
-                       ├─► khối bất động + độ nghiêng đầu ──┐                               ▼ (CLASS, SCORE)
-                       └─► WEAR, CANCEL/SOS ────────────────┴─► bỏ phiếu 2/3 ─► Safety FSM ─► OLED, còi, LED
+MPU6050 ─I²C 100 Hz─► MCU (FW_NODE) ─UART 115200, 21 B/mẫu─► ESP32: đổi trục ngực, lọc ↓2, INT8, ring 128×6
+                                                                │  ─SPI 772 B / 0,32 s─► FPGA: 1D-CNN INT8 (E2 + N2)
+                                                                │  ◄────── SPI 7 B (CLASS, SCORE) ──────┘
+                                                                ├─► bỏ phiếu 2/3 ─► Safety FSM ─► nga.c xác nhận ngã thật
+                                                                ├─► khối bất động + độ nghiêng ngực, tư thế (A.11)
+                                                                └─► còi 2 kHz (lệnh UART → MCU → PZ1), web, log TCP 3333
 ```
 
 **Ba tầng tham vọng** (tầng dưới chạy trước; mỗi tính năng tầng 2–3 có công tắc tắt):
 
 | Tầng | Nội dung | FPGA | Mạng |
 |---|---|---|---|
-| **1 – LÕI** | Mũ chạy độc lập: ngã + bất động → PRE_ALARM → ALARM, bấm CANCEL | Engine **E1** hiện có, P = 1, 14 ms | **N1**: 2 Conv + GAP (đã có RTL) |
+| **1 – LÕI** | Thiết bị chạy độc lập: ngã + bất động → PRE_ALARM → ALARM, bấm CANCEL | Engine **E1** hiện có, P = 1, 14 ms | **N1**: 2 Conv + GAP (đã có RTL) |
 | **2 – MẠNH** | Đạt mọi chỉ tiêu trong đề cương v2 | Bước 1: **E1 mở rộng** để chạy N2 (≈ 14 ms). Bước 2: engine **E2**, 1 chu kỳ/MAC, ≤ 6 ms | **N2**: 3 Conv + Flatten-Dense |
 | **3 – ĐỘT PHÁ** | P = 4 (≤ 2 ms), Fmax ≥ 100 MHz, năng lượng/lần suy luận, lớp suýt ngã, cập nhật weight qua SPI, log Flash, chỉ suy luận khi có chuyển động | E2 nhiều làn | N2 mở rộng |
 
@@ -57,7 +54,7 @@ MPU6050 ─I²C 100 Hz─► MCU: lọc [1,3,3,1]/8 ↓2 ─► INT8 ─► ring
 | N1 / N2 | 3.168 / 6.368 weight · 225.408 / 227.328 MAC |
 | Thời gian suy luận | Đo trong mô phỏng: E1 + N1: 13,96 ms · E2 + N2: 5,15 ms (P = 1), 1,50 ms (P = 4) · **E2 + N2-S: 2,65 ms (P = 1), 0,80 ms (P = 4)** (14/10) |
 | Lớp | **Cam kết 2 lớp (v2.1, 16/10): 0 NORMAL · 3 FALL.** 1 IMPACT và 2 suýt ngã để dành cho mở rộng; phần cứng vẫn xuất 4 logit |
-| Dữ liệu | **D1** công khai, cảm biến ở đầu, 25 Hz: FALL + NORMAL, nguồn huấn luyện duy nhất (v2.1) · **D2** NORMAL khi đội mũ + va/rơi mũ và **D3** ngã trên đệm: gộp thành một buổi thử trên mũ, chỉ để kiểm tra |
+| Dữ liệu | **D1** công khai, cảm biến ở đầu, 25 Hz: FALL + NORMAL, nguồn huấn luyện duy nhất của CNN · **Log đeo ngực của nhóm (28/10)**: 9 tư thế, 7 loại động tác dễ nhầm (ngồi mạnh ×10, cúi, đi, nằm xuống, ngồi dậy, lăn), 15 cú ngã lên nệm; dùng để chốt đổi trục, tư thế và ngưỡng `nga.c`, không huấn luyện CNN |
 
 ---
 
@@ -213,6 +210,12 @@ Chi tiết ở A.7. Trình tự: `[GHI 772 byte] → chờ IRQ (timeout 50 ms) �
 
 ### 4.3. Firmware
 
+**Bản chạy trên board (từ 24/10, v2.2): chia hai.** Dây nối cố định chỉ cho MCU một đường UART TX sang ESP32, còn ESP32 làm master SPI tới FPGA. Vì vậy:
+- **MCU SN32F407** (`firmware/keil/fw.uvprojx`, `FW_NODE 1`): đọc MPU6050 100 Hz, trừ offset gyro, gỡ bus I²C và cấu hình lại khi cảm biến không trả lời, gửi mỗi mẫu một khung `F1 7E` 21 byte (`node_link.c`, CRC-16) qua UART 115200; nhận lệnh còi 1 byte từ ESP32 và tạo âm 2 kHz trên PZ1.
+- **ESP32** (`esp32/mu_nga_hub`, cùng lõi C với `firmware/src/`): tách khung UART (chịu nhiễu: chỉ nhận LEN = 14, dò lại `F1 7E` trong khung hỏng, chèn bù mẫu mất ≤ 50), đổi trục ngực + trừ `ACC_OFF` (`hub_doi_truc`), chạy `app_core` (tiền xử lý A.2, khung A.7, Safety FSM A.8), tư thế (A.11), xác nhận ngã thật (A.12), MẤT CẢM BIẾN; hỏi vòng FPGA qua SPI; phục vụ trang web, log USB + TCP 3333.
+
+Phần dưới là thiết kế ban đầu khi MCU làm hết (vẫn là chế độ của `app_core`, không dùng trên board hiện tại).
+
 Không RTOS. Ngắt chỉ đặt cờ: INT của MPU6050, IRQ của FPGA, SysTick 1 ms, nút.
 
 Vòng lặp chính, mỗi khe 10 ms:
@@ -239,13 +242,14 @@ RAM: `ring` 768 + UART TX 512 + RX 64 + trang OLED 128 + bộ lọc 36 + khối 
 
 - **Dữ liệu — chiến lược lai (chốt 13/10):** ba nguồn, mỗi nguồn một vai trò.
   - **D1 – công khai, cảm biến ở đầu:** bộ Özdemir–Barshan (AI-13). Cấp lớp FALL và phần lớn NORMAL để huấn luyện. Theo tài liệu đi kèm, bộ này có 17 người × 36 hoạt động × khoảng 5 lần = 3.060 bản ghi. **Đã có trong [ml/data/public/](ml/data/public/README.md) (16/10): 11 người, 1.180 cú ngã, 961 bản ghi hoạt động thường ngày, 11,57 giờ, 109.970 cửa sổ** (13/10: 6 người, 604 cú ngã; sáng 16/10: 8 người, 840 cú ngã). Riêng số cú ngã đã gấp 4,7 lần mức 250 nhóm định tự thu, và không ai trong nhóm phải ngã hàng trăm lần. 6 người còn lại chưa tải được vì máy chủ UCI cắt kết nối giữa chừng
-  - **D2 – tự thu trên mũ, không có cú ngã nào** (v2.1: chỉ để kiểm tra, không huấn luyện): NORMAL khi đội mũ ≥ 2 giờ tổng từ ≥ 2 người, 20 lần va mũ khi đang đội, 20 lần rơi mũ (AI-05, AI-08). Lớp IMPACT chỉ thu khi buổi thử cho thấy cần (mục 9). Không bộ công khai nào có các sự kiện này
-  - **D3 – ngã trên đệm khi đội mũ, ≥ 20 cú từ ≥ 2 người** (v2.1; trước: ≥ 40 cú từ ≥ 3 người): chỉ để kiểm tra mô hình trên đúng thiết bị (AI-03, AI-14, TH-07, TH-10). Không đưa vào huấn luyện
+  - **D2 – tự thu trên thiết bị đeo ngực, không có cú ngã nào** (v2.1: chỉ để kiểm tra, không huấn luyện): NORMAL khi đeo thiết bị ≥ 2 giờ tổng từ ≥ 2 người, 20 lần va mũ khi đang đội, 20 lần rơi mũ (AI-05, AI-08). Lớp IMPACT chỉ thu khi buổi thử cho thấy cần (mục 9). Không bộ công khai nào có các sự kiện này
+  - **D3 – ngã trên đệm khi đeo thiết bị, ≥ 20 cú từ ≥ 2 người** (v2.1; trước: ≥ 40 cú từ ≥ 3 người): chỉ để kiểm tra mô hình trên đúng thiết bị (AI-03, AI-14, TH-07, TH-10). Không đưa vào huấn luyện
   - **Dữ liệu ở thân người (ngực, thắt lưng):** nhóm chấp nhận dùng, nhưng chỉ là nguồn bổ sung vì đã có kênh đầu. Phép đo ngày 13/10 trên 6 người của D1, nơi cùng một cú ngã được ghi đồng thời ở ba vị trí (mô hình thay thế là hồi quy logistic trên 31 đặc trưng, không phải CNN của đề tài): huấn luyện ở ngực hoặc thắt lưng rồi thử trên đầu của người để riêng cho recall sự kiện 93,9–95,0 %, ngang với huấn luyện ở đầu (94,0 %); nhưng số bản ghi thường ngày bị báo nhầm tăng từ 51/499 lên 79–87/499. Nguồn bổ sung gồm kênh ngực và thắt lưng của D1, và SisFall (thắt lưng, 200 Hz, có đủ băng tần tới 25 Hz mà D1 thiếu). Có đưa vào hay không do AI-09 quyết bằng số đo
-- **Ba chỗ D1 khác thiết bị thật, phải đo chứ không giả định (AI-14):** (i) D1 lấy mẫu 25 Hz, chuỗi của ta 50 Hz, nên sau nội suy băng 12,5–25 Hz của D1 gần như trống; (ii) FALL chỉ có trong D1, IMPACT chỉ có trong D2, nên mạng có thể học phân biệt *nguồn dữ liệu* thay vì *chuyển động*; (iii) cảm biến của D1 buộc vào đầu, của ta nằm trên vỏ mũ, trục và độ rung khác nhau. Phương án lùi cuối cùng là kế hoạch cũ: tự thu ≥ 250 cú ngã từ ≥ 8 người
-- **Hai bước mô hình:** N1 dùng lại notebook hiện có để có mô hình trên mũ sớm nhất (tầng 1). N2 huấn luyện có mô phỏng lượng tử đúng A.5.
+- **Ba chỗ D1 khác thiết bị thật, phải đo chứ không giả định (AI-14):** (i) D1 lấy mẫu 25 Hz, chuỗi của ta 50 Hz, nên sau nội suy băng 12,5–25 Hz của D1 gần như trống; (ii) FALL chỉ có trong D1, IMPACT chỉ có trong D2, nên mạng có thể học phân biệt *nguồn dữ liệu* thay vì *chuyển động*; (iii) cảm biến của D1 buộc vào đầu, của ta nằm trên thiết bị, trục và độ rung khác nhau. Phương án lùi cuối cùng là kế hoạch cũ: tự thu ≥ 250 cú ngã từ ≥ 8 người
+- **Hai bước mô hình:** N1 dùng lại notebook hiện có để có mô hình trên thiết bị đeo ngực sớm nhất (tầng 1). N2 huấn luyện có mô phỏng lượng tử đúng A.5.
 - **Đánh giá:** Leave-One-Subject-Out theo người của D1. Chỉ số chính là **recall FALL mức sự kiện**: một cú ngã tính là phát hiện khi ít nhất 2 trong 3 cửa sổ vùng dương báo FALL với SCORE ≥ `T_SCORE`. Phép thử cuối là recall trên D3. Mọi con số báo cáo phải ghi rõ đo trên nguồn nào.
-- **SisFall:** cảm biến ở thắt lưng, xa vị trí mũ hơn D1, nên không dùng để đánh giá đề tài. Giá trị của nó là đã thông chuỗi huấn luyện → INT8 → RTL (H1, H5).
+- **Đeo ngực (28/10):** CNN N2 trên FPGA vẫn là mô hình học từ kênh đầu của D1; chưa huấn luyện lại bằng kênh ngực (việc mở B4). Trên log đeo ngực, CNN nghi đúng 14/15 cú ngã nhưng cũng nghi 19 lần khi ngồi phịch xuống ghế, nên quyết định cuối nằm ở tầng xác nhận `nga.c` (A.12), có ngưỡng chọn từ log đeo ngực của nhóm.
+- **SisFall:** cảm biến ở thắt lưng, khác vị trí ngực và đầu, nên không dùng để đánh giá đề tài. Giá trị của nó là đã thông chuỗi huấn luyện → INT8 → RTL (H1, H5).
 
 ### 4.5. Safety FSM
 
@@ -259,18 +263,22 @@ STANDBY ◄─ WEAR = 0 liên tục 3 s ─┐        ┌───────�
 ```
 Bảng chuyển trạng thái và tham số ở A.8.
 
+**Tầng xác nhận ngã thật (ESP32, A.12).** Khi FSM vào SUSPECT, `nga.c` xét bốn dấu hiệu. Thiếu thì gọi `safety_bo_nghi()`: FSM về MONITOR (lý do `WHY_KHONG_NGA`), còi im, web vẫn hiện ĐANG THEO DÕI, bộ đếm "Số lần phát hiện ngã" không tăng. Đủ thì SUSPECT hiện lên web là PHÁT HIỆN NGÃ và còi kêu. Các chuyển trạng thái còn lại của FSM không đổi.
+
 ---
 
 ## 5. Bảng cổng 0 % → 100 %
+
+> **Đọc khi đeo ngực (28/10):** kế hoạch, cổng và chỉ tiêu ở mục 5, 6, 9, 10, 11 viết theo đề cương (mũ bảo hộ). Từ 28/10 đọc "mũ" là "thiết bị đeo ngực", "đeo thiết bị" là "đeo thiết bị". Các mục riêng của mũ (va mũ, rơi mũ, cảm biến đeo thiết bị) không còn áp dụng; phần tương ứng khi đeo ngực là các động tác dễ nhầm (ngồi mạnh, cúi, nằm xuống, ngồi dậy, lăn người) đã thử ở log đeo ngực của nhóm (A.12).
 
 Chưa qua cổng thì chưa tính phần trăm.
 
 | Cổng | % | Tầng | Việc phải xong | Điều kiện qua cổng |
 |---|---|---|---|---|
 | G0 | 5 | 1 | FW-02, FW-03, AI-01, AI-02, RA-01, RB-01, TH-01..03 | Một nguồn tham số, RTL khớp 20/20; chân phía MCU đã chốt, đo 3,3 V; cảm biến PASS ở ±16 g / ±2000 °/s |
-| G1 | 15 | 1 | FW-04..06 (hoặc TH-12), AI-03, AI-13, TH-04 | Log 10 phút trên mũ không mất mẫu; thu thử xong; D1 đã chuyển về thang A.2; A.1–A.3 đóng băng |
+| G1 | 15 | 1 | FW-04..06 (hoặc TH-12), AI-03, AI-13, TH-04 | Log 10 phút trên thiết bị đeo ngực không mất mẫu; thu thử xong; D1 đã chuyển về thang A.2; A.1–A.3 đóng băng |
 | G2 | 30 | 1 | FW-07..10, FW-13, AI-04, RA-02..05, RB-02, TH-05 | 1.000 vòng ghi → IRQ → đọc trên board thật, 0 lỗi; 20 vector qua HIL khớp golden; 1.000 khung MCU khớp CRC với Python |
-| G3 | 45 | 1 | AI-05..07, AI-14, FW-11, RB-03, TH-06 | Buổi thử nhỏ đầu tiên trên mũ xong (v2.1: NORMAL khi đội mũ ≥ 30 phút từ ≥ 2 người; ≥ 10 cú ngã trên đệm; 10 va mũ, 10 rơi mũ); mô hình huấn luyện trên D1 đã nạp lên chip và đạt recall ≥ 80 % trên các cú ngã thu thử (AI-14); FSM qua hết ca test trên PC |
+| G3 | 45 | 1 | AI-05..07, AI-14, FW-11, RB-03, TH-06 | Buổi thử nhỏ đầu tiên trên thiết bị đeo ngực xong (v2.1: NORMAL khi đeo thiết bị ≥ 30 phút từ ≥ 2 người; ≥ 10 cú ngã trên đệm; 10 va mũ, 10 rơi mũ); mô hình huấn luyện trên D1 đã nạp lên chip và đạt recall ≥ 80 % trên các cú ngã thu thử (AI-14); FSM qua hết ca test trên PC |
 | **G4** | **60** | **1 xong** | FW-12, RA-06, TH-07, TH-08 | **Mũ chạy độc lập:** HIL ≥ 500 cửa sổ khớp 100 %; ngã trên đệm 10 lần ≥ 8 lần PRE_ALARM; chạy 30 phút không treo |
 | G5 | 75 | 2 | AI-08..10, RB-02b, RB-04, RA-07, RA-08, TH-09 | LOSO trên D1 đạt recall ≥ 95 % và Macro-F1 ≥ 0,90; recall trên D3 ≥ 90 % (≥ 20 cú ngã, ≥ 2 người; v2.1); N2 chạy trên chip khớp 100 % trên ≥ 2.000 cửa sổ HIL; với E2 thì `CYCLES` ≤ 300.000 |
 | G6 | 90 | 2 | FW-14, FW-15, AI-11, TH-10 | Thử thực địa đạt: báo giả, va mũ, rơi mũ (đếm và hủy được), độ trễ, người mới; có số đo MCU-only |
@@ -278,7 +286,7 @@ Chưa qua cổng thì chưa tính phần trăm.
 | — | — | 3 | FW-16, AI-12, RA-09, RB-05, RB-06 | Không cam kết; chỉ làm khi G6 đã qua |
 
 ```
-G0 ─► G1 ─┬─► G3 (dữ liệu, N1 trên mũ) ──────────► G4 (TẦNG 1 trên mũ) ─► G5 ─► G6 ─► G7
+G0 ─► G1 ─┬─► G3 (dữ liệu, N1 trên thiết bị đeo ngực) ──────────► G4 (TẦNG 1 trên thiết bị đeo ngực) ─► G5 ─► G6 ─► G7
           └─► G2 (SPI thật + E1 trên chip với weight hiện có) ─┘
 ```
 Đường găng là dữ liệu. Nhánh RTL và đường truyền không chờ dữ liệu vì đã có weight SisFall để chạy thử toàn chuỗi.
@@ -289,7 +297,7 @@ G0 ─► G1 ─┬─► G3 (dữ liệu, N1 trên mũ) ───────�
 
 Ký hiệu: `(cổng · tầng)`. Chỉ đánh `[x]` khi đạt *Pass* và có bằng chứng trong `docs/bao_cao/`.
 
-### FW — firmware và phần điện trên mũ
+### FW — firmware và phần điện trên thiết bị đeo ngực
 
 - [x] **FW-01** (G0·1) Kiểm tra MPU6050 trên phần cứng — *Pass:* đọc được cảm biến trên ESP32 và SN32F407 ✅ (bằng mã riêng của một thành viên; cần đưa mã và log vào thư mục, X12)
 - [ ] **FW-02** (G0·1) Chuyển `test_sensor` sang thang ghi thô của A.1 và sang chân của EVK — *Pass:* T1..T7 PASS; `|a|` = 2048 ± 10 %; INT 200 xung / 2 s
@@ -306,7 +314,7 @@ Ký hiệu: `(cổng · tầng)`. Chỉ đánh `[x]` khi đạt *Pass* và có b
   - Còn lại (đợt B): nạp lên EVK, thấy `hello`, LED nháy, dòng SW3/SW6; đo VDD
 - [ ] **FW-04** (G1·1) `mpu6050.c` theo A.1 trên I2C0 phần cứng (P0.10/P0.11, `PFPA->I2C0` = 0x0A) ở 400 kHz, hạ 100 kHz nếu sườn lên chậm; ngắt INT trên P2.2; canh mất mẫu 25 ms — *Pass:* chu kỳ INT 10,0 ms trên logic analyzer; đọc lại 7 thanh ghi đúng. Có thể lấy `i2c0.c` của dự án vòng 1 (`D:\hoctap\fpga\thi_fpga\MCU\firmware\drivers\`) làm gốc; mã đó đã biên dịch, chưa rõ đã chạy trên board chưa. *Lùi:* sau 1 ngày chưa chạy thì dùng `i2c_soft.c`
   - **Mã xong 14/10 (chỉ biên dịch):** [firmware/src/i2c0.c](firmware/src/i2c0.c) dựng từ `i2c0.c` của dự án vòng 1, theo datasheet mục 15.10 (START → địa chỉ → thanh ghi → START lặp → đọc, byte cuối NACK, timeout bằng vòng lặp và `TOCTRL`); [firmware/src/imu.c](firmware/src/imu.c) ghi đúng bảng A.1 rồi **đọc lại 7 thanh ghi**, báo số thanh ghi sai lúc khởi động; INT trên P2.2 qua ngắt cổng P2. Chờ board để đo chu kỳ INT
-- [ ] **FW-05** (G1·1) Hiệu chuẩn offset gyro: trung bình 200 mẫu lúc khởi động, làm lại nếu mũ đang rung — *Pass:* trung bình 500 mẫu trong ±2 LSB
+- [ ] **FW-05** (G1·1) Hiệu chuẩn offset gyro: trung bình 200 mẫu lúc khởi động, làm lại nếu thiết bị đang rung — *Pass:* trung bình 500 mẫu trong ±2 LSB
   - **Cách kiểm trên board (16/10):** [tools/gyro_residual.py](tools/gyro_residual.py) đọc file LOG của `logger.py` (gyro đã trừ offset), in trung bình 500 mẫu đầu mỗi trục (Pass ±2 LSB) và 500 mẫu lệch nhất trên cả file (độ trôi); bước B5.4 của `docs/huong_dan_dot_B.md`. Thử trên dữ liệu giả: offset dư −1,0 → PASS, −3,0 → FAIL
   - **Mã xong 14/10:** [firmware/src/gyro_cal.c](firmware/src/gyro_cal.c), C thuần: 200 mẫu, làm lại khi max − min của trục gyro nào > 100 LSB (≈ 6 °/s), làm tròn đối xứng. Unicorn: chuỗi có rung lúc đầu → làm lại 2 lần, offset trùng tham chiếu Python. Pass (±2 LSB trên 500 mẫu) đo ở board
 - [ ] **FW-06** (G1·1) `uart_log.c` (buffer vòng + ngắt TX) và chế độ LOG theo A.9 — *Pass:* file 10 phút, 0 lần mất mẫu
@@ -351,10 +359,10 @@ Ký hiệu: `(cổng · tầng)`. Chỉ đánh `[x]` khi đạt *Pass* và có b
   - E1 với weight SisFall: `weights.mem`, `bias.mem` xuất ra **trùng từng byte** file của nhóm. 50 vector (10 FALL + 10 NORMAL của D1, LFSR, toàn +127 / −128 / 0, xen kẽ, bậc thang, gyro bão hòa, ngẫu nhiên): đọc ngược khớp golden 50/50; biên |acc| [172.430, 295.566, 140.083] < 2^31
   - E2 cho N2-S (P = 1 và 4): đọc ngược 50/50; mô hình địa chỉ chạy trên ROM đã xuất == golden. Bằng chứng: [docs/bao_cao/2026-10-14_ai04_ai09/](docs/bao_cao/2026-10-14_ai04_ai09/README.md)
   - `res_XX.mem` của E2 để CYCLES = 0 vì E2 chưa có
-- [ ] **AI-05** (G3·1) `docs/data_protocol.md`; buổi thử nhỏ đầu tiên trên mũ (v2.1) — *Pass:* NORMAL khi đội mũ ≥ 30 phút từ ≥ 2 người; ≥ 10 cú ngã trên đệm; 10 va mũ khi đang đội, 10 rơi mũ; có video; không file nào mất mẫu. (Trước v2.1: ≥ 100 IMPACT để huấn luyện, không ai phải ngã)
+- [ ] **AI-05** (G3·1) `docs/data_protocol.md`; buổi thử nhỏ đầu tiên trên thiết bị đeo ngực (v2.1) — *Pass:* NORMAL khi đeo thiết bị ≥ 30 phút từ ≥ 2 người; ≥ 10 cú ngã trên đệm; 10 va mũ khi đang đội, 10 rơi mũ; có video; không file nào mất mẫu. (Trước v2.1: ≥ 100 IMPACT để huấn luyện, không ai phải ngã)
   - Mỗi file ghi một chuỗi 5–6 sự kiện cùng loại, bấm nút đánh dấu quanh từng sự kiện: khoảng 14 file mỗi người thay vì hơn 80
-  - Va đập khi **không** đội mũ (rơi mũ, đặt mạnh mũ) không cần người tham gia: một thành viên thu hàng loạt, gán `subject = h0`, chỉ dùng để huấn luyện. Lớp IMPACT được đánh giá trên các va đập khi đang đội
-  - **15/10:** [docs/data_protocol.md](docs/data_protocol.md): an toàn và giấy đồng ý (TH-06), kiểm tra thiết bị, đặt tên file, **19 hoạt động có mã cố định** (5 IMPACT, 8 NORMAL khi đội mũ, 6 kiểu ngã D3), cách bấm SW6 quanh từng va đập, chỉ tiêu số lượng. Ưu tiên `nam_xuong`, `cui_nhat`, `suyt_nga` vì đó là nguồn báo giả khi phát lại D1 (AI-10)
+  - Va đập khi **không** đeo thiết bị (rơi mũ, đặt mạnh mũ) không cần người tham gia: một thành viên thu hàng loạt, gán `subject = h0`, chỉ dùng để huấn luyện. Lớp IMPACT được đánh giá trên các va đập khi đang đội
+  - **15/10:** [docs/data_protocol.md](docs/data_protocol.md): an toàn và giấy đồng ý (TH-06), kiểm tra thiết bị, đặt tên file, **19 hoạt động có mã cố định** (5 IMPACT, 8 NORMAL khi đeo thiết bị, 6 kiểu ngã D3), cách bấm SW6 quanh từng va đập, chỉ tiêu số lượng. Ưu tiên `nam_xuong`, `cui_nhat`, `suyt_nga` vì đó là nguồn báo giả khi phát lại D1 (AI-10)
 - [ ] **AI-06** (G3·1) `windowing.py`: giảm mẫu cả hai pha, lượng tử, bước 16, vùng nhãn A.4 → `dataset.npz`; nhận cả D1 (đã ở 50 Hz, điểm va chạm lấy tự động) lẫn D2, D3 (100 Hz, theo nút đánh dấu); mỗi cửa sổ mang mã nguồn và mã người — *Pass:* đối chiếu bằng mắt 20 cửa sổ mỗi lớp với video (D2, D3) hoặc với biểu đồ bản ghi gốc (D1)
   - **Công cụ xong 15/10:** [tools/windowing.py](tools/windowing.py): điểm sự kiện theo A.4 (trong đoạn bấm nút, hoặc trên cả file với D3), giảm mẫu và lượng tử bằng đúng hàm golden, cắt cửa sổ và gán nhãn, loại file mất mẫu hoặc sai tên, `--plot` vẽ từng sự kiện; ra npz cùng khóa với D1 nên `train_cnn.py --extra` dùng thẳng. Thử bằng file LOG giả dựng từ D1 nội suy 100 Hz: 10/10 sự kiện đúng vị trí (lệch 0 mẫu), mỗi sự kiện đúng 3 cửa sổ dương. Bằng chứng: [docs/bao_cao/2026-10-15_ai05_ai06_thu_du_lieu/](docs/bao_cao/2026-10-15_ai05_ai06_thu_du_lieu/). Pass (đối chiếu 20 cửa sổ mỗi lớp với video) chờ dữ liệu thật
 - [ ] **AI-07** (G3·1) Huấn luyện mô hình tầng 1 trên D1 (v2.1: không cần D2; notebook gốc không có nên dùng `ml/train_cnn.py`), xuất INT8 — *Pass:* golden trùng nhãn với mô hình lượng tử của notebook ≥ 99,5 % cửa sổ
@@ -362,7 +370,7 @@ Ký hiệu: `(cổng · tầng)`. Chỉ đánh `[x]` khi đạt *Pass* và có b
   - LOSO 6 người, INT8, `T_SCORE = 0`: **recall sự kiện 515/604 = 85,3 %** (theo người 75,0–99,0 %), Macro-F1 0,861, accuracy 97,9 %, FP32 → INT8 trùng nhãn 99,77 %; phiếu 2/3 nhầm trên bản ghi sinh hoạt 20,6 lần/giờ **trước** Safety FSM
   - Weight xuất ở `ml/out/n1_d1/fpga_export/` chạy trên RTL: `run_all.sh --export` cho 20/20 (10 FALL + 10 NORMAL) và `tb_top_spi` PASS. Bằng chứng: [docs/bao_cao/2026-10-14_ai07_n1_d1/](docs/bao_cao/2026-10-14_ai07_n1_d1/README.md)
   - v2.1: không còn cần D2. Còn lại cho Pass: chạy lại trên D1 8 người và lưu bằng chứng (16/10 đang chạy N1 × 3 seed). Lượng tử hiện là PTQ, chưa phải QAT
-- [ ] **AI-08** (G5·2) Buổi thử chính trên mũ (v2.1) — *Pass:* NORMAL khi đội mũ ≥ 2 giờ tổng từ ≥ 2 người, có cúi nhặt, nằm xuống, vấp; ≥ 20 cú ngã trên đệm từ ≥ 2 người; 20 va mũ khi đang đội, 20 rơi mũ. (Trước v2.1: ≥ 250 IMPACT; NORMAL ≥ 2 giờ từ ≥ 4 người; ≥ 40 cú ngã từ ≥ 3 người)
+- [ ] **AI-08** (G5·2) Buổi thử chính trên thiết bị đeo ngực (v2.1) — *Pass:* NORMAL khi đeo thiết bị ≥ 2 giờ tổng từ ≥ 2 người, có cúi nhặt, nằm xuống, vấp; ≥ 20 cú ngã trên đệm từ ≥ 2 người; 20 va mũ khi đang đội, 20 rơi mũ. (Trước v2.1: ≥ 250 IMPACT; NORMAL ≥ 2 giờ từ ≥ 4 người; ≥ 40 cú ngã từ ≥ 3 người)
 - [ ] **AI-09** (G5·2) N2 với mô phỏng lượng tử đúng A.5; LOSO theo người của D1, mỗi lượt để riêng một buổi thu của D2; so N1 / N2 / N2-S (8-16-16) / N2-L (16-24-32); so có và không có dữ liệu ở thân người (kênh ngực, thắt lưng của D1; SisFall) trên cùng tập kiểm tra — *Pass:* chọn mô hình nhỏ nhất đạt recall sự kiện ≥ 95 % và Macro-F1 ≥ 0,90 trong LOSO, và recall ≥ 90 % trên D3; FP32 → INT8 giảm ≤ 2 điểm %; dữ liệu thân chỉ được giữ nếu không làm tăng báo nhầm trên bản ghi thường ngày
   - **Sơ bộ 14/10, chỉ trên D1 (6 người, chưa có D2/D3):** [ml/train_cnn.py](ml/train_cnn.py) + [ml/src/cnn_numpy.py](ml/src/cnn_numpy.py) huấn luyện cả họ A.4, LOSO, INT8 PTQ, kiểm golden từng bit. Macro-F1 INT8: N1 0,861 · N2 0,958 · **N2-S 0,975** · N2-L 0,976; recall sự kiện (T_SCORE 0): 85,3 % · 98,8 % · **98,7 %** · 98,0 %; FP32 → INT8 trùng nhãn ≥ 99,77 %. Chọn sơ bộ ban đầu là N2-S (mô hình nhỏ nhất đạt ≥ 95 % và ≥ 0,90; 3.184 weight, 113.664 MAC). Bằng chứng: [docs/bao_cao/2026-10-14_ai04_ai09/](docs/bao_cao/2026-10-14_ai04_ai09/README.md)
   - **Sửa 15/10 sau khi lặp 3 seed** (`nhieu_seed/`): Macro-F1 INT8 N2-S 0,975 / 0,916 / 0,945 (TB 0,945), **N2 0,958 / 0,969 / 0,977 (TB 0,968)**, N2-L 0,976 / 0,960 / 0,941 (TB 0,959); phiếu 2/3 nhầm/giờ ở T_SCORE 8 TB: N2-S 21,2, **N2 8,0**, N2-L 6,5. Seed đầu của N2-S là seed may; chênh lệch do seed lớn hơn chênh lệch giữa mô hình. **Chọn sơ bộ đổi thành N2** (ổn định nhất; vẫn ≤ 6 ms trên E2: 5,15 ms), N2-S giữ làm phương án nhỏ. Chốt khi có D2/D3, đánh giá nhiều seed
@@ -372,25 +380,25 @@ Ký hiệu: `(cổng · tầng)`. Chỉ đánh `[x]` khi đạt *Pass* và có b
   - **D1 11 người, 16/10 tối** (N2 chỉ đầu, 3 seed, máy gốc): Macro-F1 INT8 TB **0,9828** (0,9823 / 0,9813 / 0,9847); recall sự kiện T_SCORE 0 / 8: **99,6 % / 97,7 %**; phiếu nhầm T_SCORE 8 TB 3,10/giờ; người 105 vẫn yếu nhất (0,924–0,964), người 109 lọt 1–5/119. Mô hình cuối seed 20261014 (chọn trước) vào bitstream 3. [n2_11_nguoi](docs/bao_cao/2026-10-16_n2_11_nguoi/README.md)
 - [ ] **AI-10** (G5·2) Chốt `T_SCORE`, `VOTE_K`; phát lại toàn bộ dữ liệu qua golden + FSM để chốt `T_STILL_A`, `T_STILL_G`, `T_TILT` — *Pass:* ≥ 95 % cú ngã tới PRE_ALARM; 0 PRE_ALARM trên file NORMAL; ≤ 10 % sự kiện IMPACT gây PRE_ALARM
   - **Sơ bộ 14/10 trên D1:** [tools/playback_d1.py](tools/playback_d1.py) phát lại 604 cú ngã + 2,65 giờ sinh hoạt qua mô hình LOSO + `safety_model.py` (trùng `safety.c` trên 240.000 tick). N2-S với tham số A.8 hiện tại: ngã → SUSPECT 98,7 %, trễ trung vị **0,84 s** (p90 1,03 s); ngã **kết thúc nằm** → PRE_ALARM **97,0 %**; ngã rồi đứng dậy → PRE_ALARM 0/120 (đúng); trễ PRE_ALARM 4,08 s (p90 5,32 s); **PRE_ALARM giả 5,66/giờ**. Quét 36 cấu hình: chưa cấu hình nào đạt cùng lúc ≥ 95 % và ≤ 1/giờ; ứng viên 3/3 phiếu, T_SCORE 8: 92,1 % và 1,13/giờ. Các số này dùng mô hình N2-S seed 20261014 (seed may).
-  - **Sửa 15/10, trung bình 3 seed:** mọi cấu hình đều có **5,8–10 PRE_ALARM giả/giờ**; N2, 2/3 phiếu, T_SCORE 8: ngã nằm → PRE_ALARM 95,5 %, đứng dậy 0/360, 5,91 giả/giờ, trễ 4,08 / 5,25 s. ⚠️ Chỉ tiêu ≤ 1/giờ có rủi ro thật nếu chỉ dùng D1. Đường giảm: D2 NORMAL đội mũ (nằm, cúi, vấp) → WEAR → STILL_BLOCKS 10–12 → gộp 2–3 mô hình (E2 P = 4 chạy 3 lần vẫn < 5 ms). Đã thử gộp 3 seed N2: T_SCORE 8 → 95,7 % ngã nằm, 4,91 giả/giờ (giảm ≈ 17 %), chưa đủ
+  - **Sửa 15/10, trung bình 3 seed:** mọi cấu hình đều có **5,8–10 PRE_ALARM giả/giờ**; N2, 2/3 phiếu, T_SCORE 8: ngã nằm → PRE_ALARM 95,5 %, đứng dậy 0/360, 5,91 giả/giờ, trễ 4,08 / 5,25 s. ⚠️ Chỉ tiêu ≤ 1/giờ có rủi ro thật nếu chỉ dùng D1. Đường giảm: D2 NORMAL đeo thiết bị (nằm, cúi, vấp) → WEAR → STILL_BLOCKS 10–12 → gộp 2–3 mô hình (E2 P = 4 chạy 3 lần vẫn < 5 ms). Đã thử gộp 3 seed N2: T_SCORE 8 → 95,7 % ngã nằm, 4,91 giả/giờ (giảm ≈ 17 %), chưa đủ
   - **SPEC v3.1 (15/10): điều kiện nghiêng hai phía `|az_tb| < T_TILT`.** 15/22 báo giả có đầu lộn ngược (cúi gập, `az_tb` ≈ −2040); 375/375 cú ngã nằm có `az_tb` ≥ −1074. Sau v3.1 (3 seed): N2, T_SCORE 8: ngã nằm 95,5 %, **1,26 giả/giờ** (trước 5,91); **gộp 3 seed N2: 95,7 %, 0,75 giả/giờ**, lần đầu đạt cả hai ngưỡng trên D1. Còn lại: 815 (nằm giường), 805 (cúi 90°). Giữ T_TILT 45° (60° mất 10–13 điểm). Bằng chứng: [docs/bao_cao/2026-10-14_ai10_playback/](docs/bao_cao/2026-10-14_ai10_playback/README.md), mục v3.1
   - Pass hiện ghi "≥ 95 % cú ngã tới PRE_ALARM" mâu thuẫn với định nghĩa hệ thống (chỉ báo động khi người **nằm** bất động): 4 kiểu ngã của D1 có đứng dậy và không được báo. Đề nghị sửa thành "≥ 95 % cú ngã kết thúc nằm tới PRE_ALARM; 0 cú ngã có đứng dậy tới ALARM" — chờ nhóm duyệt (X15)
   - **X15 đã đo 15/10** (`playback_d1.py --still-upright N`, chỉ là thí nghiệm, SPEC không đổi): thêm nhánh "bất động ≥ N khối dù đầu thẳng" bắt ngã quỳ/ngồi 85 / 76 / 53 % (N = 12 / 16 / 20) nhưng cũng báo **69 / 36 / 3 % cú ngã đã đứng dậy** và tăng PRE_ALARM giả lên 3,78 / 2,14 / 1,76 lần/giờ (từ 1,26). Đề nghị giữ v3.1, ngã ngồi dùng SOS. Bằng chứng: [docs/bao_cao/2026-10-15_x15_nga_ngoi/](docs/bao_cao/2026-10-15_x15_nga_ngoi/README.md)
-  - **D1 8 người, 16/10** (N2 chỉ đầu, 3 seed, SPEC v3.1, 840 cú ngã, 3,88 giờ sinh hoạt): T_SCORE 8: ngã nằm → PRE_ALARM **96,2 / 96,4 / 96,2 % (TB 96,3 %)**, PRE_ALARM giả **0,77 / 0,77 / 0,51/giờ (TB 0,68)**, gộp 3 seed 95,3 % / 0,26; đứng dậy 0/166; trễ SUSPECT trung vị 0,86–0,88 s; trễ PRE_ALARM trung vị 4,12 s, **p90 5,92 s** (6 người: 5,21 s). Lần đầu trung bình 3 seed đạt cả ≥ 95 % và ≤ 1/giờ trên D1, nhưng chỉ 2–3 lần báo giả nên khoảng tin cậy rộng; vẫn phải đo trên mũ. Theo đúng điều kiện của đề cương ("≤ 5 s khi người nằm yên trong 2 s sau va chạm"): 366 cú ngã nằm đạt điều kiện → PRE_ALARM 355/366, trễ trung vị 3,83 s, **p90 4,36 s, lớn nhất 4,56 s, 0 cú > 5 s** (cả 3 seed); p90 5,92 s đến từ những cú ngã còn cử động quá 2 s. [ai09_8_nguoi](docs/bao_cao/2026-10-16_ai09_8_nguoi/README.md)
-  - **D1 11 người, 16/10 tối** (SPEC v3.1, 1.180 cú ngã, 5,43 giờ sinh hoạt): T_SCORE 8: ngã nằm → PRE_ALARM **96,4 / 95,8 / 96,4 % (TB 96,2 %)**, PRE_ALARM giả **0,92 / 0,74 / 1,66/giờ (TB 1,11)**, gộp 3 seed 95,6 % / 0,74; đứng dậy 0/234; mọi báo giả từ 815 (nằm xuống giường). T_SCORE 16: 0 / 0,37 / 0,92 giả/giờ nhưng ngã nằm 93,8 / 91,9 / 93,1 %. Trễ khi nằm yên trong 2 s: p90 4,32 s, lớn nhất 4,56 s, 0 cú > 5 s. Đề nghị giữ T_SCORE 8, chốt sau buổi thử đội mũ (≥ 2 giờ). [n2_11_nguoi](docs/bao_cao/2026-10-16_n2_11_nguoi/README.md)
+  - **D1 8 người, 16/10** (N2 chỉ đầu, 3 seed, SPEC v3.1, 840 cú ngã, 3,88 giờ sinh hoạt): T_SCORE 8: ngã nằm → PRE_ALARM **96,2 / 96,4 / 96,2 % (TB 96,3 %)**, PRE_ALARM giả **0,77 / 0,77 / 0,51/giờ (TB 0,68)**, gộp 3 seed 95,3 % / 0,26; đứng dậy 0/166; trễ SUSPECT trung vị 0,86–0,88 s; trễ PRE_ALARM trung vị 4,12 s, **p90 5,92 s** (6 người: 5,21 s). Lần đầu trung bình 3 seed đạt cả ≥ 95 % và ≤ 1/giờ trên D1, nhưng chỉ 2–3 lần báo giả nên khoảng tin cậy rộng; vẫn phải đo trên thiết bị đeo ngực. Theo đúng điều kiện của đề cương ("≤ 5 s khi người nằm yên trong 2 s sau va chạm"): 366 cú ngã nằm đạt điều kiện → PRE_ALARM 355/366, trễ trung vị 3,83 s, **p90 4,36 s, lớn nhất 4,56 s, 0 cú > 5 s** (cả 3 seed); p90 5,92 s đến từ những cú ngã còn cử động quá 2 s. [ai09_8_nguoi](docs/bao_cao/2026-10-16_ai09_8_nguoi/README.md)
+  - **D1 11 người, 16/10 tối** (SPEC v3.1, 1.180 cú ngã, 5,43 giờ sinh hoạt): T_SCORE 8: ngã nằm → PRE_ALARM **96,4 / 95,8 / 96,4 % (TB 96,2 %)**, PRE_ALARM giả **0,92 / 0,74 / 1,66/giờ (TB 1,11)**, gộp 3 seed 95,6 % / 0,74; đứng dậy 0/234; mọi báo giả từ 815 (nằm xuống giường). T_SCORE 16: 0 / 0,37 / 0,92 giả/giờ nhưng ngã nằm 93,8 / 91,9 / 93,1 %. Trễ khi nằm yên trong 2 s: p90 4,32 s, lớn nhất 4,56 s, 0 cú > 5 s. Đề nghị giữ T_SCORE 8, chốt sau buổi thử đeo thiết bị (≥ 2 giờ). [n2_11_nguoi](docs/bao_cao/2026-10-16_n2_11_nguoi/README.md)
   - **Quét VOTE_K trên 11 người (16/10):** VOTE_K 3 / T_SCORE 4: ngã nằm 96,4 %, 1,04 giả/giờ; VOTE_K 3 / T8: 94,9 % / 0,68; so với VOTE_K 2 / T8: 96,2 % / 1,11. Chênh lệch trong nhiễu (0–1 lần mỗi seed), VOTE_K 3 làm trễ SUSPECT p90 lên 1,33–1,36 s (giới hạn 1,5 s) → giữ VOTE_K 2 / T_SCORE 8, chốt trên buổi thử (`playback_log.py --vote-k --t-score`). [n2_11_nguoi](docs/bao_cao/2026-10-16_n2_11_nguoi/README.md) mục 6
 - [ ] **AI-11** (G6·2) Bảng FP32 / INT8 / RTL; recall sự kiện; báo giả mỗi giờ tính trên bản ghi — *Pass:* có bảng và confusion matrix trong `docs/bao_cao/`
-  - **Bản cho mô hình lên chip, 16/10** (N2 11 người): FP32 → INT8 mất ≤ 0,0001 Macro-F1; ma trận nhầm lẫn cộng 3 seed: NORMAL → FALL 658 / 318.641 (0,21 %), FALL lọt 92 / 10.611; RTL `tb_e2` 50/50, netlist sau P&R PASS, mô phỏng ghép firmware ↔ RTL 423/423. Bằng chứng: [n2_11_nguoi](docs/bao_cao/2026-10-16_n2_11_nguoi/README.md) mục 5. Pass vẫn cần số trên buổi thử đội mũ
+  - **Bản cho mô hình lên chip, 16/10** (N2 11 người): FP32 → INT8 mất ≤ 0,0001 Macro-F1; ma trận nhầm lẫn cộng 3 seed: NORMAL → FALL 658 / 318.641 (0,21 %), FALL lọt 92 / 10.611; RTL `tb_e2` 50/50, netlist sau P&R PASS, mô phỏng ghép firmware ↔ RTL 423/423. Bằng chứng: [n2_11_nguoi](docs/bao_cao/2026-10-16_n2_11_nguoi/README.md) mục 5. Pass vẫn cần số trên buổi thử đeo thiết bị
   - **Bảng sơ bộ 15/10 trên D1** (N2, N2-S × 3 seed): FP32 → INT8 mất ≤ 0,15 điểm Macro-F1; INT8 → RTL mất 0 (trùng từng bit, kể cả netlist sau P&R); ma trận nhầm lẫn N2 cộng 3 seed: FALL lọt 111/5.436, NORMAL → FALL 698/154.059 (0,45 %). Phương sai theo seed lớn gấp > 40 lần sai số lượng tử. Bằng chứng: [docs/bao_cao/2026-10-15_ai11_bang_so_bo/](docs/bao_cao/2026-10-15_ai11_bang_so_bo/README.md). Pass cần mô hình cuối trên D1 + D2 + D3
 - [ ] **AI-12** (·3) Lớp thứ tư (suýt ngã); thử huấn luyện trước bằng bộ ở cổ (FallAllD) hoặc ở thắt lưng (SisFall)
-- [ ] **AI-13** (G1·1) Nguồn D1: bộ "Simulated Falls and Daily Living Activities" của Özdemir và Barshan (UCI, số 455; 1,24 GB; CC BY 4.0) — bộ công khai duy nhất tìm được có cảm biến ở **đầu** (Xsens MTw, 25 Hz, gia tốc m/s², gyro rad/s). [tools/convert_d1.py](tools/convert_d1.py) lấy kênh đầu, xoay trục về quy ước của mũ cho từng người, nội suy 25 → 50 Hz, đổi về thang INT8 của A.2, cắt cửa sổ và gán nhãn theo A.4; [tools/plot_d1.py](tools/plot_d1.py) vẽ 20 kiểu ngã — *Pass:* đủ 17 người; mỗi người qua ba phép kiểm vị trí đầu; kênh Z khi đi bộ đọc 16 ± 2 mức; có biểu đồ mỗi kiểu ngã
+- [ ] **AI-13** (G1·1) Nguồn D1: bộ "Simulated Falls and Daily Living Activities" của Özdemir và Barshan (UCI, số 455; 1,24 GB; CC BY 4.0) — bộ công khai duy nhất tìm được có cảm biến ở **đầu** (Xsens MTw, 25 Hz, gia tốc m/s², gyro rad/s). [tools/convert_d1.py](tools/convert_d1.py) lấy kênh đầu, xoay trục về trục người (X trước, Y trái, Z lên) cho từng người, nội suy 25 → 50 Hz, đổi về thang INT8 của A.2, cắt cửa sổ và gán nhãn theo A.4; [tools/plot_d1.py](tools/plot_d1.py) vẽ 20 kiểu ngã — *Pass:* đủ 17 người; mỗi người qua ba phép kiểm vị trí đầu; kênh Z khi đi bộ đọc 16 ± 2 mức; có biểu đồ mỗi kiểu ngã
   - **Đã xong 13/10 cho 6/17 người** (101–106): 604 cú ngã + 499 hoạt động thường ngày; kênh Z đọc 15,2–16,0 mức; 604/604 cú ngã có đủ 3 cửa sổ dương; chỉ 0,003 % mẫu vượt 7,94 g và 0,05 % vượt 496 °/s nên thang INT8 hiện tại vừa. Bằng chứng: [docs/bao_cao/2026-10-13_d1_dau/](docs/bao_cao/2026-10-13_d1_dau/)
   - **Mã cảm biến ở đầu là 340540.** `Information.pdf` đi kèm ghi 340506 là đầu, nhưng trên cả 6 người thì 340506 quay 1,63–2,20 rad/s khi đi bộ, chỉ nghiêng 13–19° khi cúi và không đổi độ cao khi ngã (dấu hiệu của cổ chân); 340540 thì 0,16–0,39 rad/s, 71–106° và đổi độ cao nhiều nhất
   - **16/10: lên 8/17 người** (thêm 107, 108; máy thứ hai, [tools/fetch_d1.sh](tools/fetch_d1.sh) giải các người đã tải trọn từ file zip 643 MB tải dở). 840 cú ngã, 840/840 đủ 3 cửa sổ dương; 107 và 108 qua đủ ba phép kiểm vị trí đầu (340540: 0,28 / 0,31 rad/s, 82° / 110°, +0,080 / +0,099 hPa; kênh Z 15,3 mức). Phần 101–106 trùng từng byte bản cũ ở cả 3 cảm biến. Bản sao Kaggle thiếu nhiều file, không dùng. Bằng chứng: [docs/bao_cao/2026-10-16_d1_8_nguoi/](docs/bao_cao/2026-10-16_d1_8_nguoi/README.md)
   - **16/10 trưa: lên 11/17 người** (thêm 109, 110, 203 từ một lượt tải 840 MB). 203 lệch ở gyro và độ nghiêng khi cúi, nhưng Δp khi ngã của 340540 lớn nhất trong 6 cảm biến của chính người đó, nên vẫn là đầu. [d1_11_nguoi](docs/bao_cao/2026-10-16_d1_11_nguoi/README.md)
   - Còn lại: 6 người, cần một kết nối tới UCI giữ được khoảng 35–50 phút (mỗi kết nối 0,4–0,6 MB/s, không nhận Range, bị cắt sau 16–25 phút) rồi chạy `tools/fetch_d1.sh`; xác nhận độc lập mã cảm biến (X14)
-- [ ] **AI-14** (G3·1) Đo độ chênh giữa D1 và dữ liệu trên mũ, rẻ trước: (1) so phổ lúc đi bộ của D1 với D2 ở băng 12,5–25 Hz; (2) cho mô hình của AI-07 chạy trên các cú ngã thu thử của AI-03 và lập bảng nhầm lẫn — *Pass:* recall sự kiện ≥ 80 % và ≤ 10 % cú ngã bị gọi là IMPACT. *Không đạt thì lần lượt:* (a) lọc thêm `[1,2,1]/4` ở 50 Hz trên cả MCU lẫn pipeline để hai nguồn cùng băng tần (−6 dB ở 12,5 Hz, −20 dB ở 20 Hz; phải nâng SPEC lên v3.1 và sinh lại vector); (b) thêm SisFall đã giảm về 50 Hz để mạng thấy cú ngã có đủ băng tần tới 25 Hz; (c) tinh chỉnh bằng một nửa D3, đánh giá trên nửa kia, tách người; (d) quay về kế hoạch cũ: tự thu ≥ 250 cú ngã từ ≥ 8 người, mất khoảng 1 tuần
-  - **Chuẩn bị bước (1), 15/10:** [tools/spectrum_check.py](tools/spectrum_check.py) đo tỉ lệ công suất 12,5–25 Hz / 0,5–25 Hz của tín hiệu vào mạng lúc đi bộ. **D1 (32 bản ghi đi bộ): 0,06–0,49 % tùy trục**, tức băng này gần như trống như dự đoán; đối chứng thêm sóng 15 Hz thì 3–15 %. Khi có D2: `--log ml/data/raw/*_di_bo_*.csv` in tỉ số mũ / D1 theo trục. Bằng chứng: [docs/bao_cao/2026-10-15_ai14_pho_d1/](docs/bao_cao/2026-10-15_ai14_pho_d1/pho_d1_di_bo.log)
+- [ ] **AI-14** (G3·1) Đo độ chênh giữa D1 và dữ liệu trên thiết bị đeo ngực, rẻ trước: (1) so phổ lúc đi bộ của D1 với D2 ở băng 12,5–25 Hz; (2) cho mô hình của AI-07 chạy trên các cú ngã thu thử của AI-03 và lập bảng nhầm lẫn — *Pass:* recall sự kiện ≥ 80 % và ≤ 10 % cú ngã bị gọi là IMPACT. *Không đạt thì lần lượt:* (a) lọc thêm `[1,2,1]/4` ở 50 Hz trên cả MCU lẫn pipeline để hai nguồn cùng băng tần (−6 dB ở 12,5 Hz, −20 dB ở 20 Hz; phải nâng SPEC lên v3.1 và sinh lại vector); (b) thêm SisFall đã giảm về 50 Hz để mạng thấy cú ngã có đủ băng tần tới 25 Hz; (c) tinh chỉnh bằng một nửa D3, đánh giá trên nửa kia, tách người; (d) quay về kế hoạch cũ: tự thu ≥ 250 cú ngã từ ≥ 8 người, mất khoảng 1 tuần
+  - **Chuẩn bị bước (1), 15/10:** [tools/spectrum_check.py](tools/spectrum_check.py) đo tỉ lệ công suất 12,5–25 Hz / 0,5–25 Hz của tín hiệu vào mạng lúc đi bộ. **D1 (32 bản ghi đi bộ): 0,06–0,49 % tùy trục**, tức băng này gần như trống như dự đoán; đối chứng thêm sóng 15 Hz thì 3–15 %. Khi có D2: `--log ml/data/raw/*_di_bo_*.csv` in tỉ số thiết bị / D1 theo trục. Bằng chứng: [docs/bao_cao/2026-10-15_ai14_pho_d1/](docs/bao_cao/2026-10-15_ai14_pho_d1/pho_d1_di_bo.log)
 
 ### RTL-A — giao tiếp và lên chip
 
@@ -442,8 +450,8 @@ Ký hiệu: `(cổng · tầng)`. Chỉ đánh `[x]` khi đạt *Pass* và có b
 - [ ] **TH-01** (G0·1) Repo Git; cấu trúc `docs/ firmware/ rtl/ ml/ tools/`; chép Phụ lục A thành `docs/spec.md`; tạo `docs/bao_cao/` — *Pass:* cả nhóm clone được
   - 15/10: repo GitHub private `danhle396/fpga2026gowin`; cấu trúc và `docs/bao_cao/` có sẵn. `docs/spec.md` sinh bằng `tools/sync_spec.py` từ Phụ lục A (bản gốc vẫn là Phụ lục A; `--check` báo lệch). Máy thứ hai đã clone và chạy được cả chuỗi kiểm ([may2_icarus12](docs/bao_cao/2026-10-15_may2_icarus12/README.md)). **Còn thiếu:** từng thành viên tự clone được (mời vào repo private)
 - [ ] **TH-02** (G0·1) Xác nhận Phụ lục E trên board thật: tìm sơ đồ `32F407 EVK V1.0.pdf` và chép vào `docs/datasheet/` (sơ đồ Kiwi và datasheet MCU đã chép 14/10); tám chân MCU mới chọn ở E.1 có ra header và còn trống không; dò 6 chân J1 của Kiwi theo E.4 — *Pass:* mọi dòng ở E.1 có dấu "đã kiểm"; không chân nào trùng chân nạp; đo I/O hai board đều 3,3 V
-- [ ] **TH-03** (G0·1) Vật tư: logic analyzer 8 kênh, mũ bảo hộ, một nút nhấn (v2.1, nối song song SW3: P2.4 xuống GND), đệm ≥ 10 cm, power bank, cáp 4 lõi ≤ 50 cm — *Pass:* đủ đồ
-- [ ] **TH-04** (G1·1) Gắn IMU lên mũ theo A.1; ghi `AZ_dung_yen` — *Pass:* lắc mạnh không lỏng; giá trị ≈ +2048
+- [ ] **TH-03** (G0·1) Vật tư: logic analyzer 8 kênh, dây đeo ngực, một nút nhấn (v2.1, nối song song SW3: P2.4 xuống GND), đệm ≥ 10 cm, power bank, cáp 4 lõi ≤ 50 cm — *Pass:* đủ đồ
+- [ ] **TH-04** (G1·1) Gắn IMU lên dây đeo ngực theo A.1; ghi `AZ_dung_yen` — *Pass:* lắc mạnh không lỏng; giá trị ≈ +2048
 - [ ] **TH-05** (G2·1) Ảnh logic analyzer một giao dịch ghi, một giao dịch đọc — *Pass:* lưu trong `docs/bao_cao/`
 - [ ] **TH-06** (G3·1) An toàn và tổ chức buổi thu: đệm, bảo hộ, người đứng cạnh, giấy đồng ý — *Pass:* mọi người tham gia đã ký
 - [ ] **TH-07** (G4·1) `tools/hil_test.py`; chạy HIL — *Pass:* ≥ 500 cửa sổ, 0 sai lệch CLASS, SCORE, 4 LOGIT
@@ -451,9 +459,9 @@ Ký hiệu: `(cổng · tầng)`. Chỉ đánh `[x]` khi đạt *Pass* và có b
 - [ ] **TH-08** (G4·1) Mũ bản 1: hộp hai board + pin, đầu nối chắc, thử tầng 1 — *Pass:* điều kiện cổng G4
 - [ ] **TH-09** (G5·2) HIL với E2 — *Pass:* ≥ 2.000 cửa sổ, 0 sai lệch
 - [ ] **TH-10** (G6·2) Thử thực địa — *Pass:* ≥ 2 người lạ, ≥ 18/20 cú ngã vào PRE_ALARM; ≥ 2 giờ tổng từ ≥ 2 người ≤ 1 báo giả/giờ; va mũ khi đang đội 20 lần ≥ 18 lần không vào PRE_ALARM; rơi mũ 20 lần: đếm số lần vào PRE_ALARM, mọi lần hủy được bằng CANCEL (v2.1); SUSPECT ≤ 1,5 s, PRE_ALARM ≤ 5 s; đo dòng 5 V từng board
-  - **Công cụ chấm sẵn 16/10:** [tools/playback_log.py](tools/playback_log.py) phát lại file LOG của buổi thử qua đúng chuỗi của thiết bị (trùng mã máy `app_core.c` 15/15 lần đổi trạng thái) và in Pass: ngã kết thúc nằm → PRE_ALARM, ngã rồi đứng dậy phải 0, báo giả/giờ trên file đội mũ (tự hủy sau 2 s để đếm đủ), va mũ → PRE_ALARM (đường lùi IMPACT). [playback_log](docs/bao_cao/2026-10-16_playback_log/README.md)
+  - **Công cụ chấm sẵn 16/10:** [tools/playback_log.py](tools/playback_log.py) phát lại file LOG của buổi thử qua đúng chuỗi của thiết bị (trùng mã máy `app_core.c` 15/15 lần đổi trạng thái) và in Pass: ngã kết thúc nằm → PRE_ALARM, ngã rồi đứng dậy phải 0, báo giả/giờ trên file đeo thiết bị (tự hủy sau 2 s để đếm đủ), va mũ → PRE_ALARM (đường lùi IMPACT). [playback_log](docs/bao_cao/2026-10-16_playback_log/README.md)
 - [ ] **TH-11** (G7·2) Báo cáo, slide, video dự phòng, README build, gắn tag — *Pass:* giảng viên hướng dẫn duyệt
-  - **Bản nháp 16/10:** [docs/bao_cao_cuoi/BAO_CAO_KY_THUAT_nhap.md](docs/bao_cao_cuoi/BAO_CAO_KY_THUAT_nhap.md) — kiến trúc, phương pháp kiểm chứng nhiều tầng, dữ liệu và huấn luyện, bảng kết quả theo 11 chỉ tiêu cam kết của đề cương (cột mô phỏng / dữ liệu công khai đã điền; cột trên chip / trên mũ đánh dấu [CHỜ ĐO]). Chưa có slide, video
+  - **Bản nháp 16/10:** [docs/bao_cao_cuoi/BAO_CAO_KY_THUAT_nhap.md](docs/bao_cao_cuoi/BAO_CAO_KY_THUAT_nhap.md) — kiến trúc, phương pháp kiểm chứng nhiều tầng, dữ liệu và huấn luyện, bảng kết quả theo 11 chỉ tiêu cam kết của đề cương (cột mô phỏng / dữ liệu công khai đã điền; cột trên chip / trên thiết bị đeo ngực đánh dấu [CHỜ ĐO]). Chưa có slide, video
 - [ ] **TH-12** (G1 · tùy chọn; nhóm có ESP32) Mạch ghi dữ liệu: `test_sensor/esp32/mpu6050_test.py` đổi sang thang A.1 (dòng 22–23 và 157: `0x18`; ngưỡng dòng 224–229), thêm một chân nút đánh dấu — *Pass:* T1..T7 PASS; 10 phút không mất mẫu; file đọc được bằng `tools/logger.py`. Thay được FW-04..06 trong điều kiện của G1; firmware SN32 vẫn phải có trước G2
 - [ ] **TH-13** (G2 · tùy chọn; nhóm có ESP32) Đồ gá SPI: ESP32 làm master (3,3 V), PC điều khiển qua cổng nối tiếp, gửi khung và đọc kết quả — *Pass:* 20 vector khớp golden. Cho phép kiểm FPGA trên chip (RA-05, TH-07, TH-09) mà không chờ `spi_fpga.c` của SN32. Cách khác không cần nối dây: thêm `uart_rx`/`uart_tx` vào RTL và đi qua CH340N có sẵn trên Kiwi (FPGA nhận ở C4, phát ở B5)
 
@@ -500,8 +508,8 @@ Quy tắc testbench: đọc file bằng `$readmemh`, tự so, in `PASS` hoặc `
 | I²C treo sau reset | Slave giữ SDA | 9 xung SCL bằng GPIO lúc khởi động |
 | MCU hoặc FPGA nóng, đọc sai | VDD của EVK đang là 5 V (SW1 hoặc jumper J1 sai) | Đặt theo E.4 bước 1, đo VDD trước khi cắm dây |
 | Khung SPI đọc về sai lẻ tẻ, MISO có hai mức lạ | Flash SPI của EVK cũng đang được chọn | Giữ P1.8 mức cao; làm phép thử E.4 bước 2 |
-| Huấn luyện 99 % nhưng thử thật kém | Chia ngẫu nhiên theo cửa sổ; mũ gắn lệch chiều | Dùng LOSO; kiểm `AZ_dung_yen` |
-| Báo giả khi đặt mũ xuống bàn | Quên tắt hệ thống; mũ nằm nghiêng và bất động | Nhấn nhanh 2 lần để tắt trước khi tháo mũ; CANCEL trong 10 s; đường lùi: lớp IMPACT hoặc quy tắc rơi tự do |
+| Huấn luyện 99 % nhưng thử thật kém | Chia ngẫu nhiên theo cửa sổ; cảm biến gắn lệch chiều | Dùng LOSO; kiểm `AZ_dung_yen` |
+| Báo giả khi đặt thiết bị xuống bàn | Quên tắt hệ thống; thiết bị nằm nghiêng và bất động | Nhấn nhanh 2 lần để tắt trước khi tháo thiết bị; CANCEL trong 10 s; đường lùi: lớp IMPACT hoặc quy tắc rơi tự do |
 | HIL lệch vài cửa sổ hiếm | Giá trị biên, bão hòa | Lấy đúng cửa sổ đó làm test vector, so từng tầng |
 
 ---
@@ -517,7 +525,7 @@ Mọi tính năng tầng 2–3 tắt được mà không hỏng tầng 1.
 | `DECIM` | `config.h` + `windowing.py` | 2 | 2 | 1 = mạng nhận 100 Hz, cửa sổ 1,28 s. Chỉ dùng được khi mọi nguồn huấn luyện có ≥ 100 Hz; D1 chỉ có 25 Hz nên hiện không dùng được |
 | `VOTE_K` | `config.h` | 1 | 2 | Một cửa sổ FALL là đủ |
 | `TILT_EN` | `config.h` | 0 | 1 | Chỉ cần bất động |
-| `WEAR_PRESENT` | `firmware/src/board.h` | 0 | 0 (v2.1 bật/tắt bằng nút; chỉ đặt 1 nếu có cảm biến đội mũ trên P2.3) | Coi như luôn đội |
+| `WEAR_PRESENT` | `firmware/src/board.h` | 0 | 0 (v2.1 bật/tắt bằng nút; chỉ đặt 1 nếu có cảm biến đeo thiết bị trên P2.3) | Coi như luôn đội |
 | `BTN_POWER` | `firmware/src/fw_config.h` | 1 | 1 | Nút chỉ còn CANCEL/SOS, hệ thống luôn bật |
 | `SOS_EN`, `SELFTEST_EN` | `config.h` | 0 | 1 | Bỏ tính năng |
 | `PROTO` | `config.h` + RTL | 3 | 3 | 1 = khung CRC-8 hiện có |
@@ -525,14 +533,14 @@ Mọi tính năng tầng 2–3 tắt được mà không hỏng tầng 1.
 
 | Nếu… | Thì… | Mất gì |
 |---|---|---|
-| D1 không dùng được trên mũ (AI-14 không đạt sau các bước a, b, c) | Tự thu ≥ 250 cú ngã từ ≥ 8 người như kế hoạch cũ | Khoảng 1 tuần; phải sửa lại mục dữ liệu của đề cương |
+| D1 không dùng được trên thiết bị đeo ngực (AI-14 không đạt sau các bước a, b, c) | Tự thu ≥ 250 cú ngã từ ≥ 8 người như kế hoạch cũ | Khoảng 1 tuần; phải sửa lại mục dữ liệu của đề cương |
 | D2 ít | **Đã áp dụng ở v2.1 (16/10):** gộp IMPACT vào NORMAL (2 lớp), dựa vào nút bật/tắt và FSM; đề cương đã sửa | Macro-F1 thành 2 lớp |
 | N2 không hơn N1 | Giữ N1 | Không mất gì |
 | E2 chưa xong | Chạy N2 trên E1 mở rộng, ≈ 14 ms | Chỉ mất chỉ tiêu ≤ 6 ms; mô hình và các chỉ tiêu nhận dạng không bị ảnh hưởng |
 | Giao thức v3 chậm | `PROTO = 1` | SEQ, STATUS, CRC-16 |
 | Timing không đạt 50 MHz | Chạy 27 MHz không PLL, SCK ≤ 2 MHz | Thời gian suy luận gấp 1,86 lần |
 | I²C phần cứng trục trặc | `i2c_soft.c` | ≈ 1,2 ms mỗi mẫu |
-| Không làm được cảm biến đội mũ | **Đã áp dụng ở v2.1:** một nút bấm bật/tắt (`pwr_btn.c`, `BTN_POWER = 1`) | Không phát hiện được mũ văng khi chưa SUSPECT (vốn cũng không xét sau SUSPECT) |
+| Không làm được cảm biến đeo thiết bị | **Đã áp dụng ở v2.1:** một nút bấm bật/tắt (`pwr_btn.c`, `BTN_POWER = 1`) | Không phát hiện được mũ văng khi chưa SUSPECT (vốn cũng không xét sau SUSPECT) |
 | Chưa có OLED | Hiện trạng thái bằng LED 7 đoạn 4 số trên EVK (P0.0–P0.7, P1.9–P1.12), quét bằng ngắt timer | Chữ hiển thị rút gọn; đề cương ghi OLED nên phải nêu trong báo cáo |
 | Hỏng phần cứng lúc demo | Video dự phòng + HIL trên PC | — |
 
@@ -540,19 +548,21 @@ Mọi tính năng tầng 2–3 tắt được mà không hỏng tầng 1.
 
 ## 10. Metrics theo tầng
 
-> Cập nhật 2026-10-14. Cột "Hiện tại" chỉ ghi số đã đo.
+> Cập nhật 2026-10-14; dòng "Chạy độc lập" và hai dòng đeo ngực cập nhật 2026-10-28. Cột "Hiện tại" chỉ ghi số đã đo. Cách đọc "mũ" khi đeo ngực: ghi chú đầu mục 5.
 
 | Chỉ tiêu | Tầng 1 | **Tầng 2 (cam kết)** | Tầng 3 | Hiện tại |
 |---|---|---|---|---|
-| Chạy độc lập trên mũ | Có | Có, kèm tự kiểm khi bật nguồn | — | Chưa |
+| Chạy độc lập trên thiết bị đeo ngực (từ 28/10: đeo ngực) | Có | Có, kèm tự kiểm khi bật nguồn | — | **Có (28/10): đeo ngực, chạy pin, tự kiểm FPGA PASS khi khởi động;** chưa có buổi đeo dài có số đo |
+| Đeo ngực: động tác dễ nhầm không báo ngã (log nhóm, chạy lại lõi ESP32) | — | — | — | **28/10, `nga.c` bản 3:** ngồi phịch xuống ghế 0/10; cả log động tác (cúi, đi, nằm xuống, ngồi dậy, lăn) 0 lần; ngưỡng chọn trên chính log này |
+| Đeo ngực: ngã lên nệm được báo (log nhóm, chạy lại lõi ESP32) | — | — | — | **28/10:** 14/15 (một người, một buổi) |
 | Số lớp | 2 (NORMAL, FALL) | **2 lớp NORMAL / FALL** (v2.1) | + IMPACT, suýt ngã | 2 lớp trên D1 |
 | Recall FALL mức sự kiện, LOSO trên D1 | ≥ 85 % | **≥ 95 %** | ≥ 98 % | INT8, 6/17 người, chưa có D2: N1 85,3 % (1 seed) · **N2 98,7 %** · N2-S 98,6 % (trung bình 3 seed, 15/10) · 8/17 người (16/10): N2 99,6 % · **11/17 người (16/10): N2 99,6 %** (TB 3 seed) |
-| Recall FALL mức sự kiện trên D3 (ngã khi đội mũ, chạy lại bản ghi) | ≥ 80 % | ≥ 90 % (≥ 18/20) | ≥ 95 % | chưa đo |
+| Recall FALL mức sự kiện trên D3 (ngã khi đeo thiết bị, chạy lại bản ghi) | ≥ 80 % | ≥ 90 % (≥ 18/20) | ≥ 95 % | chưa đo |
 | Macro-F1 2 lớp mức cửa sổ, LOSO trên D1 (v2.1) | — | **≥ 0,90** | ≥ 0,93 | trung bình 3 seed trên D1: N2 0,968, N2-S 0,945 (N1 0,861); 8 người (16/10): N2 0,977; **11 người (16/10): N2 0,983** |
-| Thử trực tiếp trên mũ | ≥ 8/10 | **≥ 18/20 với ≥ 2 người, dữ liệu của họ không dùng để huấn luyện** | — | chưa |
-| Báo giả sau Safety FSM | — | **≤ 1 PRE_ALARM giả/giờ** (≥ 2 giờ tổng từ ≥ 2 người; v2.1) | 0 trong 3 giờ | phát lại sinh hoạt D1 (không đội mũ, 2,65 giờ), trung bình 3 seed, SPEC v3.1: N2 T_SCORE 8: 1,26/giờ; gộp 3 seed N2: 0,75/giờ (trước v3.1: 5,91 / 4,91) (15/10) · 8 người, 3,88 giờ (16/10): N2 T_SCORE 8: TB 0,68/giờ; gộp 0,26/giờ (2–3 lần mỗi seed) · **11 người, 5,43 giờ (16/10): T_SCORE 8 TB 1,11/giờ (0,92 / 0,74 / 1,66; toàn bộ từ 815 nằm xuống giường), gộp 0,74/giờ** — vượt nhẹ, chốt trên buổi thử đội mũ |
-| Va mũ khi đang đội không gây PRE_ALARM | — | **≥ 18/20** | 20/20 | chưa |
-| Rơi mũ khi hệ thống đang bật (v2.1) | — | **báo cáo số lần PRE_ALARM; 100 % hủy được trước ALARM** | 0 lần PRE_ALARM | chưa |
+| Thử trực tiếp trên thiết bị đeo ngực | ≥ 8/10 | **≥ 18/20 với ≥ 2 người, dữ liệu của họ không dùng để huấn luyện** | — | chưa |
+| Báo giả sau Safety FSM | — | **≤ 1 PRE_ALARM giả/giờ** (≥ 2 giờ tổng từ ≥ 2 người; v2.1) | 0 trong 3 giờ | phát lại sinh hoạt D1 (không đeo thiết bị, 2,65 giờ), trung bình 3 seed, SPEC v3.1: N2 T_SCORE 8: 1,26/giờ; gộp 3 seed N2: 0,75/giờ (trước v3.1: 5,91 / 4,91) (15/10) · 8 người, 3,88 giờ (16/10): N2 T_SCORE 8: TB 0,68/giờ; gộp 0,26/giờ (2–3 lần mỗi seed) · **11 người, 5,43 giờ (16/10): T_SCORE 8 TB 1,11/giờ (0,92 / 0,74 / 1,66; toàn bộ từ 815 nằm xuống giường), gộp 0,74/giờ** — vượt nhẹ, chốt trên buổi thử đeo thiết bị |
+| Va mũ khi đang đội không gây PRE_ALARM (không áp dụng khi đeo ngực) | — | **≥ 18/20** | 20/20 | chưa |
+| Rơi mũ khi hệ thống đang bật (v2.1; không áp dụng khi đeo ngực) | — | **báo cáo số lần PRE_ALARM; 100 % hủy được trước ALARM** | 0 lần PRE_ALARM | chưa |
 | Va chạm → SUSPECT / PRE_ALARM | ≤ 2 s / ≤ 6 s | **≤ 1,5 s / ≤ 5 s** | trung vị ≤ 1,0 s | phát lại D1 (N2-S): trung vị 0,84 s / 4,08 s; p90 1,03 s / 5,32 s (14/10) · 8 người, N2 (16/10): trung vị 0,88 s / 4,12 s; p90 1,04 s / 5,92 s trên mọi cú ngã; **chỉ tính ngã nằm yên trong 2 s như đề cương: PRE_ALARM trung vị 3,83 s, p90 4,36 s, lớn nhất 4,56 s** |
 | Suy luận FPGA | ≤ 15 ms | **≤ 6 ms** | ≤ 2 ms (P = 4) | E1: 13,96 ms · E2: N2 5,15 ms, **N2-S 2,65 ms**; P = 4: 1,50 / 0,80 ms (mô phỏng 14/10) |
 | So với MCU-only | — | **có số đo; FPGA nhanh hơn ≥ 5 lần** | ≥ 20 lần | dự toán bằng đếm lệnh (chưa đo chip): MCU N2-S 39–119 ms → E2 nhanh hơn 14,8–44,9 lần; E1 so N1: 5,3–16,7 lần |
@@ -576,19 +586,20 @@ Tạm tính từ 13/10/2026; phải chỉnh theo lịch BTC.
 | 4 (03–09/11) | FW-14, FW-15 | AI-08..10 | RA-07, RA-08 | RB-04, hỗ trợ HIL | TH-09 | G5 |
 | 5 (10–16/11) | Chỉnh ngưỡng, sửa lỗi | AI-11 | Hỗ trợ đo | (RB-05 nếu G6 đã qua) | TH-10, TH-11 | G6, G7 |
 
-Không có tuần đệm. Cuối tuần 3 phải có mũ tầng 1; nếu trễ thì cắt theo mục 9, không kéo dài.
+Không có tuần đệm. Cuối tuần 3 phải có thiết bị tầng 1; nếu trễ thì cắt theo mục 9, không kéo dài.
 
 ---
 
 ## 12. Kịch bản demo (3–5 phút)
 
-1. Bật nguồn: tự kiểm FPGA, LED 7 đoạn hiện trạng thái MONITOR. Đội mũ, đi lại, cúi, quay đầu.
-2. Nhấn nhanh 2 lần (bíp dài) → `STANDBY`, tháo mũ, thả rơi mũ → không báo động.
-3. Đội lại, giữ nút 2 s (2 bíp ngắn) để bật, va mũ vào xà → không báo động (người vẫn đứng, không bất động).
-4. Ngã trên đệm, nằm yên → `SUSPECT` → `PRE_ALARM`, đếm ngược → bấm CANCEL.
-5. Ngã lần nữa, không bấm → `ALARM`.
-6. Đứng dậy, giữ nút 3 s → báo động SOS.
-7. Màn hình PC: HIL khớp 100 %; bảng E1 → E2 → MCU-only; bảng tài nguyên và timing.
+1. Bật nguồn pin: ESP32 tự kiểm FPGA (web: "Tự kiểm FPGA lúc khởi động PASS"), trạng thái ĐANG THEO DÕI. Mở trang web `http://<IP ESP32>/` trên laptop / điện thoại.
+2. Đeo thiết bị ở ngực, đứng, ngồi, cúi, nằm ngửa, nằm nghiêng → thẻ "Tư thế hiện tại" đổi theo; không báo ngã.
+3. Ngồi phịch xuống ghế thật mạnh, nằm xuống giường, lăn người khi đang nằm → không báo ngã (CNN có thể nghi, `nga.c` loại).
+4. Ngã xuống nệm rồi đứng dậy → PHÁT HIỆN NGÃ, còi bíp, "Số lần phát hiện ngã" tăng; tự về ĐANG THEO DÕI sau 8 s.
+5. Ngã xuống nệm rồi nằm yên → PHÁT HIỆN NGÃ → CẢNH BÁO đếm ngược 10 s → bấm "Hủy cảnh báo" (hoặc nút SW3).
+6. Ngã lần nữa, nằm yên, không bấm → BÁO ĐỘNG; giữ nút 1 s để tắt.
+7. Đứng, giữ nút SW3 3 s → BÁO ĐỘNG SOS. Nhấn nhanh 2 lần → TẮT; "Bật lại hệ thống" trên web.
+8. Màn hình PC: bảng kiểm (`test.sh`, `m0_test` khớp golden từng bit), bảng tài nguyên và timing FPGA, bảng số đo ngồi mạnh / ngã của `nga.c`.
 
 Luôn có video dự phòng.
 
@@ -600,15 +611,18 @@ Luôn có video dự phòng.
 |---|---|
 | Mạng nhỏ thế, MCU chạy được, cần FPGA làm gì? | Số đo MCU-only (FW-15) so với FPGA; bước 0,32 s khiến MCU phải dành phần lớn CPU cho suy luận trong khi vẫn lấy mẫu 100 Hz và lái giao diện; FPGA cho thời gian cố định đếm được từng chu kỳ. Thừa nhận: với mạng cỡ này MCU-only khả thi, lợi ích là dư địa và tính xác định |
 | Ngã giả lập có giống ngã thật? | Không hoàn toàn. Cả D1 lẫn D3 đều là ngã giả lập của người tình nguyện; phạm vi đề tài ghi rõ điều này; báo cáo kèm số ca tuyệt đối; đánh giá tách người |
-| Huấn luyện bằng dữ liệu người khác thu, cảm biến buộc ở đầu chứ không nằm trên mũ, thì có đúng với mũ không? | Không mặc nhiên đúng, nên nhóm đo: AI-14 đo độ chênh ở tuần 3, và mọi mô hình đều phải qua D3 (≥ 20 cú ngã khi đội mũ, v2.1) cùng thử trực tiếp ≥ 18/20. Lý do chọn cách này: đã có sẵn 604 cú ngã của 6 người (bộ đầy đủ là 17 người) thay cho 250 cú phải tự thu, và người tình nguyện chỉ phải ngã ≥ 40 lần |
+| CNN học từ cảm biến ở đầu (D1), sao dùng được khi đeo ngực? | Chưa huấn luyện lại cho ngực, nên CNN chỉ là bước **nghi**. Quyết định cuối là tầng `nga.c` (A.12), ngưỡng chọn từ log đeo ngực của nhóm: ngồi mạnh báo nhầm 0/10, ngã lên nệm 14/15. Thừa nhận: ngưỡng chọn trên chính log chấm, một người; huấn luyện CNN trên kênh ngực là việc mở |
+| Ngồi phịch xuống ghế va chạm tới 6 g, mạnh hơn cả ngã, sao phân biệt? | Va chạm một mình không phân biệt được. Log đeo ngực: ngồi mạnh ngực nghiêng ≤ 31°, quay ≤ 149 °/s; ngã nghiêng 58–80°, quay 258–467 °/s. `nga.c` cần cả quay ≥ 220 °/s lẫn nghiêng ≥ 45° |
+| Ngã ngồi / ngã quỳ thì sao? | Không báo, nhóm chấp nhận: với cảm biến ở ngực, kiểu ngã thân vẫn thẳng giống hệt ngồi phịch xuống ghế. Người còn tỉnh dùng SOS (giữ nút 3 s). D1 người 102: 15 bản ghi kiểu này đều không báo |
+| Cảm biến bị treo thì sao? | MCU tự gỡ bus và cấu hình lại mỗi giây; quá 3 s không có mẫu thì ESP32 báo MẤT CẢM BIẾN (web đỏ, còi 2 bíp mỗi 3 s), không im lặng. Cảm biến treo trong chip (SDA = SCL = 1, cấu hình lại không trả lời) chỉ hết khi cắt nguồn; nghi sụt áp 3,3 V khi WiFi phát [CẦN XÁC MINH]. Sản phẩm thật: nguồn riêng có công tắc tắt / bật cảm biến |
 | Người ngã còn tỉnh nhưng không dậy được? | Nút SOS giữ 3 s; trạng thái SUSPECT vẫn được ghi log |
-| Mũ văng khỏi đầu khi ngã? | Từ SUSPECT trở đi bỏ qua trạng thái bật/tắt (WEAR); mũ nằm yên và nghiêng vẫn dẫn tới báo động — cố ý thiên về an toàn |
+| Vì sao đeo ngực mà không đội mũ như đề cương? | Nhóm chuyển sang dây đeo ngực ngày 28/10. Ưu điểm có thể nêu: thiết bị gắn vào thân nên không văng ra khi ngã như mũ, và hướng ngực cho biết tư thế thân người (đứng / ngồi / cúi / nằm). Các số đo trên mũ / kênh đầu trước đó vẫn ghi rõ nguồn |
 | Lượng tử hóa mất bao nhiêu? | Bảng FP32 / INT8 / RTL; trên SisFall đã đo −1 đến −2 điểm recall FALL |
 | Làm sao biết phần cứng tính đúng? | HIL ≥ 2.000 cửa sổ khớp từng bit; tự kiểm LFSR mỗi lần bật nguồn |
 | Số ≤ 6 ms lấy từ đâu? | E2 đã có trong mô phỏng (14/10): N2 5,15 ms, N2-S 2,65 ms với 1 làn, khớp golden ở mọi tầng 50/50; bản E1 đo được 13,96 ms. Chưa đo trên chip |
 | 50 Hz có bắt được xung va chạm? | Cảm biến chạy 100 Hz, mạng nhận 50 Hz. Thừa nhận: các cú ngã huấn luyện (D1) chỉ có 25 Hz, nên mạng không học được thành phần trên 12,5 Hz của cú ngã; va đập mũ (D2) thì có đủ tới 25 Hz. AI-14 đo xem điều này có gây nhầm không |
 | ±8 g có bão hòa khi va mũ? | Ghi thô ±16 g; tỉ lệ vượt 8 g được đo ở AI-03 trước khi chốt |
-| Không ai ở gần thì còi có ích gì? | Hướng mở rộng: truyền không dây; ngoài phạm vi cam kết |
+| Không ai ở gần thì còi có ích gì? | ESP32 đã phát trạng thái lên trang web qua WiFi (người giám sát xem từ xa trong cùng mạng); gửi tin nhắn / thông báo ra ngoài mạng là hướng mở rộng |
 | Ba cửa sổ chồng nhau 87,5 % thì bỏ phiếu có thêm thông tin gì? | Ba cửa sổ nhìn sự kiện ở ba vị trí khác nhau và với lượng dữ liệu sau va chạm khác nhau (0,48–1,42 s). Lợi ích thật được đo ở AI-10: so `VOTE_K = 1` với `VOTE_K = 2` trên cùng dữ liệu |
 | Số người ít thì kết luận được gì? | D1 có 17 người theo tài liệu đi kèm (đã tải 8), buổi thử có ≥ 2 người. Vẫn ít, nên báo cáo số ca tuyệt đối, tách người, ghi rõ nguồn của từng con số, và có thử trực tiếp với người ngoài tập huấn luyện |
 | Sao không tính lũy tiến khi hai cửa sổ liền nhau trùng 87,5 %? | Khung độc lập thì kiểm chứng từng bit được qua HIL và không mất đồng bộ khi rớt một khung; FPGA còn dư thời gian hơn 20 lần |
@@ -630,7 +644,9 @@ Luôn có video dự phòng.
 | Ngắt data-ready | 0x01 | `INT_ENABLE` 0x38 |
 | Đọc dữ liệu | burst 14 byte từ 0x3B: AX AY AZ TEMP GX GY GZ, byte cao trước | 0x3B–0x48 |
 
-**Gắn trên mũ:** đỉnh hoặc phía sau mũ, đệm xốp mỏng, **Z hướng lên trời, X hướng về trước** khi đội mũ đứng thẳng. `AZ_dung_yen = ______` (phải ≈ +2048). Đóng băng ở cổng G1.
+**Gắn ở ngực (từ 28/10, `FW_VI_TRI_DEO 1`):** module trên dây đeo ngực. ESP32 đổi trục cảm biến về **trục người: X hướng về trước, Y sang trái, Z lên trời** khi đứng thẳng: X người = +Z cảm biến, Y người = −X cảm biến, Z người = −Y cảm biến (`TRUC_X/Y/Z` trong `fw_config.h`, đo bằng `ghi_uart --tu-the` + `tools/truc_cam_bien.py`), rồi trừ offset gia tốc `ACC_OFF` = (204, −3, −4) LSB theo trục người (đo khi đeo, 9 tư thế yên). Mọi xử lý từ A.2 trở đi dùng trục người. Đổi cảm biến hay cách đeo thì đo lại.
+
+*Thiết kế ban đầu (mũ):* đỉnh hoặc phía sau mũ, Z hướng lên trời, X hướng về trước khi đội mũ đứng thẳng (`FW_VI_TRI_DEO 0`, không đổi trục).
 
 ### A.2 Tiền xử lý trên MCU
 
@@ -749,8 +765,9 @@ Chế độ RUN đọc 7 byte; chế độ HIL đọc 20 byte. Không có kết 
 |---|---|
 | MONITOR → STANDBY | `WEAR = 0` (hệ thống TẮT bằng nút) liên tục 3 s |
 | STANDBY → MONITOR | `WEAR = 1` (hệ thống BẬT) |
-| MONITOR → SUSPECT | `fall_votes ≥ VOTE_K` và mũ đã được đội trong 3 s gần nhất |
-| SUSPECT → PRE_ALARM | `still_run ≥ STILL_BLOCKS` và (nếu `TILT_EN`) **`\|az_tb\| < T_TILT`**: đầu nằm ngang, lệch 45°–135° khỏi phương thẳng đứng (v3.1, 15/10) |
+| MONITOR → SUSPECT | `fall_votes ≥ VOTE_K` và hệ thống BẬT (`WEAR = 1`) trong 3 s gần nhất |
+| SUSPECT → PRE_ALARM | `still_run ≥ STILL_BLOCKS` và (nếu `TILT_EN`) **`\|az_tb\| < T_TILT`**: ngực (trục Z người) nằm ngang, lệch 45°–135° khỏi phương thẳng đứng (v3.1, 15/10) |
+| SUSPECT, PRE_ALARM → MONITOR | Tầng xác nhận ngã thật (A.12) loại lần nghi (`safety_bo_nghi`, lý do `WHY_KHONG_NGA`) |
 | SUSPECT → MONITOR | Quá `SUSPECT_TIMEOUT` |
 | PRE_ALARM → MONITOR | Bấm CANCEL |
 | PRE_ALARM → ALARM | Hết `PRE_ALARM_TIME` |
@@ -765,14 +782,14 @@ Từ SUSPECT trở đi bỏ qua WEAR. IMPACT khi đang đội (chỉ khi bật l
 - ở MONITOR, nhấn nhanh 2 lần (mỗi lần < 0,4 s, lần 2 bắt đầu < 0,6 s sau khi nhả lần 1) = TẮT;
 - mọi cử chỉ khác đưa nguyên vào FSM như trên (giữ 3 s = SOS, nhấn ở PRE_ALARM = CANCEL, giữ 1 s ở ALARM).
 
-Còi xác nhận: BẬT = 2 bíp 100 ms, TẮT = 1 bíp 600 ms. Còi theo trạng thái (`app_buzzer`): SUSPECT = bíp 400 ms mỗi giây suốt trạng thái (tối đa `SUSPECT_TIMEOUT_MS` 8 s; nhóm 28/10: nghi ngã, kể cả ngã nhẹ rồi ngồi/đứng dậy, cũng là ngã); PRE_ALARM = bíp 150 ms hai lần mỗi giây; ALARM = hú 350/500 ms. Chỉ là giao diện: chuyển trạng thái của FSM không đổi.
+Còi xác nhận: BẬT = 2 bíp 100 ms, TẮT = 1 bíp 600 ms. Còi theo trạng thái (`app_buzzer`): SUSPECT = bíp 400 ms mỗi giây suốt trạng thái (tối đa `SUSPECT_TIMEOUT_MS` 8 s); PRE_ALARM = bíp 150 ms hai lần mỗi giây; ALARM = hú 350/500 ms. Âm 2 kHz cố định (`COI_KIEU_CHOT`). **Khi bật tầng A.12 (ESP32)**, SUSPECT / PRE_ALARM / ALARM chưa được xác nhận là ngã thật thì còi im và web hiện MONITOR (`hub_coi`, `hub_ten_trang_thai`); ALARM do SOS luôn kêu. MẤT CẢM BIẾN (quá 3 s không có mẫu): 2 bíp mỗi 3 s. Chỉ là giao diện: chuyển trạng thái của FSM không đổi.
 
 | Tham số | Giá trị đầu | Chốt ở |
 |---|---|---|
 | `T_SCORE`, `VOTE_K` / `VOTE_N` | theo validation; 2 / 3 | AI-10 |
 | `T_STILL_A` / `T_STILL_G` | 300 LSB (≈ 0,15 g) / 250 LSB (≈ 15 °/s) | AI-10 |
 | `STILL_BLOCKS` | 8 khối = 2,56 s | AI-10 |
-| `T_TILT` | 1450 LSB (\|az_tb\| < 1450 ↔ đầu lệch 45°–135°; đầu thẳng hay lộn ngược khi cúi gập đều không tính là nằm) | AI-10 |
+| `T_TILT` | 1450 LSB (\|az_tb\| < 1450 ↔ ngực lệch 45°–135°; ngực thẳng hay lộn ngược khi cúi gập đều không tính là nằm) | AI-10 |
 | `SUSPECT_TIMEOUT` | 8 s | — |
 | `PRE_ALARM_TIME` / `COOLDOWN_TIME` | 10 s / 30 s | — |
 
@@ -794,7 +811,7 @@ MCU tạo payload 768 byte bằng LFSR Galois 16 bit (đa thức 0xB400, mầm 0
 
 ### A.11 Nhận dạng tư thế (chỉ để hiển thị)
 
-Chạy trên ESP32 (`firmware/src/posture.c`, gọi trong `hub_sample`), trên cùng mẫu thô 100 Hz (AX AY AZ, 2048 LSB/g; trục mũ X trước, Y trái, Z lên). **Không đưa vào Safety FSM, không đổi quyết định báo ngã.** Đáp án số nguyên: `ml/src/posture_model.py`; C phải trùng từng mẫu (`tools/m0_test.py`, mode 13).
+Chạy trên ESP32 (`firmware/src/posture.c`, gọi trong `hub_sample`), trên cùng mẫu thô 100 Hz (AX AY AZ, 2048 LSB/g; trục người theo A.1: X trước, Y trái, Z lên). Bảng dưới viết "đầu" theo thiết kế ban đầu; khi đeo ngực, "đầu" đọc là "ngực". **Không đưa vào Safety FSM, không đổi quyết định báo ngã.** Đáp án số nguyên: `ml/src/posture_model.py`; C phải trùng từng mẫu (`tools/m0_test.py`, mode 13).
 
 | Tư thế | Mã | Điều kiện |
 |---|---|---|
@@ -810,7 +827,28 @@ Chạy trên ESP32 (`firmware/src/posture.c`, gọi trong `hub_sample`), trên c
 - **Dậy sau khi nằm ≥ 300 mẫu (3 s):** khi đầu chốt THẲNG lại (kể cả qua giai đoạn CÚI), Δh của đợt dậy < 1,5 m → NGỒI, ngược lại ĐỨNG.
 - **Cúi sâu, chỉ khi đeo ngực** (`FW_VI_TRI_DEO 1`, 28/10): hướng chốt NẰM úp về trước (mx < 0, \|mx\| ≥ \|my\|), đi thẳng từ THẲNG / CÚI, đợt cử động vừa xong hạ < 0,5 m (1.044.189) → CÚI, không đếm thời gian nằm; hết khi rời NẰM, quay ngửa/nghiêng, một đợt hạ thêm ≥ 0,3 m (626.513) hoặc úp yên ≥ 3.000 mẫu (30 s). Đầu vào gia tốc đã trừ `ACC_OFF_*` (hub.c).
 - Căn bậc hai nguyên theo bit; mọi phép chia làm tròn về 0. Lúc bật: ĐỨNG.
-- **Đo trên D1** (`tools/posture_eval.py`, mẫu 50 Hz lặp thành 100 Hz, tư thế ở cuối 1.844 bản ghi so với mô tả hoạt động): đứng 93,2 %, ngồi 82,0 %, nhận ra nằm 93,2 % (đúng cả hướng 79,9 %), tổng 85,8 %. Chưa đo trên mũ [CẦN XÁC MINH – nguồn: buổi thử trên mũ].
+- **Đo trên D1** (`tools/posture_eval.py`, mẫu 50 Hz lặp thành 100 Hz, tư thế ở cuối 1.844 bản ghi so với mô tả hoạt động): đứng 93,2 %, ngồi 82,0 %, nhận ra nằm 93,2 % (đúng cả hướng 79,9 %), tổng 85,8 %. **Khi đeo ngực (28/10):** log 9 tư thế giữ yên của nhóm đúng 9/9 (`tools/m0_test.py` kiểm lại mỗi lần chạy; [tu_the_nguc](docs/bao_cao/2026-10-28_tu_the_nguc/README.md)).
+
+### A.12 Xác nhận ngã thật (ESP32, `firmware/src/nga.c`, 28/10)
+
+Chạy trong `hub.c` khi bật (`nga_en = 1`, mặc định trên ESP32). SUSPECT của A.8 (CNN 2/3 FALL) chỉ là bước nghi. Đầu vào: mẫu thô trục người (A.1, đã trừ `ACC_OFF`), khối 32 mẫu của A.11 và hướng ngực đã chốt (A.11).
+
+Mỗi khối lưu: đỉnh \|a\|², đỉnh \|ω\|², hướng chốt, cờ nghiêng (tổng ax, ay, az của khối thỏa `az ≤ 0` hoặc `(ax² + ay²)·100 ≥ az²·NGA_NGHIENG_TAN2_X100`). Lịch sử 36 khối (11,5 s).
+
+Khi FSM vào SUSPECT, xác nhận khi **đủ cả bốn**:
+
+| Dấu hiệu | Điều kiện | Tham số (`fw_config.h`) |
+|---|---|---|
+| 1. Trước đó thẳng | có ít nhất một khối hướng chốt THẲNG trong khối lùi `NGA_TRUOC_DEN..NGA_TRUOC_TU` (3,2–10,2 s trước SUSPECT); chưa đủ 32 khối lịch sử thì coi là thẳng | 10 / 32 |
+| 2. Va chạm | đỉnh \|a\| trong `NGA_VA_CHAM_KHOI` khối gần nhất (kể cả khối đang gom) ≥ `NGA_VA_CHAM_LSB`; khối có đỉnh là *khối va chạm* | 12 khối; 5120 LSB = 2,5 g |
+| 3. Quay nhanh | đỉnh \|ω\| trong ±`NGA_QUAY_KHOI` khối quanh khối va chạm ≥ `NGA_QUAY_LSB` | 5 khối; 3608 LSB = 220 °/s |
+| 4. Ngực nghiêng | có khối nghiêng (≥ 45°) từ khối va chạm tới `NGA_NGHIENG_KHOI` khối sau | tan² 45° = 100/100; 12 khối |
+
+Thứ tự quyết định mỗi khe 10 ms: (1) sai → loại; (2) sai → loại; (3) và (4) đúng → xác nhận; quá cửa sổ quay mà chưa quay → loại; quá cửa sổ nghiêng hoặc `NGA_CHO_MS` (4 s) sau SUSPECT → loại. Loại thì `safety_bo_nghi` (A.8). Mỗi lần xét ghi log `N,<ms>,XAC_NHAN|BO,ly_do,dinh,quay,nghieng,dh_cm,truoc_thang`.
+
+- **Ngưỡng chọn từ log đeo ngực của nhóm (28/10):** ngồi phịch xuống ghế ×10: nghiêng ≤ 31°, quay ≤ 149 °/s; 14 cú ngã lên nệm: nghiêng 58–80°, quay 258–467 °/s ([nga_that](docs/bao_cao/2026-10-28_nga_that/README.md)).
+- **Không báo theo thiết kế:** ngã kết thúc quỳ / ngồi mà thân thẳng (nghiêng < 45°), ngã va chạm < 2,5 g, ngã khi đang nằm hoặc cúi lâu (trước đó không thẳng).
+- **Đáp án:** chưa có golden Python; bản C là chuẩn, kiểm bằng `tools/m0_test.py` (12 ca `mode_nga` + 2 ca hub) và `tools/nga_tren_log.py` trên log thật [CẦN XÁC MINH – việc mở B3: `ml/src` golden khớp C từng bit].
 
 ### Lịch sử thay đổi SPEC
 
@@ -824,6 +862,7 @@ Chạy trên ESP32 (`firmware/src/posture.c`, gọi trong `hub_sample`), trên c
 | 2026-10-25 | **v3.3**: thêm A.11 nhận dạng tư thế trên ESP32, chỉ để hiển thị. Không đổi A.1–A.10, khung, FSM hay vector |
 | 2026-10-28 | v3.3: A.11 thêm quy tắc cúi sâu khi đeo ngực; gia tốc trừ offset trước khi xử lý. Không đổi A.1–A.10, khung, FSM |
 | 2026-10-28 | v3.3 (làm rõ giao diện, không đổi FSM): A.8 ghi mẫu còi theo trạng thái; SUSPECT kêu suốt trạng thái |
+| 2026-10-28 | **v3.4** (đeo ngực, chốt đề tài): A.1 vị trí ngực + đổi trục + `ACC_OFF`; A.8 thêm chuyển SUSPECT/PRE_ALARM → MONITOR khi A.12 loại, còi chỉ kêu khi đã xác nhận, âm 2 kHz, MẤT CẢM BIẾN; A.11 đọc "đầu" là "ngực"; thêm A.12 xác nhận ngã thật. Không đổi khung, số học, vector |
 | 2026-10-14 | v3 (làm rõ, không đổi số học hay khung): A.7 thêm quy ước một bộ đệm kết quả và giá trị `STATUS` cho từng lỗi; `cnn_params.vh` thêm `CNN_SCORE_SHIFT` (lấy từ `score_shift` trong json) |
 
 ---
@@ -1095,6 +1134,8 @@ uint16_t crc16_ccitt(const uint8_t *p, uint32_t n)
 | 2026-10-28 | Nhóm duyệt `nga.c` bản 3: "như vậy là ổn rồi", không thu thêm buổi người khác đeo. Chốt ngưỡng `NGA_*` hiện tại; ngã kết thúc quỳ / ngồi mà thân thẳng không báo (X15 theo hướng không báo) | Quyết định của nhóm; rủi ro: ngưỡng chỉ kiểm trên log một người |
 | 2026-10-28 | **Chốt kết quả đề tài.** ESP32 đã nạp bản cuối (`nga.c` bản 3, `MPU_NGUON_GPIO 0`, web "Cảm biến treo (lần)"): web `/data` mẫu 8.740, mất 0, hỏng 0. Kiểm cuối: `fpga/scripts/test.sh` TẤT CẢ PASS (tb_e2, tb_proto, bản sao ESP32 trùng `firmware/src`), `m0_test` 70/70, `sync_spec` PASS. TRẠNG THÁI thêm khung CHỐT KẾT QUẢ, sửa dòng còi (chỉ kêu khi xác nhận ngã thật) và bước tiếp theo | Nhóm: "đề tài này xong rồi"; các cổng theo giấy tờ không đổi, không đánh [x] khi thiếu bằng chứng |
 | 2026-10-28 | Nhóm giữ thiết kế nút web: "Hủy cảnh báo" chỉ dùng ở CẢNH BÁO / BÁO ĐỘNG, "Bật lại hệ thống" chỉ ở TẮT; ở PHÁT HIỆN NGÃ (SUSPECT) không hủy được, còi tự tắt sau 8 s nếu người đứng dậy, nằm bất động ≥ 2,56 s thì sang CẢNH BÁO. SPEC A.8 không đổi | Quyết định của nhóm sau khi thử trên board |
+| 2026-10-28 | **Viết lại file theo dự án đeo ngực** (nhóm yêu cầu): tiêu đề, target, platform (thêm ESP32); khung TRẠNG THÁI gộp thành một bản 28/10; mục 1 tóm tắt + sơ đồ luồng MCU → ESP32 → FPGA; 4.3 firmware chia MCU / ESP32; 4.4, 4.5 thêm tầng xác nhận ngã; mục 12 demo, mục 13 phản biện cho đeo ngực; ghi chú cách đọc "mũ" ở mục 5–11; mục 10 thêm 3 dòng số đo đeo ngực. **SPEC v3.4:** A.1 vị trí ngực + đổi trục + `ACC_OFF`, A.8 chuyển A.12 loại + còi, A.11, thêm A.12 xác nhận ngã thật; `docs/spec.md` sinh lại (`sync_spec` PASS). Không đổi khung, số học, vector, mã nguồn | Đề tài đã chuyển sang đeo ngực; SPEC ghi đúng mã đang chạy |
+| 2026-10-28 | **Đồng bộ toàn bộ tài liệu sang đeo ngực, theo code hiện tại** (nhóm yêu cầu): nhóm bỏ hẳn `DE_CUONG_v2.md`, `THAY_DOI_SO_VOI_v1.md` → gỡ mọi link, đoạn "Tài liệu" ghi file này là tài liệu chính. Mục 4.4–11: cụm từ của mũ đổi sang thiết bị đeo ngực, hai chỉ tiêu va mũ / rơi mũ ghi không áp dụng. A.8 `T_TILT` đọc theo ngực; A.11 thêm kết quả 9/9 khi đeo ngực; `docs/spec.md` sinh lại. Viết lại `docs/bao_cao_cuoi/BAO_CAO_KY_THUAT_nhap.md` (kiến trúc MCU → ESP32 → FPGA, tầng xác nhận ngã, kết quả đeo ngực) và `docs/data_protocol.md` (thu bằng `ghi_uart --kich-ban`, chấm bằng `nga_tren_log.py`); sửa `README.md`, `docs/huong_dan_nap_chay.md`, `firmware/README.md`, `ml/data/public/README.md`. Không đổi mã nguồn | Đề tài chốt ở vị trí ngực |
 
 ---
 

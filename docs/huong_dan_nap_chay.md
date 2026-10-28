@@ -88,7 +88,7 @@ STAT,mau=...,mat=0,khung_hong=0,gui=...,ok=...,timeout=0,loi=0,bo_qua=0,spi_khz=
 
 **Đo hướng cảm biến** (khi đổi chỗ đeo, ví dụ sang ngực): chạy bằng pin, laptop cùng WiFi, `python -I tools/ghi_uart.py --tcp <IP> --lenh LOG --buoc truc_nguc --tu-the`. **Đeo lên người** (không cầm tay). Màn hình nhắc lần lượt 9 bước: đứng thẳng → ngồi xuống ghế → đứng dậy → cúi về trước → đứng thẳng lại → nằm ngửa → nghiêng phải → nghiêng trái → nằm sấp; mỗi bước 6 s để đổi + 10 s giữ yên, tổng khoảng 2,5 phút; không bấm Ctrl+C. Mất WiFi thì tự nối lại. Gửi lại file `ket_qua_board/truc_nguc_*.txt`. Đọc bảng đổi trục: `python -I tools/truc_cam_bien.py <file>` (in `TRUC_X/Y/Z` cho `fw_config.h`; log ghi bằng bản đã đổi trục thì thêm `--da-doi`, bảng đúng là +1 +2 +3). Vị trí đeo chọn bằng `FW_VI_TRI_DEO` trong `firmware/src/fw_config.h` (1 = ngực, 0 = mũ), sửa xong chạy `bash esp32/dong_bo_core.sh` rồi nạp lại ESP32; MCU không đổi.
 
-**Thử tư thế** (đội mũ, hoặc cầm board đúng hướng: Z hướng lên trời, X hướng ra trước mặt): đứng yên → `Đứng thẳng`; ngồi xuống ghế → `Ngồi` (sau khi ngồi yên ≈ 0,3 s); nằm ngửa / nằm nghiêng / úp → tư thế nằm tương ứng sau ≈ 1 s; ngồi dậy từ giường → `Ngồi`, đứng dậy → `Đứng thẳng`; đi lại > 4 s → `Đang di chuyển`. Đứng/ngồi dựa vào độ cao đầu thay đổi khi đứng lên ngồi xuống, nên lúc bật nguồn luôn hiện `Đứng thẳng`; bật nguồn khi đang ngồi thì phải đứng lên ngồi lại một lần. Gửi lại: file log có dòng `P,` và ghi chú tư thế thật theo thời gian.
+**Thử tư thế** (đeo thiết bị ở ngực đúng như lúc đo hướng cảm biến): đứng yên → `Đứng thẳng`; ngồi xuống ghế → `Ngồi` (sau khi ngồi yên ≈ 0,3 s); nằm ngửa / nằm nghiêng / úp → tư thế nằm tương ứng sau ≈ 1 s; ngồi dậy từ giường → `Ngồi`, đứng dậy → `Đứng thẳng`; đi lại > 4 s → `Đang di chuyển`. Đứng/ngồi dựa vào độ cao ngực thay đổi khi đứng lên ngồi xuống, nên lúc bật nguồn luôn hiện `Đứng thẳng`; bật nguồn khi đang ngồi thì phải đứng lên ngồi lại một lần. Gửi lại: file log có dòng `P,` và ghi chú tư thế thật theo thời gian.
 
 **Thử ngã:** từ 28/10 lắc board không còn đủ (cần trước đó thẳng + va chạm + nằm / hạ ngực). Đeo lên ngực, ngã lên nệm dày có người đỡ. Log có dòng `N,<ms>,XAC_NHAN|BO,ly_do=..,dinh=<g·100>,dh_cm=..,truoc_thang=..` cho **mỗi lần CNN nghi** (lý do loại: 1 trước đó không thẳng, 2 không có va chạm, 3 không nằm / ngực không hạ; xác nhận: 4 nằm, 5 ngực hạ, 6 bất động) và `S,<ms>,<trạng thái hiển thị>`; `F,...` là trạng thái thô của FSM. Nhấn SW3 trên EVK (hoặc nút BOOT của ESP32) trong lúc CẢNH BÁO để hủy.
 
@@ -107,7 +107,7 @@ Gõ trên USB hoặc TCP, kết thúc bằng Enter.
 
 | Lệnh | Tác dụng |
 |---|---|
-| `LOG` | In từng mẫu 100 Hz `t,ax,ay,az,gx,gy,gz,btn,wear` (dùng cho buổi thử trên mũ) |
+| `LOG` | In từng mẫu 100 Hz `t,ax,ay,az,gx,gy,gz,btn,wear` (dùng cho buổi thử khi đeo ngực; `tools/ghi_uart.py` gửi lệnh này qua TCP) |
 | `RUN` | Quay về in kết quả |
 | `ST` | Chạy lại tự kiểm FPGA |
 | `SPI 100` | Đặt SCK 100 kHz (tốc độ nhóm đã chạy thông). Mặc định 1000; nếu tự kiểm ở 1 MHz FAIL thì ESP32 tự hạ xuống 100 |

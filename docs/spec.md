@@ -15,7 +15,9 @@
 | Ngắt data-ready | 0x01 | `INT_ENABLE` 0x38 |
 | Đọc dữ liệu | burst 14 byte từ 0x3B: AX AY AZ TEMP GX GY GZ, byte cao trước | 0x3B–0x48 |
 
-**Gắn trên mũ:** đỉnh hoặc phía sau mũ, đệm xốp mỏng, **Z hướng lên trời, X hướng về trước** khi đội mũ đứng thẳng. `AZ_dung_yen = ______` (phải ≈ +2048). Đóng băng ở cổng G1.
+**Gắn ở ngực (từ 28/10, `FW_VI_TRI_DEO 1`):** module trên dây đeo ngực. ESP32 đổi trục cảm biến về **trục người: X hướng về trước, Y sang trái, Z lên trời** khi đứng thẳng: X người = +Z cảm biến, Y người = −X cảm biến, Z người = −Y cảm biến (`TRUC_X/Y/Z` trong `fw_config.h`, đo bằng `ghi_uart --tu-the` + `tools/truc_cam_bien.py`), rồi trừ offset gia tốc `ACC_OFF` = (204, −3, −4) LSB theo trục người (đo khi đeo, 9 tư thế yên). Mọi xử lý từ A.2 trở đi dùng trục người. Đổi cảm biến hay cách đeo thì đo lại.
+
+*Thiết kế ban đầu (mũ):* đỉnh hoặc phía sau mũ, Z hướng lên trời, X hướng về trước khi đội mũ đứng thẳng (`FW_VI_TRI_DEO 0`, không đổi trục).
 
 ### A.2 Tiền xử lý trên MCU
 
@@ -134,8 +136,9 @@ Chế độ RUN đọc 7 byte; chế độ HIL đọc 20 byte. Không có kết 
 |---|---|
 | MONITOR → STANDBY | `WEAR = 0` (hệ thống TẮT bằng nút) liên tục 3 s |
 | STANDBY → MONITOR | `WEAR = 1` (hệ thống BẬT) |
-| MONITOR → SUSPECT | `fall_votes ≥ VOTE_K` và mũ đã được đội trong 3 s gần nhất |
-| SUSPECT → PRE_ALARM | `still_run ≥ STILL_BLOCKS` và (nếu `TILT_EN`) **`\|az_tb\| < T_TILT`**: đầu nằm ngang, lệch 45°–135° khỏi phương thẳng đứng (v3.1, 15/10) |
+| MONITOR → SUSPECT | `fall_votes ≥ VOTE_K` và hệ thống BẬT (`WEAR = 1`) trong 3 s gần nhất |
+| SUSPECT → PRE_ALARM | `still_run ≥ STILL_BLOCKS` và (nếu `TILT_EN`) **`\|az_tb\| < T_TILT`**: ngực (trục Z người) nằm ngang, lệch 45°–135° khỏi phương thẳng đứng (v3.1, 15/10) |
+| SUSPECT, PRE_ALARM → MONITOR | Tầng xác nhận ngã thật (A.12) loại lần nghi (`safety_bo_nghi`, lý do `WHY_KHONG_NGA`) |
 | SUSPECT → MONITOR | Quá `SUSPECT_TIMEOUT` |
 | PRE_ALARM → MONITOR | Bấm CANCEL |
 | PRE_ALARM → ALARM | Hết `PRE_ALARM_TIME` |
@@ -150,14 +153,14 @@ Từ SUSPECT trở đi bỏ qua WEAR. IMPACT khi đang đội (chỉ khi bật l
 - ở MONITOR, nhấn nhanh 2 lần (mỗi lần < 0,4 s, lần 2 bắt đầu < 0,6 s sau khi nhả lần 1) = TẮT;
 - mọi cử chỉ khác đưa nguyên vào FSM như trên (giữ 3 s = SOS, nhấn ở PRE_ALARM = CANCEL, giữ 1 s ở ALARM).
 
-Còi xác nhận: BẬT = 2 bíp 100 ms, TẮT = 1 bíp 600 ms. Còi theo trạng thái (`app_buzzer`): SUSPECT = bíp 400 ms mỗi giây suốt trạng thái (tối đa `SUSPECT_TIMEOUT_MS` 8 s; nhóm 28/10: nghi ngã, kể cả ngã nhẹ rồi ngồi/đứng dậy, cũng là ngã); PRE_ALARM = bíp 150 ms hai lần mỗi giây; ALARM = hú 350/500 ms. Chỉ là giao diện: chuyển trạng thái của FSM không đổi.
+Còi xác nhận: BẬT = 2 bíp 100 ms, TẮT = 1 bíp 600 ms. Còi theo trạng thái (`app_buzzer`): SUSPECT = bíp 400 ms mỗi giây suốt trạng thái (tối đa `SUSPECT_TIMEOUT_MS` 8 s); PRE_ALARM = bíp 150 ms hai lần mỗi giây; ALARM = hú 350/500 ms. Âm 2 kHz cố định (`COI_KIEU_CHOT`). **Khi bật tầng A.12 (ESP32)**, SUSPECT / PRE_ALARM / ALARM chưa được xác nhận là ngã thật thì còi im và web hiện MONITOR (`hub_coi`, `hub_ten_trang_thai`); ALARM do SOS luôn kêu. MẤT CẢM BIẾN (quá 3 s không có mẫu): 2 bíp mỗi 3 s. Chỉ là giao diện: chuyển trạng thái của FSM không đổi.
 
 | Tham số | Giá trị đầu | Chốt ở |
 |---|---|---|
 | `T_SCORE`, `VOTE_K` / `VOTE_N` | theo validation; 2 / 3 | AI-10 |
 | `T_STILL_A` / `T_STILL_G` | 300 LSB (≈ 0,15 g) / 250 LSB (≈ 15 °/s) | AI-10 |
 | `STILL_BLOCKS` | 8 khối = 2,56 s | AI-10 |
-| `T_TILT` | 1450 LSB (\|az_tb\| < 1450 ↔ đầu lệch 45°–135°; đầu thẳng hay lộn ngược khi cúi gập đều không tính là nằm) | AI-10 |
+| `T_TILT` | 1450 LSB (\|az_tb\| < 1450 ↔ ngực lệch 45°–135°; ngực thẳng hay lộn ngược khi cúi gập đều không tính là nằm) | AI-10 |
 | `SUSPECT_TIMEOUT` | 8 s | — |
 | `PRE_ALARM_TIME` / `COOLDOWN_TIME` | 10 s / 30 s | — |
 
@@ -179,7 +182,7 @@ MCU tạo payload 768 byte bằng LFSR Galois 16 bit (đa thức 0xB400, mầm 0
 
 ### A.11 Nhận dạng tư thế (chỉ để hiển thị)
 
-Chạy trên ESP32 (`firmware/src/posture.c`, gọi trong `hub_sample`), trên cùng mẫu thô 100 Hz (AX AY AZ, 2048 LSB/g; trục mũ X trước, Y trái, Z lên). **Không đưa vào Safety FSM, không đổi quyết định báo ngã.** Đáp án số nguyên: `ml/src/posture_model.py`; C phải trùng từng mẫu (`tools/m0_test.py`, mode 13).
+Chạy trên ESP32 (`firmware/src/posture.c`, gọi trong `hub_sample`), trên cùng mẫu thô 100 Hz (AX AY AZ, 2048 LSB/g; trục người theo A.1: X trước, Y trái, Z lên). Bảng dưới viết "đầu" theo thiết kế ban đầu; khi đeo ngực, "đầu" đọc là "ngực". **Không đưa vào Safety FSM, không đổi quyết định báo ngã.** Đáp án số nguyên: `ml/src/posture_model.py`; C phải trùng từng mẫu (`tools/m0_test.py`, mode 13).
 
 | Tư thế | Mã | Điều kiện |
 |---|---|---|
@@ -195,7 +198,28 @@ Chạy trên ESP32 (`firmware/src/posture.c`, gọi trong `hub_sample`), trên c
 - **Dậy sau khi nằm ≥ 300 mẫu (3 s):** khi đầu chốt THẲNG lại (kể cả qua giai đoạn CÚI), Δh của đợt dậy < 1,5 m → NGỒI, ngược lại ĐỨNG.
 - **Cúi sâu, chỉ khi đeo ngực** (`FW_VI_TRI_DEO 1`, 28/10): hướng chốt NẰM úp về trước (mx < 0, \|mx\| ≥ \|my\|), đi thẳng từ THẲNG / CÚI, đợt cử động vừa xong hạ < 0,5 m (1.044.189) → CÚI, không đếm thời gian nằm; hết khi rời NẰM, quay ngửa/nghiêng, một đợt hạ thêm ≥ 0,3 m (626.513) hoặc úp yên ≥ 3.000 mẫu (30 s). Đầu vào gia tốc đã trừ `ACC_OFF_*` (hub.c).
 - Căn bậc hai nguyên theo bit; mọi phép chia làm tròn về 0. Lúc bật: ĐỨNG.
-- **Đo trên D1** (`tools/posture_eval.py`, mẫu 50 Hz lặp thành 100 Hz, tư thế ở cuối 1.844 bản ghi so với mô tả hoạt động): đứng 93,2 %, ngồi 82,0 %, nhận ra nằm 93,2 % (đúng cả hướng 79,9 %), tổng 85,8 %. Chưa đo trên mũ [CẦN XÁC MINH – nguồn: buổi thử trên mũ].
+- **Đo trên D1** (`tools/posture_eval.py`, mẫu 50 Hz lặp thành 100 Hz, tư thế ở cuối 1.844 bản ghi so với mô tả hoạt động): đứng 93,2 %, ngồi 82,0 %, nhận ra nằm 93,2 % (đúng cả hướng 79,9 %), tổng 85,8 %. **Khi đeo ngực (28/10):** log 9 tư thế giữ yên của nhóm đúng 9/9 (`tools/m0_test.py` kiểm lại mỗi lần chạy; [tu_the_nguc](docs/bao_cao/2026-10-28_tu_the_nguc/README.md)).
+
+### A.12 Xác nhận ngã thật (ESP32, `firmware/src/nga.c`, 28/10)
+
+Chạy trong `hub.c` khi bật (`nga_en = 1`, mặc định trên ESP32). SUSPECT của A.8 (CNN 2/3 FALL) chỉ là bước nghi. Đầu vào: mẫu thô trục người (A.1, đã trừ `ACC_OFF`), khối 32 mẫu của A.11 và hướng ngực đã chốt (A.11).
+
+Mỗi khối lưu: đỉnh \|a\|², đỉnh \|ω\|², hướng chốt, cờ nghiêng (tổng ax, ay, az của khối thỏa `az ≤ 0` hoặc `(ax² + ay²)·100 ≥ az²·NGA_NGHIENG_TAN2_X100`). Lịch sử 36 khối (11,5 s).
+
+Khi FSM vào SUSPECT, xác nhận khi **đủ cả bốn**:
+
+| Dấu hiệu | Điều kiện | Tham số (`fw_config.h`) |
+|---|---|---|
+| 1. Trước đó thẳng | có ít nhất một khối hướng chốt THẲNG trong khối lùi `NGA_TRUOC_DEN..NGA_TRUOC_TU` (3,2–10,2 s trước SUSPECT); chưa đủ 32 khối lịch sử thì coi là thẳng | 10 / 32 |
+| 2. Va chạm | đỉnh \|a\| trong `NGA_VA_CHAM_KHOI` khối gần nhất (kể cả khối đang gom) ≥ `NGA_VA_CHAM_LSB`; khối có đỉnh là *khối va chạm* | 12 khối; 5120 LSB = 2,5 g |
+| 3. Quay nhanh | đỉnh \|ω\| trong ±`NGA_QUAY_KHOI` khối quanh khối va chạm ≥ `NGA_QUAY_LSB` | 5 khối; 3608 LSB = 220 °/s |
+| 4. Ngực nghiêng | có khối nghiêng (≥ 45°) từ khối va chạm tới `NGA_NGHIENG_KHOI` khối sau | tan² 45° = 100/100; 12 khối |
+
+Thứ tự quyết định mỗi khe 10 ms: (1) sai → loại; (2) sai → loại; (3) và (4) đúng → xác nhận; quá cửa sổ quay mà chưa quay → loại; quá cửa sổ nghiêng hoặc `NGA_CHO_MS` (4 s) sau SUSPECT → loại. Loại thì `safety_bo_nghi` (A.8). Mỗi lần xét ghi log `N,<ms>,XAC_NHAN|BO,ly_do,dinh,quay,nghieng,dh_cm,truoc_thang`.
+
+- **Ngưỡng chọn từ log đeo ngực của nhóm (28/10):** ngồi phịch xuống ghế ×10: nghiêng ≤ 31°, quay ≤ 149 °/s; 14 cú ngã lên nệm: nghiêng 58–80°, quay 258–467 °/s ([nga_that](docs/bao_cao/2026-10-28_nga_that/README.md)).
+- **Không báo theo thiết kế:** ngã kết thúc quỳ / ngồi mà thân thẳng (nghiêng < 45°), ngã va chạm < 2,5 g, ngã khi đang nằm hoặc cúi lâu (trước đó không thẳng).
+- **Đáp án:** chưa có golden Python; bản C là chuẩn, kiểm bằng `tools/m0_test.py` (12 ca `mode_nga` + 2 ca hub) và `tools/nga_tren_log.py` trên log thật [CẦN XÁC MINH – việc mở B3: `ml/src` golden khớp C từng bit].
 
 ### Lịch sử thay đổi SPEC
 
@@ -209,4 +233,5 @@ Chạy trên ESP32 (`firmware/src/posture.c`, gọi trong `hub_sample`), trên c
 | 2026-10-25 | **v3.3**: thêm A.11 nhận dạng tư thế trên ESP32, chỉ để hiển thị. Không đổi A.1–A.10, khung, FSM hay vector |
 | 2026-10-28 | v3.3: A.11 thêm quy tắc cúi sâu khi đeo ngực; gia tốc trừ offset trước khi xử lý. Không đổi A.1–A.10, khung, FSM |
 | 2026-10-28 | v3.3 (làm rõ giao diện, không đổi FSM): A.8 ghi mẫu còi theo trạng thái; SUSPECT kêu suốt trạng thái |
+| 2026-10-28 | **v3.4** (đeo ngực, chốt đề tài): A.1 vị trí ngực + đổi trục + `ACC_OFF`; A.8 thêm chuyển SUSPECT/PRE_ALARM → MONITOR khi A.12 loại, còi chỉ kêu khi đã xác nhận, âm 2 kHz, MẤT CẢM BIẾN; A.11 đọc "đầu" là "ngực"; thêm A.12 xác nhận ngã thật. Không đổi khung, số học, vector |
 | 2026-10-14 | v3 (làm rõ, không đổi số học hay khung): A.7 thêm quy ước một bộ đệm kết quả và giá trị `STATUS` cho từng lỗi; `cnn_params.vh` thêm `CNN_SCORE_SHIFT` (lấy từ `score_shift` trong json) |

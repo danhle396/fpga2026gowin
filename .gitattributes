@@ -20,3 +20,5 @@
 *.pack binary
 *.png binary
 *.txt text eol=lf
+# file bitstream .fs: GitHub nhận nhầm là F#
+*.fs linguist-detectable=false

@@ -1,4 +1,4 @@
-# firmware/ — mã C của mũ: SN32F407 (nút cảm biến) và lõi dùng chung với ESP32
+# firmware/ — mã C của thiết bị đeo ngực: SN32F407 (nút cảm biến) và lõi dùng chung với ESP32
 
 Phần cứng nối cố định (đề cương v2.2): `SN32F407 → UART 115200 → ESP32 → SPI → FPGA`. Thư mục này có hai phần:
 

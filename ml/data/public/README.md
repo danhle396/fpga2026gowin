@@ -17,7 +17,7 @@ Nguồn huấn luyện lớp FALL và NORMAL của đề tài (mục 4.4 và vi�
 
 | File | Nội dung |
 |---|---|
-| `d1_trials_50hz.npz` | Từng bản ghi đầy đủ ở 50 Hz, INT16 theo LSB của MPU6050 ở ±16 g / ±2000 °/s (2048 LSB/g, 16,4 LSB/(°/s)), trục đã xoay về quy ước của mũ. `data[start[i] : start[i] + length[i]]` là bản ghi thứ `i`; `subject`, `act` (801–816 thường ngày, 901–920 ngã), `rep`, `event` (chỉ số mẫu của điểm va chạm, −1 nếu không phải ngã), `flags` (1 = có khoảng trống đã nội suy, 2 = có mẫu ngoài dải đã bỏ) |
+| `d1_trials_50hz.npz` | Từng bản ghi đầy đủ ở 50 Hz, INT16 theo LSB của MPU6050 ở ±16 g / ±2000 °/s (2048 LSB/g, 16,4 LSB/(°/s)), trục đã xoay về trục người của thiết bị (X trước, Y trái, Z lên; SPEC A.1). `data[start[i] : start[i] + length[i]]` là bản ghi thứ `i`; `subject`, `act` (801–816 thường ngày, 901–920 ngã), `rep`, `event` (chỉ số mẫu của điểm va chạm, −1 nếu không phải ngã), `flags` (1 = có khoảng trống đã nội suy, 2 = có mẫu ngoài dải đã bỏ) |
 | `d1_windows.npz` | 109.970 cửa sổ 128 × 6 INT8, bước 16 mẫu, nhãn theo A.4: `y` = 0 (NORMAL, 106.433 cửa sổ) hoặc 3 (FALL, 3.537 cửa sổ; 1.179/1.180 cú ngã đủ 3 cửa sổ). Kèm `subject`, `act`, `trial`, `p` (vị trí điểm va chạm trong cửa sổ, −1 nếu không có). Cửa sổ thuộc vùng bỏ của A.4 đã được loại |
 | `d1_windows_nguc_340539.npz`, `d1_windows_that_lung_340535.npz` | Cùng định dạng với `d1_windows.npz`, lấy từ cảm biến ở **ngực** và **thắt lưng** của cùng các lần thực hiện (thêm 15/10). Chỉ dùng làm dữ liệu huấn luyện bổ sung: `ml/train_cnn.py --train-only <hai file>`. Không bao giờ dùng để kiểm tra, vì thiết bị đeo trên đầu. Kết quả AI-09: `docs/bao_cao/2026-10-15_ai09_du_lieu_than/` |
 
@@ -34,8 +34,8 @@ Thứ tự kênh: `[AX, AY, AZ, GX, GY, GZ]`; X hướng về trước, Y sang t
    | Đổi áp suất khi ngã (cao xuống thấp) | ≈ 0 hPa | +0,084 đến +0,089 hPa, lớn nhất trong 6 cảm biến |
 
    Kết luận này dựa trên số liệu, chưa có xác nhận độc lập (Hình 1 của bài báo, hoặc hỏi tác giả). Bảng kiểm của từng người nằm trong `docs/bao_cao/2026-10-13_d1_dau/`.
-2. **Chỉ có 25 Hz.** Mẫu 50 Hz ở đây là mẫu gốc xen với mẫu nội suy `(−1, 9, 9, −1)/16`, nên phần phổ 12,5–25 Hz gần như trống, trong khi dữ liệu thu trên mũ có đủ tới 25 Hz. Việc AI-14 đo ảnh hưởng của điều này.
-3. **Không có lớp IMPACT** (rơi mũ, va mũ, tháo và đội). Lớp đó nhóm phải tự thu (nguồn D2). Cảm biến ở đây buộc vào đầu chứ không nằm trên vỏ mũ.
+2. **Chỉ có 25 Hz.** Mẫu 50 Hz ở đây là mẫu gốc xen với mẫu nội suy `(−1, 9, 9, −1)/16`, nên phần phổ 12,5–25 Hz gần như trống, trong khi dữ liệu thiết bị tự thu (100 Hz, giảm còn 50 Hz) có đủ tới 25 Hz. Việc AI-14 đo ảnh hưởng của điều này.
+3. **Không có lớp IMPACT** (va đập không phải ngã); mạng hiện chỉ dùng 2 lớp NORMAL / FALL. Cảm biến dùng để huấn luyện là cảm biến ở đầu, còn thiết bị đeo ở ngực: CNN chưa huấn luyện lại bằng kênh ngực (`d1_windows_nguc_340539.npz` có sẵn), nên quyết định báo ngã cuối cùng nằm ở tầng xác nhận `nga.c` (SPEC A.12).
 
 Khi tách tập huấn luyện và kiểm tra, tách theo `subject`, không tách ngẫu nhiên theo cửa sổ: các cửa sổ liền nhau trùng nhau 87,5 %.
 

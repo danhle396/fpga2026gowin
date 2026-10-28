@@ -1,82 +1,76 @@
-# Quy trình thu dữ liệu trên mũ — D2 và D3 (việc AI-05, AI-08, TH-06)
+# Quy trình thu dữ liệu khi đeo ngực
 
-Theo chiến lược dữ liệu ở mục 4.4 của `PROJECT_MASTER.md`:
-- **D2** = va đập mũ (lớp IMPACT) + sinh hoạt khi đội mũ (NORMAL); không ai phải ngã.
-- **D3** = ngã thật trên đệm khi đội mũ; **chỉ để kiểm tra**, không đưa vào huấn luyện.
+Dữ liệu nhóm tự thu **chỉ để kiểm tra thiết bị**, không dùng để huấn luyện CNN (CNN học từ bộ công khai D1, mục 4.4 của `PROJECT_MASTER.md`). Ngày 28/10 nhóm dùng dữ liệu này để:
+- đo hướng cảm biến (đổi trục, SPEC A.1);
+- kiểm tư thế (A.11);
+- chọn ngưỡng tầng xác nhận ngã thật (A.12).
 
-## 1. An toàn và đồng ý (TH-06) — bắt buộc trước buổi D3
+## 1. An toàn và đồng ý — bắt buộc trước buổi có ngã
 
-- Đệm dày ≥ 10 cm, rộng ít nhất 2 × 2 m, đặt trên sàn phẳng; dọn vật cứng trong bán kính 1,5 m.
-- Người ngã đội mũ bảo hộ cài quai, mặc đồ dài, có bảo vệ khuỷu tay và đầu gối.
-- Luôn có **một người đứng cạnh đệm** sẵn sàng đỡ; ngã chậm, có kiểm soát; không ngã từ trên cao, không ngã đầu xuống trước.
-- Người tham gia ký giấy đồng ý: mục đích, rủi ro, quyền dừng bất cứ lúc nào, dữ liệu chỉ dùng cho đề tài và được ẩn danh (mã `s01`, `s02`…). Người có bệnh về cột sống, tim mạch hoặc đang đau không tham gia.
+- Đệm hoặc nệm dày ≥ 10 cm, rộng ít nhất 2 × 2 m, đặt trên sàn phẳng; dọn vật cứng trong bán kính 1,5 m.
+- Người ngã mặc đồ dài, có bảo vệ khuỷu tay và đầu gối.
+- Luôn có **một người đứng cạnh đệm**, sẵn sàng đỡ. Ngã chậm, có kiểm soát; không ngã từ trên cao, không ngã đầu xuống trước.
+- Người tham gia ký giấy đồng ý, gồm: mục đích; rủi ro; quyền dừng bất cứ lúc nào; dữ liệu chỉ dùng cho đề tài và được ẩn danh (mã `s01`, `s02`…).
+- Người có bệnh về cột sống, tim mạch hoặc đang đau không tham gia.
 - Dừng buổi thu ngay khi có ai đau hoặc chóng mặt.
 
 ## 2. Thiết bị và kiểm tra trước mỗi buổi
 
-1. Cảm biến gắn trên mũ theo A.1: Z hướng lên trời, X hướng về trước khi đội và đứng thẳng; đệm xốp mỏng; cố định chắc (TH-04).
-2. Firmware chính, chế độ LOG: giữ SW6 lúc khởi động, hoặc gửi `LOG`. Để mũ đứng yên 3 s lúc khởi động cho hiệu chuẩn gyro.
-3. Ghi bằng `tools/logger.py`. Mỗi file kết thúc phải in `mất 0 mẫu -> PASS`; file có mất mẫu thì **thu lại**.
-4. Quay video toàn bộ buổi; mở đầu mỗi file bằng câu đọc to "<người> <hoạt động> lần <n>" để khớp video với file.
-5. Kiểm nhanh: đội mũ đứng yên 5 s thì cột `az` ≈ +2048 (±10 %).
+1. Module MPU6050 trên dây đeo ngực, cố định chắc. Hướng gắn phải giống lúc đo đổi trục (A.1). Đổi cách gắn thì đo lại theo mục 4.
+2. Ba board đã nạp theo `docs/huong_dan_nap_chay.md`, chạy pin.
+3. Laptop cùng mạng WiFi với ESP32. Trang web `http://<IP ESP32>/` hiện ĐANG THEO DÕI, "Mẫu mất" và "Khung hỏng" không tăng khi đứng yên.
+4. Lúc khởi động, đứng yên khoảng 3 s để MCU hiệu chuẩn gyro.
+5. Quay video toàn bộ buổi, để khớp từng bước với log khi cần xem lại.
 
-## 3. Đặt tên file
+## 3. Thu log
 
+`tools/ghi_uart.py` nối tới ESP32 qua WiFi (TCP 3333), gửi lệnh `LOG`, đọc to lời nhắc từng bước theo kịch bản và ghi mốc vào file. Mốc có dạng `# >>> TU THE <mã> doi` lúc chuẩn bị và `... giu` lúc bắt đầu làm. File lưu ở `ket_qua_board/<bước>_<ngày giờ>.txt`. Mất kết nối thì công cụ tự nối lại và gửi lại `LOG`.
+
+```bash
+python -I tools/ghi_uart.py --tcp <IP ESP32> --lenh LOG --buoc tu_the   --kich-ban tu_the     # 9 tư thế, ≈ 2,5 phút
+python -I tools/ghi_uart.py --tcp <IP ESP32> --lenh LOG --buoc dong_tac --kich-ban dong_tac   # động tác dễ nhầm, ≈ 7–9 phút
+python -I tools/ghi_uart.py --tcp <IP ESP32> --lenh LOG --buoc nga      --kich-ban nga        # ngã lên nệm, ≈ 4–5 phút
 ```
-python tools/logger.py --port COMx --subject <người> --activity <hoạt động> --trial <n>
-→ ml/data/raw/<người>_<hoạt động>_<nn>.csv        (<nn> = số lần, hai chữ số: 01, 02, …)
-```
-- `<người>` là `s01`, `s02`… Riêng **`h0`** dành cho va đập khi *không* đội mũ: một người thu hàng loạt, chỉ dùng để huấn luyện. **`s00`** chỉ dùng cho file thử trên bàn ở đợt B (B5); `windowing.py` bỏ qua mọi file `s00_*`.
-- `<hoạt động>` phải nằm trong bảng dưới; `tools/windowing.py` từ chối tên lạ.
 
-| `<hoạt động>` | Nguồn | Lớp | Mô tả | Nút đánh dấu SW6 |
-|---|---|---|---|---|
-| `roi_mu` | D2, h0 | IMPACT | thả mũ rơi từ 1–1,5 m xuống sàn | bấm giữ quanh mỗi lần rơi |
-| `dat_manh` | D2, h0 | IMPACT | đặt mạnh mũ xuống bàn hoặc sàn | như trên |
-| `va_mu` | D2 | IMPACT | đang đội, va mũ vào vật (cửa, khung) ở tốc độ đi bộ | như trên |
-| `go_mu` | D2 | IMPACT | đang đội, gõ mạnh lên mũ bằng tay hoặc vật mềm | như trên |
-| `thao_doi` | D2 | IMPACT | tháo mũ ra rồi đội lại | như trên |
-| `di_bo` | D2 | NORMAL | đi bộ, rẽ, đi nhanh | không |
-| `cau_thang` | D2 | NORMAL | lên xuống cầu thang | không |
-| `cui_nhat` | D2 | NORMAL | cúi nhặt đồ dưới sàn, đứng lên | không |
-| `ngoi_dung` | D2 | NORMAL | ngồi xuống ghế, đứng lên | không |
-| `nam_xuong` | D2 | NORMAL | chủ động nằm xuống đệm hoặc giường, nằm yên 10 s, ngồi dậy | không |
-| `lam_viec` | D2 | NORMAL | thao tác làm việc: khuân vác nhẹ, với tay lên cao, gõ búa | không |
-| `chay` | D2 | NORMAL | chạy chậm | không |
-| `suyt_nga` | D2 | NORMAL (lớp 2 dự trữ ở tầng 3) | vấp rồi lấy lại thăng bằng, trượt chân nhẹ, trẹo chân, đi khập khiễng vài bước | không |
-| `nga_truoc`, `nga_sau`, `nga_trai`, `nga_phai` | D3 | FALL | ngã trên đệm theo hướng, **nằm yên 10 s** sau ngã | không (mỗi file 1 lần ngã) |
-| `nga_dung_day` | D3 | FALL | ngã trên đệm rồi tự đứng dậy sau 2–3 s | không |
-| `nga_ngoi` | D3 | FALL | ngã ngồi, giữ tư thế ngồi 10 s | không |
-
-## 4. Cách bấm nút đánh dấu (D2, lớp IMPACT)
-
-- Mỗi file gom **5–6 sự kiện cùng loại**, cách nhau ≥ 5 s, để giảm số file (mục 6, AI-05).
-- Người phụ **bấm giữ SW6 khoảng 1–2 s bao quanh từng va đập**: bấm ngay trước, nhả ngay sau. Cột `btn` của file LOG ghi lại.
-- `windowing.py` lấy điểm sự kiện là mẫu có |a| lệch khỏi 1 g nhiều nhất **trong đoạn đang bấm** (A.4). Không cần bấm đúng thời điểm, chỉ cần đoạn bấm chứa va đập và không chứa va đập khác.
-- D3 không dùng nút: mỗi file một lần ngã, điểm sự kiện tìm trên cả file (như D1). File ngã phải dài ≥ 15 s và có ≥ 10 s sau ngã.
-
-## 5. Chỉ tiêu số lượng
-
-**Đề cương v2.1 (16/10):** mạng chỉ có 2 lớp và chỉ huấn luyện bằng bộ công khai D1. Mọi dữ liệu tự thu ở đây **chỉ để kiểm tra** thiết bị. Các file va đập (`roi_mu`, `va_mu`…) vẫn bấm nút đánh dấu, để đếm xem va đập nào dẫn tới PRE_ALARM.
-
-| Đợt | Việc | Chỉ tiêu (Pass) |
+| Kịch bản | Các bước (số lần) | Cần |
 |---|---|---|
-| Buổi thử nhỏ (AI-05, G3) | NORMAL khi đội mũ | ≥ 30 phút từ ≥ 2 người |
-| | ngã trên đệm | ≥ 10 cú |
-| | va mũ khi đang đội / rơi mũ khi hệ thống bật | 10 / 10 lần |
-| Buổi thử chính (AI-08, G5) | NORMAL khi đội mũ | ≥ 2 giờ tổng từ ≥ 2 người, có cúi nhặt, nằm xuống, `suyt_nga` |
-| | ngã trên đệm (D3) | ≥ 20 cú từ ≥ 2 người không có dữ liệu trong huấn luyện |
-| | va mũ khi đang đội / rơi mũ khi hệ thống bật | 20 / 20 lần |
+| `tu_the` | đứng; ngồi ghế lưng thẳng; đứng dậy; cúi về trước; đứng lại; nằm ngửa; nằm nghiêng phải; nằm nghiêng trái; nằm sấp. Mỗi bước 6 s đổi + 10 s giữ yên | ghế, chỗ nằm |
+| `dong_tac` | đứng yên; ngồi phịch xuống ghế thật mạnh rồi đứng lên (×10); cúi nhặt đồ (×5); đi lại 30 s; nằm xuống giường (×5); ngồi dậy (×5); đang nằm lăn người thật mạnh (×10) | ghế, giường / nệm |
+| `nga` | đứng yên; ngã xuống nệm rồi nằm yên (×10); ngã nhẹ xuống nệm rồi ngồi dậy ngay (×5) | nệm dày, người đỡ (mục 1) |
 
-Lớp IMPACT chỉ phải thu để huấn luyện (≥ 250 va đập) nếu buổi thử có hơn 2/20 lần va mũ vào PRE_ALARM (đường lùi trong đề cương).
+Mỗi dòng mẫu trong log là `t_ms,ax,ay,az,gx,gy,gz,…`, đã đổi về trục người và trừ `ACC_OFF`. Log còn có các dòng trạng thái của ESP32:
+- `F,` — trạng thái FSM thô;
+- `N,` — mỗi lần xét ngã;
+- `S,` — trạng thái hiển thị;
+- `STAT,` — thống kê.
 
-Ưu tiên thu `nam_xuong`, `cui_nhat` và `suyt_nga`. Phát lại D1 (AI-10) cho thấy báo giả đến chủ yếu từ nằm xuống giường, nhặt đồ và vấp.
+## 4. Chấm log
 
-## 6. Sau mỗi buổi
-
+```bash
+python -I tools/truc_cam_bien.py ket_qua_board/tu_the_<giờ>.txt --da-doi     # hướng cảm biến: bảng đổi trục đúng phải là (+1, +2, +3); kiểm tư thế
+python -I tools/nga_tren_log.py  ket_qua_board/dong_tac_<giờ>.txt            # chạy lại lõi ESP32: CNN nghi / nga.c loại / báo ngã, theo từng bước
+python -I tools/nga_tren_log.py  ket_qua_board/nga_<giờ>.txt
 ```
-python -I tools/playback_log.py ml/data/raw --detail                             # chấm Pass: ngã → PRE_ALARM, báo giả/giờ, va mũ (mô hình của bitstream 3)
-python -I tools/windowing.py ml/data/raw --out ml/data/d2/d2_windows.npz       # D2 (bỏ qua file nga_*)
-python -I tools/windowing.py ml/data/raw --only-falls --out ml/data/d3/d3_windows.npz
-```
-Script in số sự kiện tìm được theo file. Số sự kiện phải bằng số lần thực hiện; lệch thì xem lại đoạn bấm nút trong video. Cuối cùng đối chiếu bằng mắt 20 cửa sổ mỗi lớp với video (Pass của AI-06): `--plot <thư mục>` vẽ từng sự kiện.
+
+`nga_tren_log.py` chạy nguyên lõi ESP32 dạng mã máy Cortex-M0 trong Unicorn, với CNN tham chiếu thay cho FPGA. Với mỗi lần CNN nghi, công cụ in ra:
+- đang ở bước nào;
+- `nga.c` xác nhận hay loại, và vì sao;
+- đỉnh va chạm, tốc độ quay, có nghiêng hay không.
+
+Log ghi bằng bản ESP32 trước 28/10 17:16 (đã đổi trục, chưa trừ offset) thì thêm `--chua-tru-offset`.
+
+## 5. Chỉ tiêu
+
+| Việc | Chỉ tiêu (Pass) | Đã có (28/10, một người, một buổi) |
+|---|---|---|
+| Tư thế giữ yên | 9/9 đoạn đúng | 9/9 |
+| Động tác dễ nhầm | 0 lần báo ngã | 0 (CNN nghi 22 lần, `nga.c` loại cả 22) |
+| Ngã lên nệm | ≥ 18/20 cú được báo | 14/15 |
+| Đeo dài (đi lại, ngồi, làm việc, nằm nghỉ) | ≤ 1 lần báo nhầm mỗi giờ, ≥ 2 giờ tổng từ ≥ 2 người | **[CHỜ ĐO]** |
+| Ngã từ người khác (không có trong log chọn ngưỡng) | ≥ 18/20, ≥ 2 người | **[CHỜ ĐO]** |
+
+Bằng chứng: `docs/bao_cao/2026-10-28_tu_the_nguc/`, `docs/bao_cao/2026-10-28_nga_that/`.
+
+## 6. Định dạng cũ (thiết kế ban đầu trên mũ)
+
+`tools/logger.py`, `tools/windowing.py` và `tools/playback_log.py` đọc file CSV do MCU ghi ở chế độ LOG khi MCU làm hết phần xử lý (A.9). Trên phần cứng hiện tại, MCU chạy `FW_NODE` nên không dùng các công cụ này. Chúng vẫn được giữ lại để chấm các file cùng định dạng.
