@@ -66,7 +66,7 @@ function ve(d){
  const t=document.getElementById('tk');t.textContent=d.tk?'PASS':'FAIL';t.style.color=d.tk?'var(--ok)':'var(--bad)';
  document.getElementById('tkd').textContent='SPI '+d.s.spi_khz+' kHz';
  const s=d.s,R=(a,b)=>'<div class="row"><span>'+a+'</span><b>'+b+'</b></div>';
- document.getElementById('tke').innerHTML=R('Số lần phát hiện ngã',d.nga+(d.nga?' (lần cuối '+((d.t-d.t_nga)/1000).toFixed(0)+' s trước)':''))+R('Mẫu nhận',s.mau)+R('Mẫu bù (chèn lại mẫu mất)',s.bu||0)+R('Mất cảm biến (lần)',s.mat_cb||0)+R('Tự cắt nguồn cảm biến (gỡ treo)',d.cat_mpu||0)+R('Mẫu mất',s.mat)+R('Khung hỏng',s.hong)+R('Cửa sổ gửi FPGA',s.gui)+R('FPGA trả OK',s.ok)+R('Timeout',s.to)+R('Lỗi khác',s.loi);
+ document.getElementById('tke').innerHTML=R('Số lần phát hiện ngã',d.nga+(d.nga?' (lần cuối '+((d.t-d.t_nga)/1000).toFixed(0)+' s trước)':''))+R('Mẫu nhận',s.mau)+R('Mẫu bù (chèn lại mẫu mất)',s.bu||0)+R('Mất cảm biến (lần)',s.mat_cb||0)+R('Cảm biến treo (lần)',d.cat_mpu||0)+R('Mẫu mất',s.mat)+R('Khung hỏng',s.hong)+R('Cửa sổ gửi FPGA',s.gui)+R('FPGA trả OK',s.ok)+R('Timeout',s.to)+R('Lỗi khác',s.loi);
  const [tn,tc]=tt(d.tt),te=document.getElementById('tt');te.children[0].style.background=tc;te.children[1].textContent=tn;
  const last=d.pt.length?d.pt[d.pt.length-1][0]:0;
  document.getElementById('ttd').textContent=(last?'từ '+((d.t-last)/1000).toFixed(0)+' s trước · ':'')+'không phải té ngã, chỉ để theo dõi';

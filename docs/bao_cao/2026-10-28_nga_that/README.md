@@ -20,7 +20,7 @@ Ngưỡng đặt trong `fw_config.h` (`NGA_*`). Đây là bản 2; quy tắc ch�
 Cùng đợt sửa:
 - **MẤT CẢM BIẾN:** quá 3 s không có mẫu thì web đỏ, còi 2 bíp mỗi 3 s, LED nháy nhanh.
 - **UART chịu nhiễu:** bộ tách chỉ nhận khung LEN = 14 và dò lại `F1 7E` ngay trong khung hỏng.
-- **ESP32:** bật kéo lên trên GPIO16, bộ đệm nhận 32 KB, gửi log TCP bằng `MSG_DONTWAIT`, chèn bù mẫu mất (khoảng hở ≤ 50 mẫu), cấp nguồn MPU6050 qua GPIO25 để tự gỡ treo.
+- **ESP32:** bật kéo lên trên GPIO16, bộ đệm nhận 32 KB, gửi log TCP bằng `MSG_DONTWAIT`, chèn bù mẫu mất (khoảng hở ≤ 50 mẫu), cấp nguồn MPU6050 qua GPIO25 để tự gỡ treo. Nhóm nối VCC vào GPIO25 thì cảm biến không chạy, nên chốt giữ VCC ở 3,3 V của ESP32 (`MPU_NGUON_GPIO 0`); MPU treo thì rút pin ≈ 5 s.
 
 ## Kết quả
 
@@ -61,4 +61,4 @@ Chi tiết từng bản ghi kèm lý do loại: [nga_d1_102_v1.txt](nga_d1_102_v
 - D1 là **cảm biến ở đầu**, và người 102 nằm trong tập huấn luyện của mô hình N2_11. CNN nghi đúng 101/101 là con số lạc quan. Chưa có bản ghi liền kênh ngực (việc B1).
 - Ngồi xuống thật mạnh mà đỉnh ≥ 3 g sẽ bị báo ngã nhầm. Ngất / ngã nhẹ va chạm < 2,5 g sẽ bị bỏ sót. Ngã khi đang cúi sẽ bị loại vì trước đó không thẳng. [CẦN XÁC MINH – nguồn: dữ liệu nhóm tự thu khi đeo ngực, `ghi_uart --kich-ban dong_tac` và `--kich-ban nga`]
 - Nằm xuống giường khi đeo có đỉnh 2,4 g, rất sát ngưỡng 2,5 g.
-- Chưa nạp lên board.
+- ESP32 đã nạp 28/10; chưa thử ngã thật / ngồi mạnh khi đeo.

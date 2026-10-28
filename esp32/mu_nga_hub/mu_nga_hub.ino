@@ -45,11 +45,13 @@ extern "C" {
 #define LED_PIN         2           // LED trên ESP32 DevKit: sáng/nháy theo còi + LED của Safety FSM
 #define BTN_PIN         0           // nút BOOT: CANCEL phụ (OR với nút SW3 của MCU)
 #define USB_BAUD        460800
-// Nguồn MPU6050 (28/10): VCC của module GY-521 nối GPIO25 thay cho chân 3,3 V (GND vẫn ở ESP32). MPU6050 có lúc treo
-// (đèn sáng, không trả lời I²C, chỉ cắt nguồn mới hết): MCU báo "MPU6050 ... ket qua=-1" và > MPU_TREO_MS không có mẫu
-// → ESP32 tắt GPIO25 MPU_CAT_MS rồi bật lại, MCU tự cấu hình lại trong ≤ 1 s. Chỉ dựa vào dòng báo lỗi của MCU, không
-// dựa vào "không có mẫu" đơn thuần: lúc khởi động MCU hiệu chuẩn gyro vài giây chưa gửi mẫu. Module ăn ≈ 5–7 mA.
-// VCC chưa chuyển sang GPIO25 thì việc bật/tắt chân này vô hại.
+// Nguồn MPU6050: VCC của module GY-521 nối chân 3,3 V của ESP32, GND ở ESP32. MPU6050 có lúc treo (đèn sáng, không
+// trả lời I²C, chỉ cắt nguồn mới hết): MCU báo "MPU6050 ... ket qua=-1" và > MPU_TREO_MS không có mẫu.
+// MPU_NGUON_GPIO 1 (thử 28/10): VCC nối GPIO25, ESP32 tắt chân MPU_CAT_MS rồi bật lại để gỡ treo. Nhóm nối VCC vào
+// GPIO25 thì cảm biến không chạy, nối 3,3 V thì chạy → nhóm chốt 28/10 giữ 3,3 V: MPU_NGUON_GPIO 0, ESP32 không đụng
+// GPIO25, MPU treo thì chỉ báo trong log, người dùng rút pin ≈ 5 s. Chỉ dựa vào dòng báo lỗi của MCU, không dựa vào
+// "không có mẫu" đơn thuần: lúc khởi động MCU hiệu chuẩn gyro vài giây chưa gửi mẫu.
+#define MPU_NGUON_GPIO  0
 #define MPU_NGUON_PIN   25
 #define MPU_TREO_MS     2000u
 #define MPU_CAT_MS      300u
@@ -85,7 +87,7 @@ static int      s_last_rc = -1;
 static uint32_t s_web_cancel_until = 0;
 // kiểu âm còi: fix cứng COI_KIEU_CHOT (node_link.h, 2 kHz; nhóm nghe thử 6 kiểu trên board 28/10 và chốt kiểu này)
 static const uint8_t s_coi_kieu = COI_KIEU_CHOT;
-static uint32_t s_n_cat_mpu = 0;               // số lần ESP32 cắt nguồn MPU6050 để gỡ treo
+static uint32_t s_n_cat_mpu = 0;               // số lần MPU6050 treo (MPU_NGUON_GPIO 1: số lần ESP32 cắt nguồn gỡ treo)
 static uint32_t s_n_nga = 0, s_t_nga = 0;     // số lần phát hiện ngã THẬT (nga.c xác nhận) từ lúc bật, lúc lần gần nhất
 // mất cảm biến: quá MAT_CB_MS không có mẫu (sau khi đã có mẫu, hoặc quá 15 s từ lúc bật) → web đỏ, còi + LED kiểu riêng
 #define MAT_CB_MS 3000u
@@ -256,9 +258,11 @@ static void web_data()
 // ---------------- setup / loop ----------------
 void setup()
 {
+#if MPU_NGUON_GPIO
     pinMode(MPU_NGUON_PIN, OUTPUT);            // cấp nguồn MPU6050 càng sớm càng tốt
     gpio_set_drive_capability((gpio_num_t)MPU_NGUON_PIN, GPIO_DRIVE_CAP_3);   // ≈ 40 mA: module ăn 5–7 mA, sụt áp ít nhất
     digitalWrite(MPU_NGUON_PIN, HIGH);
+#endif
     Serial.begin(USB_BAUD);
     Serial2.setRxBufferSize(32768);             // ≈ 15 s ở 2,1 kB/s: vòng lặp có lỡ chậm (WiFi, web) cũng không tràn
     Serial2.begin(MCU_BAUD, SERIAL_8N1, MCU_RX_PIN, MCU_TX_PIN);
@@ -461,12 +465,17 @@ void loop()
         out("# MPU6050: da cap lai nguon, cho MCU cau hinh lai");
     } else if (!dang_cat && now - t_last_sample > MPU_TREO_MS && t_mpu_loi && now - t_mpu_loi < 3000u &&
                (t_cat == 0 || now - t_cat >= MPU_CAT_CACH_MS)) {
-        digitalWrite(MPU_NGUON_PIN, LOW);
-        dang_cat = 1;
         t_cat = now;
         s_n_cat_mpu++;
+#if MPU_NGUON_GPIO
+        digitalWrite(MPU_NGUON_PIN, LOW);
+        dang_cat = 1;
         snprintf(s, sizeof s, "# MPU6050 treo (%lu ms khong co mau): cat nguon GPIO%d %u ms, lan %lu",
                  (unsigned long)(now - t_last_sample), MPU_NGUON_PIN, MPU_CAT_MS, (unsigned long)s_n_cat_mpu);
+#else
+        snprintf(s, sizeof s, "# MPU6050 treo (%lu ms khong co mau), lan %lu: rut pin ~5 s roi cam lai",
+                 (unsigned long)(now - t_last_sample), (unsigned long)s_n_cat_mpu);
+#endif
         out(s);
     }
     if (now - t_last_sample > 2000u && now - t_warn > 2000u) {
