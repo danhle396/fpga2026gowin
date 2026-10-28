@@ -1,0 +1,17 @@
+thư mục làm việc: /tmp/tmp.fj2omdaNJZ
+  fpga/src = mô hình n2_11_p1: PASS (0 s)
+  tb_e2 (P = 1, 10 vector, mọi tầng): PASS (23 s)
+  tb_e2 (P = 4, 10 vector, mọi tầng): PASS (13 s)
+  tb_proto (top v3 qua SPI: 10 khung + 7 kịch bản lỗi): PASS (45 s)
+  esp32/mu_nga_hub trùng firmware/src: PASS (0 s)
+
+| Kiểm | Kết quả | Thời gian |
+|---|---|---|
+| fpga/src = mô hình n2_11_p1 | PASS | 0 s |
+| tb_e2 (P = 1, 10 vector, mọi tầng) | PASS | 23 s |
+| tb_e2 (P = 4, 10 vector, mọi tầng) | PASS | 13 s |
+| tb_proto (top v3 qua SPI: 10 khung + 7 kịch bản lỗi) | PASS | 45 s |
+| esp32/mu_nga_hub trùng firmware/src | PASS | 0 s |
+Icarus: Icarus Verilog version 0.9.7  (v0_9_7)
+TẤT CẢ PASS
+rtl rc=0
