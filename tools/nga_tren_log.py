@@ -18,16 +18,24 @@ import m0_test as m0  # noqa: E402
 import truc_cam_bien as tc  # noqa: E402
 
 WHY = ["NONE", "WEAR_ON", "WEAR_OFF", "VOTES", "STILL", "TIMEOUT", "CANCEL", "SOS", "ALARM_ACK", "KHONG_NGA"]
+NGA_EV = []          # các lần xét ngã của lần chạy gần nhất
+LD = ['-', 'trước không thẳng', 'không va chạm', 'không nằm / ngực không hạ', 'nằm', 'ngực hạ', 'bất động']
 ST = ["STANDBY", "MONITOR", "SUSPECT", "PRE_ALARM", "ALARM", "COOLDOWN"]
 
 
 def chay(stream, P, nga_en):
     blob = m0.cnn_blob(P, []) + struct.pack("<IBBBB", len(stream), 0, 1, 5, nga_en) + stream
+    NGA_EV.clear()
     _, out = m0.run(11, 0, blob, max_insn=8_000_000_000)
     s_ev, i = [], 0
     while out[i] != ord("T"):
         if out[i] == ord("R"):
             i += 4
+        elif out[i] == ord("N"):                           # 'N' t hd ly_do truoc_thang co_va_cham peak2 dh_dot co_dot
+            t, hd, ld, tr, vc = struct.unpack("<IBBBB", out[i + 1:i + 9])
+            pk2, dh, cd = struct.unpack("<IqB", out[i + 9:i + 22])
+            NGA_EV.append((t, hd, ld, tr, vc, pk2 ** 0.5 / 2048, dh * 9.80665 / 2048 / 1e4 if cd else None))
+            i += 22
         else:
             s_ev.append((struct.unpack("<I", out[i + 1:i + 5])[0], out[i + 5], out[i + 6])); i += 7
     return s_ev

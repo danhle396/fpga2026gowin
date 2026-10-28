@@ -16,6 +16,8 @@ ROOT = pathlib.Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(ROOT / "tools"))
 import m0_test as m0  # noqa: E402
 
+NGA_EV = []          # các lần xét ngã của lần chạy gần nhất
+LD = ['-', 'trước không thẳng', 'không va chạm', 'không nằm / ngực không hạ', 'nằm', 'ngực hạ', 'bất động']
 ST = ["STANDBY", "MONITOR", "SUSPECT", "PRE_ALARM", "ALARM", "COOLDOWN"]
 WHY_KHONG_NGA = 9
 
@@ -32,11 +34,17 @@ def mot_ban_ghi(x50, P, truc, off):
         s_cb[:, 3 + abs(c) - 1] = np.sign(c) * b[:, 3 + i_nguoi]
     stream = b"".join(m0.node_pack(k, s_cb[k], 0) for k in range(len(s_cb)))
     blob = m0.cnn_blob(P, []) + struct.pack("<IBBBB", len(stream), 0, 1, 5, 1) + stream
+    NGA_EV.clear()
     _, out = m0.run(11, 0, blob, max_insn=4_000_000_000)
     ev, i = [], 0
     while out[i] != ord("T"):
         if out[i] == ord("R"):
             i += 4
+        elif out[i] == ord("N"):                           # 'N' t hd ly_do truoc_thang co_va_cham peak2 dh_dot co_dot
+            t, hd, ld, tr, vc = struct.unpack("<IBBBB", out[i + 1:i + 9])
+            pk2, dh, cd = struct.unpack("<IqB", out[i + 9:i + 22])
+            NGA_EV.append((t, hd, ld, tr, vc, pk2 ** 0.5 / 2048, dh * 9.80665 / 2048 / 1e4 if cd else None))
+            i += 22
         else:
             ev.append((struct.unpack("<I", out[i + 1:i + 5])[0], out[i + 5], out[i + 6])); i += 7
     # CNN nghi = có SUSPECT, hoặc có lần bị loại ngay trong khe vào SUSPECT (mode 11 chỉ thấy MONITOR, KHONG_NGA)
@@ -54,19 +62,22 @@ def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--subject", type=int, default=102)
     ap.add_argument("--out")
+    ap.add_argument("--act", type=int, nargs="*", help="chỉ chạy các mã hoạt động này")
     a = ap.parse_args()
     z = np.load(ROOT / "ml" / "data" / "public" / "d1_trials_50hz.npz")
     D, S, L, A, U = z["data"], z["start"], z["length"], z["act"], z["subject"]
     name, P = [(n, p) for n, p in m0.cnn_models()][0]
     truc, off = m0.vi_tri_deo()
-    idx = np.flatnonzero(U == a.subject)
+    idx = np.flatnonzero((U == a.subject) & (np.isin(A, a.act) if a.act else True))
     print(f"D1 người {a.subject}: {len(idx)} bản ghi, mô hình {name}, vị trí đeo theo fw_config.h {truc} {off}")
     rows = []
     for n_i, i in enumerate(idx):
         act = int(A[i])
         nghi, xn = mot_ban_ghi(D[S[i]:S[i] + L[i]].astype(np.int64), P, truc, off)
         rows.append((act, nghi, xn))
-        print(f"  {n_i + 1:3d}/{len(idx)} act {act}: CNN nghi {int(nghi)}, xác nhận ngã {int(xn)}", flush=True)
+        lydo = "; ".join(f"{'XÁC NHẬN' if hd == 1 else 'loại'}: {LD[ld]} (trước thẳng {tr}, đỉnh {pk:.2f} g, "
+                         f"Δh {'-' if dh is None else f'{dh:+.2f} m'})" for _, hd, ld, tr, vc, pk, dh in NGA_EV)
+        print(f"  {n_i + 1:3d}/{len(idx)} act {act}: CNN nghi {int(nghi)}, xác nhận ngã {int(xn)}  {lydo}", flush=True)
     if a.out:
         with open(a.out, "w", encoding="utf-8") as f:
             f.write("act,cnn_nghi,xac_nhan\n")

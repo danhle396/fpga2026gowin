@@ -45,6 +45,7 @@ void nga_bat_dau(nga_t *n, uint32_t now)
     n->peak2_sk = pk;
     n->truoc_thang = thang;
     n->co_va_cham = pk >= (uint32_t)NGA_VA_CHAM_LSB * (uint32_t)NGA_VA_CHAM_LSB;
+    n->va_cham_manh = pk >= (uint32_t)NGA_VA_CHAM_MANH * (uint32_t)NGA_VA_CHAM_MANH;
     n->co_dot = 0;
     n->dh_dot = 0;
     n->ly_do = NGA_LD_KHONG;
@@ -65,6 +66,7 @@ int nga_buoc(nga_t *n, uint32_t now, uint8_t huong, uint8_t pre_alarm)
 {
     if (n->trang_thai != NGA_DANG_XET) return NGA_HD_KHONG;
     if (!n->truoc_thang)                                    return ket(n, NGA_BO, NGA_LD_DANG_NAM);
+    if (n->va_cham_manh)                                    return ket(n, NGA_XAC_NHAN, NGA_LD_VA_CHAM_MANH);
     if (!n->co_va_cham)                                     return ket(n, NGA_BO, NGA_LD_KHONG_VA_CHAM);
     if (huong == HUONG_NAM)                                 return ket(n, NGA_XAC_NHAN, NGA_LD_NAM);
     if (n->co_dot && n->dh_dot <= -(int64_t)NGA_HA_H)       return ket(n, NGA_XAC_NHAN, NGA_LD_HA_NGUC);
