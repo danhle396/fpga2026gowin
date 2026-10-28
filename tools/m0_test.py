@@ -445,6 +445,14 @@ def test_node():
     return ok
 
 
+def vi_tri_deo():
+    """(TRUC_X, TRUC_Y, TRUC_Z) theo FW_VI_TRI_DEO mặc định trong firmware/src/fw_config.h."""
+    import re
+    t = (ROOT / "firmware" / "src" / "fw_config.h").read_text(encoding="utf-8")
+    v = int(re.search(r"#define FW_VI_TRI_DEO\s+(\d+)", t).group(1))
+    return (3, -1, -2) if v == 1 else (1, 2, 3)
+
+
 def test_hub():
     """hub.c (chạy trên ESP32): luồng UART của MCU → app_core → khung v3 → FPGA giả lập (hỏi vòng, không IRQ) → FSM.
     So với cùng tham chiếu Python của test_app (golden + safety_model), kết quả đến sau 1 khe 10 ms."""
@@ -454,13 +462,19 @@ def test_hub():
     name = "N2 D1" if "N2 D1" in ms else list(ms)[0]
     P = ms[name]
     raw, acts = app_stream()
-    r = np.clip(raw.astype(np.int64), -32768, 32767)                  # MCU đã trừ offset gyro trước khi gửi
+    # trục người (như golden); ±32767 để đổi dấu không tràn. MCU gửi theo trục cảm biến (FW_VI_TRI_DEO, fw_config.h):
+    # dựng ngược luồng MCU từ trục người, hub_doi_truc phải trả lại đúng trục người
+    r = np.clip(raw.astype(np.int64), -32767, 32767)                  # MCU đã trừ offset gyro trước khi gửi
     cancel = np.zeros(len(r), np.uint8)
     for a0, dur in ((2500, 120), (5200, 40), (7400, 350), (9800, 120), (11500, 120)):
         cancel[a0:a0 + dur] = 1
+    s_cb = np.zeros_like(r)
+    for i_nguoi, c in enumerate(vi_tri_deo()):                        # trục người i = ±(trục cảm biến |c|)
+        for g in (0, 3):
+            s_cb[:, g + abs(c) - 1] = np.sign(c) * r[:, g + i_nguoi]
     stream = b"# MPU6050 OK: WHO_AM_I=0x68\n# gyro_off,1,2,3\n"
     for k in range(len(r)):
-        stream += node_pack(k, r[k], int(cancel[k]))
+        stream += node_pack(k, s_cb[k], int(cancel[k]))
         if k % 1000 == 999:
             stream += b"STAT,raw,%d\n" % k
     t_score, tilt, eng = 0, 1, 5

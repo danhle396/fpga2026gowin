@@ -43,6 +43,23 @@
 #define COI_TU_ESP32    0
 #endif
 
+/* Vị trí đeo (28/10). Mọi phần sau MCU (CNN, khối A.8, tư thế A.11) dùng trục người: X trước, Y trái, Z lên.
+ * hub.c đổi trục cảm biến về trục người trước khi xử lý (hub_doi_truc). Mã ±1/±2/±3 = ± trục X/Y/Z của MPU6050.
+ *   0 = mũ: cảm biến đã đúng trục người.
+ *   1 = ngực (đo ket_qua_board/truc_nguc_20261028_151551, docs/bao_cao/2026-10-28_deo_nguc): X = +Z, Y = −X, Z = −Y. */
+#ifndef FW_VI_TRI_DEO
+#define FW_VI_TRI_DEO   1
+#endif
+#if FW_VI_TRI_DEO == 1
+#define TRUC_X  3
+#define TRUC_Y  (-1)
+#define TRUC_Z  (-2)
+#else
+#define TRUC_X  1
+#define TRUC_Y  2
+#define TRUC_Z  3
+#endif
+
 /* ---- A.8 khối và Safety FSM (giá trị đầu; chốt ở AI-10) ---- */
 #define BLK_SAMPLES     32      /* 32 mẫu thô 100 Hz = 0,32 s */
 #define T_STILL_A       300     /* LSB ở ±16 g, ≈ 0,15 g */

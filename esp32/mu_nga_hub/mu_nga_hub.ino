@@ -260,6 +260,8 @@ void setup()
         if (!ok) delay(1000);
     }
     if (!ok) H.app.err_flag = 1;
+    out(FW_VI_TRI_DEO == 1 ? "# vi tri deo: NGUC (truc nguoi X=+Z Y=-X Z=-Y cua MPU6050; LOG in truc nguoi)"
+                            : "# vi tri deo: MU (truc cam bien = truc nguoi)");
     out("# start");
 }
 
@@ -300,8 +302,8 @@ void loop()
             if (s_log) {
                 // t theo số mẫu MCU đã gửi (100 Hz, tính cả mẫu mất), không theo lúc ESP32 nhận: UART có thể dồn cục
                 unsigned long t_log = 10UL * (unsigned long)(NR.n_ok + NR.n_lost - 1u);
-                snprintf(s, sizeof s, "%lu,%d,%d,%d,%d,%d,%d,%u,1", t_log, NR.r[0], NR.r[1], NR.r[2],
-                         NR.r[3], NR.r[4], NR.r[5], (unsigned)((NR.keys >> 1) & 1u));
+                snprintf(s, sizeof s, "%lu,%d,%d,%d,%d,%d,%d,%u,1", t_log, H.r[0], H.r[1], H.r[2],
+                         H.r[3], H.r[4], H.r[5], (unsigned)((NR.keys >> 1) & 1u));
                 out(s);
             }
         } else if (e == NODE_TEXT && NR.line[0]) {

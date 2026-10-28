@@ -38,11 +38,15 @@ typedef struct {
     spi_result_t last;
     int      last_rc;
     posture_t pos;
+    int16_t  r[6];              /* mẫu vừa nhận, đã đổi về trục người */
 } hub_t;
 
 void hub_init(hub_t *h, uint32_t now);
-/* Một mẫu 100 Hz từ MCU (gyro đã trừ offset). Có cửa sổ mới và FPGA rảnh thì ghi khung ngay. Trả về cờ APP_* | HUB_POSTURE. */
-unsigned hub_sample(hub_t *h, const hub_io_t *io, const int16_t r[6], uint8_t keys, uint32_t now);
+/* Trục cảm biến → trục người (X trước, Y trái, Z lên) theo FW_VI_TRI_DEO (fw_config.h); cả gia tốc lẫn gyro. */
+void hub_doi_truc(const int16_t in[6], int16_t out[6]);
+/* Một mẫu 100 Hz từ MCU, trục cảm biến (gyro đã trừ offset). Đổi trục (h->r), rồi tiền xử lý, khối, tư thế; có cửa sổ mới
+ * và FPGA rảnh thì ghi khung ngay. Trả về cờ APP_* | HUB_POSTURE. */
+unsigned hub_sample(hub_t *h, const hub_io_t *io, const int16_t raw[6], uint8_t keys, uint32_t now);
 /* Gọi thường xuyên (≥ 1 lần/ms). Trả về SPI_PENDING nếu chưa có gì mới, ngược lại mã SPI_* của kết quả vừa đọc
  * (kết quả nằm ở h->last và đã đưa vào app_on_result). */
 int  hub_poll(hub_t *h, const hub_io_t *io, uint32_t now);

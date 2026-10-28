@@ -41,8 +41,25 @@ static void send_frame(hub_t *h, const hub_io_t *io, uint8_t seq,
     h->n_sent++;
 }
 
-unsigned hub_sample(hub_t *h, const hub_io_t *io, const int16_t r[6], uint8_t keys, uint32_t now)
+static int16_t truc(const int16_t *v, int c)
 {
+    int32_t x = c > 0 ? v[c - 1] : -(int32_t)v[-c - 1];
+    return (int16_t)(x > 32767 ? 32767 : x);             /* −(−32768) */
+}
+
+void hub_doi_truc(const int16_t in[6], int16_t out[6])
+{
+    static const int8_t k[3] = { TRUC_X, TRUC_Y, TRUC_Z };
+    for (int i = 0; i < 3; i++) {
+        out[i]     = truc(in, k[i]);
+        out[3 + i] = truc(in + 3, k[i]);                  /* gyro quay cùng phép xoay */
+    }
+}
+
+unsigned hub_sample(hub_t *h, const hub_io_t *io, const int16_t raw[6], uint8_t keys, uint32_t now)
+{
+    const int16_t *r = h->r;
+    hub_doi_truc(raw, h->r);
     h->keys = keys;
     h->n_samples++;
     unsigned f = app_on_raw(&h->app, r);

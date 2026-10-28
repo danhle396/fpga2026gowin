@@ -1,0 +1,18 @@
+7940 mẫu; trọng lực trung bình lúc giữ yên (LSB, 2048 = 1 g):
+  dung          n= 700  x    -142  y   -2038  z     250  |g|  2058
+  nam_ngua      n= 700  x    -263  y      -4  z    2240  |g|  2255
+  nghieng_phai  n= 701  x   -2029  y     -36  z     131  |g|  2033
+  nghieng_trai  n= 700  x    2021  y     138  z     366  |g|  2059
+  cui           n= 841  x     -73  y    -592  z   -1760  |g|  1858
+  X trước: +Z cảm biến (trục đó mang 99 % trọng lực)
+  Y trái: -X cảm biến (trục đó mang 100 % trọng lực)
+  Z lên: -Y cảm biến (trục đó mang 99 % trọng lực)
+bảng đổi trục: TRUC_X +3, TRUC_Y -1, TRUC_Z -2  (định thức +1, phép xoay đúng)
+  kiểm chéo: nghiêng trái ra +X, phải là ngược dấu Y trái → đúng
+posture_model trên log đã đổi trục, tư thế ở cuối mỗi đoạn giữ yên:
+  dung          → DUNG          ✓
+  nam_ngua      → NAM_NGUA      ✓
+  nghieng_phai  → NGHIENG_PHAI  ✓
+  nghieng_trai  → NGHIENG_TRAI  ✓
+  cui           → NAM_SAP       ✗ (kỳ vọng CUI)
+KẾT LUẬN: bảng rõ ràng
