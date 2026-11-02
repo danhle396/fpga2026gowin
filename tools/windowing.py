@@ -1,5 +1,5 @@
 #!/usr/bin/env python
-# tools/windowing.py — file LOG 100 Hz của mũ (tools/logger.py) → cửa sổ INT8 có nhãn theo SPEC v3 A.2–A.4 (việc AI-06).
+# tools/windowing.py — file LOG 100 Hz của thiết bị (tools/logger.py) → cửa sổ INT8 có nhãn theo SPEC v3 A.2–A.4 (việc AI-06).
 #
 #   python -I tools/windowing.py ml/data/raw --out ml/data/d2/d2_windows.npz             # D2: IMPACT + NORMAL
 #   python -I tools/windowing.py ml/data/raw --only-falls --out ml/data/d3/d3_windows.npz   # D3: ngã trên đệm

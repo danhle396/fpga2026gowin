@@ -1,4 +1,4 @@
-// trang_web_html.h — trang theo dõi thiết bị đeo ngực, do ESP32 phục vụ ở http://<IP ESP32>/ (mu_nga_hub.ino).
+// trang_web_html.h — trang theo dõi thiết bị đeo ngực, do ESP32 phục vụ ở http://<IP ESP32>/ (nguc_nga_hub.ino).
 // Tự chứa (không CDN): xem được trên hotspot điện thoại không có Internet. Trang hỏi /data mỗi 300 ms.
 #pragma once
 

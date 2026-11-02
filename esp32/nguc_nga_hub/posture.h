@@ -1,19 +1,19 @@
 /*
- * posture.h — nhận dạng tư thế từ cảm biến ở đầu (A.11). C thuần, số nguyên; trùng từng bit với
+ * posture.h — nhận dạng tư thế từ cảm biến đeo ngực (A.11; nguc = 0: cảm biến ở đầu). C thuần, số nguyên; trùng từng bit với
  * ml/src/posture_model.py (tools/m0_test.py kiểm). Chạy trên ESP32 trong hub.c, độc lập với Safety FSM:
  * chỉ để hiển thị / báo cáo, không đổi quyết định báo ngã.
  *
  * Tư thế: đứng thẳng, ngồi, nằm ngửa, nằm sấp, nằm nghiêng trái / phải, cúi người, đang di chuyển (đi lại).
- * Đầu vào: mẫu 100 Hz, AX AY AZ INT16 (±16 g: 2048 LSB/g), trục của mũ: X trước, Y trái, Z lên.
+ * Đầu vào: mẫu 100 Hz, AX AY AZ INT16 (±16 g: 2048 LSB/g), trục người: X trước, Y trái, Z lên.
  * Cách làm (chi tiết ở posture_model.py):
- *   - hướng đầu theo trung bình khối 32 mẫu: az > 0,82|g| THẲNG, az < 0,50|g| NẰM (hướng nằm theo trục lớn hơn
+ *   - hướng cảm biến theo trung bình khối 32 mẫu: az > 0,82|g| THẲNG, az < 0,50|g| NẰM (hướng nằm theo trục lớn hơn
  *     của ax / ay), còn lại CÚI; giữ 3 khối mới chốt;
- *   - đứng / ngồi theo độ cao đầu qua mỗi đợt cử động (tích phân |a| − g, chỉnh trôi bằng vận tốc 0 hai đầu):
+ *   - đứng / ngồi theo độ cao cảm biến qua mỗi đợt cử động (tích phân |a| − g, chỉnh trôi bằng vận tốc 0 hai đầu):
  *     hạ ≥ 0,25 m (0,15 m nếu có lúc ngả / cúi mạnh) → ngồi, lên ≥ 0,25 m → đứng; dậy sau khi nằm ≥ 3 s:
  *     lên < 1,5 m → ngồi dậy, ngược lại đứng dậy; đi lại liên tục > 4 s → đứng;
  *   - đeo ngực (nguc = 1, 28/10): cúi nhặt đồ ngực ngả 79°, nằm sấp 78°; úp về trước đi thẳng từ đứng mà ngực hạ
  *     < 0,5 m → cúi người (đo: cúi hạ 0,20 m, đứng → nằm hạ 0,89 m).
- * Kết quả trên D1 (tools/posture_eval.py, 1.844 bản ghi, tư thế cuối): đứng 93,2 %, ngồi 82,0 %, nhận ra nằm 93,2 %
+ * Kết quả trên D1 kênh đầu (tools/posture_eval.py, 1.844 bản ghi, tư thế cuối): đứng 93,2 %, ngồi 82,0 %, nhận ra nằm 93,2 %
  * (đúng cả hướng 79,9 %).
  */
 #ifndef POSTURE_H

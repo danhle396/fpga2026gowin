@@ -1,15 +1,15 @@
-"""posture_model.py — nhận dạng tư thế từ cảm biến ở đầu (đáp án số nguyên cho firmware/src/posture.c, A.11).
+"""posture_model.py — nhận dạng tư thế từ cảm biến đeo ngực; nguc = 0: cảm biến ở đầu (đáp án số nguyên cho firmware/src/posture.c, A.11).
 
 Không thay Safety FSM: tư thế chỉ để hiển thị và báo cáo (đứng thẳng, ngồi, nằm ngửa, nằm sấp, nằm nghiêng trái/phải,
-cúi người, đang di chuyển). Đầu vào: mẫu thô 100 Hz [AX AY AZ ...] INT16 (±16 g: 2048 LSB/g); trục của mũ: X trước,
+cúi người, đang di chuyển). Đầu vào: mẫu thô 100 Hz [AX AY AZ ...] INT16 (±16 g: 2048 LSB/g); trục người: X trước,
 Y trái, Z lên. Mọi phép tính là số nguyên, chia làm tròn về 0 (tdiv) để posture.c trùng từng bit.
 
-1. Hướng đầu theo trung bình gia tốc khối 32 mẫu (0,32 s): az > 0,82 |g| → THẲNG; az < 0,50 |g| → NẰM
+1. Hướng cảm biến theo trung bình gia tốc khối 32 mẫu (0,32 s): az > 0,82 |g| → THẲNG; az < 0,50 |g| → NẰM
    (|ay| > |ax|: ay > 0 nghiêng phải, ngược lại nghiêng trái; còn lại ax > 0 nằm ngửa, ngược lại nằm sấp); khác → CÚI.
    Giữ 3 khối liên tiếp (≈ 1 s) mới chốt.
 2. Đợt cử động: | |a| − 2048 | > 120 LSB (0,06 g) trong 30 mẫu gần nhất. Trong đợt: v += |a| − g_yên, h += v; hết đợt
    chỉnh trôi bằng vận tốc 0 ở hai đầu: Δh = h − v_cuối·(n+1)/2 (đơn vị: Δh[m] = Δh · 9,80665 / 2048 / 100²).
-3. Đứng hay ngồi (cùng đầu thẳng):
+3. Đứng hay ngồi (cùng cảm biến thẳng):
    - đợt đầu luôn thẳng: Δh ≤ −0,25 m → NGỒI; Δh ≥ +0,25 m → ĐỨNG; đợt dài > 4 s (đi lại) → ĐỨNG;
    - dậy sau khi NẰM ≥ 3 s: Δh < 1,5 m → NGỒI (ngồi dậy), ngược lại ĐỨNG (đứng dậy);
    - đợt có lúc nằm < 3 s (cúi rất sâu, ngã rồi bật dậy ngay): giữ nguyên. Đợt có cúi vẫn dùng Δh (ngồi xuống ghế

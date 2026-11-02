@@ -18,7 +18,7 @@ def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--port", required=True)
     ap.add_argument("--baud", type=int, default=460800)
-    ap.add_argument("--gui", default="", help="gửi lệnh này trước khi ghi, ví dụ LOG (ESP32 hub, esp32/mu_nga_hub)")
+    ap.add_argument("--gui", default="", help="gửi lệnh này trước khi ghi, ví dụ LOG (ESP32 hub, esp32/nguc_nga_hub)")
     ap.add_argument("--subject", required=True)                # vd: s01
     ap.add_argument("--activity", required=True)               # vd: fall_front
     ap.add_argument("--trial", type=int, required=True)

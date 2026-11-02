@@ -56,7 +56,7 @@ else add "tb_proto (top v3 qua SPI: $NG khung + 7 kịch bản lỗi)" FAIL $((S
 
 # 4. lõi C trong sketch ESP32
 if bash "$ROOT/esp32/dong_bo_core.sh" --check > "$WORK/esp32_sync.log" 2>&1
-then add "esp32/mu_nga_hub trùng firmware/src" PASS 0; else add "esp32/mu_nga_hub trùng firmware/src" FAIL 0; fi
+then add "esp32/nguc_nga_hub trùng firmware/src" PASS 0; else add "esp32/nguc_nga_hub trùng firmware/src" FAIL 0; fi
 
 echo
 echo "| Kiểm | Kết quả | Thời gian |"

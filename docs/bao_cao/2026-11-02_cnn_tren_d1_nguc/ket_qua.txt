@@ -1,0 +1,60 @@
+Mô hình ml/out/n2_11_d1: học từ D1 kênh đầu (340540), không huấn luyện lại. Người: [101, 102, 103, 104, 105, 106, 107, 108]
+Chỉ đo CNN + 2/3 phiếu; chưa qua Safety FSM và nga.c. Nguồn: D1 công khai, không phải thiết bị của nhóm.
+
+===== Kênh đầu (cảm biến 340540): 79111 cửa sổ =====
+--- LOSO, người để riêng ---
+  người 101: Macro-F1 0.9904  sự kiện 98/100  phiếu sinh hoạt 2.0/h
+  người 102: Macro-F1 0.9940  sự kiện 101/101  phiếu sinh hoạt 0.0/h
+  người 103: Macro-F1 0.9966  sự kiện 101/101  phiếu sinh hoạt 0.0/h
+  người 104: Macro-F1 0.9733  sự kiện 101/101  phiếu sinh hoạt 19.5/h
+  người 105: Macro-F1 0.9499  sự kiện 100/100  phiếu sinh hoạt 34.1/h
+  người 106: Macro-F1 0.9883  sự kiện 101/101  phiếu sinh hoạt 0.0/h
+  người 107: Macro-F1 0.9816  sự kiện 117/117  phiếu sinh hoạt 3.2/h
+  người 108: Macro-F1 0.9770  sự kiện 119/119  phiếu sinh hoạt 3.3/h
+  Macro-F1 TB 0.9814; FALL bị lọt 19/2520 cửa sổ; NORMAL gọi FALL 173/76591 cửa sổ
+  T_SCORE  0: recall sự kiện 838/840 = 0.998; 2/3 phiếu nhầm 30 lần / 3.85 h = 7.78/h
+  T_SCORE  8: recall sự kiện 821/840 = 0.977; 2/3 phiếu nhầm 10 lần / 3.85 h = 2.59/h
+  T_SCORE 16: recall sự kiện 771/840 = 0.918; 2/3 phiếu nhầm 5 lần / 3.85 h = 1.30/h
+--- cuối, đang nạp trên FPGA ---
+  người 101: Macro-F1 1.0000  sự kiện 100/100  phiếu sinh hoạt 0.0/h
+  người 102: Macro-F1 0.9974  sự kiện 101/101  phiếu sinh hoạt 0.0/h
+  người 103: Macro-F1 0.9966  sự kiện 101/101  phiếu sinh hoạt 0.0/h
+  người 104: Macro-F1 0.9924  sự kiện 101/101  phiếu sinh hoạt 2.2/h
+  người 105: Macro-F1 0.9850  sự kiện 100/100  phiếu sinh hoạt 4.3/h
+  người 106: Macro-F1 0.9924  sự kiện 101/101  phiếu sinh hoạt 0.0/h
+  người 107: Macro-F1 0.9885  sự kiện 117/117  phiếu sinh hoạt 0.0/h
+  người 108: Macro-F1 0.9860  sự kiện 119/119  phiếu sinh hoạt 3.3/h
+  Macro-F1 TB 0.9923; FALL bị lọt 0/2520 cửa sổ; NORMAL gọi FALL 79/76591 cửa sổ
+  T_SCORE  0: recall sự kiện 840/840 = 1.000; 2/3 phiếu nhầm 5 lần / 3.85 h = 1.30/h
+  T_SCORE  8: recall sự kiện 840/840 = 1.000; 2/3 phiếu nhầm 3 lần / 3.85 h = 0.78/h
+  T_SCORE 16: recall sự kiện 830/840 = 0.988; 2/3 phiếu nhầm 0 lần / 3.85 h = 0.00/h
+
+===== Kênh ngực (cảm biến 340539): 79124 cửa sổ =====
+--- LOSO, người để riêng ---
+  người 101: Macro-F1 0.9833  sự kiện 97/100  phiếu sinh hoạt 0.0/h
+  người 102: Macro-F1 0.9896  sự kiện 100/101  phiếu sinh hoạt 0.0/h
+  người 103: Macro-F1 0.9957  sự kiện 101/101  phiếu sinh hoạt 0.0/h
+  người 104: Macro-F1 0.9859  sự kiện 101/101  phiếu sinh hoạt 8.7/h
+  người 105: Macro-F1 0.9866  sự kiện 100/100  phiếu sinh hoạt 2.1/h
+  người 106: Macro-F1 0.9923  sự kiện 99/101  phiếu sinh hoạt 4.7/h
+  người 107: Macro-F1 0.9884  sự kiện 116/117  phiếu sinh hoạt 0.0/h
+  người 108: Macro-F1 0.9714  sự kiện 114/119  phiếu sinh hoạt 1.6/h
+  Macro-F1 TB 0.9866; FALL bị lọt 52/2520 cửa sổ; NORMAL gọi FALL 82/76604 cửa sổ
+  T_SCORE  0: recall sự kiện 828/840 = 0.986; 2/3 phiếu nhầm 8 lần / 3.85 h = 2.08/h
+  T_SCORE  8: recall sự kiện 781/840 = 0.930; 2/3 phiếu nhầm 2 lần / 3.85 h = 0.52/h
+  T_SCORE 16: recall sự kiện 703/840 = 0.837; 2/3 phiếu nhầm 1 lần / 3.85 h = 0.26/h
+--- cuối, đang nạp trên FPGA ---
+  người 101: Macro-F1 0.9758  sự kiện 92/100  phiếu sinh hoạt 0.0/h
+  người 102: Macro-F1 0.9957  sự kiện 101/101  phiếu sinh hoạt 2.9/h
+  người 103: Macro-F1 0.9958  sự kiện 101/101  phiếu sinh hoạt 0.0/h
+  người 104: Macro-F1 0.9891  sự kiện 101/101  phiếu sinh hoạt 6.5/h
+  người 105: Macro-F1 0.9850  sự kiện 100/100  phiếu sinh hoạt 4.3/h
+  người 106: Macro-F1 0.9869  sự kiện 96/101  phiếu sinh hoạt 0.0/h
+  người 107: Macro-F1 0.9800  sự kiện 111/117  phiếu sinh hoạt 0.0/h
+  người 108: Macro-F1 0.9715  sự kiện 114/119  phiếu sinh hoạt 1.6/h
+  Macro-F1 TB 0.9850; FALL bị lọt 75/2520 cửa sổ; NORMAL gọi FALL 75/76604 cửa sổ
+  T_SCORE  0: recall sự kiện 816/840 = 0.971; 2/3 phiếu nhầm 7 lần / 3.85 h = 1.82/h
+  T_SCORE  8: recall sự kiện 799/840 = 0.951; 2/3 phiếu nhầm 2 lần / 3.85 h = 0.52/h
+  T_SCORE 16: recall sự kiện 763/840 = 0.908; 2/3 phiếu nhầm 1 lần / 3.85 h = 0.26/h
+
+Đối chứng LOSO kênh đầu so với report.txt, 8 người: PASS

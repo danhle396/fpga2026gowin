@@ -18,7 +18,7 @@ Chi tiết: [PROJECT_MASTER.md](PROJECT_MASTER.md) (TRẠNG THÁI), [docs/bao_ca
 | Board | Project | Vai trò |
 |---|---|---|
 | **FPGA** Kiwi Primer 20K | `fpga/fpga_project.gprj` (Gowin IDE: Run All). Bản dựng sẵn: `fpga/bitstream/fpga_project.fs` | Nhận cửa sổ 128 × 6 mẫu INT8, chạy CNN (engine E2, 5,15 ms), trả lớp + điểm |
-| **ESP32** | `esp32/mu_nga_hub/mu_nga_hub.ino` (Arduino IDE, ESP32 Dev Module) | Tách khung UART (chịu nhiễu, chèn bù mẫu mất), đổi trục cảm biến → trục người khi đeo ngực, tiền xử lý, cửa sổ, khung SPI v3, hỏi vòng FPGA, bỏ phiếu + Safety FSM, xác nhận ngã thật, tư thế, MẤT CẢM BIẾN, lệnh còi, trang web, log USB + WiFi TCP 3333 |
+| **ESP32** | `esp32/nguc_nga_hub/nguc_nga_hub.ino` (Arduino IDE, ESP32 Dev Module) | Tách khung UART (chịu nhiễu, chèn bù mẫu mất), đổi trục cảm biến → trục người khi đeo ngực, tiền xử lý, cửa sổ, khung SPI v3, hỏi vòng FPGA, bỏ phiếu + Safety FSM, xác nhận ngã thật, tư thế, MẤT CẢM BIẾN, lệnh còi, trang web, log USB + WiFi TCP 3333 |
 | **MCU** SN32F407 EVK | `firmware/keil/fw.uvprojx` (Keil: F7, F8) | Đọc MPU6050 100 Hz, hiệu chuẩn gyro, gỡ bus I²C và cấu hình lại khi cảm biến không trả lời, gửi từng mẫu + nút sang ESP32; nhận lệnh còi từ ESP32, kêu PZ1 2 kHz |
 
 Xem dữ liệu: mở `http://<IP ESP32>` trên điện thoại hoặc laptop cùng WiFi (trang web do ESP32 phục vụ: trạng thái, tư thế hiện tại và lịch sử, kết quả CNN, biểu đồ gia tốc, thống kê, sự kiện, nút hủy). Nguồn MPU6050 lấy từ 3,3 V của ESP32; khi web báo MẤT CẢM BIẾN mà cảm biến treo thì rút pin ≈ 5 s rồi cắm lại. Từng bước, cách ghi log và lỗi hay gặp: **[docs/huong_dan_nap_chay.md](docs/huong_dan_nap_chay.md)**.

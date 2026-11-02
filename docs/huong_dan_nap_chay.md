@@ -16,7 +16,7 @@ MPU6050 ──I²C──► SN32F407 (MCU) ──UART 115200──► ESP32 ─�
 |---|---|---|
 | MCU SN32F407 | `firmware/keil/fw.uvprojx` (mặc định `FW_NODE 1`: chỉ đọc cảm biến và gửi cho ESP32) | Keil: F7, F8 (cần driver SN-Link, B2) |
 | FPGA Kiwi | `fpga/fpga_project.gprj` = `fpga/bitstream/fpga_project.fs` | Gowin Programmer, External Flash Mode (đã nạp 24/10) |
-| ESP32 | `esp32/mu_nga_hub/mu_nga_hub.ino` | Arduino IDE |
+| ESP32 | `esp32/nguc_nga_hub/nguc_nga_hub.ino` | Arduino IDE |
 
 **Chỉ nạp `fpga/bitstream/fpga_project.fs` vào FPGA.** Bitstream này an toàn với dây ESP32: trên CS, SCK, MOSI FPGA chỉ nhận vào, riêng MISO là FPGA phát ra cho ESP32 nhận. Bitstream khác có thể lái các chân J2 và tranh dây với ESP32.
 
@@ -44,8 +44,8 @@ Mất lệnh quá 0,5 s (ESP32 reset, đứt dây) thì MCU tự tắt còi. Tro
 ## 2. ESP32
 
 1. Arduino IDE → Boards Manager → cài **esp32 by Espressif Systems** (đã build thử bản 3.0.7; bản 2.0.x cũng chạy được).
-2. Mở `esp32/mu_nga_hub/mu_nga_hub.ino`, chọn board **ESP32 Dev Module** và cổng COM của ESP32.
-3. WiFi: `Tro Bao Tran T4` (ghi ở đầu `mu_nga_hub.ino`). Mang đi nơi khác (thi, demo) thì sửa `WIFI_STA_SSID`, `WIFI_STA_PASSWORD` sang hotspot điện thoại rồi nạp lại ESP32.
+2. Mở `esp32/nguc_nga_hub/nguc_nga_hub.ino`, chọn board **ESP32 Dev Module** và cổng COM của ESP32.
+3. WiFi: hotspot laptop `test99`, băng 2,4 GHz (ghi ở đầu `nguc_nga_hub.ino`). Đổi mạng thì sửa `WIFI_STA_SSID`, `WIFI_STA_PASSWORD` rồi nạp lại ESP32 (ESP32 chỉ bắt 2,4 GHz).
 4. Upload. Không phải cài thêm thư viện nào.
 
 Các file `.c`/`.h` trong thư mục sketch là **bản chép** từ `firmware/src`. Sửa ở `firmware/src` rồi chạy `bash esp32/dong_bo_core.sh`; `rtl/tb/run_all.sh` sẽ báo FAIL nếu hai nơi lệch nhau.
@@ -66,7 +66,7 @@ Trang tự cập nhật 3 lần/giây và không cần Internet.
 
 
 - **Qua USB của ESP32:** `python -I tools/ghi_uart.py --port COMx --buoc chay --giay 60`. `COMx` là cổng của ESP32; baud mặc định 460800 đã khớp.
-- **Qua WiFi:** laptop vào cùng mạng `Tro Bao Tran T4`. IP của ESP32 in ở dòng `# WiFi ... IP ...` trên USB. Chạy `python -I tools/ghi_uart.py --tcp <IP> --buoc chay --giay 60`, hoặc công cụ của nhóm `wifi_live_log.py --host <IP>`.
+- **Qua WiFi:** laptop bật hotspot `test99`. IP của ESP32 in ở dòng `# WiFi ... IP ...` trên USB. Chạy `python -I tools/ghi_uart.py --tcp <IP> --buoc chay --giay 60`, hoặc công cụ của nhóm `wifi_live_log.py --host <IP>`.
 
 Mong đợi sau khi bật nguồn:
 

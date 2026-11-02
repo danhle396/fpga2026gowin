@@ -1,6 +1,8 @@
-# D1 — dữ liệu công khai, cảm biến ở đầu
+# D1 — dữ liệu công khai: kênh ngực
 
-Nguồn huấn luyện lớp FALL và NORMAL của đề tài (mục 4.4 và việc AI-13 trong [PROJECT_MASTER.md](../../../PROJECT_MASTER.md)).
+Thiết bị đeo ở ngực. **Kênh ngực** (`d1_windows_nguc_340539.npz`) là dữ liệu cùng vị trí đeo, dùng để đo mô hình.
+
+**Mô hình đang nạp đo trên kênh ngực, không huấn luyện lại (02/11):** 8 người, Macro-F1 0,985, recall sự kiện 816/840 = 97,1 %, 1,82 lần 2/3 phiếu nhầm/giờ. Nguồn: phát lại D1 công khai, chỉ CNN + 2/3 phiếu; đây không phải độ chính xác trên thiết bị của nhóm. Chi tiết: [2026-11-02_cnn_tren_d1_nguc](../../../docs/bao_cao/2026-11-02_cnn_tren_d1_nguc/README.md).
 
 ## Nguồn gốc
 
@@ -11,7 +13,9 @@ Nguồn huấn luyện lớp FALL và NORMAL của đề tài (mục 4.4 và vi�
 
 ## Hiện có gì (16/10/2026)
 
-**Kênh đầu: 11 trên 17 người** (101–110, 203): 2.141 bản ghi = 1.180 cú ngã + 961 hoạt động thường ngày, tổng 11,57 giờ, 109.970 cửa sổ. Phần 8 người cũ (101–108) trùng từng byte với bản trước ([2026-10-16_d1_11_nguoi](../../../docs/bao_cao/2026-10-16_d1_11_nguoi/README.md)). Từ 16/10 nhóm **chỉ dùng kênh đầu**. Hai file ngực và thắt lưng vẫn là bản 8 người (101–108), chỉ giữ để đối chiếu AI-09.
+**Kênh đầu: 11 trên 17 người** (101–110, 203): 2.141 bản ghi = 1.180 cú ngã + 961 hoạt động thường ngày, tổng 11,57 giờ, 109.970 cửa sổ. Phần 8 người cũ (101–108) trùng từng byte với bản trước ([2026-10-16_d1_11_nguoi](../../../docs/bao_cao/2026-10-16_d1_11_nguoi/README.md)). Từ 16/10 CNN **chỉ huấn luyện bằng kênh đầu**.
+
+**Kênh ngực: 8 trên 17 người** (101–108): 840 cú ngã, 3,85 giờ sinh hoạt, 79.124 cửa sổ (2.520 FALL). Kênh thắt lưng cũng là bản 8 người, chỉ giữ để đối chiếu AI-09.
 
 6 người còn lại chưa có (mã người không liền nhau: sau 110 là 203). File gốc nặng 1,24 GB. Máy chủ UCI không nhận `Range`, giới hạn mỗi kết nối khoảng 0,4–0,6 MB/s và cắt kết nối sau 16–25 phút, nên mỗi lượt chỉ lấy được 477–643 MB đầu. Bản sao trên Kaggle thiếu nhiều file, không dùng được. Cách lấy phần còn lại: tải trọn file zip (cần một kết nối giữ được khoảng 35–50 phút, hoặc mạng nhanh hơn), rồi chạy `bash tools/fetch_d1.sh <thư mục ngoài repo> <file zip>` và các lệnh ở cuối file này. Script giải được cả từ file zip tải dở.
 
@@ -19,7 +23,7 @@ Nguồn huấn luyện lớp FALL và NORMAL của đề tài (mục 4.4 và vi�
 |---|---|
 | `d1_trials_50hz.npz` | Từng bản ghi đầy đủ ở 50 Hz, INT16 theo LSB của MPU6050 ở ±16 g / ±2000 °/s (2048 LSB/g, 16,4 LSB/(°/s)), trục đã xoay về trục người của thiết bị (X trước, Y trái, Z lên; SPEC A.1). `data[start[i] : start[i] + length[i]]` là bản ghi thứ `i`; `subject`, `act` (801–816 thường ngày, 901–920 ngã), `rep`, `event` (chỉ số mẫu của điểm va chạm, −1 nếu không phải ngã), `flags` (1 = có khoảng trống đã nội suy, 2 = có mẫu ngoài dải đã bỏ) |
 | `d1_windows.npz` | 109.970 cửa sổ 128 × 6 INT8, bước 16 mẫu, nhãn theo A.4: `y` = 0 (NORMAL, 106.433 cửa sổ) hoặc 3 (FALL, 3.537 cửa sổ; 1.179/1.180 cú ngã đủ 3 cửa sổ). Kèm `subject`, `act`, `trial`, `p` (vị trí điểm va chạm trong cửa sổ, −1 nếu không có). Cửa sổ thuộc vùng bỏ của A.4 đã được loại |
-| `d1_windows_nguc_340539.npz`, `d1_windows_that_lung_340535.npz` | Cùng định dạng với `d1_windows.npz`, lấy từ cảm biến ở **ngực** và **thắt lưng** của cùng các lần thực hiện (thêm 15/10). Chỉ dùng làm dữ liệu huấn luyện bổ sung: `ml/train_cnn.py --train-only <hai file>`. Không bao giờ dùng để kiểm tra, vì thiết bị đeo trên đầu. Kết quả AI-09: `docs/bao_cao/2026-10-15_ai09_du_lieu_than/` |
+| `d1_windows_nguc_340539.npz`, `d1_windows_that_lung_340535.npz` | Cùng định dạng với `d1_windows.npz`, lấy từ cảm biến ở **ngực** và **thắt lưng** của cùng các lần thực hiện (thêm 15/10). Mô hình đang nạp không huấn luyện bằng hai file này (xem mục 3 bên dưới). Kênh ngực dùng để đo mô hình: `tools/cnn_tren_d1_nguc.py`. Thí nghiệm thêm vào huấn luyện: `ml/train_cnn.py --train-only <hai file>`, kết quả AI-09 ở `docs/bao_cao/2026-10-15_ai09_du_lieu_than/` |
 
 Thứ tự kênh: `[AX, AY, AZ, GX, GY, GZ]`; X hướng về trước, Y sang trái, Z lên trời. Đứng yên thì AZ ≈ +16 mức INT8.
 

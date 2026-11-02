@@ -1,11 +1,11 @@
 /*
- * app_main.c — SN32F407 là nút cảm biến của mũ (phần cứng nối cố định, đề cương v2.2): MCU không nối SPI/IRQ/RST_N với
+ * app_main.c — SN32F407 là nút cảm biến của thiết bị đeo ngực (phần cứng nối cố định, đề cương v2.2): MCU không nối SPI/IRQ/RST_N với
  * FPGA, chỉ có UART TX P3.1 → ESP32 GPIO16 (115200 8N1). Không RTOS; ngắt chỉ đặt cờ.
  *
  * Khởi động: clock 48 MHz, UART, watchdog → I2C0 + MPU6050 (A.1, đọc lại 7 thanh ghi) → hiệu chuẩn gyro 2 s
  * (đứng yên) → vòng lặp: mỗi mẫu 100 Hz (MPU6050 báo bằng INT_STATUS, không có dây INT) trừ offset gyro rồi gửi một
  * khung node_link 21 byte (F1 7E ..., kèm trạng thái nút SW3/SW6). Tiền xử lý A.2, cửa sổ, khung v3 gửi FPGA, bỏ phiếu
- * + Safety FSM chạy trên ESP32 bằng cùng mã C (hub.c, esp32/mu_nga_hub).
+ * + Safety FSM chạy trên ESP32 bằng cùng mã C (hub.c, esp32/nguc_nga_hub).
  * Chữ in ra (dòng "# ...", STAT mỗi 5 s) đi cùng đường UART; ESP32 chuyển lên log với tiền tố "MCU ".
  * LED D6 nháy 1 Hz khi đang gửi mẫu; nháy nhanh 2 Hz khi MPU6050 lỗi.
  * Còi PZ1 (P3.0): theo lệnh 1 byte ESP32 gửi về qua dây ESP32 GPIO17 → P3.2 (node_link.h); tạm tắt bằng
@@ -19,7 +19,7 @@
 #include "gyro_cal.h"
 #include "node_link.h"
 
-#define I2C_HZ  400000u     /* hạ 100000 nếu sườn lên chậm với cáp dài tới mũ (E.1) */
+#define I2C_HZ  400000u     /* hạ 100000 nếu sườn lên chậm với cáp dài tới cảm biến (E.1) */
 
 static void put_kv(const char *k, int32_t v) { uart_puts(k); uart_put_dec(v); }
 
@@ -70,7 +70,7 @@ int main(void)
     }
     uart_puts("# MPU6050 OK: WHO_AM_I=0x68, 7 thanh ghi doc lai dung\n");
 
-    /* ---- hiệu chuẩn gyro (FW-05): giữ mũ đứng yên ---- */
+    /* ---- hiệu chuẩn gyro (FW-05): giữ thiết bị đứng yên ---- */
     gyro_cal_t gc;
     gyro_cal_init(&gc);
     uint32_t t_hint = board_millis();

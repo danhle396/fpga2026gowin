@@ -5,7 +5,7 @@ Phần cứng nối cố định (đề cương v2.2): `SN32F407 → UART 115200
 | Phần | File | Chạy ở |
 |---|---|---|
 | **MCU** | `app_main.c`, `board.c`, `i2c0.c`, `imu.c`, `gyro_cal.c` + `node_link.c`, `crc.c` | SN32F407: đọc MPU6050 100 Hz (hỏi INT_STATUS), hiệu chuẩn gyro, gửi từng mẫu + nút thành khung `F1 7E` |
-| **Lõi dùng chung** | `hub.c`, `app_core.c`, `preprocess.c`, `blocks.c`, `safety.c`, `pwr_btn.c`, `spi_frame.c`, `crc.c`, `node_link.c`, `fw_config.h`, `selftest_expect_v3_e2_n2.h` | ESP32 (`esp32/mu_nga_hub`, bản chép bằng `esp32/dong_bo_core.sh`) và bộ test trên PC |
+| **Lõi dùng chung** | `hub.c`, `app_core.c`, `preprocess.c`, `blocks.c`, `safety.c`, `pwr_btn.c`, `spi_frame.c`, `crc.c`, `node_link.c`, `fw_config.h`, `selftest_expect_v3_e2_n2.h` | ESP32 (`esp32/nguc_nga_hub`, bản chép bằng `esp32/dong_bo_core.sh`) và bộ test trên PC |
 
 ## Nạp MCU
 

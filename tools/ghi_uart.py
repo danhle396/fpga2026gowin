@@ -61,7 +61,7 @@ KICH_BAN = {
 
 
 class _Tcp:
-    """Log TCP của ESP32 hub (esp32/mu_nga_hub, cổng 3333), cùng giao diện read/write như cổng COM.
+    """Log TCP của ESP32 hub (esp32/nguc_nga_hub, cổng 3333), cùng giao diện read/write như cổng COM.
     Mất kết nối (WiFi chập chờn khi nằm xuống) thì thử nối lại mỗi 1 s; ghi chú vào self.note để _record ghi ra file."""
     def __init__(self, host, port):
         import socket

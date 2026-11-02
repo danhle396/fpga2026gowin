@@ -1,6 +1,6 @@
 /*
  * gyro_cal.h — hiệu chuẩn offset con quay lúc khởi động (việc FW-05). C thuần.
- * Lấy trung bình GYRO_CAL_N mẫu; nếu trong lúc đó max − min của trục gyro nào vượt GYRO_CAL_SPAN (mũ đang rung)
+ * Lấy trung bình GYRO_CAL_N mẫu; nếu trong lúc đó max − min của trục gyro nào vượt GYRO_CAL_SPAN (thiết bị đang rung)
  * thì bắt đầu lại. Kết quả làm tròn tới LSB gần nhất.
  */
 #ifndef GYRO_CAL_H

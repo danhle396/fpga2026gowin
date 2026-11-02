@@ -1,4 +1,4 @@
-// esp32/mu_nga_hub/mu_nga_hub.ino — ESP32 là trung tâm khi phần cứng nối cố định theo codecanthiet của nhóm (24/10):
+// esp32/nguc_nga_hub/nguc_nga_hub.ino — ESP32 là trung tâm khi phần cứng nối cố định theo codecanthiet của nhóm (24/10):
 //
 //   MPU6050 → I2C → SN32F407 (FW_NODE: chỉ đọc cảm biến) → UART 115200 → ESP32 GPIO16
 //   ESP32 GPIO27 CS / 18 SCK / 23 MOSI / 19 MISO → Kiwi J2-16 / J2-10 / J2-11 / J2-13 (R11 / T14 / R13 / R12)
@@ -278,7 +278,7 @@ void setup()
     s_server.begin();
     s_web.on("/", HTTP_GET, []() { s_web.send_P(200, "text/html; charset=utf-8", TRANG_WEB); });
     s_web.on("/data", HTTP_GET, web_data);
-    // Nút web giả lập nút trên mũ, nhưng chỉ đúng việc được hỏi: một lần nhấn ở MONITOR không được tính (2 lần = TẮT)
+    // Nút web giả lập nút trên thiết bị, nhưng chỉ đúng việc được hỏi: một lần nhấn ở MONITOR không được tính (2 lần = TẮT)
     s_web.on("/huy", HTTP_POST, []() {
         uint8_t st = H.app.fsm.st;
         if (st == ST_PRE_ALARM)  { s_web_cancel_until = millis() + 300;  s_web.send(200, "text/plain", "da huy canh bao"); }

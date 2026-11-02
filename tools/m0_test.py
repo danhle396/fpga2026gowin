@@ -204,7 +204,7 @@ def test_safety():
 
 
 def fsm_stream(rng, n_ticks, t0):
-    """Chuỗi ngẫu nhiên có cấu trúc: đoạn đội/tháo mũ, giữ nút 0,05–4,5 s, kết quả CNN mỗi 32 tick, khối mỗi 32 tick."""
+    """Chuỗi ngẫu nhiên có cấu trúc: đoạn đeo/tháo thiết bị, giữ nút 0,05–4,5 s, kết quả CNN mỗi 32 tick, khối mỗi 32 tick."""
     recs, t = [], t0
     wear, btn, wear_left, btn_left = 1, 0, 0, 0
     for k in range(n_ticks):
@@ -384,7 +384,7 @@ def test_app():
     g = np.random.default_rng(5)
     st = np.zeros((900, 6), np.int64)
     st[:, 3:] = np.array([41, -17, 3]) + g.integers(-8, 9, (900, 3))
-    st[60:70, 4] += 400                                      # mũ bị rung lúc đầu: phải bắt đầu lại
+    st[60:70, 4] += 400                                      # thiết bị bị rung lúc đầu: phải bắt đầu lại
     _, out = run(9, len(st), st.astype("<i2").tobytes())
     done, _, restarts, used = struct.unpack("<BBHH", out[:6])
     offc = struct.unpack("<3h", out[6:12])

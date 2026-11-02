@@ -43,7 +43,7 @@ void     board_buzzer(int on);
 void     board_buzzer_kieu(uint8_t k);         /* COI_KIEU_*; đang kêu thì đổi ngay */
 uint8_t  board_buzzer_kieu_hien(void);
 
-/* WEAR P2.3 (kéo lên, công tắc đội mũ nối xuống GND). Chưa có cảm biến đội mũ thì WEAR_PRESENT = 0: luôn coi là đội. */
+/* WEAR P2.3 (kéo lên, công tắc đeo nối xuống GND). Chưa có cảm biến đeo thì WEAR_PRESENT = 0: luôn coi là đang đeo. */
 #define WEAR_PRESENT  0
 int      board_wear(void);
 

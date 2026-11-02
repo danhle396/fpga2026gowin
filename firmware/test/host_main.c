@@ -425,7 +425,7 @@ static void mode_safety(void)
     check("A.8 phieu cu bi xoa khi vao MONITOR, khong vao SUSPECT", S.st == ST_MONITOR);
     fsm_reset(); step(1, 0); run(2500, 0, 0);
     safety_on_result(&S, CLS_FALL, 100); step(0, 0); safety_on_result(&S, CLS_FALL, 100); step(0, 0);
-    check("A.8 MONITOR -> SUSPECT khi mu duoc doi trong 3 s gan nhat (WEAR = 0 moi 2,5 s)", S.st == ST_SUSPECT);
+    check("A.8 MONITOR -> SUSPECT khi thiet bi duoc deo trong 3 s gan nhat (WEAR = 0 moi 2,5 s)", S.st == ST_SUSPECT);
 
     /* ---- dòng 4: SUSPECT → PRE_ALARM ---- */
     fsm_reset(); to_suspect();

@@ -1,5 +1,5 @@
 #!/usr/bin/env python
-# tools/playback_log.py — chấm buổi thử trên mũ: phát lại file LOG 100 Hz (tools/logger.py) qua đúng chuỗi của thiết bị
+# tools/playback_log.py — chấm buổi thử trên thiết bị: phát lại file LOG 100 Hz (tools/logger.py) qua đúng chuỗi của thiết bị
 # rồi in các chỉ tiêu Pass của đề cương v2.1 (AI-05 / AI-08 / TH-10, docs/data_protocol.md mục 5).
 #
 #   python -I tools/playback_log.py ml/data/raw                       # mô hình của bitstream 3 (ml/out/n2_11_d1)
@@ -77,7 +77,7 @@ def run_file(raw, Q, ss, cfg, lat, auto_cancel_ms=None):
 
 def main():
     sys.stdout.reconfigure(encoding="utf-8")
-    ap = argparse.ArgumentParser(description="chấm buổi thử trên mũ (đề cương v2.1)")
+    ap = argparse.ArgumentParser(description="chấm buổi thử trên thiết bị (đề cương v2.1)")
     ap.add_argument("src", nargs="+", type=pathlib.Path, help="thư mục hoặc file .csv của tools/logger.py")
     ap.add_argument("--params", type=pathlib.Path, default=DEFAULT_PARAMS)
     ap.add_argument("--t-score", type=int, default=8)
@@ -164,7 +164,7 @@ def main():
         va = [x for x in impacts if x[2] == "va_mu"]
         if va:
             n_ev, n_pre = sum(x[3] for x in va), sum(x[4] for x in va)
-            print(f"  đường lùi IMPACT (va mũ khi đang đội > 2/20 vào PRE_ALARM thì phải thu IMPACT): "
+            print(f"  đường lùi IMPACT (va đập khi đang đeo > 2/20 vào PRE_ALARM thì phải thu IMPACT): "
                   f"{n_pre}/{n_ev} → {'PHẢI THU IMPACT' if n_ev and n_pre / n_ev > 0.1 else 'không cần'}")
     return 0
 

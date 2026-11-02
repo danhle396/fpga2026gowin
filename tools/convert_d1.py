@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 # tools/convert_d1.py — chuyển bộ D1 (Özdemir & Barshan, UCI #455) về định dạng của thiết bị (việc AI-13).
-# Lấy một cảm biến (mặc định là cảm biến ở đầu), xoay trục về quy ước của mũ (X trước, Y trái, Z lên),
+# Lấy một cảm biến (mặc định là cảm biến ở đầu), xoay trục về quy ước của thiết bị (X trước, Y trái, Z lên),
 # nội suy 25 → 50 Hz, đổi sang LSB của MPU6050 ở ±16 g / ±2000 °/s, rồi cắt cửa sổ và gán nhãn theo A.3, A.4.
 #
 #   python tools/convert_d1.py --src <thư mục chứa 101, 102, ...> --out ml/data/public
@@ -224,7 +224,7 @@ def main():
              f"{int((np.bincount(np.array(W['trial'])[y == FALL], minlength=len(length)) == 3).sum())}/{len(ev_tr)}")
     L.append("")
     L.append("người | bản ghi | ngã | gyro rms khi đi bộ (rad/s) | nghiêng lớn nhất khi cúi (độ) | Δ áp suất khi ngã (hPa) "
-             "| Z khi đi bộ (mức INT8) | lệch trục lên / trước (độ) | trục mũ X Y Z lấy từ trục cảm biến")
+             "| Z khi đi bộ (mức INT8) | lệch trục lên / trước (độ) | trục thiết bị X Y Z lấy từ trục cảm biến")
     for r in rep_rows:
         L.append("%5s | %4d | %3d | %5.2f | %4.0f | %+.3f | %5.1f | %4.1f / %4.1f | %s" % r)
     text = "\n".join(L)

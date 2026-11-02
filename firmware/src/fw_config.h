@@ -93,7 +93,7 @@
 #define VOTE_N          3
 #define T_SCORE         0       /* chưa chốt (AI-10); 0 = mọi cửa sổ FALL đều tính phiếu */
 #define WEAR_OFF_MS     3000    /* MONITOR → STANDBY khi WEAR = 0 liên tục 3 s */
-#define WEAR_RECENT_MS  3000    /* MONITOR → SUSPECT cần mũ được đội trong 3 s gần nhất */
+#define WEAR_RECENT_MS  3000    /* MONITOR → SUSPECT cần thiết bị được đeo trong 3 s gần nhất */
 #define SUSPECT_TIMEOUT_MS  8000
 #define PRE_ALARM_MS    10000
 #define COOLDOWN_MS     30000

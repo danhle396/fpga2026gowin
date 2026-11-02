@@ -96,7 +96,7 @@ Mạng N2 được chọn sau khi so trên 8 người. Mạng 2 lớp Conv + Glo
 - nhận lệnh còi từ ESP32 và tạo âm 2 kHz trên PZ1 bằng ngắt timer;
 - watchdog.
 
-**ESP32** (`esp32/mu_nga_hub`):
+**ESP32** (`esp32/nguc_nga_hub`):
 - **Tách khung chịu nhiễu:** chỉ nhận khung đúng độ dài; khung hỏng thì dò lại đầu khung ngay trong các byte của nó, nên mỗi lần nhiễu chỉ mất 1 mẫu. Mẫu mất (khoảng hở ≤ 50 mẫu) được chèn bù bằng mẫu gần nhất.
 - **Đổi trục và trừ offset:** đổi trục cảm biến → trục người khi đeo ngực (X trước, Y trái, Z lên), rồi trừ offset gia tốc đo khi đeo.
 - **Tiền xử lý và khung SPI:** bộ lọc giảm mẫu `(r₀ + 3r₁ + 3r₂ + r₃ + 4) >> 3`, lượng tử INT8 có làm tròn và bão hòa, khung SPI v3 kèm CRC-16.
