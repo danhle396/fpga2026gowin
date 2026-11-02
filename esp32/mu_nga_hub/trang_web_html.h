@@ -1,11 +1,11 @@
-// trang_web_html.h — trang theo dõi mũ, do ESP32 phục vụ ở http://<IP ESP32>/ (mu_nga_hub.ino).
+// trang_web_html.h — trang theo dõi thiết bị đeo ngực, do ESP32 phục vụ ở http://<IP ESP32>/ (mu_nga_hub.ino).
 // Tự chứa (không CDN): xem được trên hotspot điện thoại không có Internet. Trang hỏi /data mỗi 300 ms.
 #pragma once
 
 static const char TRANG_WEB[] PROGMEM = R"HTML(<!doctype html>
 <html lang="vi"><head><meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Mũ phát hiện té ngã</title>
+<title>Thiết bị đeo ngực phát hiện té ngã</title>
 <style>
 :root{--bg:#f4f5f7;--card:#fff;--ink:#1d2330;--mute:#6b7280;--line:#e3e6ea;--ok:#16a34a;--warn:#d97706;--bad:#dc2626;--info:#2563eb}
 @media (prefers-color-scheme:dark){:root{--bg:#111418;--card:#1b2027;--ink:#e8eaee;--mute:#9aa3ad;--line:#2b323b}}
@@ -28,7 +28,7 @@ button.do{background:var(--bad);color:#fff;border:0}button:disabled{opacity:.35;
 #pt i{width:10px;height:10px;border-radius:2px;flex:none}
 .lg{display:flex;gap:14px;font-size:12px}.lg i{display:inline-block;width:10px;height:10px;border-radius:2px;margin-right:4px;vertical-align:-1px}
 </style></head><body><main>
-<h1>Mũ bảo hộ phát hiện té ngã <span class="muted" id="ket">· đang kết nối…</span></h1>
+<h1>Thiết bị đeo ngực phát hiện té ngã <span class="muted" id="ket">· đang kết nối…</span></h1>
 <div id="st">…</div>
 <div class="grid" style="margin-top:12px">
  <div class="card"><div class="muted">Tư thế hiện tại</div><div id="tt"><i></i><span>–</span></div><div class="muted" id="ttd">Không phải té ngã: chỉ để theo dõi</div></div>

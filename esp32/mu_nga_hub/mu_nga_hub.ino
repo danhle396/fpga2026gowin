@@ -57,8 +57,8 @@ extern "C" {
 #define MPU_CAT_MS      300u
 #define MPU_CAT_CACH_MS 10000u      // hai lần cắt cách nhau ít nhất 10 s
 // WiFi của nhóm (mạng duy nhất đang dùng). Mang đi nơi khác thì sửa 2 dòng này rồi nạp lại ESP32.
-#define WIFI_STA_SSID     "Tro Bao Tran T4"
-#define WIFI_STA_PASSWORD "thy0905542257"
+#define WIFI_STA_SSID     "test99"          // Mobile hotspot của laptop (31/10), laptop = 192.168.137.1
+#define WIFI_STA_PASSWORD "12345678"
 #define WIFI_TCP_PORT   3333
 
 static hub_t H;
