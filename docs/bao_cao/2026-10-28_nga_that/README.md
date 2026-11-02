@@ -76,7 +76,7 @@ Ngưỡng bản 3 chọn từ bảng này: quay 220 °/s, nghiêng 45°. **Ngư�
 | nga | 14/14 cú ngã | **14/14** ([nga_tren_log_nga_v3.txt](nga_tren_log_nga_v3.txt)) |
 | 9 tư thế (17:05) | 2 lần | **0** ([nga_tren_log_9_tu_the_v3.txt](nga_tren_log_9_tu_the_v3.txt)) |
 
-**Cập nhật 02/11:** nhóm xác định lần `nga_nhe_5` (1,74 g, nghiêng 22°, quay 71 °/s) không phải ngã, nên bảng trên tính 14 cú ngã trên 15 lần thử. Log gốc và file kết quả vẫn có lần này. Quyết định này có sau khi đã xem kết quả; số liệu đo phù hợp với nó nhưng không tự chứng minh được.
+**Cập nhật 02/11:** nhóm xác định lần `nga_nhe_5` (1,74 g, nghiêng 22°, quay 71 °/s) không phải ngã, nên bảng trên tính 14 cú ngã trên 14 lần thử. Log gốc và file kết quả vẫn có lần này. Quyết định này có sau khi đã xem kết quả; số liệu đo phù hợp với nó nhưng không tự chứng minh được.
 
 - Trên log dong_tac, mọi lần ngồi mạnh đều bị loại vì cả hai dấu hiệu: quay ≤ 149 °/s và ngực không nghiêng. Lần lăn người bị loại vì trước đó không thẳng.
 - Có 5 lần xét bị loại vì đỉnh 2,40–2,49 g. Đó là các khung CNN nghi trước hoặc sau cú ngã nga_nam_2, nga_nam_5 và nga_nhe_4; ba cú ngã này vẫn được xác nhận ở lần nghi kế tiếp.
