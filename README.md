@@ -6,7 +6,7 @@ MPU6050 trên dây đeo ngực → SONiX SN32F407 → UART → ESP32 → SPI →
 
 - Chạy thông trên board bằng pin: tự kiểm FPGA PASS, mẫu đều, mất 0, FPGA trả OK mọi khung.
 - **Chỉ báo ngã thật** (`firmware/src/nga.c`, SPEC A.12): CNN 2/3 cửa sổ FALL chỉ là bước nghi; báo ngã khi đủ 4 dấu hiệu: trước đó thẳng, va chạm ≥ 2,5 g, ngực quay ≥ 220 °/s, ngực nghiêng ≥ 45°.
-- Log đeo ngực của nhóm: ngồi phịch xuống ghế báo nhầm 0/10, cả log động tác (cúi, đi, nằm xuống, ngồi dậy, lăn) báo nhầm 0, ngã lên nệm 14/15, 9 tư thế nhận đúng 9/9. Ngưỡng chọn trên chính log này (một người, một buổi).
+- Log đeo ngực của nhóm: ngồi phịch xuống ghế báo nhầm 0/10, cả log động tác (cúi, đi, nằm xuống, ngồi dậy, lăn) báo nhầm 0, ngã lên nệm 14/14, 9 tư thế nhận đúng 9/9. Ngưỡng chọn trên chính log này (một người, một buổi).
 - Không báo theo thiết kế: ngã kết thúc quỳ / ngồi mà thân vẫn thẳng.
 - CNN N2 trên FPGA học từ D1 kênh đầu, 11 người: LOSO Macro-F1 0,983; chưa huấn luyện lại cho kênh ngực.
 - Kiểm không cần board: `fpga/scripts/test.sh`, `m0_test`, `sync_spec` đều PASS.

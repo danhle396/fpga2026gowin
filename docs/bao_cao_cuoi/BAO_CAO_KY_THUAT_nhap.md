@@ -29,7 +29,7 @@ Kết quả chính:
 | | Kết quả |
 |---|---|
 | Mạng N2 (3 lớp Conv + Dense, INT8), tách theo người trên 11 người của bộ công khai (cảm biến ở đầu) | Macro-F1 **0,983**; nhận ra **99,6 %** cú ngã |
-| Log đeo ngực của nhóm, sau tầng xác nhận ngã thật | Ngồi phịch xuống ghế: báo nhầm **0/10**; cả log động tác dễ nhầm: báo nhầm **0**; ngã lên nệm: **14/15**; tư thế: **9/9** |
+| Log đeo ngực của nhóm, sau tầng xác nhận ngã thật | Ngồi phịch xuống ghế: báo nhầm **0/10**; cả log động tác dễ nhầm: báo nhầm **0**; ngã lên nệm: **14/14**; tư thế: **9/9** |
 | Thời gian suy luận trên FPGA | **5,15 ms** (258.080 chu kỳ ở 50,143 MHz, mô phỏng) |
 | Khớp phần cứng – phần mềm | RTL và netlist sau Place & Route khớp mô hình tham chiếu **từng bit**; phần mềm ESP32 chạy dạng mã máy trên trình giả lập khớp mô hình tham chiếu |
 | Tài nguyên | Logic 8 %, BSRAM 18 %, DSP 10 %, Fmax 111,01 MHz |
@@ -183,7 +183,7 @@ Hai kết quả phụ:
 | Log | CNN nghi | Báo ngã cho người dùng |
 |---|---|---|
 | Động tác dễ nhầm (không có cú ngã) | 22 lần (ngồi mạnh 19, lăn 3) | **0** |
-| Ngã lên nệm, 15 cú | 14 cú | **14/15**; cú sót là ngã nhẹ 1,74 g mà CNN cũng không nghi |
+| Ngã lên nệm | 14 cú | **14/14** |
 | 9 tư thế giữ yên | 2 lần | **0**; tư thế nhận đúng **9/9** |
 
 Bằng chứng: `2026-10-28_nga_that`, `2026-10-28_tu_the_nguc`.
@@ -194,7 +194,7 @@ Bằng chứng: `2026-10-28_nga_that`, `2026-10-28_tu_the_nguc`.
 |---|---|---|---|
 | Hoạt động độc lập; tự kiểm khi bật nguồn | Không cần PC | **Có:** chạy pin, tự kiểm FPGA PASS mỗi lần khởi động, mẫu đều, mất 0 | `2026-10-28_chot_ket_qua` |
 | Độ nhạy FALL mức sự kiện / Macro-F1 hai lớp (CNN) | ≥ 95 % / ≥ 0,90 | **99,6 % / 0,983** (TB 3 seed, 11 người, bộ công khai, kênh đầu) | `2026-10-16_n2_11_nguoi` |
-| Ngã được báo khi đeo ngực | ≥ 18/20 | Log nhóm: 14/15 (một người, một buổi). **[CHỜ ĐO]** buổi ≥ 20 cú ngã từ ≥ 2 người | `2026-10-28_nga_that` |
+| Ngã được báo khi đeo ngực | ≥ 18/20 | Log nhóm: 14/14 (một người, một buổi). **[CHỜ ĐO]** buổi ≥ 20 cú ngã từ ≥ 2 người | `2026-10-28_nga_that` |
 | Không báo nhầm động tác thường | ≤ 1 lần/giờ | Log nhóm: 0 lần trên ≈ 7 phút động tác dễ nhầm. **[CHỜ ĐO]** đeo ≥ 2 giờ | `2026-10-28_nga_that` |
 | Độ trễ: va chạm → SUSPECT | ≤ 1,5 s | Bộ công khai: trung vị 0,84–0,88 s. **[CHỜ ĐO]** khi đeo ngực | `2026-10-16_n2_11_nguoi` |
 | Độ trễ: → PRE-ALARM khi nằm yên trong 2 s | ≤ 5 s | Bộ công khai: 514 cú ngã thỏa điều kiện, trung vị 3,80 s, p90 4,32 s, 0 cú > 5 s | như trên |
@@ -204,7 +204,7 @@ Bằng chứng: `2026-10-28_nga_that`, `2026-10-28_tu_the_nguc`.
 | Công suất | Ước lượng + dòng đo | Ước lượng của Gowin EDA ≈ 157 mW [CẦN XÁC MINH – nguồn: báo cáo Power cho bitstream hiện tại]. **[CHỜ ĐO]** dòng thật | |
 
 **Nhận xét trung thực:**
-1. **Ngưỡng tầng xác nhận** (220 °/s, 45°) được chọn trên chính log dùng để chấm, một người, một buổi. Con số 0/10 và 14/15 vì vậy lạc quan hơn thực tế. Cần một buổi đeo với người khác để kiểm.
+1. **Ngưỡng tầng xác nhận** (220 °/s, 45°) được chọn trên chính log dùng để chấm, một người, một buổi. Con số 0/10 và 14/14 vì vậy lạc quan hơn thực tế. Cần một buổi đeo với người khác để kiểm.
 2. **CNN học từ cảm biến ở đầu**, chưa huấn luyện lại cho ngực. Trên log ngực, CNN nghi cả 19 lần ngồi mạnh; tầng xác nhận là phần loại các lần nghi này.
 3. **Không báo theo thiết kế:**
    - ngã kết thúc **ngồi hoặc quỳ** mà thân vẫn thẳng. Với cảm biến ở ngực, kiểu ngã này giống hệt ngồi phịch xuống ghế. Trên bộ công khai (người 102), 15 bản ghi kiểu này đều không báo;

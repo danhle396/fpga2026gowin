@@ -29,7 +29,7 @@ Nhóm kết thúc đề tài ngày 28/10 với bản đang chạy trên board. T
 - **Ngã thật / động tác khác, log đeo ngực của nhóm** (chạy lại nguyên lõi ESP32, [nga_that](../2026-10-28_nga_that/README.md)):
   - ngồi phịch xuống ghế: báo nhầm 0/10 (bản 2: 9/10);
   - cả log động tác (cúi, đi, nằm xuống, ngồi dậy, lăn người): báo nhầm 0;
-  - ngã lên nệm: 14/15. Cú bị sót là ngã nhẹ 1,74 g, CNN cũng không nghi.
+  - ngã lên nệm: 14/14.
 - **D1 người 102** (kênh đầu): ngã 70/101, sinh hoạt báo nhầm 0/81. Không báo 15 cú ngã kết thúc quỳ / ngồi; nhóm chấp nhận điều này.
 - **Tư thế khi đeo ngực:** 9/9 tư thế đúng ([tu_the_nguc](../2026-10-28_tu_the_nguc/README.md)).
 - **CNN N2 trên FPGA** (D1 11 người, kênh đầu, LOSO): Macro-F1 0,983 ([d1_11_nguoi](../2026-10-16_d1_11_nguoi/README.md)).

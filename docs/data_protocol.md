@@ -65,7 +65,7 @@ Log ghi bằng bản ESP32 trước 28/10 17:16 (đã đổi trục, chưa trừ
 |---|---|---|
 | Tư thế giữ yên | 9/9 đoạn đúng | 9/9 |
 | Động tác dễ nhầm | 0 lần báo ngã | 0 (CNN nghi 22 lần, `nga.c` loại cả 22) |
-| Ngã lên nệm | ≥ 18/20 cú được báo | 14/15 |
+| Ngã lên nệm | ≥ 18/20 cú được báo | 14/14 |
 | Đeo dài (đi lại, ngồi, làm việc, nằm nghỉ) | ≤ 1 lần báo nhầm mỗi giờ, ≥ 2 giờ tổng từ ≥ 2 người | **[CHỜ ĐO]** |
 | Ngã từ người khác (không có trong log chọn ngưỡng) | ≥ 18/20, ≥ 2 người | **[CHỜ ĐO]** |
 

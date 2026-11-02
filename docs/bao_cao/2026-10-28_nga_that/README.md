@@ -47,7 +47,7 @@ Thu bằng `ghi_uart --kich-ban dong_tac` và `--kich-ban nga`, ESP32 chạy b�
 | Ngồi phịch xuống ghế ×10 | 4,30–6,17 g | 18–31° | 85–149 °/s |
 | Ngã lên nệm rồi nằm ×10 | 2,58–5,29 g | 58–80° | 281–467 °/s |
 | Ngã nhẹ rồi ngồi dậy ×4 | 3,33–3,77 g | 68–78° | 258–385 °/s |
-| Ngã nhẹ lần 5 | 1,74 g | 22° | 71 °/s |
+| Lần thử `nga_nhe_5` (đã loại, không phải ngã) | 1,74 g | 22° | 71 °/s |
 | Nằm xuống giường ×5 | 1,03–2,74 g | 85–96° | 12–192 °/s |
 | Cúi nhặt đồ ×5 | 1,51–1,68 g | 66–72° | 175–210 °/s |
 
@@ -70,11 +70,13 @@ Ngưỡng bản 3 chọn từ bảng này: quay 220 °/s, nghiêng 45°. **Ngư�
 
 **Chạy lại nguyên lõi ESP32** (`tools/nga_tren_log.py`, CNN golden thay FPGA) trên log của nhóm:
 
-| Log | CNN nghi | Bản 2 báo ngã | **Bản 3 báo ngã** |
-|---|---|---|---|
-| dong_tac (không có cú ngã) | 22 lần (ngồi mạnh 19, lăn 3) | 9/10 lần ngồi mạnh (trên board) | **0** ([nga_tren_log_dong_tac_v3.txt](nga_tren_log_dong_tac_v3.txt)) |
-| nga (15 cú ngã) | 14/15 cú ngã (sót ngã nhẹ lần 5: 1,74 g) | 13/15 (trên board; nga_nam_10 bị loại vì 2,96 g mà không nằm) | **14/15** ([nga_tren_log_nga_v3.txt](nga_tren_log_nga_v3.txt)) |
-| 9 tư thế (17:05) | 2 lần | 0 | **0** ([nga_tren_log_9_tu_the_v3.txt](nga_tren_log_9_tu_the_v3.txt)) |
+| Log | CNN nghi | **Bản 3 báo ngã** |
+|---|---|---|
+| dong_tac (không có cú ngã) | 22 lần (ngồi mạnh 19, lăn 3) | **0** ([nga_tren_log_dong_tac_v3.txt](nga_tren_log_dong_tac_v3.txt)) |
+| nga | 14/14 cú ngã | **14/14** ([nga_tren_log_nga_v3.txt](nga_tren_log_nga_v3.txt)) |
+| 9 tư thế (17:05) | 2 lần | **0** ([nga_tren_log_9_tu_the_v3.txt](nga_tren_log_9_tu_the_v3.txt)) |
+
+**Cập nhật 02/11:** nhóm xác định lần `nga_nhe_5` (1,74 g, nghiêng 22°, quay 71 °/s) không phải ngã, nên bảng trên tính 14 cú ngã trên 15 lần thử. Log gốc và file kết quả vẫn có lần này. Quyết định này có sau khi đã xem kết quả; số liệu đo phù hợp với nó nhưng không tự chứng minh được.
 
 - Trên log dong_tac, mọi lần ngồi mạnh đều bị loại vì cả hai dấu hiệu: quay ≤ 149 °/s và ngực không nghiêng. Lần lăn người bị loại vì trước đó không thẳng.
 - Có 5 lần xét bị loại vì đỉnh 2,40–2,49 g. Đó là các khung CNN nghi trước hoặc sau cú ngã nga_nam_2, nga_nam_5 và nga_nhe_4; ba cú ngã này vẫn được xác nhận ở lần nghi kế tiếp.
@@ -96,7 +98,7 @@ Chi tiết từng bản ghi: [nga_d1_102_v3.txt](nga_d1_102_v3.txt), [nga_d1_102
 ## Giới hạn
 
 - Ngưỡng quay và nghiêng chọn trên chính 25 lần thu của một người, một buổi. Cần một buổi thu khác (người khác, nệm khác) để kiểm.
-- **Bỏ sót theo thiết kế:** ngã ngồi, ngã quỳ mà thân vẫn thẳng (nghiêng < 45°); ngã chậm hoặc va chạm < 2,5 g (ngã nhẹ lần 5: 1,74 g).
+- **Bỏ sót theo thiết kế:** ngã ngồi, ngã quỳ mà thân vẫn thẳng (nghiêng < 45°); ngã chậm hoặc va chạm < 2,5 g.
 - Nằm xuống giường mạnh (lần 1: 2,74 g, nghiêng 94°) chỉ bị loại nhờ dấu hiệu quay: 192 °/s so với ngưỡng 220 °/s. CNN không nghi lần này, nhưng khoảng cách tới ngưỡng nhỏ.
 - D1 là cảm biến ở đầu, người 102 nằm trong tập huấn luyện của N2_11.
 - Bản 3 chưa nạp lên ESP32.

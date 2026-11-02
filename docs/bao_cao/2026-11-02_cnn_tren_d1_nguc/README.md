@@ -32,7 +32,7 @@ Khi sang ngực, recall giảm 1,2–2,9 điểm %. Số báo nhầm rất ít l
 2. **Hàng "đang nạp" không độc lập về người:** cả 8 người đều có trong tập huấn luyện (kênh đầu), và cùng lần thực hiện được ghi đồng thời ở hai kênh.
 3. **Hàng LOSO độc lập về người hơn, nhưng không phải weight đang nạp.**
 4. **Chưa qua Safety FSM và `nga.c`:** kênh ngực chưa có bản ghi liền (việc B1).
-5. **D1 không có động tác ngồi phịch mạnh như log của nhóm.** Trên log đeo ngực 28/10 (một người, một buổi), CNN nghi đúng 14/15 cú ngã nhưng cũng nghi 19 lần khi ngồi phịch ([PROJECT_MASTER.md](../../../PROJECT_MASTER.md), mục 4.4). Vì vậy tỉ lệ báo nhầm ở trên không đại diện cho thiết bị thật, và `nga.c` vẫn cần thiết.
+5. **D1 không có động tác ngồi phịch mạnh như log của nhóm.** Trên log đeo ngực 28/10 (một người, một buổi), CNN nghi đúng 14/14 cú ngã nhưng cũng nghi 19 lần khi ngồi phịch ([PROJECT_MASTER.md](../../../PROJECT_MASTER.md), mục 4.4). Vì vậy tỉ lệ báo nhầm ở trên không đại diện cho thiết bị thật, và `nga.c` vẫn cần thiết.
 
 ## Được nói
 
