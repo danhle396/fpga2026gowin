@@ -1,0 +1,12 @@
+﻿8 dong STAT
+STAT,mau=4062,mat=0,khung_hong=0,gui=119,ok=119,timeout=0,loi=0,bo_qua=0,spi_khz=1000,tcp_bo=0,byte_rx=85867,cat_mpu=0,bu=0,nga=0,nga_bo=0
+STAT,mau=7562,mat=0,khung_hong=0,gui=229,ok=229,timeout=0,loi=0,bo_qua=0,spi_khz=1000,tcp_bo=0,byte_rx=159880,cat_mpu=0,bu=0,nga=0,nga_bo=0
+dt 35.0 s
+  mau: 99.9 /s
+  mat: 0.0 /s
+  khung_hong: 0.0 /s
+  gui: 3.1 /s
+  ok: 3.1 /s
+  bo_qua: 0.0 /s
+  byte_rx: 2112.5 /s
+  bu: 0.0 /s

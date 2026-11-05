@@ -49,7 +49,7 @@ button.do{background:var(--bad);color:#fff;border:0}button:disabled{opacity:.35;
 <p class="muted" style="font-size:12px">MPU6050 → SN32F407 → UART → ESP32 → SPI → FPGA Kiwi (1D-CNN INT8) → Safety FSM. Cập nhật 3 lần/giây.</p>
 </main><script>
 const TEN={MONITOR:'ĐANG THEO DÕI',SUSPECT:'PHÁT HIỆN NGÃ',MAT_CB:'MẤT CẢM BIẾN – thiết bị không bảo vệ, kiểm MPU6050',PRE_ALARM:'CẢNH BÁO – nhấn hủy nếu ổn',ALARM:'BÁO ĐỘNG',COOLDOWN:'TẠM NGHỈ',STANDBY:'TẮT',MAT:'MẤT KẾT NỐI'};
-const LOP={0:'NORMAL – bình thường',1:'lớp 1',2:'lớp 2',3:'FALL – ngã'};
+const LOP={0:'NORMAL – bình thường',1:'lớp 1',2:'lớp 2',3:'FALL – nghi ngờ ngã'};
 const TT={DUNG:['Đứng thẳng','#16a34a'],DI_LAI:['Đang di chuyển','#0d9488'],NGOI:['Ngồi','#2563eb'],
  NAM_NGUA:['Nằm ngửa (nằm thẳng)','#7c3aed'],NAM_SAP:['Nằm sấp','#a21caf'],NGHIENG_TRAI:['Nằm nghiêng trái','#c026d3'],
  NGHIENG_PHAI:['Nằm nghiêng phải','#db2777'],CUI:['Cúi người','#ca8a04']};

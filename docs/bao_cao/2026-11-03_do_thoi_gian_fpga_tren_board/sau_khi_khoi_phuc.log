@@ -1,0 +1,51 @@
+26321,63,0,42,MONITOR,0
+MCU @L~DMpD@ @` 2H%c}&0> @@@ I8@@~5DQld@@@~6DOn 2%|DOn2 %dx2 @"  @  % @0@@|DLjs @@ @3dd`@P@@L! |9DHo
+MCU @ \@H0@
+MCU  0 @@ D"@H @0~DNl `  6UQmau=2506,i2c_loi=0,mat=0,cau_hinh_lai=0,lenh_coi=249,kieu_coi=2
+27112,64,0,42,MONITOR,0
+27270,66,0,42,MONITOR,0
+27590,67,0,42,MONITOR,0
+MCU $x'2~DLo V~DOlh%LD@~|DOo,|DJo`y `  d@@dd  8|DLn@ `Hng@@   H $ `  >D$   0$ @H 0"$dH@@`$%   00H 00
+MCU 3 @@% @  @@$$@@ /~(DHm`  `0`
+28111,68,0,42,MONITOR,0
+28231,69,0,42,MONITOR,0
+28551,70,0,42,MONITOR,0
+MCU B~|DNn4 @ @@@h2$@@$A(D6@@  b}b33!}8@}"~@ ,@  $`~cDMl@ 2@2/~dDPm@  `,}|9DNoH `@4@!0 , ``@, ~jDNk@
+MCU x|9DIo&( 00  |9DJsY  @@
+MCU D @@B@`@` @@ 2`4X  "LL`   4@B@@D @` PL"
+MCU @@ 6@0L"
+MCU d& d@@L  d0&  ,"`d@L $ h H@0@@`@!0 `@2` H@$$`d@@%(
+MCU   
+29390,71,0,42,MONITOR,0
+MCU 0R4 @h@@L @ (0 /~DLqH~DKn@@2` @~DOl~DOrR?{"5|HOBcr~DLo@  %@@@@H`(L2 @ @,0 6,L l$ $@ b L  d$  @d~
+# STAT xem dong STAT ke tiep
+MCU 6 @Dt %@`  00 @`H 62@~|DKn"   @@@T?~DKp/D %` 
+30120,72,0,42,MONITOR,0
+30351,74,0,42,MONITOR,0
+MCU    ~|DLu0@d$` `@%d`, ,@,D@ 6@% L@,L@   % 6@dA$}5~)DRq 8i~*DNs d0 @
+STAT,mau=1361,mat=1495,khung_hong=967,gui=61,ok=61,timeout=0,loi=0,bo_qua=14,spi_khz=1000,tcp_bo=0,byte_rx=185583,cat_mpu=0,bu=1289,nga=0,nga_bo=0
+MCU  ~+DMmj `d  T  /~,DMo3@@ @~.DMq 20"@~|DKp4@L@`L0,@ x7~2DSm 0L  d$$  |DPn0`  L  @$,H,  @D$, @b `1
+MCU  B0@H@@~KDMp
+MCU @@ ~LDOj@~MDIo BB@@~NDOr H@~ODNld~PDMrJ@$ B||E9DRpZ@%@ D
+MCU x|Q9DMvZ(!&DRmS`d `@@   
+31119,75,0,42,MONITOR,0
+31320,77,0,42,MONITOR,0
+MCU  2DG @ 4@`9?0$(,~DMk% ,(B@@y~DOn  H@@ @ ~DJrf ,@~DLnd@ |]DNm$@@~DHn  ~DLo#d ,p|iDSq@@@~DKn`0@@p|
+MCU   H :r$ @h@.0@`,H    ,`\,@` `I@
+tu kiem FPGA (A.10) SPI 1000 kHz: doc 5A EE 01 03 00 06 43, mong doi 5A EE 01 03 00 06 43 class=3  PASS
+32124,78,0,42,MONITOR,0
+32270,80,0,42,MONITOR,0
+32599,81,0,42,MONITOR,0
+MCU @%Ap H,,@|DMq%,@@0, 0,D`2 @@$ 0`  %X~DLh  0d D0" 0 P 2 @@H,L@D@   4@,$ Br@@,` @|DNn dR0|DTq>JPQQ
+MCU @) @~DMm`%@@b~DQq ~DNjL@@(~DNu0@P~
+33129,82,0,42,MONITOR,0
+33229,83,0,42,MONITOR,0
+33549,84,0,42,MONITOR,0
+MCU DPrd0@@ ~DIs(d@\~DMp pX5DMo A P  ~DPnh$H$ %X @`$ B,~DKn0dHd`  $@,@`,hb,0``$,$ @d  $@ D   0%0X @ 
+MCU @@@%0 ~rDNs5 `@,@ @~sDKn@,@~tDNr !&~uDPn)A`p|9DOn`0 2@Yh$   d |9DJl @@@B@@` @ \`0 `@  @` @@`D4 @
+34389,85,0,42,MONITOR,0
+MCU B&Y`2$`P%~DPn{: D(N6A@^Mn_~DMoLB~DJo  ~DNj@` ~DRq$ @~DGmD% ~DPo @~DNrL0@@@ @|DMoI H
+MCU BB~DMo%H l _~DSs@    .(`@     `@@,  ,$@ @  0~DKo@,D@|EDMpr`  (0@6@@@@"@ %  @|eDKp`@ " ~DPlD `/~D
+MCU ,@8  H$,h@$,@ @@@~DKt
+MCU `,@~DIl@~DLj@
+35129,86,0,42,MONITOR,0

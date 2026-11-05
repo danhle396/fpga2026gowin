@@ -1,0 +1,21 @@
+# MCU van chay (co chu qua UART) nhung khong co mau: MPU6050 khong tra loi, xem dong 'MCU # MPU6050 ...'
+MCU # MPU6050 khong co mau moi > 200 ms: cau hinh lai, ket qua=-1, SDA=1 SCL=1 (khong tra loi: kiem 
+MCU # MPU6050 khong co mau moi > 200 ms: cau hinh lai, ket qua=-1, SDA=1 SCL=1 (khong tra loi: kiem 
+STAT,mau=0,mat=0,khung_hong=0,gui=0,ok=0,timeout=0,loi=0,bo_qua=0,spi_khz=1000,tcp_bo=0,byte_rx=9986,cat_mpu=8,bu=0,nga=0,nga_bo=0
+# MCU van chay (co chu qua UART) nhung khong co mau: MPU6050 khong tra loi, xem dong 'MCU # MPU6050 ...'
+MCU STAT,mau=310779,i2c_loi=0,mat=65,cau_hinh_lai=7387,lenh_coi=24753,kieu_coi=2
+MCU # MPU6050 khong co mau moi > 200 ms: cau hinh lai, ket qua=-1, SDA=1 SCL=1 (khong tra loi: kiem 
+MCU # MPU6050 khong co mau moi > 200 ms: cau hinh lai, ket qua=-1, SDA=1 SCL=1 (khong tra loi: kiem 
+# STAT xem dong STAT ke tiep
+# MPU6050 treo (82001 ms khong co mau), lan 9: rut pin ~5 s roi cam lai
+# MCU van chay (co chu qua UART) nhung khong co mau: MPU6050 khong tra loi, xem dong 'MCU # MPU6050 ...'
+MCU # MPU6050 khong co mau moi > 200 ms: cau hinh lai, ket qua=-1, SDA=1 SCL=1 (khong tra loi: kiem 
+MCU # MPU6050 khong co mau moi > 200 ms: cau hinh lai, ket qua=-1, SDA=1 SCL=1 (khong tra loi: kiem 
+tu kiem FPGA (A.10) SPI 1000 kHz: doc 5A EE 01 03 00 06 43, mong doi 5A EE 01 03 00 06 43 class=3  PASS
+# MCU van chay (co chu qua UART) nhung khong co mau: MPU6050 khong tra loi, xem dong 'MCU # MPU6050 ...'
+MCU # MPU6050 khong co mau moi > 200 ms: cau hinh lai, ket qua=-1, SDA=1 SCL=1 (khong tra loi: kiem 
+STAT,mau=0,mat=0,khung_hong=0,gui=0,ok=0,timeout=0,loi=0,bo_qua=0,spi_khz=1000,tcp_bo=0,byte_rx=10644,cat_mpu=9,bu=0,nga=0,nga_bo=0
+MCU STAT,mau=310779,i2c_loi=0,mat=65,cau_hinh_lai=7392,lenh_coi=24801,kieu_coi=2
+MCU # MPU6050 khong co mau moi > 200 ms: cau hinh lai, ket qua=-1, SDA=1 SCL=1 (khong tra loi: kiem 
+# MCU van chay (co chu qua UART) nhung khong co mau: MPU6050 khong tra loi, xem dong 'MCU # MPU6050 ...'
+MCU # MPU6050 khong co mau moi > 200 ms: cau hinh lai, ket qua=-1, SDA=1 SCL=1 (khong tra loi: kiem 
