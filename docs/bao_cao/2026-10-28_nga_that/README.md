@@ -35,7 +35,7 @@ Cùng đợt sửa:
 
 Thu bằng `ghi_uart --kich-ban dong_tac` và `--kich-ban nga`, ESP32 chạy bản 2:
 - [dong_tac_20261028_204848.txt](dong_tac_20261028_204848.txt): đứng; ngồi phịch xuống ghế ×10; cúi nhặt đồ ×5; đi lại 30 s; nằm xuống giường ×5; ngồi dậy ×5; lăn người khi đang nằm ×10;
-- [nga_20261028_205657.txt](nga_20261028_205657.txt): ngã xuống nệm rồi nằm ×10; ngã nhẹ rồi ngồi dậy ngay ×5.
+- [nga_20261028_205657.txt](nga_20261028_205657.txt): ngã xuống nệm rồi nằm ×10; ngã nhẹ rồi ngồi dậy ngay ×4.
 
 Đặc trưng từng lần ([dac_trung_b2.txt](dac_trung_b2.txt), [dac_trung.py](dac_trung.py)):
 - đỉnh |a|;

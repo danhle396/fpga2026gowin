@@ -52,4 +52,4 @@ nga_nhe_1        3.63            12      78    17        178    258  XAC_NHAN/7/
 nga_nhe_2        3.33            12      78     7        203    339  XAC_NHAN/7/3.33g
 nga_nhe_3        3.77            14      72    12        152    349  XAC_NHAN/7/3.77g
 nga_nhe_4        3.40            23      68    48        145    385  XAC_NHAN/7/3.4g BO/2/2.4g
-nga_nhe_5        1.74            13      22     2        118     71  
+  
