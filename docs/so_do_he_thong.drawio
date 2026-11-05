@@ -143,7 +143,7 @@
           <mxGeometry height="60" width="1300" x="40" y="10" as="geometry" />
         </mxCell>
         <mxCell id="wr2" parent="1" style="rounded=1;whiteSpace=wrap;html=1;arcSize=6;fillColor=#dae8fc;strokeColor=#6c8ebf;verticalAlign=middle;align=center;spacing=6;fontSize=12;verticalAlign=top;align=center;fontStyle=1;fontSize=14;arcSize=3;" value="MPU6050 (dây đeo ngực)" vertex="1">
-          <mxGeometry height="254" width="260" x="40" y="90" as="geometry" />
+          <mxGeometry height="220" width="260" x="40" y="90" as="geometry" />
         </mxCell>
         <mxCell id="wr3" parent="1" style="rounded=1;whiteSpace=wrap;html=1;arcSize=6;fillColor=#dae8fc;strokeColor=#6c8ebf;verticalAlign=middle;align=center;spacing=6;fontSize=12;fontSize=11;arcSize=10;" value="VCC" vertex="1">
           <mxGeometry height="28" width="230" x="55" y="132" as="geometry" />
@@ -160,11 +160,8 @@
         <mxCell id="wr7" parent="1" style="rounded=1;whiteSpace=wrap;html=1;arcSize=6;fillColor=#dae8fc;strokeColor=#6c8ebf;verticalAlign=middle;align=center;spacing=6;fontSize=12;fontSize=11;arcSize=10;" value="AD0 → GND (địa chỉ 0x68)" vertex="1">
           <mxGeometry height="28" width="230" x="55" y="268" as="geometry" />
         </mxCell>
-        <mxCell id="wr8" parent="1" style="rounded=1;whiteSpace=wrap;html=1;arcSize=6;fillColor=#eeeeee;strokeColor=#bbbbbb;verticalAlign=middle;align=center;spacing=6;fontSize=12;fontSize=11;arcSize=10;" value="XDA, XCL, INT: để trống" vertex="1">
-          <mxGeometry height="28" width="230" x="55" y="302" as="geometry" />
-        </mxCell>
         <mxCell id="wr9" parent="1" style="rounded=1;whiteSpace=wrap;html=1;arcSize=6;fillColor=#d5e8d4;strokeColor=#82b366;verticalAlign=middle;align=center;spacing=6;fontSize=12;verticalAlign=top;align=center;fontStyle=1;fontSize=14;arcSize=3;" value="SN32F407 EVK V1.0" vertex="1">
-          <mxGeometry height="390" width="300" x="40" y="420" as="geometry" />
+          <mxGeometry height="322" width="300" x="40" y="420" as="geometry" />
         </mxCell>
         <mxCell id="wr10" parent="1" style="rounded=1;whiteSpace=wrap;html=1;arcSize=6;fillColor=#d5e8d4;strokeColor=#82b366;verticalAlign=middle;align=center;spacing=6;fontSize=12;fontSize=11;arcSize=10;" value="P3.1 UTXD0 · J10 UTX_P31" vertex="1">
           <mxGeometry height="28" width="270" x="55" y="462" as="geometry" />
@@ -190,14 +187,8 @@
         <mxCell id="wr17" parent="1" style="rounded=1;whiteSpace=wrap;html=1;arcSize=6;fillColor=#f8cecc;strokeColor=#b85450;verticalAlign=middle;align=center;spacing=6;fontSize=12;fontSize=11;arcSize=10;" value="P3.8 → LED D6 (nháy 1 Hz = firmware chạy)" vertex="1">
           <mxGeometry height="28" width="270" x="55" y="700" as="geometry" />
         </mxCell>
-        <mxCell id="wr18" parent="1" style="rounded=1;whiteSpace=wrap;html=1;arcSize=6;fillColor=#eeeeee;strokeColor=#bbbbbb;verticalAlign=middle;align=center;spacing=6;fontSize=12;fontSize=11;arcSize=10;" value="P1.8: firmware không điều khiển" vertex="1">
-          <mxGeometry height="28" width="270" x="55" y="734" as="geometry" />
-        </mxCell>
-        <mxCell id="wr19" parent="1" style="rounded=1;whiteSpace=wrap;html=1;arcSize=6;fillColor=#eeeeee;strokeColor=#bbbbbb;verticalAlign=middle;align=center;spacing=6;fontSize=12;fontSize=11;arcSize=10;" value="P1.0–P1.2, P2.8, P2.9, P2.1: không nối&lt;br&gt;(SPI tới FPGA do ESP32 làm)" vertex="1">
-          <mxGeometry height="28" width="270" x="55" y="768" as="geometry" />
-        </mxCell>
         <mxCell id="wr20" parent="1" style="rounded=1;whiteSpace=wrap;html=1;arcSize=6;fillColor=#fff2cc;strokeColor=#d6b656;verticalAlign=middle;align=center;spacing=6;fontSize=12;verticalAlign=top;align=center;fontStyle=1;fontSize=14;arcSize=3;" value="ESP32 DevKit (ESP32 Dev Module)" vertex="1">
-          <mxGeometry height="526" width="320" x="640" y="90" as="geometry" />
+          <mxGeometry height="492" width="320" x="640" y="90" as="geometry" />
         </mxCell>
         <mxCell id="wr21" parent="1" style="rounded=1;whiteSpace=wrap;html=1;arcSize=6;fillColor=#ffe6cc;strokeColor=#d79b00;verticalAlign=middle;align=center;spacing=6;fontSize=12;fontSize=11;arcSize=10;" value="3V3 (cấp MPU6050)" vertex="1">
           <mxGeometry height="28" width="290" x="655" y="132" as="geometry" />
@@ -238,11 +229,8 @@
         <mxCell id="wr33" parent="1" style="rounded=1;whiteSpace=wrap;html=1;arcSize=6;fillColor=#f5f5f5;strokeColor=#666666;verticalAlign=middle;align=center;spacing=6;fontSize=12;fontSize=11;arcSize=10;" value="USB: nạp + log 460800" vertex="1">
           <mxGeometry height="28" width="290" x="655" y="540" as="geometry" />
         </mxCell>
-        <mxCell id="wr34" parent="1" style="rounded=1;whiteSpace=wrap;html=1;arcSize=6;fillColor=#eeeeee;strokeColor=#bbbbbb;verticalAlign=middle;align=center;spacing=6;fontSize=12;fontSize=11;arcSize=10;" value="GPIO25: không dùng (MPU_NGUON_GPIO 0)" vertex="1">
-          <mxGeometry height="28" width="290" x="655" y="574" as="geometry" />
-        </mxCell>
         <mxCell id="wr35" parent="1" style="rounded=1;whiteSpace=wrap;html=1;arcSize=6;fillColor=#e1d5e7;strokeColor=#9673a6;verticalAlign=middle;align=center;spacing=6;fontSize=12;verticalAlign=top;align=center;fontStyle=1;fontSize=14;arcSize=3;" value="Kiwi Primer 20K — header J2 (bank 3,3 V)" vertex="1">
-          <mxGeometry height="322" width="330" x="1180" y="158" as="geometry" />
+          <mxGeometry height="254" width="330" x="1180" y="158" as="geometry" />
         </mxCell>
         <mxCell id="wr36" parent="1" style="rounded=1;whiteSpace=wrap;html=1;arcSize=6;fillColor=#e1d5e7;strokeColor=#9673a6;verticalAlign=middle;align=center;spacing=6;fontSize=12;fontSize=11;arcSize=10;" value="J2-16 · R11 · spi_cs_n (kéo lên)" vertex="1">
           <mxGeometry height="28" width="300" x="1195" y="200" as="geometry" />
@@ -261,12 +249,6 @@
         </mxCell>
         <mxCell id="wr41" parent="1" style="rounded=1;whiteSpace=wrap;html=1;arcSize=6;fillColor=#eeeeee;strokeColor=#bbbbbb;verticalAlign=middle;align=center;spacing=6;fontSize=12;fontSize=11;arcSize=10;" value="H11 · dao động 27 MHz (trên board)" vertex="1">
           <mxGeometry height="28" width="300" x="1195" y="370" as="geometry" />
-        </mxCell>
-        <mxCell id="wr42" parent="1" style="rounded=1;whiteSpace=wrap;html=1;arcSize=6;fillColor=#eeeeee;strokeColor=#bbbbbb;verticalAlign=middle;align=center;spacing=6;fontSize=12;fontSize=11;arcSize=10;" value="J2-24 · R8 · irq: không nối" vertex="1">
-          <mxGeometry height="28" width="300" x="1195" y="404" as="geometry" />
-        </mxCell>
-        <mxCell id="wr43" parent="1" style="rounded=1;whiteSpace=wrap;html=1;arcSize=6;fillColor=#eeeeee;strokeColor=#bbbbbb;verticalAlign=middle;align=center;spacing=6;fontSize=12;fontSize=11;arcSize=10;" value="J2-23 · T8 · rst_n: không nối (kéo lên trong chip)" vertex="1">
-          <mxGeometry height="28" width="300" x="1195" y="438" as="geometry" />
         </mxCell>
         <mxCell id="wr44" edge="1" parent="1" source="wr21" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;html=1;endArrow=block;endFill=1;strokeColor=#d79b00;strokeWidth=1.5;fontSize=11;labelBackgroundColor=#ffffff;exitX=0;exitY=0.5;entryX=1;entryY=0.5;" target="wr3" value="3,3 V">
           <mxGeometry relative="1" as="geometry" />
@@ -336,7 +318,7 @@
     </mxGraphModel>
   </diagram>
   <diagram id="es" name="3. ESP32 processing flow">
-    <mxGraphModel dx="1625" dy="967" grid="0" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1900" pageHeight="1100" math="0" shadow="0">
+    <mxGraphModel dx="1585" dy="963" grid="0" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1900" pageHeight="1100" math="0" shadow="0">
       <root>
         <mxCell id="0" />
         <mxCell id="1" parent="0" />
@@ -368,9 +350,9 @@
           <mxGeometry height="70" width="410" x="1140" y="80" as="geometry" />
         </mxCell>
         <mxCell id="es10" parent="1" style="rounded=1;whiteSpace=wrap;html=1;arcSize=6;fillColor=#fff2cc;strokeColor=#d6b656;verticalAlign=middle;align=center;spacing=6;fontSize=12;fontSize=11;" value="&lt;b&gt;Read result&lt;/b&gt; (polling)&lt;br&gt;5A · SEQ · STATUS · CLASS · SCORE · CRC&lt;br&gt;STATUS ≠ 0x01, SEQ differs → drop" vertex="1">
-          <mxGeometry height="110" width="190" x="1360" y="380" as="geometry" />
+          <mxGeometry height="110" width="190" x="1394" y="380" as="geometry" />
         </mxCell>
-        <mxCell id="es11" parent="1" style="rounded=1;whiteSpace=wrap;html=1;arcSize=6;fillColor=#fff2cc;strokeColor=#d6b656;verticalAlign=middle;align=center;spacing=6;fontSize=12;fontSize=11;" value="&lt;b&gt;Voting&lt;/b&gt;&lt;br&gt;fall_votes = FALL windows&lt;br&gt;in the last 3 (SCORE ≥ T_SCORE)" vertex="1">
+        <mxCell id="es11" parent="1" style="rounded=1;whiteSpace=wrap;html=1;arcSize=6;fillColor=#fff2cc;strokeColor=#d6b656;verticalAlign=middle;align=center;spacing=6;fontSize=12;fontSize=11;" value="&lt;b&gt;Voting&lt;/b&gt;&lt;br&gt;fall_votes = FALL windows&lt;br&gt;in the last 3" vertex="1">
           <mxGeometry height="110" width="190" x="1140" y="380" as="geometry" />
         </mxCell>
         <mxCell id="es12" parent="1" style="rounded=1;whiteSpace=wrap;html=1;arcSize=6;fillColor=#fff2cc;strokeColor=#d6b656;verticalAlign=middle;align=center;spacing=6;fontSize=12;fontSize=11;" value="&lt;b&gt;blocks.c&lt;/b&gt; (A.8)&lt;br&gt;block of 32 raw samples (0.32 s)&lt;br&gt;still: max−min &amp;lt; 300 / 250 LSB&lt;br&gt;still_run, az_tb" vertex="1">
@@ -473,7 +455,7 @@
         <mxCell id="es39" edge="1" parent="1" source="es14" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;html=1;endArrow=block;endFill=1;strokeColor=#b85450;strokeWidth=1.5;fontSize=11;labelBackgroundColor=#ffffff;exitX=0.65;exitY=0;entryX=0.65;entryY=1;" target="es13" value="reject&lt;br&gt;(safety_bo_nghi)">
           <mxGeometry relative="1" as="geometry" />
         </mxCell>
-        <mxCell id="es61" value="confirmed" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;html=1;endArrow=block;endFill=1;strokeColor=#b85450;strokeWidth=1.5;fontSize=11;labelBackgroundColor=#ffffff;exitX=0.5;exitY=1;entryX=0.5;entryY=0;" edge="1" parent="1" source="es14" target="es19">
+        <mxCell id="es61" edge="1" parent="1" source="es14" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;html=1;endArrow=block;endFill=1;strokeColor=#b85450;strokeWidth=1.5;fontSize=11;labelBackgroundColor=#ffffff;exitX=0.5;exitY=1;entryX=0.5;entryY=0;" target="es19" value="confirmed">
           <mxGeometry relative="1" as="geometry" />
         </mxCell>
         <mxCell id="es40" edge="1" parent="1" source="es17" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;html=1;endArrow=block;endFill=1;strokeColor=#333333;strokeWidth=1.5;fontSize=11;labelBackgroundColor=#ffffff;exitX=0;exitY=0.5;entryX=1;entryY=0.5;" target="es16" value="">
@@ -522,7 +504,7 @@
           </mxGeometry>
         </mxCell>
         <mxCell id="es49" edge="1" parent="1" source="es18" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;html=1;endArrow=block;endFill=1;strokeColor=#b85450;strokeWidth=1.5;fontSize=11;labelBackgroundColor=#ffffff;exitX=0.5;exitY=1;entryX=0;entryY=0.3;" target="es19" value="overrides (in .ino)">
-          <mxGeometry x="-0.3" relative="1" as="geometry">
+          <mxGeometry relative="1" x="-0.3" as="geometry">
             <Array as="points">
               <mxPoint x="135" y="730" />
               <mxPoint x="700" y="730" />
@@ -534,7 +516,7 @@
     </mxGraphModel>
   </diagram>
   <diagram id="fp" name="4. FPGA – RTL architecture">
-    <mxGraphModel dx="1724" dy="1026" grid="0" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1900" pageHeight="1100" math="0" shadow="0">
+    <mxGraphModel dx="1689" dy="1026" grid="0" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1900" pageHeight="1100" math="0" shadow="0">
       <root>
         <mxCell id="0" />
         <mxCell id="1" parent="0" />
@@ -547,23 +529,14 @@
         <mxCell id="fp3" parent="1" style="rounded=1;whiteSpace=wrap;html=1;arcSize=6;fillColor=#f5f5f5;strokeColor=#666666;verticalAlign=middle;align=center;spacing=6;fontSize=12;" value="clk 27 MHz&lt;br&gt;(H11)" vertex="1">
           <mxGeometry height="50" width="150" x="40" y="130" as="geometry" />
         </mxCell>
-        <mxCell id="fp4" parent="1" style="rounded=1;whiteSpace=wrap;html=1;arcSize=6;fillColor=#eeeeee;strokeColor=#bbbbbb;verticalAlign=middle;align=center;spacing=6;fontSize=12;" value="rst_n (J2-23)&lt;br&gt;not connected, pulled up" vertex="1">
-          <mxGeometry height="50" width="150" x="40" y="200" as="geometry" />
-        </mxCell>
         <mxCell id="fp5" parent="1" style="rounded=1;whiteSpace=wrap;html=1;arcSize=6;fillColor=#fff2cc;strokeColor=#d6b656;verticalAlign=middle;align=center;spacing=6;fontSize=12;" value="spi_cs_n · spi_sclk · spi_mosi&lt;br&gt;(J2-16 / 10 / 11, from ESP32)" vertex="1">
           <mxGeometry height="70" width="190" x="40" y="330" as="geometry" />
         </mxCell>
         <mxCell id="fp6" parent="1" style="rounded=1;whiteSpace=wrap;html=1;arcSize=6;fillColor=#fff2cc;strokeColor=#d6b656;verticalAlign=middle;align=center;spacing=6;fontSize=12;" value="spi_miso → ESP32&lt;br&gt;(J2-13)" vertex="1">
           <mxGeometry height="50" width="190" x="40" y="700" as="geometry" />
         </mxCell>
-        <mxCell id="fp7" parent="1" style="rounded=1;whiteSpace=wrap;html=1;arcSize=6;fillColor=#eeeeee;strokeColor=#bbbbbb;verticalAlign=middle;align=center;spacing=6;fontSize=12;" value="irq (J2-24)&lt;br&gt;not connected" vertex="1">
-          <mxGeometry height="50" width="150" x="40" y="860" as="geometry" />
-        </mxCell>
         <mxCell id="fp8" parent="1" style="rounded=1;whiteSpace=wrap;html=1;arcSize=6;fillColor=#e1d5e7;strokeColor=#9673a6;verticalAlign=middle;align=center;spacing=6;fontSize=12;" value="&lt;b&gt;gowin_rpll / pll_50m&lt;/b&gt;&lt;br&gt;27 → 50.143 MHz" vertex="1">
           <mxGeometry height="60" width="190" x="290" y="120" as="geometry" />
-        </mxCell>
-        <mxCell id="fp9" parent="1" style="rounded=1;whiteSpace=wrap;html=1;arcSize=6;fillColor=#e1d5e7;strokeColor=#9673a6;verticalAlign=middle;align=center;spacing=6;fontSize=12;" value="&lt;b&gt;reset sync&lt;/b&gt;&lt;br&gt;3 flip-flop stages" vertex="1">
-          <mxGeometry height="60" width="190" x="290" y="195" as="geometry" />
         </mxCell>
         <mxCell id="fp10" parent="1" style="rounded=1;whiteSpace=wrap;html=1;arcSize=6;fillColor=#e1d5e7;strokeColor=#9673a6;verticalAlign=middle;align=center;spacing=6;fontSize=12;" value="&lt;b&gt;spi_slave.v&lt;/b&gt;&lt;br&gt;syncs SCK/CS/MOSI&lt;br&gt;into 50 MHz domain, mode 0&lt;br&gt;→ rx_data, rx_valid" vertex="1">
           <mxGeometry height="95" width="190" x="290" y="320" as="geometry" />
@@ -639,9 +612,6 @@
         <mxCell id="fp32" edge="1" parent="1" source="fp3" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;html=1;endArrow=block;endFill=1;strokeColor=#333333;strokeWidth=1.5;fontSize=11;labelBackgroundColor=#ffffff;exitX=1;exitY=0.5;entryX=0;entryY=0.5;" target="fp8" value="">
           <mxGeometry relative="1" as="geometry" />
         </mxCell>
-        <mxCell id="fp33" edge="1" parent="1" source="fp4" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;html=1;endArrow=block;endFill=1;strokeColor=#333333;strokeWidth=1.5;fontSize=11;labelBackgroundColor=#ffffff;exitX=1;exitY=0.5;entryX=0;entryY=0.5;" target="fp9" value="">
-          <mxGeometry relative="1" as="geometry" />
-        </mxCell>
         <mxCell id="fp34" edge="1" parent="1" source="fp5" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;html=1;endArrow=block;endFill=1;strokeColor=#333333;strokeWidth=1.5;fontSize=11;labelBackgroundColor=#ffffff;exitX=1;exitY=0.5;entryX=0;entryY=0.5;" target="fp10" value="">
           <mxGeometry relative="1" as="geometry" />
         </mxCell>
@@ -683,13 +653,6 @@
         </mxCell>
         <mxCell id="fp44" edge="1" parent="1" source="fp31" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;html=1;endArrow=block;endFill=1;strokeColor=#333333;strokeWidth=1.5;fontSize=11;labelBackgroundColor=#ffffff;exitX=0;exitY=0.5;entryX=1;entryY=0.5;" target="fp6" value="">
           <mxGeometry relative="1" as="geometry" />
-        </mxCell>
-        <mxCell id="fp45" edge="1" parent="1" source="fp29" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;html=1;endArrow=block;endFill=1;strokeColor=#bbbbbb;strokeWidth=1.5;fontSize=11;labelBackgroundColor=#ffffff;exitX=0.2;exitY=1;entryX=1;entryY=0.5;" target="fp7" value="IRQ high when frame ready&lt;br&gt;(unused)">
-          <mxGeometry relative="1" as="geometry">
-            <Array as="points">
-              <mxPoint x="1056" y="885" />
-            </Array>
-          </mxGeometry>
         </mxCell>
         <mxCell id="fp46" parent="1" style="text;html=1;whiteSpace=wrap;align=left;verticalAlign=top;fontSize=12;" value="&lt;b&gt;Resources after P&amp;amp;R&lt;/b&gt; (Gowin EDA V1.9.11.03):&lt;br&gt;Logic 8% · BSRAM 18% · DSP 10% · Fmax 111.01 MHz&lt;br&gt;RTL and post-P&amp;amp;R netlist match golden_model.py bit for bit (tb_e2, tb_proto, gl.sh)." vertex="1">
           <mxGeometry height="70" width="520" x="1040" y="930" as="geometry" />
@@ -893,26 +856,20 @@
         <mxCell id="dv29" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;html=1;endArrow=block;endFill=1;strokeColor=#d79b00;strokeWidth=1.5;fontSize=11;labelBackgroundColor=#ffffff;exitX=0.5;exitY=1;entryX=0.5;entryY=0;dashed=1;" edge="1" parent="1" source="dv2" target="dv8">
           <mxGeometry relative="1" as="geometry" />
         </mxCell>
-        <mxCell id="dv30" value="&lt;b&gt;verify_spec_v3 (log)&lt;/b&gt;&lt;br&gt;SPEC ↔ golden&lt;br&gt;script đã xóa 24/10" style="rounded=1;whiteSpace=wrap;html=1;arcSize=6;fillColor=#ffffff;strokeColor=#999999;verticalAlign=middle;align=center;spacing=6;fontSize=12;fontSize=11;" vertex="1" parent="1">
-          <mxGeometry x="530" y="520" width="175" height="70" as="geometry" />
-        </mxCell>
-        <mxCell id="dv31" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;html=1;endArrow=block;endFill=1;strokeColor=#999999;strokeWidth=1.5;fontSize=11;labelBackgroundColor=#ffffff;exitX=0.5;exitY=0;entryX=0.5;entryY=1;dashed=1;endArrow=open;" edge="1" parent="1" source="dv30" target="dv8">
-          <mxGeometry relative="1" as="geometry" />
-        </mxCell>
         <mxCell id="dv32" value="&lt;b&gt;train ↔ golden&lt;/b&gt;&lt;br&gt;1000/1000 cửa sổ trùng" style="rounded=1;whiteSpace=wrap;html=1;arcSize=6;fillColor=#ffffff;strokeColor=#999999;verticalAlign=middle;align=center;spacing=6;fontSize=12;fontSize=11;" vertex="1" parent="1">
-          <mxGeometry x="715" y="520" width="175" height="70" as="geometry" />
+          <mxGeometry x="622" y="520" width="175" height="70" as="geometry" />
         </mxCell>
         <mxCell id="dv33" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;html=1;endArrow=block;endFill=1;strokeColor=#999999;strokeWidth=1.5;fontSize=11;labelBackgroundColor=#ffffff;exitX=0.5;exitY=0;entryX=0.5;entryY=1;dashed=1;endArrow=open;" edge="1" parent="1" source="dv32" target="dv8">
           <mxGeometry relative="1" as="geometry" />
         </mxCell>
         <mxCell id="dv34" value="&lt;b&gt;fpga/scripts/test.sh (Icarus)&lt;/b&gt;&lt;br&gt;tb_e2 P=1/4, tb_proto ↔ golden" style="rounded=1;whiteSpace=wrap;html=1;arcSize=6;fillColor=#ffffff;strokeColor=#999999;verticalAlign=middle;align=center;spacing=6;fontSize=12;fontSize=11;" vertex="1" parent="1">
-          <mxGeometry x="900" y="520" width="175" height="70" as="geometry" />
+          <mxGeometry x="807" y="520" width="175" height="70" as="geometry" />
         </mxCell>
         <mxCell id="dv35" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;html=1;endArrow=block;endFill=1;strokeColor=#999999;strokeWidth=1.5;fontSize=11;labelBackgroundColor=#ffffff;exitX=0.5;exitY=0;entryX=0.5;entryY=1;dashed=1;endArrow=open;" edge="1" parent="1" source="dv34" target="dv8">
           <mxGeometry relative="1" as="geometry" />
         </mxCell>
         <mxCell id="dv36" value="&lt;b&gt;fpga/scripts/gl.sh&lt;/b&gt;&lt;br&gt;netlist sau P&amp;amp;R ↔ golden" style="rounded=1;whiteSpace=wrap;html=1;arcSize=6;fillColor=#ffffff;strokeColor=#999999;verticalAlign=middle;align=center;spacing=6;fontSize=12;fontSize=11;" vertex="1" parent="1">
-          <mxGeometry x="1085" y="520" width="175" height="70" as="geometry" />
+          <mxGeometry x="992" y="520" width="175" height="70" as="geometry" />
         </mxCell>
         <mxCell id="dv37" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;html=1;endArrow=block;endFill=1;strokeColor=#999999;strokeWidth=1.5;fontSize=11;labelBackgroundColor=#ffffff;exitX=0.5;exitY=0;entryX=0.5;entryY=1;dashed=1;endArrow=open;" edge="1" parent="1" source="dv36" target="dv8">
           <mxGeometry relative="1" as="geometry" />
@@ -1261,7 +1218,7 @@
         <mxCell id="mc10" value="&lt;b&gt;app_main.c&lt;/b&gt;&lt;br&gt;subtract gyro offset, saturate&lt;br&gt;gap ≥ 15 ms counted as lost" style="rounded=1;whiteSpace=wrap;html=1;arcSize=6;fillColor=#fff2cc;strokeColor=#d6b656;verticalAlign=middle;align=center;spacing=6;fontSize=12;" vertex="1" parent="1">
           <mxGeometry x="700" y="260" width="190" height="95" as="geometry" />
         </mxCell>
-        <mxCell id="mc11" value="&lt;b&gt;node_link.c&lt;/b&gt;&lt;br&gt;node_pack_sample()&lt;br&gt;F1 7E · SEQ · LEN · 'D' · 6 INT16&lt;br&gt;keys · CRC-16 = 21 B" style="rounded=1;whiteSpace=wrap;html=1;arcSize=6;fillColor=#fff2cc;strokeColor=#d6b656;verticalAlign=middle;align=center;spacing=6;fontSize=12;" vertex="1" parent="1">
+        <mxCell id="mc11" value="&lt;b&gt;node_link.c&lt;/b&gt;&lt;br&gt;node_pack_sample()&lt;br&gt;F1 7E · SEQ · LEN · &#39;D&#39; · 6 INT16&lt;br&gt;keys · CRC-16 = 21 B" style="rounded=1;whiteSpace=wrap;html=1;arcSize=6;fillColor=#fff2cc;strokeColor=#d6b656;verticalAlign=middle;align=center;spacing=6;fontSize=12;" vertex="1" parent="1">
           <mxGeometry x="920" y="260" width="190" height="95" as="geometry" />
         </mxCell>
         <mxCell id="mc12" value="&lt;b&gt;board.c&lt;/b&gt; uart_putc()&lt;br&gt;waits for THRE, no interrupt&lt;br&gt;P3.1 → ESP32 GPIO16&lt;br&gt;≈ 1.8 ms per frame" style="rounded=1;whiteSpace=wrap;html=1;arcSize=6;fillColor=#fff2cc;strokeColor=#d6b656;verticalAlign=middle;align=center;spacing=6;fontSize=12;" vertex="1" parent="1">
